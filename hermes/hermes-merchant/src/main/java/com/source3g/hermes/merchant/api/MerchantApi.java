@@ -20,6 +20,8 @@ import com.source3g.hermes.merchant.service.MerchantService;
 @RequestMapping("/merchant")
 public class MerchantApi {
 	
+	//kkkkkkkkkkkk
+	
 	private Logger logger=LoggerFactory.getLogger(MerchantApi.class);
 	
 	@Autowired
