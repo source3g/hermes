@@ -14,13 +14,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.merchant.service.MerchantService;
+import com.source3g.hermes.utils.Page;
 
 @Controller
 @RequestMapping("/merchant")
 public class MerchantApi {
 	
-	//kkkkkkkkkkkk
+	
 	
 	private Logger logger=LoggerFactory.getLogger(MerchantApi.class);
 	
@@ -42,12 +44,17 @@ public class MerchantApi {
 	}
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	@ResponseBody
-	public List<Merchant> list(){
+//	public List<Merchant> list(){
+//		logger.debug("list merchant....");
+//		return merchantService.list();
+//	}
+	public Page list(String pageNo,String name){
 		logger.debug("list merchant....");
-		return merchantService.list();
+		int pageNoInt=Integer.valueOf(pageNo);
+		Merchant merchant=new Merchant();
+		merchant.setName(name);
+		return merchantService.list(pageNoInt,merchant);
 	}
-	
-
 	
 	@RequestMapping(value="/delete/{id}",method=RequestMethod.GET)
 	@ResponseBody
