@@ -6,6 +6,8 @@
 	src='${pageContext.request.contextPath}/css/bootstrap/bootstrap.js'></script>
 <script type='text/javascript'
 	src='${pageContext.request.contextPath}/js/jquery/jquery.history.js'></script>
-
 <script type='text/javascript'
 	src='${pageContext.request.contextPath}/js/jquery/jquery.form.js'></script>
+
+<script type='text/javascript'
+	src='${pageContext.request.contextPath}/js/jquery/jquery.validate.js'></script>

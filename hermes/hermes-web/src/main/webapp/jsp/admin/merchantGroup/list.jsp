@@ -13,8 +13,9 @@
 	<form id="queryForm" class="well form-inline " method="get">
 		<label class="control-label" for="name">名称：</label> <input type="text"
 			name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称...">
-		<input type="button" class="btn btn-primary"
-			onclick="queryFormSubmit();" value="查询">
+		<input id="pageNo" name="pageNo" type="hidden"> <input
+			type="button" class="btn btn-primary" onclick="goToPage(1);"
+			value="查询">
 	</form>
 
 	<table
@@ -36,7 +37,6 @@
 			</tr>
 		</c:forEach>
 	</table>
-
 	<div>
 		<ul class="pagination">
 			<li id="firstPage"><a href="javascript:void();">首页</a></li>
@@ -44,12 +44,10 @@
 			<li id="nextPage"><a href="javascript:void();">后一页</a></li>
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
 			<li>当前第${page.currentPage}/${page.totalPageCount}页 转到第 <input
-				type="text" id="pageNoToGo" name="pageNo" class="input-small">页 <input
-				type="button" id="pageOk" class="btn" value="确定"></input></li>
+				type="text" id="pageNoToGo" name="pageNo" class="input-small">页
+				<input type="button" id="pageOk" class="btn" value="确定"></input></li>
 		</ul>
 	</div>
-
-
 
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
@@ -64,7 +62,8 @@
 		$(document).ready(function() {
 			initPage();
 		});
-		function queryFormSubmit() {
+		function goToPage(pageNo) {
+			$("#pageNo").attr("value",pageNo);
 			var options = {
 				url : "${pageContext.request.contextPath}/admin/merchantGroup/list/",
 				success : showList, // post-submit callback
@@ -83,32 +82,35 @@
 		function showList(data) {
 			$("#pageContentFrame").html(data);
 		}
-
 		function toUpdate(id) {
 			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/toUpdate/" + id + "/");
 		}
-
 		function showError() {
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
+		
 		function initPage(){
-			
 			$("#pageOk").click(function(){
 				var pageNoToGoStr=$("#pageNoToGo").val();
-				loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo="+pageNoToGoStr);
+				goToPage(pageNoToGoStr);
 			});
-			
+			if(${page.currentPage}==1&&${page.currentPage}==${page.totalPageCount}){
+				$("#firstPage").addClass("active");
+				$("#frontPage").addClass("active");
+				$("#nextPage").addClass("active");
+				$("#lastPage").addClass("active");
+			}else
 			if(${page.currentPage}==1){
 				$("#firstPage").addClass("active");
 				$("#frontPage").addClass("active");
 				$("#nextPage").removeClass("active");
 				$("#lastPage").removeClass("active");
 				$("#nextPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.nextPageNo}");
+					goToPage(${page.nextPageNo});
 				});
 				$("#lastPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.lastPage}");
+					goToPage(${page.lastPage});
 				});
 				
 			}else if(${page.currentPage}==${page.totalPageCount}){
@@ -118,24 +120,23 @@
 				$("#lastPage").addClass("active");
 				
 				$("#firstPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.firstPageNo}");
+					goToPage(${page.firstPageNo});
 				});
 				$("#frontPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.previousPageNo}");
+					goToPage(${page.previousPageNo});
 				});
-		
 			}else{
 				$("#frontPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.previousPageNo}");
+					goToPage(${page.previousPageNo});
 				});
 				$("#nextPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.nextPageNo}");
+					goToPage(${page.nextPageNo});
 				});
 				$("#firstPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.firstPageNo}");
+					goToPage(${page.firstPageNo});
 				});
 				$("#lastPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/?pageNo=${page.lastPageNo}");
+					goToPage(${page.lastPageNo});
 				});
 			}
 		}

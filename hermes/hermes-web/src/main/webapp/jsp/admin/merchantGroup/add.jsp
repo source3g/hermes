@@ -21,13 +21,13 @@
 		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入集团商户名称..."
-					id="name" name="name" value="${merchantGroup.name }">
+				<input type="text" class="input-xlarge " placeholder="请输入集团商户名称..."
+					id="name" name="name" value="${merchantGroup.name }"><font
+					color="red">*</font>
 				<c:if test="${not empty update }">
 					<input type="hidden" id="strId" name="strId"
 						value="${merchantGroup.id }">
 				</c:if>
-				<span class="help-inline"><font color="red">*</font></span>
 			</div>
 		</div>
 
@@ -44,7 +44,7 @@
 	</form>
 
 	<c:if test="${not empty success }">
-		<div class="alert alert-success">操作成功</div>
+
 	</c:if>
 
 	<c:if test="${not empty errors }">
@@ -69,45 +69,60 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var options = {
-				// target:        '#output2',   // target element(s) to be updated with server response 
-				// beforeSubmit:  showRequest,  // pre-submit callback 
 				success : toList, // post-submit callback
 				error : showError
-
-			// other available options: 
-			//url:       url         // override for form's 'action' attribute 
-			//type:      type        // 'get' or 'post', override for form's 'method' attribute 
-			//dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
-			//clearForm: true        // clear all form fields after successful submit 
-			//resetForm: true        // reset the form after successful submit 
-
-			// $.ajax options can be used here too, for example: 
-			//timeout:   3000 
 			};
 
-			// bind to the form's submit event 
 			$('#addMerchantForm').submit(function() {
-				// inside event callbacks 'this' is the DOM element so we first 
-				// wrap it in a jQuery object and then invoke ajaxSubmit 
+				if (!$("#addMerchantForm").valid()) {
+					return false;
+				}
 				$(this).ajaxSubmit(options);
-				// !!! Important !!! 
-				// always return false to prevent standard browser submit and page navigation 
 				return false;
 			});
+			var validateOptions = {
+				rules : {
+					name : {
+						required : true,
+						minlength : 2
+					}
+				},
+				messages : {
+					name : {
+						required : '请填写集团商户名称',
+						minlength : '至少输入两个字符'
+					}
+				}
+			};
+
+			$("#addMerchantForm").validate(validateOptions);
 
 			function showError() {
 				$("#resultMessage").html("操作失败，请重试");
 				$("#errorModal").modal();
 			}
+			
+			initDialog();
+			
 		});
 
 		function modify() {
+			if (!$("#addMerchantForm").valid()) {
+				return false;
+			}
 			$('#addMerchantForm').ajaxSubmit({
 				success : toList
 			});
 		}
 		function toList(data) {
 			$("#pageContentFrame").html(data)
+		}
+		function initDialog(){
+			if(${not empty success }==true){
+				$('#addMerchantForm').clearForm();
+				$("#resultMessage").html("操作成功！");
+				$("#errorModal").modal();
+			}
 		}
 	</script>
 </body>
