@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+ 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<context:component-scan base-package="com.source3g">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<context:annotation-config />
+	<bean id="monitorDestination" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="ActiveMQ.Advisory.Consumer.Topic.>" />
+	</bean>
+	
+	<!-- jms 连接工厂 -->
+	<bean id="jmsFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL">
+			<value>tcp://localhost:61616</value>
+		</property>
+	</bean>
+
+
+	<bean id="monitorTopicListenerConnectionFactory"
+		class="org.springframework.jms.connection.CachingConnectionFactory">
+		<constructor-arg ref="jmsFactory" />
+		<property name="sessionCacheSize" value="100" />
+		<property name="clientId" value="clientId_monitor" />
+	</bean>
+
+	<bean id="monitorListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="monitorTopicListenerConnectionFactory" />
+		<property name="destination" ref="monitorDestination" />
+		<property name="messageListener" ref="jmsMessageListener" />
+	</bean>
+	
+</beans>

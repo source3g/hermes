@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+dl,dd,dt,ul,li{ 
+margin:0; 
+padding:0; 
+list-style:none; 
+color:#333;} 
+#wenzhang{ 
+width:198px; 
+text-align:center; 
+font-size:12px; 
+border-left:1px solid #dedede; 
+border-right:1px solid #dedede; 
+border-bottom:1px solid #dedede; 
+} 
+#wenzhang  dd dl dt{ 
+border-top:1px solid #dedede; 
+background:#f2f2f2; height:25px; 
+line-height:25px; font-weight:bold; 
+background-image:url(../images/nav02.gif); 
+} 
+#wenzhang ul{ 
+background:#f9f9f9; 
+} 
+#wenzhang li{ 
+border-top:1px solid #efefef; 
+line-height:25px; 
+} 

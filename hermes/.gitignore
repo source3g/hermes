@@ -1,0 +1,9 @@
+/*/target
+.settings
+/*/.settings/*
+.project
+/*/.classpath
+.tomcatplugin
+/*/.tomcatplugin
+/*/work
+/*/*/*.log
