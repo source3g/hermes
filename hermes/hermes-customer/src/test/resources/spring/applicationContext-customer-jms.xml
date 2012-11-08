@@ -6,7 +6,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
 
 	<bean id="customerDestination" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg value="com.source3g.wcb.customer" />
+		<constructor-arg value="com.source3g.hermes.customer" />
 	</bean>
 
 	<bean id="customerTopicListenerConnectionFactory"

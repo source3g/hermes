@@ -1,4 +1,4 @@
-D:\workspaceMine\hermes\hermes-api\target\classes
+D:\java\gitrepository\hermes\hermes\hermes-api\target\classes
 D:\java\jdk1.7.0_04\jre\lib\resources.jar
 D:\java\jdk1.7.0_04\jre\lib\rt.jar
 D:\java\jdk1.7.0_04\jre\lib\jsse.jar
@@ -12,8 +12,8 @@ D:\java\jdk1.7.0_04\jre\lib\ext\sunjce_provider.jar
 D:\java\jdk1.7.0_04\jre\lib\ext\sunmscapi.jar
 D:\java\jdk1.7.0_04\jre\lib\ext\sunpkcs11.jar
 D:\java\jdk1.7.0_04\jre\lib\ext\zipfs.jar
-D:\workspaceMine\hermes\hermes-customer\target\classes
-D:\workspaceMine\hermes\hermes-common\target\classes
+D:\java\gitrepository\hermes\hermes\hermes-customer\target\classes
+D:\java\gitrepository\hermes\hermes\hermes-common\target\classes
 D:\lib\maven-3.0.3\repositories\junit\junit\4.10\junit-4.10.jar
 D:\lib\maven-3.0.3\repositories\org\hamcrest\hamcrest-core\1.1\hamcrest-core-1.1.jar
 D:\lib\maven-3.0.3\repositories\org\springframework\spring-beans\3.1.2.RELEASE\spring-beans-3.1.2.RELEASE.jar
@@ -81,4 +81,4 @@ D:\lib\maven-3.0.3\repositories\log4j\log4j\1.2.17\log4j-1.2.17.jar
 D:\lib\maven-3.0.3\repositories\org\hibernate\hibernate-validator\4.3.0.Final\hibernate-validator-4.3.0.Final.jar
 D:\lib\maven-3.0.3\repositories\javax\validation\validation-api\1.0.0.GA\validation-api-1.0.0.GA.jar
 D:\lib\maven-3.0.3\repositories\org\jboss\logging\jboss-logging\3.1.0.CR2\jboss-logging-3.1.0.CR2.jar
-D:\workspaceMine\hermes\hermes-merchant\target\classes
+D:\java\gitrepository\hermes\hermes\hermes-merchant\target\classes

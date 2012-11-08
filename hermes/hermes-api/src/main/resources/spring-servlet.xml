@@ -48,7 +48,7 @@
 
 	<!-- 开启controller注解支持 -->
 	<!-- 注：如果base-package=com.source3g 则注解事务不起作用 TODO 读源码 -->
-	<context:component-scan base-package="com.source3g.wcb.*.api">
+	<context:component-scan base-package="com.source3g.hermes.*.api">
 		<context:include-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>

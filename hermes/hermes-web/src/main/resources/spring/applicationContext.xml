@@ -27,7 +27,7 @@
 	</bean>
 	
 	<!-- 参数配置文件 -->
-	<bean id="configParams" class="com.source3g.wcb.utils.ConfigParams" lazy-init="false"></bean>
+	<bean id="configParams" class="com.source3g.hermes.utils.ConfigParams" lazy-init="false"></bean>
 
 	<context:component-scan base-package="com.source3g">
 		<context:exclude-filter type="annotation"
