@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
+import com.source3g.hermes.utils.Page;
 
 
 @Controller
@@ -55,12 +57,18 @@ public class MerchantController {
 	}
 
 	@RequestMapping( value="list", method = RequestMethod.GET)
-	public ModelAndView list() {
+	public ModelAndView list(Merchant merchant,String pageNo) {
 		logger.debug("list.......");
-		String uri = ConfigParams.getBaseUrl()+"merchant/list/";
-		Merchant[] merchants = restTemplate.getForObject(uri, Merchant[].class);
+		if(StringUtils.isEmpty(pageNo)){
+			pageNo="1";
+		}
+		String uri = ConfigParams.getBaseUrl()+"merchant/list/?pageNo="+pageNo;
+		if(StringUtils.isEmpty(merchant.getName())){
+			uri+="&name="+merchant.getName();
+		}
+		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("merchants", merchants);
+		model.put("page", page);
 		return new ModelAndView("admin/merchant/list", model);
 	}
 
@@ -76,6 +84,7 @@ public class MerchantController {
 		Merchant merchant=restTemplate.getForObject(uri, Merchant.class);
 		Map<String,Object> model=new HashMap<String,Object>();
 		model.put("merchant", merchant);
+		model.put("update", true);
 		return new ModelAndView("admin/merchant/add",model);
 	}
 	@RequestMapping(value="/update" ,method =RequestMethod.POST)

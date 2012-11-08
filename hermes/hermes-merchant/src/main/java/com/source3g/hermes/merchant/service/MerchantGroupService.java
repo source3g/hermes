@@ -26,7 +26,7 @@ public class MerchantGroupService extends BaseService {
 	public Page list( int pageNo,MerchantGroup merchantGroup) {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(merchantGroup.getName())) {
-			// as SQL: like " '%" + personName + "%' "
+			
 			Pattern pattern = Pattern.compile("^.*" + merchantGroup.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}

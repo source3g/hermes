@@ -10,10 +10,10 @@
 </head>
 <body>
 	<form id="addMerchantForm"
-		<c:if test="${empty merchant }">
+		<c:if test="${empty update }">
 			action="${pageContext.request.contextPath}/admin/merchant/add/"
 		</c:if>
-		<c:if test="${not empty merchant}">
+		<c:if test="${not empty update}">
 			action="${pageContext.request.contextPath}/admin/merchant/update/"
 		</c:if>
 		method="post" class="form-horizontal">
@@ -31,7 +31,7 @@
 			<label class="control-label" for="addr">地址：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入商户地址..."
-					id="addr" name="addr" value="${merchant.addr }"> <span class="help-inline"></span>
+					id="addr" name="addr" value="${merchant.addr}"> <span class="help-inline"></span>
 			</div>
 		</div>
 
@@ -42,8 +42,8 @@
 			<div class="controls">
 				<input type="text" class="input-xlarge"
 					placeholder="请选择集团商户，如果没有则不选..." id="addr" readonly="readonly"
-					name="addr"> <span class="help-inline">
-					<c:if test="${not empty merchant }">
+					name="merchantGroupId"> <span class="help-inline">
+					<c:if test="${not empty update }">
 					 <input
 					type="hidden"
 					id="strId" name="strId" value="${merchant.id }">
@@ -57,12 +57,12 @@
 
 		<div class="form-actions">
 			
-			<c:if test="${not empty merchant }">
+			<c:if test="${not empty update }">
 				<input class="btn btn-primary" type="button" onclick="modify();" value="修改">
 			</c:if>
 
-			<c:if test="${ empty merchant }">
-				<input type="submit" class="btn btn-primary" input="增加">
+			<c:if test="${ empty update }">
+				<input type="submit" class="btn btn-primary"  input="增加">
 			</c:if>
 			
 			<c:if test="${ not empty success }">
@@ -141,10 +141,31 @@
 				success:toList
 			});
 		}
+		 $(document).ready(function() {
+		 $('#addMerchantForm').submit(function(){
+			var options = {
+				success : toList
+				
+			};
+			$(this).ajaxSubmit(options);
+			return false;
+		}); 
+		/*	function add(){
+					var options = {
+						success : toList, 
+						error : showError
+					};
+					$(this).ajaxSubmit(options);
+					return false;
+				}*/
+		} );
+		
+	
+		
 		function toList(data){
 			$("#pageContentFrame").html(data)
 		}
-		
+
 	</script>
 </body>
 <%-- <%@include file="../../include/footer.jsp"%> --%>
