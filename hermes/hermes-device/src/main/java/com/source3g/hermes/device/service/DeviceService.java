@@ -1,0 +1,47 @@
+package com.source3g.hermes.device.service;
+
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
+
+import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.service.BaseService;
+import com.source3g.hermes.utils.Page;
+
+@Service
+public class DeviceService extends BaseService
+{
+	private String collectionName = "device";
+	
+	public void add(Device device) {
+		device.setId(ObjectId.get());
+		mongoTemplate.insert(device, collectionName);
+	}
+	public Page list(int pageNo, Device device) {
+		Query query = new Query();
+		if (StringUtils.isNotEmpty(device.getSn())) {
+			Pattern pattern = Pattern.compile("^.*" + device.getSn()
+					+ ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("sn").is(pattern));
+		}
+		Page page = new Page();
+		Long totalCount = mongoTemplate.count(query, collectionName);
+		page.setTotalRecords(totalCount);
+		page.gotoPage(pageNo);
+		List<Device> list = mongoTemplate.find(query.skip(page.getStartRow())
+				.limit(page.getPageSize()), Device.class, collectionName);
+		page.setData(list);
+		return page;
+	}
+	@Override
+	public String getCollectionName() {
+		
+		return collectionName;
+	}
+	
+}

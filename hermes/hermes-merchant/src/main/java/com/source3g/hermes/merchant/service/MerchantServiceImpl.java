@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -17,8 +15,7 @@ import com.source3g.hermes.utils.Page;
 
 @Service
 public class MerchantServiceImpl extends BaseService implements MerchantService {
-	@Autowired
-	private MongoTemplate mongoTemplate;
+	
 	private String collectionName = "merchant";
 
 	@Override

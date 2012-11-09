@@ -13,6 +13,7 @@
 		<module>hermes-api</module>
 		<module>hermes-common</module>
    		 <module>hermes-merchant</module>
+    <module>hermes-device</module>
   </modules>
 	<build>
 		<finalName>${project.name}</finalName>

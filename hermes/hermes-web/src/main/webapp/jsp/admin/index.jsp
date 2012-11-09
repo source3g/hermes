@@ -80,6 +80,20 @@ body {
 							</ul>
 							<!-- </div> -->
 						</div>
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseTwo"> 盒子 </a>
+						</div>
+						<div id="collapseTwo" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="merchant-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
+								<li><a href="javascript:void();" id="addDevice">添加盒子</a></li>
+								<li><a href="javascript:void();" id="listDevice">盒子列表</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
 					</div>
 				</div>
 			</div>
@@ -122,6 +136,12 @@ body {
 			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/");
 		});
 		
+		$("#addDevice").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/device/add/");
+		});
+		$("#listDevice").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/device/list/");
+		});
 	});
 
 	function loadPage(url) {
