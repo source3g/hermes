@@ -41,6 +41,7 @@ public class MerchantApi {
 	}
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	@ResponseBody
+
 	public Page list(String pageNo,String name){
 		logger.debug("list merchant....");
 		int pageNoInt=Integer.valueOf(pageNo);

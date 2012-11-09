@@ -4,10 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="${pageContext.request.contextPath}/css/adminIndex.css"
-	rel="stylesheet" type="text/css" />
-<title>首页</title>
+<title>旺财宝精准营销管理系统-首页</title>
 <%@include file="../include/header.jsp"%>
+<%@include file="../include/footer.jsp"%>
 <style type="text/css">
 body {
 	padding-bottom: 40px;
@@ -24,7 +23,7 @@ body {
 					data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
-				</a> <a class="brand" href="index.html"> <img alt="旺财宝"
+				</a> <a class="brand" href="index/"> <img alt="旺财宝"
 					src="${pageContext.request.contextPath}/img/logo.png" /> <span>旺财宝</span></a>
 
 				<!-- theme selector starts -->
@@ -43,7 +42,8 @@ body {
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						<i class="icon-user"></i><span> admin</span> <span class="caret"></span>
+						<i class="icon-user"></i><span> merchant1</span> <span
+						class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
 						<li><a href="#">个人中心</a></li>
@@ -59,22 +59,30 @@ body {
 	</div>
 	<!-- topbar ends -->
 
-
-
-
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span2">
-				<div class="sidebar-nav">
-					<a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i
-						class="icon-briefcase"></i>顾客管理<!-- <span class="label label-info">+3</span> --></a>
-					<ul id="accounts-menu"
-						class="nav nav-list nav-tabs  nav-stacked collapse main-menu">
-						<li><a href="javascript:void();" id="addMerchant">添加</a></li>
-						<li><a href="javascript:void();" id="listMerchant">查询</a></li>
-					</ul>
+				<div class="accordion" id="accordion2">
+					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseOne"> 顾客管理 </a>
+						</div>
+						<div id="collapseOne" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="merchant-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<li><a href="javascript:void();" id="customerList">顾客列表</a></li>
+								<li><a href="javascript:void();" id="customerAdd">顾客新增</a></li>
+								<li><a href="javascript:void();" id="customerGroup">顾客组管理</a></li>
+								<li><a href="javascript:void();" id="customerList">来电顾客列表</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
+					</div>
 				</div>
 			</div>
+
 			<!-- span2 -->
 
 			<noscript>
@@ -87,22 +95,33 @@ body {
 				</div>
 			</noscript>
 
-			<div class="span10" id="pageContent"></div>
+			<div class="span10" id="pageContentFrame"></div>
 		</div>
 		<%@include file="../include/copyright.jsp"%>
 		<!-- row  -->
 	</div>
 	<!--/.fluid-container-->
 </body>
-<%@include file="../include/footer.jsp"%>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#addMerchant").click(function() {
-			$("#pageContent").load("${pageContext.request.contextPath}/admin/merchant/add/");
+			loadPage("${pageContext.request.contextPath}/admin/merchant/add/");
 		});
 		$("#listMerchant").click(function() {
-			$("#pageContent").load("${pageContext.request.contextPath}/admin/merchant/list/");
+			loadPage("${pageContext.request.contextPath}/admin/merchant/list/");
 		});
+		$("#addMerchantGroup").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/add/");
+		});
+
+		$("#listMerchantGroup").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/");
+		});
+
 	});
+
+	function loadPage(url) {
+		$("#pageContentFrame").load(url);
+	}
 </script>
 </html>

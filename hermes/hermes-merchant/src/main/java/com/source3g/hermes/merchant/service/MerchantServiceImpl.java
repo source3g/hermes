@@ -1,7 +1,9 @@
 package com.source3g.hermes.merchant.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,11 +36,11 @@ public class MerchantServiceImpl extends BaseService implements MerchantService 
 
 	public Page list(int pageNo, Merchant merchant) {
 		Query query = new Query();
-//		if (StringUtils.isNotEmpty(merchant.getName())) {
-//			Pattern pattern = Pattern.compile("^.*" + merchant.getName()
-//					+ ".*$", Pattern.CASE_INSENSITIVE);
-//			query.addCriteria(Criteria.where("name").is(pattern));
-//		}
+		if (StringUtils.isNotEmpty(merchant.getName())) {
+			Pattern pattern = Pattern.compile("^.*" + merchant.getName()
+					+ ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("name").is(pattern));
+		}
 		
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, collectionName);

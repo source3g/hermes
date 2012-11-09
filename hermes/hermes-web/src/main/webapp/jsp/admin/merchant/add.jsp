@@ -42,7 +42,7 @@
 			<div class="controls">
 				<input type="text" class="input-xlarge"
 					placeholder="请选择集团商户，如果没有则不选..." id="addr" readonly="readonly"
-					name="merchantGroupId"> <span class="help-inline">
+					name="merchantGroupId"> <span >
 					<c:if test="${not empty update }">
 					 <input
 					type="hidden"
@@ -87,7 +87,7 @@
 		</div>
 		<div class="modal-body">
 			<div class="well form-inline">
-				<label for="merchantGroup">商户名称：</label> <input id="merchantGroup"
+				<label for="merchantGroup">集团商户名称：</label> <input id="merchantGroup"
 					type="text" class="input-small" placeholder="商户名称">
 				<button class="btn" id="queryMerchantGroupBtn">查询</button>
 			</div>
@@ -137,31 +137,54 @@
 		}
 		
 		function modify(){
+			if (!$("#addMerchantForm").valid()) {
+				return false;
+			}
 			$('#addMerchantForm').ajaxSubmit({
 				success:toList
 			});
 		}
+		
 		 $(document).ready(function() {
 		 $('#addMerchantForm').submit(function(){
+			 if (!$("#addMerchantForm").valid()) {
+					return false;
+				}
 			var options = {
 				success : toList
 				
 			};
 			$(this).ajaxSubmit(options);
 			return false;
+			
 		}); 
-		/*	function add(){
-					var options = {
-						success : toList, 
-						error : showError
-					};
-					$(this).ajaxSubmit(options);
-					return false;
-				}*/
+		 
+		 var validateOptions={
+					rules:{
+						name:{
+							required:true,
+							minlength:2
+						},
+						addr:{
+						required:true,
+						minlength:2
+						}
+					},
+					messages:{
+						name:{
+							required:"请填写商户名称",
+							minlength:"至少输入两个字符"
+						},
+						addr:{
+							required:"请输入地址",
+							minlength:"至少输入两 个字符"
+						}
+					}
+			};
+			$('#addMerchantForm').validate(validateOptions);
 		} );
 		
-	
-		
+		 
 		function toList(data){
 			$("#pageContentFrame").html(data)
 		}

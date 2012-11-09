@@ -10,9 +10,10 @@
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
 	<label class="control-label" for="name">名称：</label>
-	<input type="text" name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称...">
-	<input type="button" class="btn btn-primary"
-			onclick="queryFormSubmit();" value="查询">
+	<input type="text" name="name" value="${merchantGroup.name}" placeholder="请输入商户名称...">
+	<input id="pageNo" name="pageNo" type="hidden">
+	<input type="submit" class="btn btn-primary"
+			value="查询">
 	</form>
 	<table class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
@@ -56,13 +57,11 @@
 	<script type="text/javascript">
 	
 		function deleteById(id) {
-	
 		$.ajax({
 			url:"${pageContext.request.contextPath}/admin/merchant/delete/"+id+"/",
 			type:"get",
 			success:showList		
-		});
-		
+		});	
 	}
 		function showList(data){
 			$("#pageContentFrame").html(data);
@@ -70,16 +69,36 @@
 		function toModify(id){
 		loadPage("${pageContext.request.contextPath}/admin/merchant/toModify/"+id+"/");
 	}
+		
+		function goToPage(pageNo){
+			$("#pageNo").attr("value",pageNo);
+			var options={
+					url:"${pageContext.request.contextPath}/admin/merchant/list/",
+					success:showList,
+					error:showError
+			};
+			$('#queryForm').ajaxSubmit(options);
+			
+		}
+		function showError() {
+			$("#resultMessage").html("操作失败，请重试");
+			$("#errorModal").modal();
+		}
 	    $(document).ready(function(){
+	    	$('#queryForm').submit(function(){
+	    		goToPage(1);
+	    		return false;
+	    	});
 			initPage();
 	});
+	    
 	    function initPage(){
 	    	$('#pageOk').click(function(){
 	    		var pageNoToGo=$('#pageNoToGo').val();
-	    		loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo="+pageNoToGo);
+	    		goToPage(pageNoToGo);
 	    	});
 	    	
-	    	if(${page.totalPageCount}==1){
+	    	if(${page.totalPageCount}==0){
 	    		$("#firstPage").addClass("active");
 				$("#frontPage").addClass("active");
 				$("#nextPage").addClass("active");
@@ -91,39 +110,37 @@
 				$("#lastPage").removeClass("active");
 				
 				$('#nextPage').click(function(){
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.nextPageNo}");
+					goToPage(${page.nextPageNo});
 				});
 				$("#lastPage").click(function (){
-					//alert(${page.lastPage});
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.totalPageCount}");
+					goToPage(${page.lastPageNo});
 				});		
 				
 	    	}else if(${page.currentPage}==${page.totalPageCount}){
-	    		
 	    		$("#firstPage").removeClass("active");
 				$("#frontPage").removeClass("active");
 				$("#nextPage").addClass("active");
 				$("#lastPage").addClass("active");
 				
 				$("#firstPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.firstPageNo}");
+					goToPage(${page.firstPageNo});
 				});
 				$("#frontPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.previousPageNo}");
+					goToPage(${page.previousPageNo});
 				});
 	    	}else{
 				$("#firstPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.firstPageNo}");
-				});
+					goToPage(${page.firstPageNo});				
+					});
 				$("#frontPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.previousPageNo}");
-				});
+					goToPage(${page.previousPageNo});				
+					});
 				$("#nextPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.nextPageNo}");
-				});
+					goToPage(${page.nextPageNo});			
+					});
 				$("#lastPage").click(function (){
-					loadPage("${pageContext.request.contextPath}/admin/merchant/list/?pageNo=${page.lastPageNo}");
-				});
+					goToPage(${page.lastPageNo});			
+					});
 			}
 	    }
 	    	

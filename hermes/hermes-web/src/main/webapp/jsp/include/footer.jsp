@@ -11,3 +11,6 @@
 
 <script type='text/javascript'
 	src='${pageContext.request.contextPath}/js/jquery/jquery.validate.js'></script>
+
+<script type='text/javascript'
+	src='${pageContext.request.contextPath}/js/index.js'></script>

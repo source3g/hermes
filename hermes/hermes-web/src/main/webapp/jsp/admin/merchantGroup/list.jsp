@@ -12,14 +12,12 @@
 
 	<form id="queryForm" class="well form-inline " method="get">
 		<label class="control-label" for="name">名称：</label> <input type="text"
-			name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称...">
+			name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称..."/>
 		<input id="pageNo" name="pageNo" type="hidden"> <input
-			type="button" class="btn btn-primary" onclick="goToPage(1);"
-			value="查询">
+			type="submit" class="btn btn-primary" value="查询"/>
 	</form>
 
-	<table
-		class="table table-striped table-bordered bootstrap-datatable datatable">
+	<table class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
 				<th width="50%">名称</th>
@@ -36,6 +34,7 @@
 					onclick="deleteById('${merchantGroup.id}');">删除</a></td>
 			</tr>
 		</c:forEach>
+
 	</table>
 	<div>
 		<ul class="pagination">
@@ -43,9 +42,11 @@
 			<li id="frontPage"><a href="javascript:void();">前一页</a></li>
 			<li id="nextPage"><a href="javascript:void();">后一页</a></li>
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
-			<li>当前第${page.currentPage}/${page.totalPageCount}页 共${page.totalRecords }条记录 转到第 <input
-				type="text" id="pageNoToGo" name="pageNo" class="input-small">页
-				<input type="button" id="pageOk" class="btn" value="确定"></input></li>
+			<li>当前第${page.currentPage}/${page.totalPageCount}页
+				共${page.totalRecords }条记录 转到第 <input type="text" id="pageNoToGo"
+				name="pageNo" class="input-small">页 <input type="button"
+				id="pageOk" class="btn" value="确定"></input>
+			</li>
 		</ul>
 	</div>
 
@@ -61,6 +62,10 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			initPage();
+			$("#queryForm").submit(function(){
+				goToPage(1);
+				return false;
+			});
 		});
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);
@@ -70,6 +75,7 @@
 				error : showError
 			};
 			$('#queryForm').ajaxSubmit(options);
+			return false;
 		}
 
 		function deleteById(id) {
@@ -95,7 +101,7 @@
 				var pageNoToGoStr=$("#pageNoToGo").val();
 				goToPage(pageNoToGoStr);
 			});
-			if(${page.currentPage}==1&&${page.currentPage}==${page.totalPageCount}){
+			if(${page.totalPageCount}==1){
 				$("#firstPage").addClass("active");
 				$("#frontPage").addClass("active");
 				$("#nextPage").addClass("active");
@@ -110,7 +116,7 @@
 					goToPage(${page.nextPageNo});
 				});
 				$("#lastPage").click(function (){
-					goToPage(${page.lastPage});
+					goToPage(${page.totalPageCount});
 				});
 				
 			}else if(${page.currentPage}==${page.totalPageCount}){
@@ -136,7 +142,7 @@
 					goToPage(${page.firstPageNo});
 				});
 				$("#lastPage").click(function (){
-					goToPage(${page.lastPageNo});
+					goToPage(${page.totalPageCount});
 				});
 			}
 		}

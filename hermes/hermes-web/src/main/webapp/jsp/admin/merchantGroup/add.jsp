@@ -9,7 +9,7 @@
 
 </head>
 <body>
-	<form id="addMerchantForm"
+	<form id="addMerchantGroupForm"
 		<c:if test="${empty update }">
 			action="${pageContext.request.contextPath}/admin/merchantGroup/add/"
 		</c:if>
@@ -33,10 +33,8 @@
 
 		<div class="form-actions">
 			<c:if test="${not empty update }">
-				<input class="btn btn-primary" type="button" onclick="modify();"
-					value="修改">
+				<input type="submit" class="btn btn-primary" value="修改">
 			</c:if>
-
 			<c:if test="${ empty update}">
 				<input type="submit" class="btn btn-primary" value="增加">
 			</c:if>
@@ -68,16 +66,20 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			var options = {
+			var addMerchantGroupFormOptions = {
+				url:"${pageContext.request.contextPath}/admin/merchantGroup/add/",
 				success : toList, // post-submit callback
 				error : showError
 			};
-
-			$('#addMerchantForm').submit(function() {
-				if (!$("#addMerchantForm").valid()) {
+			
+			$('#addMerchantGroupForm').submit(function() {
+				if (!$("#addMerchantGroupForm").valid()) {
 					return false;
 				}
-				$(this).ajaxSubmit(options);
+				if(${not empty update}){
+					addMerchantGroupFormOptions.url="${pageContext.request.contextPath}/admin/merchantGroup/update/";
+				}
+				$(this).ajaxSubmit(addMerchantGroupFormOptions);
 				return false;
 			});
 			var validateOptions = {
@@ -95,8 +97,7 @@
 				}
 			};
 
-			$("#addMerchantForm").validate(validateOptions);
-
+			$("#addMerchantGroupForm").validate(validateOptions);
 			function showError() {
 				$("#resultMessage").html("操作失败，请重试");
 				$("#errorModal").modal();
@@ -107,19 +108,19 @@
 		});
 
 		function modify() {
-			if (!$("#addMerchantForm").valid()) {
+			if (!$("#addMerchantGroupForm").valid()) {
 				return false;
 			}
-			$('#addMerchantForm').ajaxSubmit({
+			$('#addMerchantGroupForm').ajaxSubmit({
 				success : toList
 			});
 		}
 		function toList(data) {
-			$("#pageContentFrame").html(data)
+			$("#addMerchantGroupForm").html(data)
 		}
 		function initDialog(){
 			if(${not empty success }==true){
-				$('#addMerchantForm').clearForm();
+				$('#addMerchantGroupForm').clearForm();
 				$("#resultMessage").html("操作成功！");
 				$("#errorModal").modal();
 			}

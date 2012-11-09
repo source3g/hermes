@@ -6,19 +6,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfigParams {
 
-	private static ConfigParams api;
+	private static ConfigParams params;
 
 	public ConfigParams() {
-		api = this;
+		params = this;
 	}
 
 	@Value(value = "${baseApiUrl}")
 	private String baseUrl;
 
 	public static String getBaseUrl() {
-		if (api == null) {
+		if (params == null) {
 			return null;
 		}
-		return api.baseUrl;
+		return params.baseUrl;
 	}
 }
