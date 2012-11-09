@@ -1,9 +1,7 @@
 package com.source3g.hermes.merchant.service;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,7 +10,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
 
