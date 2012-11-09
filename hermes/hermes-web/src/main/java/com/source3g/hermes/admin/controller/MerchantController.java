@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 
@@ -78,15 +79,22 @@ public class MerchantController {
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/merchant/list/");
 	}
+	
 	@RequestMapping(value="/toModify/{id}" ,method = RequestMethod.GET)
 	public ModelAndView toModify(@PathVariable String id){
+		Map<String,Object> model=new HashMap<String,Object>();
 		String uri = ConfigParams.getBaseUrl()+"merchant/"+id+"/";
 		Merchant merchant=restTemplate.getForObject(uri, Merchant.class);
-		Map<String,Object> model=new HashMap<String,Object>();
+		if(StringUtils.isNotEmpty(merchant.getMerchantGroupId())){
+			String uriGroup=ConfigParams.getBaseUrl()+"/merchantGroup/"+merchant.getMerchantGroupId()+"/";
+			MerchantGroup merchantGroup=restTemplate.getForObject(uriGroup, MerchantGroup.class);
+			model.put("merchantGroup", merchantGroup);
+		}
 		model.put("merchant", merchant);
 		model.put("update", true);
 		return new ModelAndView("admin/merchant/add",model);
 	}
+	
 	@RequestMapping(value="/update" ,method =RequestMethod.POST)
 	public ModelAndView update(@Valid Merchant merchant, BindingResult errorResult){
 		String uri =  ConfigParams.getBaseUrl()+"merchant/update/";

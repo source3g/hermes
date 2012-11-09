@@ -1,5 +1,7 @@
 package com.source3g.hermes.merchant.api;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,15 @@ public class MerchantGroupApi {
 		MerchantGroup merchantGroup=new MerchantGroup();
 		merchantGroup.setName(name);
 		return merchantGroupService.list(pageNoInt,merchantGroup);
+	}
+	
+	
+	@RequestMapping(value="/listAll",method = RequestMethod.GET)
+	@ResponseBody
+	public List<MerchantGroup> listAll(String name) {
+		MerchantGroup merchantGroup=new MerchantGroup();
+		merchantGroup.setName(name);
+		return merchantGroupService.list(merchantGroup);
 	}
 
 	@RequestMapping(value="/add",method = RequestMethod.POST)

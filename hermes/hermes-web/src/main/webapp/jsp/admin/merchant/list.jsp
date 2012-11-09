@@ -98,7 +98,7 @@
 	    		goToPage(pageNoToGo);
 	    	});
 	    	
-	    	if(${page.totalPageCount}==0){
+	    	if(${page.totalPageCount}==1||${page.totalPageCount}==0){
 	    		$("#firstPage").addClass("active");
 				$("#frontPage").addClass("active");
 				$("#nextPage").addClass("active");

@@ -23,10 +23,10 @@ public class MerchantGroupService extends BaseService {
 		mongoTemplate.insert(merchantGroup, collectionName);
 	}
 
-	public Page list( int pageNo,MerchantGroup merchantGroup) {
+	public Page list(int pageNo, MerchantGroup merchantGroup) {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(merchantGroup.getName())) {
-			
+
 			Pattern pattern = Pattern.compile("^.*" + merchantGroup.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}
@@ -37,6 +37,17 @@ public class MerchantGroupService extends BaseService {
 		List<MerchantGroup> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), MerchantGroup.class, collectionName);
 		page.setData(list);
 		return page;
+	}
+
+	public List<MerchantGroup> list(MerchantGroup merchantGroup) {
+		Query query = new Query();
+		if (StringUtils.isNotEmpty(merchantGroup.getName())) {
+
+			Pattern pattern = Pattern.compile("^.*" + merchantGroup.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("name").is(pattern));
+		}
+		List<MerchantGroup> list = mongoTemplate.find(query, MerchantGroup.class, collectionName);
+		return list;
 	}
 
 	public void deleteById(String id) {

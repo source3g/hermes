@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -65,6 +66,18 @@ public class MerchantGroupController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
 		return new ModelAndView("admin/merchantGroup/list", model);
+	}
+	
+	
+	@RequestMapping(value = "/listAll", method = RequestMethod.GET)
+	@ResponseBody
+	public MerchantGroup[] listAll(MerchantGroup merchantGroup) {
+		String uri = ConfigParams.getBaseUrl() + "merchantGroup/listAll";
+		if(StringUtils.isNotEmpty(merchantGroup.getName())){
+			uri+="?name="+merchantGroup.getName();
+		}
+		MerchantGroup[] groups = restTemplate.getForObject(uri,MerchantGroup[].class);
+		return groups;
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)

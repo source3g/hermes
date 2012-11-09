@@ -101,7 +101,7 @@
 				var pageNoToGoStr=$("#pageNoToGo").val();
 				goToPage(pageNoToGoStr);
 			});
-			if(${page.totalPageCount}==1){
+			if(${page.totalPageCount}==1||${page.totalPageCount}==0){
 				$("#firstPage").addClass("active");
 				$("#frontPage").addClass("active");
 				$("#nextPage").addClass("active");
