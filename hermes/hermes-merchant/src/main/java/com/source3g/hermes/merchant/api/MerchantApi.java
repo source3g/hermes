@@ -1,7 +1,5 @@
 package com.source3g.hermes.merchant.api;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.merchant.service.MerchantService;
 import com.source3g.hermes.utils.Page;
 
@@ -44,10 +41,7 @@ public class MerchantApi {
 	}
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	@ResponseBody
-//	public List<Merchant> list(){
-//		logger.debug("list merchant....");
-//		return merchantService.list();
-//	}
+
 	public Page list(String pageNo,String name){
 		logger.debug("list merchant....");
 		int pageNoInt=Integer.valueOf(pageNo);

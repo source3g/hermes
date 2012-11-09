@@ -63,7 +63,7 @@ public class MerchantController {
 			pageNo="1";
 		}
 		String uri = ConfigParams.getBaseUrl()+"merchant/list/?pageNo="+pageNo;
-		if(StringUtils.isEmpty(merchant.getName())){
+		if(StringUtils.isNotEmpty(merchant.getName())){
 			uri+="&name="+merchant.getName();
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);

@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
 
@@ -37,11 +36,11 @@ public class MerchantServiceImpl extends BaseService implements MerchantService 
 
 	public Page list(int pageNo, Merchant merchant) {
 		Query query = new Query();
-//		if (StringUtils.isNotEmpty(merchant.getName())) {
-//			Pattern pattern = Pattern.compile("^.*" + merchant.getName()
-//					+ ".*$", Pattern.CASE_INSENSITIVE);
-//			query.addCriteria(Criteria.where("name").is(pattern));
-//		}
+		if (StringUtils.isNotEmpty(merchant.getName())) {
+			Pattern pattern = Pattern.compile("^.*" + merchant.getName()
+					+ ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("name").is(pattern));
+		}
 		
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, collectionName);
