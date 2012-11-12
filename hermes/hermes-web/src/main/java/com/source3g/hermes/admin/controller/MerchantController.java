@@ -38,7 +38,7 @@ public class MerchantController {
 		return new ModelAndView("admin/merchant/add");
 	}
 
-	@RequestMapping(value = "add", method = RequestMethod.POST)
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid Merchant merchant, BindingResult errorResult) {
 		if (errorResult.hasErrors()) {
 			Map<String, Object> model = new HashMap<String, Object>();
@@ -57,7 +57,7 @@ public class MerchantController {
 		}
 	}
 
-	@RequestMapping( value="list", method = RequestMethod.GET)
+	@RequestMapping( value="/list", method = RequestMethod.GET)
 	public ModelAndView list(Merchant merchant,String pageNo) {
 		logger.debug("list.......");
 		if(StringUtils.isEmpty(pageNo)){

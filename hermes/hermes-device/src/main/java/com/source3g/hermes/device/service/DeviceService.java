@@ -38,6 +38,11 @@ public class DeviceService extends BaseService
 		page.setData(list);
 		return page;
 	}
+	
+	public void deleteById(String id){
+		ObjectId objId = new ObjectId(id);
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)),collectionName);
+	}
 	@Override
 	public String getCollectionName() {
 		

@@ -19,64 +19,64 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.Sim;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 
 @Controller
-@RequestMapping("/admin/device")
-public class DeviceController {
+@RequestMapping("/admin/sim")
+public class SimController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(MerchantController.class);
-
 	@Autowired
 	private RestTemplate restTemplate;
 
 	@RequestMapping(value = "add", method = RequestMethod.GET)
 	public ModelAndView toAdd() {
-		return new ModelAndView("admin/device/add");
+		return new ModelAndView("admin/sim/add");
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView add(@Valid Device device, BindingResult errorResult) {
+	public ModelAndView add(@Valid Sim sim, BindingResult errorResult) {
 		if (errorResult.hasErrors()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
-			return new ModelAndView("admin/device/add", model);
+			return new ModelAndView("admin/sim/add", model);
 		}
-		String uri= ConfigParams.getBaseUrl()+"device/add";
-		HttpEntity<Device> entity = new HttpEntity<Device>(device);
+		String uri = ConfigParams.getBaseUrl() + "sim/add";
+		HttpEntity<Sim> entity = new HttpEntity<Sim>(sim);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS_WIDTH_QUOT.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
-			model.put( ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
-			return new ModelAndView("admin/device/add", model);
+			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+			return new ModelAndView("admin/sim/add", model);
 		} else {
 			return new ModelAndView("admin/error");
 		}
+
 	}
-	
-	@RequestMapping( value="/list", method = RequestMethod.GET)
-	public ModelAndView list(Device device,String pageNo) {
+
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ModelAndView list(Sim sim, String pageNo) {
 		logger.debug("list.......");
-		if(StringUtils.isEmpty(pageNo)){
-			pageNo="1";
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
 		}
-		String uri = ConfigParams.getBaseUrl()+"device/list/?pageNo="+pageNo;
-		if(StringUtils.isNotEmpty(device.getSn())){
-			uri+="&sn="+device.getSn();
+		String uri = ConfigParams.getBaseUrl() + "sim/list/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(sim.getNo())) {
+			uri += "&no=" + sim.getNo();
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
-		return new ModelAndView("admin/device/list", model);
+		return new ModelAndView("admin/sim/list", model);
 	}
-	
-	@RequestMapping(value="/delete/{id}", method=RequestMethod.GET)
-	public ModelAndView deleteById(@PathVariable String id){
-		String uri=ConfigParams.getBaseUrl()+"device/delete/" + id+"/";
+
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public ModelAndView deleteById(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "sim/delete/" + id + "/";
 		restTemplate.getForObject(uri, String.class);
-		return new ModelAndView("redirect:/admin/device/list/");
+		return new ModelAndView("redirect:/admin/sim/list/");
 	}
-	
+
 }

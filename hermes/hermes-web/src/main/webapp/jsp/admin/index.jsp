@@ -86,11 +86,25 @@ body {
 						</div>
 						<div id="collapseTwo" class="accordion-body collapse">
 							<!-- <div class="accordion-inner"> -->
-							<ul id="merchant-menu"
+							<ul id="device-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
 								<li><a href="javascript:void();" id="addDevice">添加盒子</a></li>
 								<li><a href="javascript:void();" id="listDevice">盒子列表</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseThree"> SIM卡 </a>
+						</div>
+						<div id="collapseThree" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="sim-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
+								<li><a href="javascript:void();" id="addSim">添加SIM</a></li>
+								<li><a href="javascript:void();" id="listSim">SIM卡列表</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -142,6 +156,13 @@ body {
 		$("#listDevice").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/device/list/");
 		});
+		$("#addSim").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/sim/add/");
+		});
+		$("#listSim").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/sim/list/");
+		});
+		
 	});
 
 	function loadPage(url) {

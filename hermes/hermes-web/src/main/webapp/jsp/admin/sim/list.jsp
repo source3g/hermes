@@ -9,8 +9,8 @@
 </head>
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
-	<label class="control-label" for="name">名称：</label>
-	<input type="text" name="name" value="${merchantGroup.name}" placeholder="请输入商户名称...">
+	<label class="control-label" for="no">SIM卡号：</label>
+	<input type="text" name="no" value="${sim.no}" placeholder="请输入SIM卡号...">
 	<input id="pageNo" name="pageNo" type="hidden">
 	<input type="submit" class="btn btn-primary"
 			value="查询">
@@ -18,18 +18,14 @@
 	<table class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="30%">名称</th>
-				<th width="30%">地址</th>
-				<th width="40%">操作</th>
+				<th width="30%">SIM卡号</th>
 			</tr>
 		</thead>
-		<c:forEach items="${page.data}" var="merchant">
+		<c:forEach items="${page.data}" var="sim">
 			<tr>
-				<td>${merchant.name }</td>
-				<td>${merchant.addr }</td>
+				<td>${sim.no }</td>
 				<td>
-				<a class="btn btn-success" href="javascript:void();" onclick="toModify('${merchant.id}');">修改</a>
-				<a class="btn btn-danger" href="javascript:void();" onclick="deleteById('${merchant.id}');">删除</a></td>
+				<a class="btn btn-danger" href="javascript:void();" onclick="deleteById('${sim.id}');">删除</a></td>
 				
 			</tr>
 		</c:forEach>
@@ -58,7 +54,7 @@
 	
 		function deleteById(id) {
 		$.ajax({
-			url:"${pageContext.request.contextPath}/admin/merchant/delete/"+id+"/",
+			url:"${pageContext.request.contextPath}/admin/sim/delete/"+id+"/",
 			type:"get",
 			success:showList		
 		});	
@@ -66,14 +62,11 @@
 		function showList(data){
 			$("#pageContentFrame").html(data);
 		}
-		function toModify(id){
-		loadPage("${pageContext.request.contextPath}/admin/merchant/toModify/"+id+"/");
-	}
 		
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
 			var options={
-					url:"${pageContext.request.contextPath}/admin/merchant/list/",
+					url:"${pageContext.request.contextPath}/admin/sim/list/",
 					success:showList,
 					error:showError
 			};

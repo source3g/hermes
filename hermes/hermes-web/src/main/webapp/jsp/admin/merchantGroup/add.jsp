@@ -64,7 +64,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript">f
 		$(document).ready(function() {
 			var addMerchantGroupFormOptions = {
 				url:"${pageContext.request.contextPath}/admin/merchantGroup/add/",
@@ -116,7 +116,7 @@
 			});
 		}
 		function toList(data) {
-			$("#addMerchantGroupForm").html(data)
+			$("#pageContentFrame").html(data)
 		}
 		function initDialog(){
 			if(${not empty success }==true){
