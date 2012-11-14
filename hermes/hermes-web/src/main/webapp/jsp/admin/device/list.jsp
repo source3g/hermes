@@ -91,6 +91,7 @@
 		}
 		function showList(data) {
 			$("#pageContentFrame").html(data);
+			
 		}
 		function toUpdate(id) {
 			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/toUpdate/" + id + "/");
