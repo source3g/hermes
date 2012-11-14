@@ -57,7 +57,7 @@
 		</div>
 	</div>
 
-	<script type="text/javascript">
+	<script type="text/javascript">f
 		$(document).ready(function() {
 			initDialog();
 			var addMerchantGroupFormOptions = {

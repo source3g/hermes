@@ -11,8 +11,13 @@
 <body>
 
 	<form id="queryForm" class="well form-inline " method="get">
+<<<<<<< HEAD
 		<label class="control-label" for="name">名称：</label> <input type="text"
 			name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称..." />
+=======
+		<label class="control-label" for="sn">名称：</label> <input type="text"
+			name="sn" value="${device.sn}" placeholder="请输入集团商户名称..."/>
+>>>>>>> refs/remotes/hermes/master
 		<input id="pageNo" name="pageNo" type="hidden"> <input
 			type="submit" class="btn btn-primary" value="查询" />
 	</form>
@@ -43,7 +48,7 @@
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
 			<li>当前第${page.currentPage}/${page.totalPageCount}页
 				共${page.totalRecords }条记录 转到第 <input type="text" id="pageNoToGo"
-				name="pageNo" class="input-small">页 <input type="button"
+				name="pageNo" class="input-mini">页 <input type="button"
 				id="pageOk" class="btn" value="确定"></input>
 			</li>
 		</ul>
@@ -69,7 +74,7 @@
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);
 			var options = {
-				url : "${pageContext.request.contextPath}/admin/merchantGroup/list/",
+				url : "${pageContext.request.contextPath}/admin/device/list/",
 				success : showList, // post-submit callback
 				error : showError
 			};
@@ -79,7 +84,7 @@
 
 		function deleteById(id) {
 			$.ajax({
-				url : "${pageContext.request.contextPath}/admin/merchantGroup/delete/" + id + "/",
+				url : "${pageContext.request.contextPath}/admin/device/delete/" + id + "/",
 				type : "get",
 				success : showList
 			});

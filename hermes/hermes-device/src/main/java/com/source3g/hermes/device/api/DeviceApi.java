@@ -1,9 +1,13 @@
 package com.source3g.hermes.device.api;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,19 +47,24 @@ public class DeviceApi
 		return deviceService.list(pageNoInt,device);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
+	@RequestMapping(value="/delete/{id}", method=RequestMethod.GET)
+	@ResponseBody
+	public String delete(@PathVariable String id){
+		logger.debug("delete merchant....");
+		 deviceService.deleteById(id);
+		 return ReturnConstants.SUCCESS;
+	}
+	@RequestMapping(value = "/{ids}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Device> getDeviceInfo(@PathVariable String ids) {
+		String idArray[]=ids.split(",");
+		
+		return deviceService.findByIds(Arrays.asList(idArray));
+	}
+	@RequestMapping(value="/sn/{sn}" , method=RequestMethod.GET)
+	@ResponseBody
+	public Device getDeviceInfoBySn(@PathVariable String sn) {
+		return deviceService.findBySn(sn);
+	}
 }
+	

@@ -39,8 +39,6 @@
 			</div>
 		</div>
 
-
-
 		<div class="control-group">
 			<label class="control-label" for="addr">集团商户：</label>
 			<div class="controls">
@@ -54,19 +52,19 @@
 				</span>
 			</div>
 		</div>
-
-
 		<div class="form-actions">
-
 			<c:if test="${not empty update }">
 				<input class="btn btn-primary" type="button" onclick="modify();"
 					value="修改">
 			</c:if>
 
 			<c:if test="${ empty update }">
+<<<<<<< HEAD
 				<input type="submit" class="btn btn-primary" value="增加">
+=======
+				<input type="submit" class="btn btn-primary" value="提交">
+>>>>>>> refs/remotes/hermes/master
 			</c:if>
-
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">
 					<ul>
@@ -77,6 +75,24 @@
 				</div>
 			</c:if>
 		</div>
+		<div class="control-group">
+			<label class="control-label" for="addr">盒子SN：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" placeholder="请输入盒子SN编码..."
+					id="deviceSn" name="sn"> <input type="button"
+					class="btn btn-primary " id="deviceId" onclick="findDevice()"
+					value="增加">
+			</div>
+		</div>
+		<table
+			class="table table-striped table-bordered bootstrap-datatable datatable"
+			id="deviceTable">
+			<thead>
+				<tr>
+					<th width="100%">盒子SN编码</th>
+				</tr>
+			</thead>
+		</table>
 	</form>
 
 
@@ -115,10 +131,39 @@
 	</div>
 
 	<script type="text/javascript">
+	
+	function findDevice(){
+		var sn=$("#deviceSn").val();
+		var isInTable=false;
+		$("#deviceTable tr:gt(0)").each(function (index){
+			var tdInfo=$(this).children(".deviceSnTd").html();
+			if(tdInfo.trim()==sn.trim()){
+				isInTable=true;
+			}
+		});
+		
+		if(isInTable==true){
+			return;
+		}
+		
+		$.ajax({
+				type: "get",
+				url:"${pageContext.request.contextPath}/admin/device/sn/"+sn,
+				success: showDevices,
+				dataType: "json",
+				error: showError
+		});
+	}
+	
+	function showError(){
+		alert("该盒子已被绑定");
+	}
+	
 		function select(id, name) {
 			$("#myModal").modal("toggle");
 			$("#merchantGroupId").attr("value", id);
 			$("#merchantGroupSel").attr("value", name);
+			
 		}
 
 		function queryMerchantGroup() {
@@ -220,13 +265,23 @@
 			});
 
 		});
-
+		function showDevices(data){
+			var str = $("<tr><td class='deviceSnTd'>"+data.sn+ "</td><td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this)' value='删除'><input type='hidden' name='deviceIds' value='"+data.id+"'></td></tr>")
+			$('#deviceTable').append(str);
+			//initDeviceSn();
+		}
+	//	function initDeviceSn(){
+	//		alert($("#deviceTable td").html());
+		//}
+		function deleteDevice(deleteBtn){
+			$(deleteBtn).parents("tr").remove();
+		}
 		function toList(data) {
 			$("#pageContentFrame").html(data);
 		}
 		function initDialog(){
 			if(${not empty success }==true){
-				$('#addMerchantForm').clearForm();
+				$('#addMerchantForm').clearForm();o 
 				$("#resultMessage").html("操作成功！");
 				$("#errorModal").modal();
 			}

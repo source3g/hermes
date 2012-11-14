@@ -1,5 +1,7 @@
 package com.source3g.hermes.entity.merchant;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -11,6 +13,9 @@ public class Merchant extends AbstractEntity{
 	private String addr;
 	
 	private String merchantGroupId;
+	private List<String> deviceIds;
+
+
 
 	public String getName() {
 		return name;
@@ -36,4 +41,11 @@ public class Merchant extends AbstractEntity{
 		this.merchantGroupId = merchantGroupId;
 	}
 
+	public List<String> getDeviceIds() {
+		return deviceIds;
+	}
+
+	public void setDeviceIds(List<String> deviceIds) {
+		this.deviceIds = deviceIds;
+	}
 }
