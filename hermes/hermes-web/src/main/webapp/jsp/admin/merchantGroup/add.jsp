@@ -9,14 +9,7 @@
 
 </head>
 <body>
-	<form id="addMerchantGroupForm"
-		<c:if test="${empty update }">
-			action="${pageContext.request.contextPath}/admin/merchantGroup/add/"
-		</c:if>
-		<c:if test="${not empty update }">
-			action="${pageContext.request.contextPath}/admin/merchantGroup/update/"
-		</c:if>
-		method="post" class="form-horizontal">
+	<form id="addMerchantGroupForm" method="post" class="form-horizontal">
 
 		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
@@ -66,6 +59,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			initDialog();
 			var addMerchantGroupFormOptions = {
 				url:"${pageContext.request.contextPath}/admin/merchantGroup/add/",
 				success : toList, // post-submit callback
@@ -102,9 +96,6 @@
 				$("#resultMessage").html("操作失败，请重试");
 				$("#errorModal").modal();
 			}
-			
-			initDialog();
-			
 		});
 
 		function modify() {
@@ -116,7 +107,7 @@
 			});
 		}
 		function toList(data) {
-			$("#addMerchantGroupForm").html(data)
+			$("#pageContentFrame").html(data)
 		}
 		function initDialog(){
 			if(${not empty success }==true){

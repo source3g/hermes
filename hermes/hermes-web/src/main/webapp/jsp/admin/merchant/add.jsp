@@ -6,7 +6,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>增加商户</title>
-<%-- <%@ include file="../../include/header.jsp"%> --%>
 </head>
 <body>
 	<form id="addMerchantForm"
@@ -65,7 +64,7 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-				<input type="submit" class="btn btn-primary" input="增加">
+				<input type="submit" class="btn btn-primary" value="增加">
 			</c:if>
 
 			<c:if test="${not empty errors }">
@@ -161,6 +160,7 @@
 
 		$(document).ready(function() {
 			initDialog();
+			
 			$("#queryMerchantGroupForm").submit(function() {
 				if (!$('#queryMerchantGroupForm').valid()) {
 					return false;
@@ -222,7 +222,7 @@
 		});
 
 		function toList(data) {
-			$("#pageContentFrame").html(data)
+			$("#pageContentFrame").html(data);
 		}
 		function initDialog(){
 			if(${not empty success }==true){

@@ -3,3 +3,9 @@ $(document).ready(function() {
 		cache : false
 	});
 });
+
+
+function showInfo(data) {
+	$("#pageContentFrame").html(data)
+}
+

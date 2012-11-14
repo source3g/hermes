@@ -42,7 +42,7 @@ body {
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						<i class="icon-user"></i><span> merchant1</span> <span
+						<i class="icon-user"></i><span> ${merchant.name }</span> <span
 						class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
@@ -75,7 +75,7 @@ body {
 								<li><a href="javascript:void();" id="customerList">顾客列表</a></li>
 								<li><a href="javascript:void();" id="customerAdd">顾客新增</a></li>
 								<li><a href="javascript:void();" id="customerGroup">顾客组管理</a></li>
-								<li><a href="javascript:void();" id="customerList">来电顾客列表</a></li>
+								<li><a href="javascript:void();" id="callInList">来电顾客列表</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -104,18 +104,18 @@ body {
 </body>
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#addMerchant").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/merchant/add/");
+		$("#customerList").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 		});
-		$("#listMerchant").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/merchant/list/");
+		$("#customerAdd").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customer/add/");
 		});
-		$("#addMerchantGroup").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/add/");
+		$("#customerGroup").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customerGroup/");
 		});
 
-		$("#listMerchantGroup").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/");
+		$("#callInList").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customer/callIn/list/");
 		});
 
 	});

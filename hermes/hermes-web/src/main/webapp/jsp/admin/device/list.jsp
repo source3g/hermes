@@ -12,12 +12,13 @@
 
 	<form id="queryForm" class="well form-inline " method="get">
 		<label class="control-label" for="name">名称：</label> <input type="text"
-			name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称..."/>
+			name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称..." />
 		<input id="pageNo" name="pageNo" type="hidden"> <input
-			type="submit" class="btn btn-primary" value="查询"/>
+			type="submit" class="btn btn-primary" value="查询" />
 	</form>
 
-	<table class="table table-striped table-bordered bootstrap-datatable datatable">
+	<table
+		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
 				<th width="50%">名称</th>
@@ -28,9 +29,8 @@
 		<c:forEach items="${page.data}" var="device">
 			<tr>
 				<td>${device.sn}</td>
-				<td> 
-					<a	class="btn btn-danger" href="javascript:void();"
-						onclick="deleteById('${device.id}');">删除</a></td>
+				<td><a class="btn btn-danger" href="javascript:void();"
+					onclick="deleteById('${device.id}');">删除</a></td>
 			</tr>
 		</c:forEach>
 

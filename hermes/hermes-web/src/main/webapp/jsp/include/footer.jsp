@@ -14,3 +14,6 @@
 
 <script type='text/javascript'
 	src='${pageContext.request.contextPath}/js/index.js'></script>
+
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/My97DatePicker/WdatePicker.js"></script>

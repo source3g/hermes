@@ -1,0 +1,72 @@
+package com.source3g.hermes.merchant.controller;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.WebUtils;
+
+import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.entity.customer.CustomerGroup;
+import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.utils.ConfigParams;
+
+@Controller
+@RequestMapping("/merchant/customerGroup")
+public class CustomerGroupController {
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView toIndex(HttpServletRequest request) {
+		Merchant merchant = (Merchant) request.getSession().getAttribute("merchant");
+		String uri = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
+		CustomerGroup[] customerGroups = restTemplate.getForObject(uri, CustomerGroup[].class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("customerGroups", customerGroups);
+		return new ModelAndView("/merchant/customerGroup/index", model);
+	}
+
+	@RequestMapping(value = "add", method = RequestMethod.POST)
+	public ModelAndView add(@Valid CustomerGroup customerGroup, HttpServletRequest req, BindingResult errorResult) {
+		if (errorResult.hasErrors()) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("errors", errorResult.getAllErrors());
+			return new ModelAndView("redirect:/merchant/customerGroup/", model);
+		}
+		Merchant merchant = (Merchant) req.getSession().getAttribute("merchant");
+		String uri = ConfigParams.getBaseUrl() + "customerGroup/add";
+		customerGroup.setMerchantId(merchant.getId());
+		HttpEntity<CustomerGroup> entity = new HttpEntity<CustomerGroup>(customerGroup);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+			return new ModelAndView("redirect:/merchant/customerGroup/", model);
+		} else {
+			return new ModelAndView("merchant/error");
+		}
+	}
+
+	@RequestMapping(value = "/listAllJson", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CustomerGroup> listAll(HttpServletRequest req) {
+		Merchant merchant = (Merchant) WebUtils.getSessionAttribute(req, "merchant");
+		String uri = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
+		CustomerGroup[] customerGroups = restTemplate.getForObject(uri, CustomerGroup[].class);
+		return Arrays.asList(customerGroups);
+	}
+}

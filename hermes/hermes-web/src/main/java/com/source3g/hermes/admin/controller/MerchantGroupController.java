@@ -44,7 +44,7 @@ public class MerchantGroupController {
 		String uri = ConfigParams.getBaseUrl() + "merchantGroup/add";
 		HttpEntity<MerchantGroup> entity = new HttpEntity<MerchantGroup>(merchantGroup);
 		String result = restTemplate.postForObject(uri, entity, String.class);
-		if (ReturnConstants.SUCCESS_WIDTH_QUOT.equals(result)) {
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("admin/merchantGroup/add", model);
@@ -84,7 +84,7 @@ public class MerchantGroupController {
 	public ModelAndView delete(@PathVariable String id) {
 		String uri = ConfigParams.getBaseUrl() + "merchantGroup/delete/" + id + "/";
 		String result = restTemplate.getForObject(uri, String.class);
-		if (ReturnConstants.SUCCESS_WIDTH_QUOT.equals(result)) {
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/admin/merchantGroup/list/");
 		} else {
 			return new ModelAndView("admin/error");
@@ -113,7 +113,7 @@ public class MerchantGroupController {
 		String uri = ConfigParams.getBaseUrl() + "merchantGroup/update";
 		HttpEntity<MerchantGroup> entity = new HttpEntity<MerchantGroup>(merchantGroup);
 		String result = restTemplate.postForObject(uri, entity, String.class);
-		if (ReturnConstants.SUCCESS_WIDTH_QUOT.equals(result)) {
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/admin/merchantGroup/list/");
 		} else {
 			return new ModelAndView("admin/error");

@@ -15,36 +15,32 @@ import com.source3g.hermes.utils.Page;
 
 @Service
 public class MerchantServiceImpl extends BaseService implements MerchantService {
-	
+
 	private String collectionName = "merchant";
 
 	@Override
 	public void add(Merchant merchant) {
-		merchant.setId(ObjectId.get());
-		mongoTemplate.insert(merchant, collectionName);
+		super.add(merchant);
 	}
 
 	@Override
 	public List<Merchant> list() {
-		List<Merchant> list = mongoTemplate.findAll(Merchant.class,
-				collectionName);
+		List<Merchant> list = mongoTemplate.findAll(Merchant.class, collectionName);
 		return list;
 	}
 
 	public Page list(int pageNo, Merchant merchant) {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(merchant.getName())) {
-			Pattern pattern = Pattern.compile("^.*" + merchant.getName()
-					+ ".*$", Pattern.CASE_INSENSITIVE);
+			Pattern pattern = Pattern.compile("^.*" + merchant.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}
-		
+
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, collectionName);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
-		List<Merchant> list = mongoTemplate.find(query.skip(page.getStartRow())
-				.limit(page.getPageSize()), Merchant.class, collectionName);
+		List<Merchant> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Merchant.class, collectionName);
 		page.setData(list);
 		return page;
 	}
@@ -52,14 +48,12 @@ public class MerchantServiceImpl extends BaseService implements MerchantService 
 	@Override
 	public void deleteById(String id) {
 		ObjectId objId = new ObjectId(id);
-		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)),
-				collectionName);
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)), collectionName);
 	}
 
 	@Override
 	public Merchant getMerchant(String id) {
-		Merchant merchant = mongoTemplate.findById(new ObjectId(id),
-				Merchant.class, collectionName);
+		Merchant merchant = mongoTemplate.findById(new ObjectId(id), Merchant.class, collectionName);
 		return merchant;
 	}
 

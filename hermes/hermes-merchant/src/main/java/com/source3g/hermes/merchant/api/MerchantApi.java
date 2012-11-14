@@ -19,8 +19,6 @@ import com.source3g.hermes.utils.Page;
 @RequestMapping("/merchant")
 public class MerchantApi {
 	
-	
-	
 	private Logger logger=LoggerFactory.getLogger(MerchantApi.class);
 	
 	@Autowired
@@ -36,12 +34,12 @@ public class MerchantApi {
 	@RequestMapping(value="/{id}" , method=RequestMethod.GET)
 	@ResponseBody
 	public Merchant getMerchant(@PathVariable String id){
-		
 		return merchantService.getMerchant(id);
 	}
+	
+	
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	@ResponseBody
-
 	public Page list(String pageNo,String name){
 		logger.debug("list merchant....");
 		int pageNoInt=Integer.valueOf(pageNo);
