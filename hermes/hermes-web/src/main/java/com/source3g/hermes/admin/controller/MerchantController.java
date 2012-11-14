@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.utils.ConfigParams;
@@ -90,6 +91,18 @@ public class MerchantController {
 			MerchantGroup merchantGroup=restTemplate.getForObject(uriGroup, MerchantGroup.class);
 			model.put("merchantGroup", merchantGroup);
 		}
+		if(merchant.getDeviceIds()!=null&&merchant.getDeviceIds().size()>0){
+			StringBuffer deviceIds=new StringBuffer();
+			for(String deviceId:merchant.getDeviceIds()){
+				deviceIds.append(deviceId);
+				deviceIds.append(",");
+			}
+			deviceIds.delete(deviceIds.length()-1, deviceIds.length());
+		
+			String uriDevice=ConfigParams.getBaseUrl()+"/device/"+deviceIds.toString()+"/";
+			Device device=restTemplate.getForObject(uriDevice, Device.class);
+			model.put("device", device);
+		}
 		model.put("merchant", merchant);
 		model.put("update", true);
 		return new ModelAndView("admin/merchant/add",model);
@@ -97,12 +110,12 @@ public class MerchantController {
 	
 	@RequestMapping(value="/update" ,method =RequestMethod.POST)
 	public ModelAndView update(@Valid Merchant merchant, BindingResult errorResult){
+		
 		String uri =  ConfigParams.getBaseUrl()+"merchant/update/";
+		HttpEntity<Merchant> entityMerchant=new HttpEntity<Merchant>(merchant);
+		String resultMerchant = restTemplate.postForObject(uri,entityMerchant, String.class);
 		
-		HttpEntity<Merchant> entity=new HttpEntity<Merchant>(merchant);
-		String result = restTemplate.postForObject(uri, entity, String.class);
-		
-		if (ReturnConstants.SUCCESS_WIDTH_QUOT.equals(result)) {
+		if (ReturnConstants.SUCCESS_WIDTH_QUOT.equals(resultMerchant)) {
 			return new ModelAndView("redirect:/admin/merchant/list/");
 		}else{
 			return new ModelAndView("admin/error");

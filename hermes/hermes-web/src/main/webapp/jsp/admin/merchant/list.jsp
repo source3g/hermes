@@ -29,8 +29,9 @@
 				<td>${merchant.addr }</td>
 				<td>
 				<a class="btn btn-success" href="javascript:void();" onclick="toModify('${merchant.id}');">修改</a>
-				<a class="btn btn-danger" href="javascript:void();" onclick="deleteById('${merchant.id}');">删除</a></td>
-				
+				<a class="btn btn-danger" href="javascript:void();" onclick="deleteById('${merchant.id}');">删除</a>
+		
+				</td>
 			</tr>
 		</c:forEach>
 	</table>

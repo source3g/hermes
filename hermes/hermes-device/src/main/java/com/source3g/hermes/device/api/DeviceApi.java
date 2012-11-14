@@ -1,5 +1,8 @@
 package com.source3g.hermes.device.api;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +54,17 @@ public class DeviceApi
 		 deviceService.deleteById(id);
 		 return ReturnConstants.SUCCESS;
 	}
-	
+	@RequestMapping(value = "/{ids}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Device> getDeviceInfo(@PathVariable String ids) {
+		String idArray[]=ids.split(",");
+		
+		return deviceService.findByIds(Arrays.asList(idArray));
+	}
+	@RequestMapping(value="/sn/{sn}" , method=RequestMethod.GET)
+	@ResponseBody
+	public Device getDeviceInfoBySn(@PathVariable String sn) {
+		return deviceService.findBySn(sn);
+	}
 }
+	

@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -78,5 +79,12 @@ public class DeviceController {
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/device/list/");
 	}
-	
+	@RequestMapping(value="/sn/{sn}", method=RequestMethod.GET)
+	@ResponseBody
+	public Device findBySn(@PathVariable String sn){
+		String uri = ConfigParams.getBaseUrl()+"device/sn/"+sn;
+		Device device=restTemplate.getForObject(uri, Device.class);
+		
+		return device;
+	}
 }

@@ -43,10 +43,17 @@ public class DeviceService extends BaseService
 		ObjectId objId = new ObjectId(id);
 		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)),collectionName);
 	}
+	public List<Device> findByIds(List<String> ids) {
+		Query query=new Query();
+		query.addCriteria(Criteria.where("_id").in(ids));
+		return mongoTemplate.find(query, Device.class, collectionName);
+	}
+	public Device findBySn(String sn) {
+		return mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)),Device.class,collectionName);
+	}
 	@Override
 	public String getCollectionName() {
 		
 		return collectionName;
 	}
-	
 }
