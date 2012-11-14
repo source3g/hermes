@@ -25,12 +25,11 @@ import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 
-
 @Controller
 @RequestMapping("/admin/merchant")
 public class MerchantController {
-	private static final Logger logger=LoggerFactory.getLogger(MerchantController.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(MerchantController.class);
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -46,10 +45,10 @@ public class MerchantController {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/merchant/add", model);
 		}
-		String uri = ConfigParams.getBaseUrl()+"merchant/add";
+		String uri = ConfigParams.getBaseUrl() + "merchant/add";
 		HttpEntity<Merchant> entity = new HttpEntity<Merchant>(merchant);
 		String result = restTemplate.postForObject(uri, entity, String.class);
-		if ("\"success\"".equals(result)) {
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("success", "success");
 			return new ModelAndView("admin/merchant/add", model);
@@ -58,15 +57,15 @@ public class MerchantController {
 		}
 	}
 
-	@RequestMapping( value="/list", method = RequestMethod.GET)
-	public ModelAndView list(Merchant merchant,String pageNo) {
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ModelAndView list(Merchant merchant, String pageNo) {
 		logger.debug("list.......");
-		if(StringUtils.isEmpty(pageNo)){
-			pageNo="1";
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
 		}
-		String uri = ConfigParams.getBaseUrl()+"merchant/list/?pageNo="+pageNo;
-		if(StringUtils.isNotEmpty(merchant.getName())){
-			uri+="&name="+merchant.getName();
+		String uri = ConfigParams.getBaseUrl() + "merchant/list/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(merchant.getName())) {
+			uri += "&name=" + merchant.getName();
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -76,19 +75,19 @@ public class MerchantController {
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public ModelAndView delete(@PathVariable String id) {
-		String uri =  ConfigParams.getBaseUrl()+"merchant/delete/" + id+"/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/delete/" + id + "/";
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/merchant/list/");
 	}
-	
-	@RequestMapping(value="/toModify/{id}" ,method = RequestMethod.GET)
-	public ModelAndView toModify(@PathVariable String id){
-		Map<String,Object> model=new HashMap<String,Object>();
-		String uri = ConfigParams.getBaseUrl()+"merchant/"+id+"/";
-		Merchant merchant=restTemplate.getForObject(uri, Merchant.class);
-		if(StringUtils.isNotEmpty(merchant.getMerchantGroupId())){
-			String uriGroup=ConfigParams.getBaseUrl()+"/merchantGroup/"+merchant.getMerchantGroupId()+"/";
-			MerchantGroup merchantGroup=restTemplate.getForObject(uriGroup, MerchantGroup.class);
+
+	@RequestMapping(value = "/toModify/{id}", method = RequestMethod.GET)
+	public ModelAndView toModify(@PathVariable String id) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
+		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
+		if (StringUtils.isNotEmpty(merchant.getMerchantGroupId())) {
+			String uriGroup = ConfigParams.getBaseUrl() + "/merchantGroup/" + merchant.getMerchantGroupId() + "/";
+			MerchantGroup merchantGroup = restTemplate.getForObject(uriGroup, MerchantGroup.class);
 			model.put("merchantGroup", merchantGroup);
 		}
 		if(merchant.getDeviceIds()!=null&&merchant.getDeviceIds().size()>0){
@@ -100,8 +99,8 @@ public class MerchantController {
 			deviceIds.delete(deviceIds.length()-1, deviceIds.length());
 		
 			String uriDevice=ConfigParams.getBaseUrl()+"/device/"+deviceIds.toString()+"/";
-			Device device=restTemplate.getForObject(uriDevice, Device.class);
-			model.put("device", device);
+			Device[] devices=restTemplate.getForObject(uriDevice, Device[].class);
+			model.put("devices", devices);
 		}
 		model.put("merchant", merchant);
 		model.put("update", true);

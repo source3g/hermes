@@ -6,7 +6,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>增加商户</title>
-<%-- <%@ include file="../../include/header.jsp"%> --%>
 </head>
 <body>
 	<form id="addMerchantForm"
@@ -60,7 +59,7 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-				<input type="submit" class="btn btn-primary" value="提交">
+				<input type="submit" class="btn btn-primary" value="增加">
 			</c:if>
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">
@@ -88,7 +87,16 @@
 				<tr>
 					<th width="100%">盒子SN编码</th>
 				</tr>
+				
 			</thead>
+			<c:if test="${not empty update }">
+			<c:forEach items="${devices}" var="device">
+				<tr><td class='deviceSnTd'>${device.sn}</td>
+				<td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this)' value='删除'>
+				<input type='hidden' name='deviceIds' value='${device.id}'></td>
+			</tr>
+			</c:forEach>
+			</c:if>
 		</table>
 	</form>
 
@@ -264,11 +272,7 @@
 		function showDevices(data){
 			var str = $("<tr><td class='deviceSnTd'>"+data.sn+ "</td><td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this)' value='删除'><input type='hidden' name='deviceIds' value='"+data.id+"'></td></tr>")
 			$('#deviceTable').append(str);
-			//initDeviceSn();
 		}
-	//	function initDeviceSn(){
-	//		alert($("#deviceTable td").html());
-		//}
 		function deleteDevice(deleteBtn){
 			$(deleteBtn).parents("tr").remove();
 		}
