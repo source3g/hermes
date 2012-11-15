@@ -59,13 +59,8 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-<<<<<<< HEAD
 				<input type="submit" class="btn btn-primary" value="增加">
-=======
 
-				<input type="submit" class="btn btn-primary" value="提交">
-
->>>>>>> branch 'master' of https://github.com/source3g/hermes.git
 			</c:if>
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">
@@ -93,15 +88,17 @@
 				<tr>
 					<th width="100%">盒子SN编码</th>
 				</tr>
-				
+
 			</thead>
 			<c:if test="${not empty update }">
-			<c:forEach items="${devices}" var="device">
-				<tr><td class='deviceSnTd'>${device.sn}</td>
-				<td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this)' value='删除'>
-				<input type='hidden' name='deviceIds' value='${device.id}'></td>
-			</tr>
-			</c:forEach>
+				<c:forEach items="${devices}" var="device">
+					<tr>
+						<td class='deviceSnTd'>${device.sn}</td>
+						<td><input type='button' name='deleteDeviceSn'
+							class='btn btn-danger' onclick='deleteDevice(this)' value='删除'>
+							<input type='hidden' name='deviceIds' value='${device.id}'></td>
+					</tr>
+				</c:forEach>
 			</c:if>
 		</table>
 	</form>
