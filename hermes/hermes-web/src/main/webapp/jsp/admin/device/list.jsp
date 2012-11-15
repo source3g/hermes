@@ -10,12 +10,11 @@
 </head>
 <body>
 
-	<form id="queryForm" class="well form-inline " method="post">
+	<form id="queryForm" class="well form-inline " method="get">
 		<label class="control-label" for="sn">名称：</label> <input type="text"
-			name="sn" value="${device.sn}" placeholder="请输入集团商户名称..."/>
-
-		<input id="pageNo" name="pageNo" type="hidden"> <input
-			type="submit" class="btn btn-primary" value="查询" />
+			name="sn" value="${device.sn}" placeholder="请输入盒子SN..." /> <input
+			id="pageNo" name="pageNo" type="hidden"> <input type="submit"
+			class="btn btn-primary" value="查询" />
 	</form>
 
 	<table

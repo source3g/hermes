@@ -59,8 +59,7 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-
-				<input type="submit" class="btn btn-primary" value="提交">
+				<input type="submit" class="btn btn-primary" value="增加">
 
 			</c:if>
 			<c:if test="${not empty errors }">
