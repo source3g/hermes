@@ -67,7 +67,7 @@
 			});
 		});
 		function goToPage(pageNo) {
-			$("#pageNo").attr("value",pageNo);
+			//$("#pageNo").attr("value",pageNo);
 			var options = {
 				url : "${pageContext.request.contextPath}/admin/device/list/",
 				success : showList, // post-submit callback
@@ -87,9 +87,6 @@
 		function showList(data) {
 			$("#pageContentFrame").html(data);
 			
-		}
-		function toUpdate(id) {
-			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/toUpdate/" + id + "/");
 		}
 		function showError() {
 			$("#resultMessage").html("操作失败，请重试");
