@@ -59,15 +59,9 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-<<<<<<< HEAD
-				<input type="submit" class="btn btn-primary" value="增加">
-=======
-<<<<<<< HEAD
-				<input type="submit" class="btn btn-primary" value="增加">
-=======
+
 				<input type="submit" class="btn btn-primary" value="提交">
->>>>>>> refs/remotes/hermes/master
->>>>>>> refs/remotes/origin/master
+
 			</c:if>
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">
@@ -152,6 +146,7 @@
 			var tdInfo=$(this).children(".deviceSnTd").html();
 			if(tdInfo.trim()==sn.trim()){
 				isInTable=true;
+			
 			}
 		});
 		
