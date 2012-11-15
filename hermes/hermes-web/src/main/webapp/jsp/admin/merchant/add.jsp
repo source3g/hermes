@@ -139,6 +139,67 @@
 	</div>
 
 	<script type="text/javascript">
+	$(document).ready(function() {
+		initDialog();
+		
+		var validateOptions = {
+				rules : {
+					name : {
+						required : true,
+						minlength : 2
+					},
+					addr : {
+						required : true,
+						minlength : 2
+					}
+				},
+				messages : {
+					name : {
+						required : "请填写商户名称",
+						minlength : "至少输入两个字符"
+					},
+					addr : {
+						required : "请输入地址",
+						minlength : "至少输入两 个字符"
+					}
+				}
+			};
+			$('#addMerchantForm').validate(validateOptions);
+
+			$('#queryMerchantGroupForm').validate({
+				rules : {
+					merchantGroupName : {
+						required : true
+					}
+				},
+				messages : {
+					merchantGroupName : {
+						required : "请填写集团商户名称"
+					}
+				}
+			});
+			
+		$("#queryMerchantGroupForm").submit(function() {
+			if (!$('#queryMerchantGroupForm').valid()) {
+				return false;
+			}
+			queryMerchantGroup();
+			return false;
+		});
+
+		$('#addMerchantForm').submit(function() {
+			if (!$("#addMerchantForm").valid()) {
+				return false;
+			}
+			var options = {
+				success : toList
+			};
+			$(this).ajaxSubmit(options);
+			return false;
+
+		});
+	});
+	
 	
 	function findDevice(){
 		var sn=$("#deviceSn").val();
@@ -212,68 +273,7 @@
 			});
 		}
 
-		$(document).ready(function() {
-			initDialog();
-			
-			$("#queryMerchantGroupForm").submit(function() {
-				if (!$('#queryMerchantGroupForm').valid()) {
-					return false;
-				}
-				queryMerchantGroup();
-				return false;
-			});
 
-			$('#addMerchantForm').submit(function() {
-				if (!$("#addMerchantForm").valid()) {
-					return false;
-				}
-				var options = {
-					success : toList
-
-				};
-				$(this).ajaxSubmit(options);
-				return false;
-
-			});
-
-			var validateOptions = {
-				rules : {
-					name : {
-						required : true,
-						minlength : 2
-					},
-					addr : {
-						required : true,
-						minlength : 2
-					}
-				},
-				messages : {
-					name : {
-						required : "请填写商户名称",
-						minlength : "至少输入两个字符"
-					},
-					addr : {
-						required : "请输入地址",
-						minlength : "至少输入两 个字符"
-					}
-				}
-			};
-			$('#addMerchantForm').validate(validateOptions);
-
-			$('#queryMerchantGroupForm').validate({
-				rules : {
-					merchantGroupName : {
-						required : true
-					}
-				},
-				messages : {
-					merchantGroupName : {
-						required : "请填写集团商户名称"
-					}
-				}
-			});
-
-		});
 		function showDevices(data){
 			var str = $("<tr><td class='deviceSnTd'>"+data.sn+ "</td><td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this)' value='删除'><input type='hidden' name='deviceIds' value='"+data.id+"'></td></tr>")
 			$('#deviceTable').append(str);
@@ -281,14 +281,20 @@
 		function deleteDevice(deleteBtn){
 			$(deleteBtn).parents("tr").remove();
 		}
+		
 		function toList(data) {
 			$("#pageContentFrame").html(data);
 		}
+		
 		function initDialog(){
 			if(${not empty success }==true){
-				$('#addMerchantForm').clearForm();o 
+				$('#addMerchantForm').clearForm();
 				$("#resultMessage").html("操作成功！");
-				$("#errorModal").modal();
+				$("#errorModal").modal({
+					backdrop:true,
+				    keyboard:true,
+				    show:true
+				});
 			}
 		}
 		
