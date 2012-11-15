@@ -96,11 +96,11 @@ public class MerchantController {
 				deviceIds.append(deviceId);
 				deviceIds.append(",");
 			}
-			deviceIds.delete(deviceIds.length() - 1, deviceIds.length());
-
-			String uriDevice = ConfigParams.getBaseUrl() + "/device/" + deviceIds.toString() + "/";
-			Device device = restTemplate.getForObject(uriDevice, Device.class);
-			model.put("device", device);
+			deviceIds.delete(deviceIds.length()-1, deviceIds.length());
+		
+			String uriDevice=ConfigParams.getBaseUrl()+"/device/"+deviceIds.toString()+"/";
+			Device[] devices=restTemplate.getForObject(uriDevice, Device[].class);
+			model.put("devices", devices);
 		}
 		model.put("merchant", merchant);
 		model.put("update", true);
