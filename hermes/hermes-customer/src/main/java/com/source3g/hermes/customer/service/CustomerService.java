@@ -29,7 +29,7 @@ public class CustomerService extends BaseService {
 		customer.setId(ObjectId.get());
 		mongoTemplate.insert(customer, collectionName);
 		return customer;
-	} 
+	}
 
 	public List<Customer> listAll() {
 		return mongoTemplate.findAll(Customer.class, collectionName);
