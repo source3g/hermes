@@ -59,11 +59,7 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-<<<<<<< HEAD
 				<input type="submit" class="btn btn-primary" value="增加">
-=======
-				<input type="submit" class="btn btn-primary" value="提交">
->>>>>>> refs/remotes/hermes/master
 			</c:if>
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">

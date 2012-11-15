@@ -5,21 +5,16 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>集团商户列表</title>
+<title>盒子列表</title>
 
 </head>
 <body>
 
 	<form id="queryForm" class="well form-inline " method="get">
-<<<<<<< HEAD
-		<label class="control-label" for="name">名称：</label> <input type="text"
-			name="name" value="${merchantGroup.name}" placeholder="请输入集团商户名称..." />
-=======
 		<label class="control-label" for="sn">名称：</label> <input type="text"
-			name="sn" value="${device.sn}" placeholder="请输入集团商户名称..."/>
->>>>>>> refs/remotes/hermes/master
-		<input id="pageNo" name="pageNo" type="hidden"> <input
-			type="submit" class="btn btn-primary" value="查询" />
+			name="sn" value="${device.sn}" placeholder="请输入盒子SN..." /> <input
+			id="pageNo" name="pageNo" type="hidden"> <input type="submit"
+			class="btn btn-primary" value="查询" />
 	</form>
 
 	<table
