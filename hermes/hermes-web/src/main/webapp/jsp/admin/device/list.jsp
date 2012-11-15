@@ -5,12 +5,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>集团商户列表</title>
+<title>盒子列表</title>
 
 </head>
 <body>
 
-	<form id="queryForm" class="well form-inline " method="get">
+	<form id="queryForm" class="well form-inline " method="post">
 		<label class="control-label" for="sn">名称：</label> <input type="text"
 			name="sn" value="${device.sn}" placeholder="请输入集团商户名称..."/>
 
@@ -68,7 +68,7 @@
 			});
 		});
 		function goToPage(pageNo) {
-			$("#pageNo").attr("value",pageNo);
+			//$("#pageNo").attr("value",pageNo);
 			var options = {
 				url : "${pageContext.request.contextPath}/admin/device/list/",
 				success : showList, // post-submit callback
@@ -88,9 +88,6 @@
 		function showList(data) {
 			$("#pageContentFrame").html(data);
 			
-		}
-		function toUpdate(id) {
-			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/toUpdate/" + id + "/");
 		}
 		function showError() {
 			$("#resultMessage").html("操作失败，请重试");

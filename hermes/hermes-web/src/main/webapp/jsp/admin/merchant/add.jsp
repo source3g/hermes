@@ -285,7 +285,7 @@
 		}
 		function initDialog(){
 			if(${not empty success }==true){
-				$('#addMerchantForm').clearForm();o 
+				$('#addMerchantForm').clearForm();
 				$("#resultMessage").html("操作成功！");
 				$("#errorModal").modal();
 			}
