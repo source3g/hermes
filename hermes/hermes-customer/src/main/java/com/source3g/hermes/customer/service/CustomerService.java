@@ -81,6 +81,7 @@ public class CustomerService extends BaseService {
 		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())), Customer.class, collectionName);
 		if (customer == null) {
 			customer = new Customer();
+			customer.setPhone(phone);
 			customer.setId(ObjectId.get());
 		}
 

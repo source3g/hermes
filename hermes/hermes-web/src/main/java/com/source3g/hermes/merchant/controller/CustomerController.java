@@ -106,6 +106,17 @@ public class CustomerController {
 		}
 	}
 
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public ModelAndView delete(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "customer/delete/" + id + "/";
+		String result = restTemplate.getForObject(uri, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("redirect:/merchant/customer/list/");
+		} else {
+			return new ModelAndView("/merchant/error");
+		}
+	}
+
 	private void handleCustomer(Customer customer) {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {

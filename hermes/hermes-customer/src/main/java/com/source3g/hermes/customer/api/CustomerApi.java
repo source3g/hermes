@@ -56,6 +56,13 @@ public class CustomerApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String delete(@PathVariable String id) {
+		customerService.deleteById(id);
+		return ReturnConstants.SUCCESS;
+	}
+
 	@RequestMapping(value = "/callIn/{deviceSn}/{phone}/{time}/{duration}", method = RequestMethod.GET)
 	@ResponseBody
 	public String callIn(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration) {
