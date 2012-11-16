@@ -16,7 +16,8 @@ public class Merchant extends AbstractEntity {
 	private String  account;
 	@NotEmpty(message = "password can not be null")
 	private String password;
-	private String merchantGroupId;
+	private ObjectId merchantGroupId;
+	
 	private List<ObjectId> deviceIds;
 
 	public String getName() {
@@ -35,11 +36,11 @@ public class Merchant extends AbstractEntity {
 		this.addr = addr;
 	}
 
-	public String getMerchantGroupId() {
+	public ObjectId getMerchantGroupId() {
 		return merchantGroupId;
 	}
 
-	public void setMerchantGroupId(String merchantGroupId) {
+	public void setMerchantGroupId(ObjectId merchantGroupId) {
 		this.merchantGroupId = merchantGroupId;
 	}
 
