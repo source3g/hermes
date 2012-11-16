@@ -11,13 +11,17 @@
 	http://www.springframework.org/schema/context/spring-context-3.1.xsd
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
-
 	<!-- 一定要放在context:component-scan之前 -->
 	<!--responseBody编码 -->
 	<bean
 		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean class="com.source3g.hermes.api.config.MyWebBindingInitializer" />
+		</property>
 		<property name="messageConverters">
 			<list>
+				<ref bean="jsonConverter" />
+				
 				<bean
 					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
@@ -30,13 +34,14 @@
 		</property>
 	</bean>
 
-	<bean
-		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"
-		p:order="0" />
 
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
 		p:order="0">
+		<property name="webBindingInitializer">
+			<bean class="com.source3g.hermes.api.config.MyWebBindingInitializer" />
+		</property>
+
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonConverter" />
@@ -179,5 +184,5 @@
 			</map>
 		</property>
 	</bean>
-	
+
 </beans>

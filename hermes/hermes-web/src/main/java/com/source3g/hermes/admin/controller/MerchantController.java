@@ -45,7 +45,7 @@ public class MerchantController {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/merchant/add", model);
 		}
-		String uri = ConfigParams.getBaseUrl() + "merchant/add";
+		String uri = ConfigParams.getBaseUrl() + "merchant/add/";
 		HttpEntity<Merchant> entity = new HttpEntity<Merchant>(merchant);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
@@ -85,7 +85,7 @@ public class MerchantController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
 		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
-		if (StringUtils.isNotEmpty(merchant.getMerchantGroupId())) {
+		if (merchant.getMerchantGroupId() != null) {
 			String uriGroup = ConfigParams.getBaseUrl() + "/merchantGroup/" + merchant.getMerchantGroupId() + "/";
 			MerchantGroup merchantGroup = restTemplate.getForObject(uriGroup, MerchantGroup.class);
 			model.put("merchantGroup", merchantGroup);
@@ -96,10 +96,10 @@ public class MerchantController {
 				deviceIds.append(deviceId.toString());
 				deviceIds.append(",");
 			}
-			deviceIds.delete(deviceIds.length()-1, deviceIds.length());
-		
-			String uriDevice=ConfigParams.getBaseUrl()+"/device/"+deviceIds.toString()+"/";
-			Device[] devices=restTemplate.getForObject(uriDevice, Device[].class);
+			deviceIds.delete(deviceIds.length() - 1, deviceIds.length());
+
+			String uriDevice = ConfigParams.getBaseUrl() + "/device/" + deviceIds.toString() + "/";
+			Device[] devices = restTemplate.getForObject(uriDevice, Device[].class);
 			model.put("devices", devices);
 		}
 		model.put("merchant", merchant);
@@ -119,6 +119,5 @@ public class MerchantController {
 		} else {
 			return new ModelAndView("admin/error");
 		}
-
 	}
 }

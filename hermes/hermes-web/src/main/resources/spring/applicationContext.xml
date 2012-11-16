@@ -62,7 +62,4 @@
 		<property name="queueCapacity" value="20000" />
 		<property name="rejectedExecutionHandler" ref="rejectedExecutionHandler" />
 	</bean>
-
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-	</bean>
 </beans>

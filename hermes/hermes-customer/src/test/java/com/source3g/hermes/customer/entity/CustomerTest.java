@@ -28,4 +28,5 @@ public class CustomerTest {
 		System.out.println(objectMapper.writeValueAsString(customer));
 	}
 
+
 }

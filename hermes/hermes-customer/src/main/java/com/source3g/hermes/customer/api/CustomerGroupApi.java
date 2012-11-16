@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.service.CustomerGroupService;
-import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 
 @Controller
@@ -35,8 +34,8 @@ public class CustomerGroupApi {
 
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	@ResponseBody
-	public String add(@RequestBody Customer customer) {
-		customerGroupService.add(customer);
+	public String add(@RequestBody CustomerGroup customerGroup) {
+		customerGroupService.add(customerGroup);
 		return ReturnConstants.SUCCESS;
 	}
 
