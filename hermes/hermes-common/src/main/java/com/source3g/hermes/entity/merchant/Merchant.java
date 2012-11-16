@@ -2,20 +2,19 @@ package com.source3g.hermes.entity.merchant;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
-public class Merchant extends AbstractEntity{
-	@NotEmpty(message="name can not be null")
+public class Merchant extends AbstractEntity {
+	@NotEmpty(message = "name can not be null")
 	private String name;
-	@NotEmpty(message="addr can not be null")
+	@NotEmpty(message = "addr can not be null")
 	private String addr;
-	
+
 	private String merchantGroupId;
-	private List<String> deviceIds;
-
-
+	private List<ObjectId> deviceIds;
 
 	public String getName() {
 		return name;
@@ -41,11 +40,12 @@ public class Merchant extends AbstractEntity{
 		this.merchantGroupId = merchantGroupId;
 	}
 
-	public List<String> getDeviceIds() {
+	public List<ObjectId> getDeviceIds() {
 		return deviceIds;
 	}
 
-	public void setDeviceIds(List<String> deviceIds) {
+	public void setDeviceIds(List<ObjectId> deviceIds) {
 		this.deviceIds = deviceIds;
 	}
+
 }

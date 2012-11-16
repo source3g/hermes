@@ -43,7 +43,7 @@ public class FrontController {
 			HttpEntity<Merchant> httpEntity = new HttpEntity<>(merchant);
 			restTemplate.postForObject(uriAdd, httpEntity, String.class);
 		}
-		WebUtils.setSessionAttribute(request, "merchant", merchant);
+		WebUtils.setSessionAttribute(request, "loginUser", merchant);
 	}
 
 }

@@ -73,7 +73,7 @@ public class CustomerService extends BaseService {
 			throw new Exception("盒子编号不存在");
 		}
 		Query findMerchantByDeviceSn = new Query();
-		findMerchantByDeviceSn.addCriteria(Criteria.where(device.getId()).in("deviceIds"));
+		findMerchantByDeviceSn.addCriteria(Criteria.where("deviceIds").is(device.getId()));
 		Merchant merchant = mongoTemplate.findOne(findMerchantByDeviceSn, Merchant.class, CollectionNameConstant.MERCHANT);
 		if (merchant == null) {
 			throw new Exception("盒子所属商户不存在");

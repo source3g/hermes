@@ -61,7 +61,7 @@ public class CustomerController {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list(Customer customer, String pageNo, HttpServletRequest req) {
-		Merchant merchant = (Merchant) WebUtils.getSessionAttribute(req, "merchant");
+		Merchant merchant = (Merchant) WebUtils.getSessionAttribute(req, "loginUser");
 		if (merchant == null) {
 			return new ModelAndView("/merchant/error");
 		}

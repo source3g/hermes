@@ -5,10 +5,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.source3g.hermes.entity.AbstractEntity;
 
 public class CustomerGroup extends AbstractEntity {
-	@NotEmpty(message="{customer.group.name.not.null}")
+	@NotEmpty(message = "{customer.group.name.not.null}")
 	private String name;
-	
-	private String merchantId;
+
+	private Object merchantId;
 
 	public String getName() {
 		return name;
@@ -18,13 +18,12 @@ public class CustomerGroup extends AbstractEntity {
 		this.name = name;
 	}
 
-	public String getMerchantId() {
+	public Object getMerchantId() {
 		return merchantId;
 	}
 
-	public void setMerchantId(String merchantId) {
+	public void setMerchantId(Object merchantId) {
 		this.merchantId = merchantId;
 	}
 
-	
 }

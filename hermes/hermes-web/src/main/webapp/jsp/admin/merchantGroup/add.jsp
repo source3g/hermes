@@ -18,8 +18,7 @@
 					id="name" name="name" value="${merchantGroup.name }"><font
 					color="red">*</font>
 				<c:if test="${not empty update }">
-					<input type="hidden" id="strId" name="strId"
-						value="${merchantGroup.id }">
+					<input type="hidden" id="id" name="id" value="${merchantGroup.id }">
 				</c:if>
 			</div>
 		</div>

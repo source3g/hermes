@@ -56,7 +56,7 @@ public class CustomerApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/callIn/{sn}/{phone}/{time}/{duration}", method = RequestMethod.POST)
+	@RequestMapping(value = "/callIn/{deviceSn}/{phone}/{time}/{duration}", method = RequestMethod.GET)
 	@ResponseBody
 	public String callIn(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration) {
 		try {
@@ -66,5 +66,4 @@ public class CustomerApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
-
 }

@@ -32,7 +32,7 @@ public class CustomerGroupController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView toIndex(HttpServletRequest request) {
-		Merchant merchant = (Merchant) request.getSession().getAttribute("merchant");
+		Merchant merchant = (Merchant) request.getSession().getAttribute("loginUser");
 		String uri = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
 		CustomerGroup[] customerGroups = restTemplate.getForObject(uri, CustomerGroup[].class);
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -47,7 +47,7 @@ public class CustomerGroupController {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("redirect:/merchant/customerGroup/", model);
 		}
-		Merchant merchant = (Merchant) req.getSession().getAttribute("merchant");
+		Merchant merchant = (Merchant) req.getSession().getAttribute("loginUser");
 		String uri = ConfigParams.getBaseUrl() + "customerGroup/add";
 		customerGroup.setMerchantId(merchant.getId());
 		HttpEntity<CustomerGroup> entity = new HttpEntity<CustomerGroup>(customerGroup);
@@ -64,7 +64,7 @@ public class CustomerGroupController {
 	@RequestMapping(value = "/listAllJson", method = RequestMethod.GET)
 	@ResponseBody
 	public List<CustomerGroup> listAll(HttpServletRequest req) {
-		Merchant merchant = (Merchant) WebUtils.getSessionAttribute(req, "merchant");
+		Merchant merchant = (Merchant) WebUtils.getSessionAttribute(req, "loginUser");
 		String uri = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
 		CustomerGroup[] customerGroups = restTemplate.getForObject(uri, CustomerGroup[].class);
 		return Arrays.asList(customerGroups);

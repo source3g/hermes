@@ -22,17 +22,16 @@
 		</div>
 		<div class="form-actions">
 		<input type="submit" class="btn btn-primary" value="增加">
-			
 		</div>
 		<c:if test="${not empty errors }">
-				<div class="alert alert-error">
-					<ul>
-						<c:forEach items="${errors }" var="error">
-							<li>${error.defaultMessage }</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</c:if>
+			<div class="alert alert-error">
+				<ul>
+					<c:forEach items="${errors }" var="error">
+						<li>${error.defaultMessage }</li>
+					</c:forEach>
+				</ul>
+			</div>
+		</c:if>
 	</form>
 
 	<div id="errorModal" class="modal hide fade">
@@ -88,7 +87,11 @@
 			if(${not empty success }==true){
 				$('#addDeviceForm').clearForm();
 				$("#resultMessage").html("操作成功！");
-				$("#errorModal").modal();
+				$("#errorModal").modal({
+					backdrop:true,
+				    keyboard:true,
+				    show:true
+				});
 			}
 		}
 		

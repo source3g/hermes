@@ -13,11 +13,13 @@
 	http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
 	<!-- 一定要放在context:component-scan之前 -->
-	<!--responseBody编码-->
-	<bean  class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+	<!--responseBody编码 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
 		<property name="messageConverters">
 			<list>
-				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
 						<list>
 							<value>text/plain;charset=UTF-8</value>
@@ -27,12 +29,14 @@
 			</list>
 		</property>
 	</bean>
-	
-	<bean
-		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" p:order="0" />
 
 	<bean
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"  p:order="0">
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"
+		p:order="0" />
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
+		p:order="0">
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonConverter" />
@@ -51,7 +55,7 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="jsonConverter"
 		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
 		<property name="supportedMediaTypes" value="application/json" />
@@ -92,7 +96,7 @@
 
 	<!-- ========================= VIEW定义 ========================= -->
 	<!-- bean name view resolver -->
-	<!-- 	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver"
+	<!-- <bean class="org.springframework.web.servlet.view.BeanNameViewResolver" 
 		p:order="0" /> -->
 
 	<!-- 根据客户端的不同的请求决定不同的 view进行响应, 如 /blog/1.json /blog/1.xml -->
@@ -142,8 +146,8 @@
 		class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
 		<property name="objectMapper" ref="objectMapper"></property>
 	</bean>
-	
-	
+
+
 
 	<!-- 文件上传相关 -->
 	<bean id="multipartResolver"
@@ -164,4 +168,16 @@
 		</property>
 	</bean>
 
+
+	<bean id="customEditorConfigurer"
+		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="org.bson.types.ObjectId">
+					<bean class="com.source3g.hermes.api.config.ObjectIdPropertyEditor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
 </beans>
