@@ -10,13 +10,10 @@
 <body>
 	<form id="deviceInfo" class="form-horizontal">
 		<div class="control-group">
-		<label class="control-label">盒子:</label>
+			<label class="control-label">盒子:</label>
 			<div class="controls">
-				<tr>
-					<td>${device.sn}</td>
-					<input type="hidden" name="sn" value="${device.sn}">
-					<input type="hidden" name="id" value="${device.id}">
-				</tr>
+				${device.sn}<input type="hidden" name="sn" value="${device.sn}">
+				<input type="hidden" name="id" value="${device.id}">
 			</div>
 		</div>
 		<div class="control-group">
@@ -25,24 +22,24 @@
 				<input type="text" class="input-xlarge" placeholder="请输入SIM卡号..."
 					id="simId" name="simId" value="${device.simId}"> <span
 					class="help-inline"><font color="red">*</font></span>
-					<c:if test="${ empty device.simId }">
+				<c:if test="${ empty device.simId }">
 					<input type="submit" class="btn btn-primary" value="绑定">
-					</c:if>
-					<c:if test="${ not empty device.simId }">
-					<input type="button" class="btn btn-primary" onclick="updateSimId()" value="修改">
-					</c:if>
-					
+				</c:if>
+				<c:if test="${ not empty device.simId }">
+					<input type="button" class="btn btn-primary" value="修改">
+				</c:if>
+
 			</div>
 		</div>
 		<c:if test="${not empty errors }">
-				<div class="alert alert-error">
-					<ul>
-						<c:forEach items="${errors }" var="error">
-							<li>${error.defaultMessage }</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</c:if>
+			<div class="alert alert-error">
+				<ul>
+					<c:forEach items="${errors }" var="error">
+						<li>${error.defaultMessage }</li>
+					</c:forEach>
+				</ul>
+			</div>
+		</c:if>
 	</form>
 
 	<div id="errorModal" class="modal hide fade">
@@ -54,43 +51,50 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-	$(document).ready(function() {
-			//initDialog();
-		$('#deviceInfo').submit(function(){
-			var options={
-				url : "${pageContext.request.contextPath}/admin/device/update/",
-				type: "post",
-				success : toList, // post-submit callback
-				
-			};
+		$(document).ready(function() {
+			/* var validateOptions = {
+					rules : { 
+						simId : {
+							required : true,
+							minlength : 2
+						}
+					},
+					messages : {
+						simId : {
+							required : "请填写商户名称",
+							minlength : "至少输入两个字符"
+						}
+					}
+				};
+		$('#deviceInfo').validate(validateOptions); */
+		
+			initDialog();
 			
+		$('#deviceInfo').submit(function() {
+		/* 	if(!$('#deviceInfo').valid()){
+				return false;
+			} */
+			alert("aaa");
+			var options = {
+			url : "${pageContext.request.contextPath}/admin/device/update/",
+			type : "post",
+			success : toList, // post-submit callback
+		};
 			$('#deviceInfo').ajaxSubmit(options);
+			alert("bbb");
 			return false;
 		});
 	});
-	
-	function updateSimId(){
-		$.ajax({
-			url:"${pageContext.request.contextPath}/admin/device/update/",
-			type:"post",
-			success:showList
-		});
-	}
-
-	function toList(data){
-		//initDialog()
-	}
-	function showList(data){
-		$("#pageContentFrame").html(data);
-	}
-	function initDialog(){
-		var success=true;
-		if( success=true){
-			$("#resultMessage").html("绑定成功！");
-			$("#errorModal").modal();
+		function toList(data) {
+			$("#pageContentFrame").html(data);
 		}
-	}
+		function initDialog() {
+			if (${not empty success }== true) {
+				$("#resultMessage").html("绑定成功！");
+				$("#errorModal").modal();
+			}
+		}
 	</script>
-	
-	</body>
+
+</body>
 </html>

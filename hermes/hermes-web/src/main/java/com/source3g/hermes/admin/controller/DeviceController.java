@@ -100,12 +100,18 @@ public class DeviceController {
 	}
 	@RequestMapping(value="/update", method=RequestMethod.POST)
 	public ModelAndView update(@Valid Device device, BindingResult errorResult){
+		if (errorResult.hasErrors()) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("errors", errorResult.getAllErrors());
+			return new ModelAndView("admin/device/deviceInfo", model);
+		}
+		
 		String uri = ConfigParams.getBaseUrl() + "device/update/";
 		HttpEntity<Device> entity = new HttpEntity<Device>(device);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 
-			return new ModelAndView("redirect:/admin/device/list/");
+			return new ModelAndView("/admin/device/add/");
 		} else {
 			return new ModelAndView("admin/error");
 		}

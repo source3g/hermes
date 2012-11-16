@@ -12,7 +12,10 @@ public class Merchant extends AbstractEntity {
 	private String name;
 	@NotEmpty(message = "addr can not be null")
 	private String addr;
-
+	@NotEmpty(message = "account can not be null")
+	private String  account;
+	@NotEmpty(message = "password can not be null")
+	private String password;
 	private String merchantGroupId;
 	private List<ObjectId> deviceIds;
 
@@ -48,4 +51,21 @@ public class Merchant extends AbstractEntity {
 		this.deviceIds = deviceIds;
 	}
 
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	
 }

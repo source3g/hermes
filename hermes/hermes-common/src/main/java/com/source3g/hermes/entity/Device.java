@@ -1,12 +1,14 @@
 package com.source3g.hermes.entity;
 
+import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class Device extends AbstractEntity {
 	
 	@NotEmpty(message="{device.sn.not.null}")
 	private String sn;
-	private String simId;
+	@NotEmpty(message="{device.simId.not.null}")
+	private ObjectId simId;
 
 	public String getSn() {
 		return sn;
@@ -16,11 +18,11 @@ public class Device extends AbstractEntity {
 		this.sn = sn;
 	}
 
-	public String getSimId() {
+	public ObjectId getSimId() {
 		return simId;
 	}
 
-	public void setSimId(String simId) {
+	public void setSimId(ObjectId simId) {
 		this.simId = simId;
 	}
 	

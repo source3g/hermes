@@ -16,7 +16,34 @@
 			action="${pageContext.request.contextPath}/admin/merchant/update/"
 		</c:if>
 		method="post" class="form-horizontal">
-
+		
+		<div class="control-group">
+			<label class="control-label" for="account">账号：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
+					id="account" name="account" value="${merchant.account}"> <span
+					class="help-inline"></span>
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="password">密码：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" placeholder="请输入商户密码..."
+					id="password" name="password" value="${merchant.password}"> <span
+					class="help-inline"></span>
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="password">重复确认密码：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" placeholder="请输入商户密码..."
+					id="password" name="password" value="${merchant.password}"> <span
+					class="help-inline"></span>
+			</div>
+		</div>
+		
 		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
@@ -129,6 +156,17 @@
 		</div>
 		<div class="modal-footer"></div>
 	</div>
+	
+	<c:if test="${not empty errors }">
+		<div class="alert alert-error">
+			<ul>
+				<c:forEach items="${errors }" var="error">
+					<li>${error.defaultMessage }</li>
+				</c:forEach>
+			</ul>
+		</div>
+	</c:if>
+	
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
 			<p id="resultMessage"></p>
@@ -142,8 +180,16 @@
 	$(document).ready(function() {
 		initDialog();
 		
-		var validateOptions = {
-				rules : {
+	 	var validateOptions = {
+				rules : { 
+					 account:{
+						required : true,
+						minlength : 2
+					},
+					password:{
+						required : true,
+						minlength : 2	
+					}, 
 					name : {
 						required : true,
 						minlength : 2
@@ -154,6 +200,14 @@
 					}
 				},
 				messages : {
+					account : {
+						required : "请填写商户名称",
+						minlength : "至少输入两个字符"
+					},
+				    password : {
+						required : "请填写商户名称",
+						minlength : "至少输入两个字符"
+					}, 
 					name : {
 						required : "请填写商户名称",
 						minlength : "至少输入两个字符"
@@ -177,7 +231,7 @@
 						required : "请填写集团商户名称"
 					}
 				}
-			});
+			});  
 			
 		$("#queryMerchantGroupForm").submit(function() {
 			if (!$('#queryMerchantGroupForm').valid()) {
@@ -296,7 +350,7 @@
 				    show:true
 				});
 			}
-		}
+		} 
 		
 	</script>
 </body>
