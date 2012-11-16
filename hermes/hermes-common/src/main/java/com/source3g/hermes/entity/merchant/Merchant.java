@@ -8,13 +8,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.source3g.hermes.entity.AbstractEntity;
 
 public class Merchant extends AbstractEntity {
-	@NotEmpty(message = "name can not be null")
+	@NotEmpty(message ="{merchant.name.not.null}")
 	private String name;
-	@NotEmpty(message = "addr can not be null")
+	@NotEmpty(message = "{merchant.addr.not.null}")
 	private String addr;
-	@NotEmpty(message = "account can not be null")
+	@NotEmpty(message = "{merchant.account.not.null}")
 	private String  account;
-	@NotEmpty(message = "password can not be null")
+	@NotEmpty(message = "{merchant.password.not.null}")
 	private String password;
 	
 	private ObjectId merchantGroupId;
