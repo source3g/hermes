@@ -7,23 +7,23 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 public abstract class AbstractEntity {
 	private ObjectId id;
 
-	@JsonIgnore
-	public ObjectId getIdObjId() {
+	public ObjectId getId() {
 		return id;
 	}
 
-	public String getId() {
+	@JsonIgnore
+	public String getStrId() {
 		if (id == null) {
 			return null;
 		}
 		return id.toString();
 	}
 
-	@JsonIgnore
 	public void setId(ObjectId id) {
 		this.id = id;
 	}
 
+	@JsonIgnore
 	public void setId(String id) {
 		if (!StringUtils.isEmpty(id)) {
 			this.id = new ObjectId(id);

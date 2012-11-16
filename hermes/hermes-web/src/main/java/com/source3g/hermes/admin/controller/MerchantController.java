@@ -92,8 +92,8 @@ public class MerchantController {
 		}
 		if (merchant.getDeviceIds() != null && merchant.getDeviceIds().size() > 0) {
 			StringBuffer deviceIds = new StringBuffer();
-			for (String deviceId : merchant.getDeviceIds()) {
-				deviceIds.append(deviceId);
+			for (Object deviceId : merchant.getDeviceIds()) {
+				deviceIds.append(deviceId.toString());
 				deviceIds.append(",");
 			}
 			deviceIds.delete(deviceIds.length()-1, deviceIds.length());

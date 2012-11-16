@@ -1,4 +1,4 @@
-package com.source3g.hermes.api.config;
+package com.source3g.hermes.config;
 
 import java.io.IOException;
 import java.text.ParseException;

@@ -33,6 +33,7 @@ public abstract class BaseService {
 		if (entity == null || entity.getId() == null) {
 			return;
 		}
+	//	mongoTemplate.updateFirst(query, new Update()., collectionName)
 		mongoTemplate.save(entity, getCollectionName());
 	}
 

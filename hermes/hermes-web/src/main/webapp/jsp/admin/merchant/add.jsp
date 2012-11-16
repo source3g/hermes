@@ -24,7 +24,7 @@
 					id="name" name="name" value="${merchant.name}"> <span
 					class="help-inline"><font color="red">*</font></span>
 				<c:if test="${not empty update }">
-					<input type="hidden" id="strId" name="strId"
+					<input type="hidden" id="id" name="id"
 						value="${merchant.id }">
 				</c:if>
 			</div>

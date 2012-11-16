@@ -40,8 +40,7 @@
 		p:order="0">
 		<property name="messageConverters">
 			<list>
-				<bean
-					class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean>
+				<ref bean="jsonConverter" />
 				<bean
 					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
@@ -56,6 +55,13 @@
 				</bean>
 			</list>
 		</property>
+	</bean>
+
+
+	<bean id="jsonConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes" value="application/json" />
+		<property name="objectMapper" ref="objectMapper" />
 	</bean>
 
 
@@ -134,8 +140,7 @@
 
 	<!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
 	<bean id="defaultViewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver"><!-- 
-			p:order="3" -->
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"><!-- p:order="3" -->
 		<property name="viewClass"
 			value="org.springframework.web.servlet.view.JstlView" />
 		<property name="contentType" value="text/html" />
@@ -143,9 +148,13 @@
 		<property name="suffix" value=".jsp" />
 	</bean>
 
+
+
 	<!-- json view -->
 	<bean id="defaultJsonView"
-		class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+		class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+		<property name="objectMapper" ref="objectMapper" />
+	</bean>
 
 	<!-- 文件上传相关 -->
 	<bean id="multipartResolver"
@@ -166,4 +175,17 @@
 		</property>
 	</bean>
 
+
+
+	<bean id="customEditorConfigurer"
+		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="org.bson.types.ObjectId">
+					<bean class="com.source3g.hermes.config.ObjectIdPropertyEditor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
 </beans>
