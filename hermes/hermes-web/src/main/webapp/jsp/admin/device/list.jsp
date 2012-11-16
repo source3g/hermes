@@ -30,7 +30,9 @@
 			<tr>
 				<td>${device.sn}</td>
 				<td><a class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${device.id}');">删除</a></td>
+					onclick="deleteById('${device.id}');">删除</a>
+				<a class="btn btn-success" href="javascript:void();"
+					onclick="findById('${device.id}');">详细信息</a></td>	
 			</tr>
 		</c:forEach>
 
@@ -92,7 +94,16 @@
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
-		
+		function findById(id){
+			$.ajax({
+				url:"${pageContext.request.contextPath}/admin/device/findById/"+id+"/",
+				type:"get",
+				success:toDeviceInformation
+			});
+		}
+		function toDeviceInformation(data){
+			$("#pageContentFrame").html(data);
+		}
 		function initPage(){
 			$("#pageOk").click(function(){
 				var pageNoToGoStr=$("#pageNoToGo").val();

@@ -87,4 +87,27 @@ public class DeviceController {
 		
 		return device;
 	}
+	@RequestMapping(value="/findById/{id}", method=RequestMethod.GET)
+	public ModelAndView findById(@PathVariable String id){
+		Map<String, Object> model = new HashMap<String, Object>();
+		String uri=ConfigParams.getBaseUrl()+"device/"+id+"/";
+		Device[] devices=restTemplate.getForObject(uri, Device[].class);
+		if(devices==null||devices.length!=1){
+			 return new ModelAndView(("/admin/error"));
+		}
+		model.put("device", devices[0]);
+		return new ModelAndView(("/admin/device/deviceInfo"),model);
+	}
+	@RequestMapping(value="/update", method=RequestMethod.POST)
+	public ModelAndView update(@Valid Device device, BindingResult errorResult){
+		String uri = ConfigParams.getBaseUrl() + "device/update/";
+		HttpEntity<Device> entity = new HttpEntity<Device>(device);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+
+			return new ModelAndView("redirect:/admin/device/list/");
+		} else {
+			return new ModelAndView("admin/error");
+		}
+	}
 }

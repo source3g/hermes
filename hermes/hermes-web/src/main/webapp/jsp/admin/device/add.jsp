@@ -12,7 +12,6 @@
 	<form id="addDeviceForm"
 		action="${pageContext.request.contextPath}/admin/device/add/"
 		method="post" class="form-horizontal">
-
 		<div class="control-group">
 			<label class="control-label" for="sn">SN:</label>
 			<div class="controls">
@@ -22,7 +21,7 @@
 			</div>
 		</div>
 		<div class="form-actions">
-		<input type="submit" class="btn btn-primary" input="增加">
+		<input type="submit" class="btn btn-primary" value="增加">
 			
 		</div>
 		<c:if test="${not empty errors }">

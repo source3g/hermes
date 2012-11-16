@@ -51,6 +51,13 @@ public class DeviceService extends BaseService
 	public Device findBySn(String sn) {
 		return mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)),Device.class,collectionName);
 	}
+	public Device findById(String id) {
+		Device device=mongoTemplate.findById(new ObjectId(id), Device.class, collectionName);
+		return device;
+	}
+	public void update(Device device){
+		mongoTemplate.save(device, collectionName);
+	}
 	@Override
 	public String getCollectionName() {
 		
