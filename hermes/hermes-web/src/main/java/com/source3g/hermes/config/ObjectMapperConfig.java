@@ -1,7 +1,6 @@
 package com.source3g.hermes.config;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,10 +15,11 @@ import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.deser.DateDeserializer;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.source3g.hermes.utils.DateFormateUtils;
 
 @Configuration
 public class ObjectMapperConfig {
@@ -35,9 +35,10 @@ public class ObjectMapperConfig {
 		ObjectMapper obj = new ObjectMapper();
 		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
 		module.addSerializer(Date.class, new CustomDateSerializer());
-		module.addDeserializer(Date.class, new DateDeserializer());
+		module.addDeserializer(Date.class, new CustomDateDeserializer());
 		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
 		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
+		module.addSerializer(String.class,new StringSerializer());
 		obj.registerModule(module);
 		// obj.getSerializationConfig().withSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
 		obj.getSerializationConfig().setSerializationInclusion(org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
@@ -47,8 +48,8 @@ public class ObjectMapperConfig {
 	public class CustomDateSerializer extends JsonSerializer<Date> {
 		@Override
 		public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String formattedDate = formatter.format(value);
+			SimpleDateFormat formatterLong = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String formattedDate = formatterLong.format(value);
 			jgen.writeString(formattedDate);
 		}
 	}
@@ -57,14 +58,7 @@ public class ObjectMapperConfig {
 		@Override
 		public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			String unformatedDate = jp.getText();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date retVal;
-			try {
-				retVal = sdf.parse(unformatedDate);
-			} catch (ParseException e) {
-				return null;
-			}
-			return retVal;
+			return DateFormateUtils.getDate(unformatedDate);
 		}
 	}
 
@@ -84,6 +78,17 @@ public class ObjectMapperConfig {
 			}
 			return new ObjectId(objectIdStr);
 		}
+	}
+	
+	public class StringSerializer extends JsonSerializer<String>{
+		@Override
+		public void serialize(String value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+			if(StringUtils.isEmpty(value)){
+				return;
+			}
+			jgen.writeString(value);
+		}
+		
 	}
 
 }

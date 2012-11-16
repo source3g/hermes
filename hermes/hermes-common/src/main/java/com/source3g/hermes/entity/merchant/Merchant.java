@@ -16,6 +16,7 @@ public class Merchant extends AbstractEntity {
 	private String  account;
 	@NotEmpty(message = "password can not be null")
 	private String password;
+	
 	private ObjectId merchantGroupId;
 	
 	private List<ObjectId> deviceIds;

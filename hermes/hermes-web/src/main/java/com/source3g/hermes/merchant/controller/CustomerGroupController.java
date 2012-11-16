@@ -41,7 +41,7 @@ public class CustomerGroupController {
 	}
 
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public ModelAndView add(@Valid CustomerGroup customerGroup, HttpServletRequest req, BindingResult errorResult) {
+	public ModelAndView add(@Valid CustomerGroup customerGroup, BindingResult errorResult, HttpServletRequest req) {
 		if (errorResult.hasErrors()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());

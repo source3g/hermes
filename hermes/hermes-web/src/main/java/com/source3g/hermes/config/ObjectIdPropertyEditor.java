@@ -12,6 +12,7 @@ public class ObjectIdPropertyEditor extends PropertyEditorSupport {
 		ObjectId objectId = (ObjectId) getValue();
 		return objectId.toString();
 	}
+	
 
 	@Override
 	public void setAsText(String text) throws IllegalArgumentException {

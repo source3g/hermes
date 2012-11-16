@@ -17,8 +17,12 @@
 	<!-- 要写在扫描之前 -->
 	<bean
 		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean class="com.source3g.hermes.config.MyWebBindingInitializer" />
+		</property>
 		<property name="messageConverters">
 			<list>
+				<ref bean="jsonConverter" />
 				<bean
 					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
@@ -38,6 +42,10 @@
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
 		p:order="0">
+		<property name="webBindingInitializer">
+			<bean class="com.source3g.hermes.config.MyWebBindingInitializer" />
+		</property>
+
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonConverter" />
@@ -176,6 +184,14 @@
 	</bean>
 
 
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jsonConverter" />
+			</list>
+		</property>
+	</bean>
+
 
 	<bean id="customEditorConfigurer"
 		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
@@ -187,5 +203,5 @@
 			</map>
 		</property>
 	</bean>
-	
+
 </beans>
