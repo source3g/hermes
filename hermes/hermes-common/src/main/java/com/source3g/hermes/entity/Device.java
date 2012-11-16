@@ -9,7 +9,6 @@ public class Device extends AbstractEntity {
 	private String sn;
 	@NotEmpty(message="{device.simId.not.null}")
 	private ObjectId simId;
-
 	public String getSn() {
 		return sn;
 	}

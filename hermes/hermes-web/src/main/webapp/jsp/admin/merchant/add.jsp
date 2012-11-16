@@ -38,7 +38,7 @@
 		<div class="control-group">
 			<label class="control-label" for="password">重复确认密码：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户密码..."
+				<input type="text" class="input-xlarge" placeholder="请重新输入商户密码..."
 					id="password" name="password" value="${merchant.password}"> <span
 					class="help-inline"></span>
 			</div>
@@ -180,7 +180,7 @@
 	$(document).ready(function() {
 		initDialog();
 		
-	 	var validateOptions = {
+/* 	 	var validateOptions = {
 				rules : { 
 					 account:{
 						required : true,
@@ -217,8 +217,8 @@
 						minlength : "至少输入两 个字符"
 					}
 				}
-			};
-			$('#addMerchantForm').validate(validateOptions);
+			}; */
+/* 			$('#addMerchantForm').validate(validateOptions); */
 
 			$('#queryMerchantGroupForm').validate({
 				rules : {
