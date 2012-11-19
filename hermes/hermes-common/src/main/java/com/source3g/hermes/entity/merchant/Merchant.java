@@ -8,17 +8,17 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.source3g.hermes.entity.AbstractEntity;
 
 public class Merchant extends AbstractEntity {
-	@NotEmpty(message ="{merchant.name.not.null}")
+	@NotEmpty(message = "{merchant.name.not.null}")
 	private String name;
 	@NotEmpty(message = "{merchant.addr.not.null}")
 	private String addr;
 	@NotEmpty(message = "{merchant.account.not.null}")
-	private String  account;
+	private String account;
 	@NotEmpty(message = "{merchant.password.not.null}")
 	private String password;
-	
+
 	private ObjectId merchantGroupId;
-	
+
 	private List<ObjectId> deviceIds;
 
 	public String getName() {
@@ -68,6 +68,5 @@ public class Merchant extends AbstractEntity {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+
 }

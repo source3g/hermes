@@ -66,9 +66,9 @@
 			};
 			
 			$('#addMerchantGroupForm').submit(function() {
-				if (!$("#addMerchantGroupForm").valid()) {
-					return false;
-				}
+			//	if (!$("#addMerchantGroupForm").valid()) {
+			//		return false;
+				//}
 				if(${not empty update}){
 					addMerchantGroupFormOptions.url="${pageContext.request.contextPath}/admin/merchantGroup/update/";
 				}

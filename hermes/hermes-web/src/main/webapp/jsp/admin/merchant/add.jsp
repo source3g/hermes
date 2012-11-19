@@ -16,7 +16,7 @@
 			action="${pageContext.request.contextPath}/admin/merchant/update/"
 		</c:if>
 		method="post" class="form-horizontal">
-		
+
 		<div class="control-group">
 			<label class="control-label" for="account">账号：</label>
 			<div class="controls">
@@ -25,25 +25,25 @@
 					class="help-inline"></span>
 			</div>
 		</div>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="password">密码：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入商户密码..."
-					id="password" name="password" value="${merchant.password}"> <span
-					class="help-inline"></span>
+					id="password" name="password" value="${merchant.password}">
+				<span class="help-inline"></span>
 			</div>
 		</div>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="password">重复确认密码：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请重新输入商户密码..."
-					id="password" name="password" value="${merchant.password}"> <span
-					class="help-inline"></span>
+					id="password" name="password" value="${merchant.password}">
+				<span class="help-inline"></span>
 			</div>
 		</div>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
@@ -51,8 +51,7 @@
 					id="name" name="name" value="${merchant.name}"> <span
 					class="help-inline"><font color="red">*</font></span>
 				<c:if test="${not empty update }">
-					<input type="hidden" id="id" name="id"
-						value="${merchant.id }">
+					<input type="hidden" id="id" name="id" value="${merchant.id }">
 				</c:if>
 			</div>
 		</div>
@@ -130,8 +129,6 @@
 		</table>
 	</form>
 
-
-
 	<div id="myModal" class="modal hide fade">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">&times;</a>
@@ -156,7 +153,7 @@
 		</div>
 		<div class="modal-footer"></div>
 	</div>
-	
+
 	<c:if test="${not empty errors }">
 		<div class="alert alert-error">
 			<ul>
@@ -166,7 +163,7 @@
 			</ul>
 		</div>
 	</c:if>
-	
+
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
 			<p id="resultMessage"></p>
@@ -179,8 +176,7 @@
 	<script type="text/javascript">
 	$(document).ready(function() {
 		initDialog();
-		
-/* 	 	var validateOptions = {
+	 	var validateOptions = {
 				rules : { 
 					 account:{
 						required : true,
@@ -217,9 +213,8 @@
 						minlength : "至少输入两 个字符"
 					}
 				}
-			}; */
-/* 			$('#addMerchantForm').validate(validateOptions); */
-
+			}; 
+			$('#addMerchantForm').validate(validateOptions); 
 			$('#queryMerchantGroupForm').validate({
 				rules : {
 					merchantGroupName : {
@@ -232,7 +227,6 @@
 					}
 				}
 			});  
-			
 		$("#queryMerchantGroupForm").submit(function() {
 			if (!$('#queryMerchantGroupForm').valid()) {
 				return false;
@@ -240,14 +234,14 @@
 			queryMerchantGroup();
 			return false;
 		});
-
 		$('#addMerchantForm').submit(function() {
-			if (!$("#addMerchantForm").valid()) {
-				return false;
-			}
-			var options = {
+		//	if (!$("#addMerchantForm").valid()) {
+		//		return false;
+		//	}
+			 var options = {
 				success : toList
-			};
+			}; 
+			
 			$(this).ajaxSubmit(options);
 			return false;
 

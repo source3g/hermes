@@ -38,7 +38,6 @@ public class ObjectMapperConfig {
 		module.addDeserializer(Date.class, new CustomDateDeserializer());
 		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
 		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
-		module.addSerializer(String.class,new StringSerializer());
 		obj.registerModule(module);
 		// obj.getSerializationConfig().withSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
 		obj.getSerializationConfig().setSerializationInclusion(org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
@@ -79,16 +78,4 @@ public class ObjectMapperConfig {
 			return new ObjectId(objectIdStr);
 		}
 	}
-	
-	public class StringSerializer extends JsonSerializer<String>{
-		@Override
-		public void serialize(String value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-			if(StringUtils.isEmpty(value)){
-				return;
-			}
-			jgen.writeString(value);
-		}
-		
-	}
-
 }

@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 public abstract class AbstractEntity {
+
 	private ObjectId id;
 
 	public ObjectId getId() {
