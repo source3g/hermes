@@ -11,39 +11,27 @@
 	http://www.springframework.org/schema/context/spring-context-3.1.xsd
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
-	
-	
-	<!-- 一定要放在context:component-scan之前 -->
-	<!--responseBody编码 -->
-	<bean
-		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-		<property name="webBindingInitializer">
-			<bean class="com.source3g.hermes.api.config.MyWebBindingInitializer" />
-		</property>
-		<property name="messageConverters">
-			<list>
-				<ref bean="jsonConverter" />
-				
-				<bean
-					class="org.springframework.http.converter.StringHttpMessageConverter">
-					<property name="supportedMediaTypes">
-						<list>
-							<value>text/plain;charset=UTF-8</value>
-						</list>
-					</property>
-				</bean>
-			</list>
-		</property>
+
+
+	<!-- 数据绑定器 -->
+	<bean id="myWebBindingInitializer" class="com.source3g.hermes.api.config.MyWebBindingInitializer">
+		<property name="validator" ref="validator"></property>
 	</bean>
 
+	<!-- 以下 validator -->
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
+		<!-- <property name="validationMessageSource" ref="messageSource" /> -->
+	</bean>
 
+	<!-- 开启支持@Controller 和 @RequestMapping注解的处理器。 处理器映射RequestMappingHandlerMapping 
+		和 处理器适配器RequestMappingHandlerAdapter组合来代替Spring2.5开始的处理器映射DefaultAnnotationHandlerMapping和处理器适配器AnnotationMethodHandlerAdapter，提供更多的扩展点。 -->
 	<bean
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
-		p:order="0">
-		<property name="webBindingInitializer">
-			<bean class="com.source3g.hermes.api.config.MyWebBindingInitializer" />
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer" ref="myWebBindingInitializer">
 		</property>
-
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonConverter" />
@@ -62,6 +50,10 @@
 			</list>
 		</property>
 	</bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
+
+
 
 	<bean id="jsonConverter"
 		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
@@ -69,17 +61,9 @@
 		<property name="objectMapper" ref="objectMapper" />
 	</bean>
 
-	<!-- 会自动注册了validator ConversionService -->
-	<mvc:annotation-driven validator="validator"
-		conversion-service="conversion-service" />
 
-	<!-- 以下 validator ConversionService 在使用 mvc:annotation-driven 会 自动注册 -->
-	<bean id="validator"
-		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
-		<!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
-		<property name="validationMessageSource" ref="messageSource" />
-	</bean>
+
+
 	<bean id="conversion-service"
 		class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
 

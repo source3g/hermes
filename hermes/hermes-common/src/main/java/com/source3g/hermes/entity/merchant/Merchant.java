@@ -10,7 +10,6 @@ import com.source3g.hermes.entity.AbstractEntity;
 public class Merchant extends AbstractEntity {
 	@NotEmpty(message = "{merchant.name.not.null}")
 	private String name;
-	@NotEmpty(message = "{merchant.addr.not.null}")
 	private String addr;
 	@NotEmpty(message = "{merchant.account.not.null}")
 	private String account;

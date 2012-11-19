@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.constants.CollectionNameConstant;
 import com.source3g.hermes.entity.Sim;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
@@ -16,7 +17,7 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class SimService extends BaseService {
 
-	private String collectionName = "sim";
+	private String collectionName = CollectionNameConstant.SIM;
 
 	public void add(Sim sim) {
 		sim.setId(ObjectId.get());

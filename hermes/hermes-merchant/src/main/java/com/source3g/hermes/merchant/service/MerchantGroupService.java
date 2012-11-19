@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.constants.CollectionNameConstant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
@@ -16,7 +17,7 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class MerchantGroupService extends BaseService {
 
-	protected String collectionName = "merchantgroup";
+	protected String collectionName = CollectionNameConstant.MERCHANT_GROUP;
 
 	public void add(MerchantGroup merchantGroup) {
 		merchantGroup.setId(ObjectId.get());

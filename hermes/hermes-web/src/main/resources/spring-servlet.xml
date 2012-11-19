@@ -13,45 +13,25 @@
 	http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
 
-	<!-- 会自动注册了validator ConversionService -->
-	<mvc:annotation-driven conversion-service="conversion-service" />
-
-	<!-- 要写在扫描之前 -->
-	<bean
-		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-
-		<property name="webBindingInitializer">
-			<bean class="com.source3g.hermes.config.MyWebBindingInitializer" />
-		</property>
-
-		<property name="messageConverters">
-			<list>
-				<!-- <ref bean="jsonConverter" /> -->
-				<bean
-					class="org.springframework.http.converter.StringHttpMessageConverter">
-					<property name="supportedMediaTypes">
-						<list>
-							<value>text/plain;charset=UTF-8</value>
-						</list>
-					</property>
-				</bean>
-
-			</list>
-		</property>
+	<!-- 数据绑定器 -->
+	<bean id="myWebBindingInitializer" class="com.source3g.hermes.config.MyWebBindingInitializer">
+		<property name="validator" ref="validator"></property>
 	</bean>
 
-	<bean
-		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"
-		p:order="0" />
+	<!-- 以下 validator -->
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
+		<!-- <property name="validationMessageSource" ref="messageSource" /> -->
+	</bean>
 
+	<!-- 开启支持@Controller 和 @RequestMapping注解的处理器。 处理器映射RequestMappingHandlerMapping 
+		和 处理器适配器RequestMappingHandlerAdapter组合来代替Spring2.5开始的处理器映射DefaultAnnotationHandlerMapping和处理器适配器AnnotationMethodHandlerAdapter，提供更多的扩展点。 -->
 	<bean
-		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
-		p:order="0">
-
-		<property name="webBindingInitializer">
-			<bean class="com.source3g.hermes.config.MyWebBindingInitializer" />
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer" ref="myWebBindingInitializer">
 		</property>
-
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonConverter" />
@@ -70,7 +50,8 @@
 			</list>
 		</property>
 	</bean>
-
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
 
 
 	<bean id="jsonConverter"
@@ -80,12 +61,7 @@
 	</bean>
 
 
-	<!-- 开启controller注解支持 -->
-	<!-- 注：如果base-package=cn.javass 则注解事务不起作用 TODO 读源码 -->
-	<context:component-scan base-package="com.source3g.hermes.*.controller">
-		<context:include-filter type="annotation"
-			expression="org.springframework.stereotype.Controller" />
-	</context:component-scan>
+
 
 	<bean id="conversion-service"
 		class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
@@ -196,5 +172,13 @@
 			</map>
 		</property>
 	</bean>
+
+
+	<!-- 开启controller注解支持 -->
+	<context:component-scan base-package="com.source3g.hermes.*.controller">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
 
 </beans>

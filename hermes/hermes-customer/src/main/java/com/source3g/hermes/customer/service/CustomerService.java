@@ -12,18 +12,18 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.constants.CollectionNameConstant;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.service.BaseService;
-import com.source3g.hermes.utils.CollectionNameConstant;
 import com.source3g.hermes.utils.Page;
 
 @Service
 public class CustomerService extends BaseService {
 
-	private String collectionName = "customer";
+	private String collectionName = CollectionNameConstant.CUSTOMER;
 
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
