@@ -20,80 +20,85 @@
 			<label class="control-label" for="simId">请输入SIM卡号:</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入SIM卡号..."
-					id="simId" name="simId" value="${device.simId}"> <span
-					class="help-inline"><font color="red">*</font></span>
+					id="no" name="no" value="${sim.no}"> <span
+					class="help-inline"> <font color="red">*</font></span>
 				<c:if test="${ empty device.simId }">
 					<input type="submit" class="btn btn-primary" value="绑定">
 				</c:if>
 				<c:if test="${ not empty device.simId }">
-					<input type="button" class="btn btn-primary" value="修改">
+					<input type="submit" class="btn btn-primary" value="修改">
+			
 				</c:if>
 
 			</div>
 		</div>
 		<c:if test="${not empty errors }">
-			<div class="alert alert-error">
-				<ul>
-					<c:forEach items="${errors }" var="error">
-						<li>${error.defaultMessage }</li>
-					</c:forEach>
-				</ul>
+				<div class="alert alert-error">
+					<ul>
+						<c:forEach items="${errors }" var="error">
+							<li>${error.defaultMessage }</li>
+						</c:forEach>
+					</ul>
+				</div>
+			</c:if>
+			
+		<div id="errorModal" class="modal hide fade">
+			<div class="modal-body">
+				<p id="resultMessage"></p>
 			</div>
-		</c:if>
+			<div class="modal-footer">
+				<a href="#" class="btn" data-dismiss="modal">确定</a>
+			</div>
+		</div>
 	</form>
 
-	<div id="errorModal" class="modal hide fade">
-		<div class="modal-body">
-			<p id="resultMessage"></p>
-		</div>
-		<div class="modal-footer">
-			<a href="#" class="btn" data-dismiss="modal">确定</a>
-		</div>
-	</div>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			/* var validateOptions = {
+		$(document).ready(function(){
+			 var validateOptions = {
 					rules : { 
-						simId : {
+						no : {
 							required : true,
 							minlength : 2
 						}
 					},
 					messages : {
-						simId : {
-							required : "请填写商户名称",
+						no : {
+							required : "请填写SIM卡号",
 							minlength : "至少输入两个字符"
 						}
 					}
 				};
-		$('#deviceInfo').validate(validateOptions); */
 		
-			initDialog();
-			
-		$('#deviceInfo').submit(function() {
-		/* 	if(!$('#deviceInfo').valid()){
+		$('#deviceInfo').validate(validateOptions); 
+		 $('#deviceInfo').submit(function() { 
+		 	 if(!$('#deviceInfo').valid()){
 				return false;
-			} */
-			alert("aaa");
+			} 
 			var options = {
 			url : "${pageContext.request.contextPath}/admin/device/update/",
 			type : "post",
-			success : toList, // post-submit callback
+			success : toList // post-submit callback
 		};
+			
 			$('#deviceInfo').ajaxSubmit(options);
-			alert("bbb");
+		
 			return false;
 		});
-	});
+		
+		initDialog(); 
+
+		
+		
+ 	});
 		function toList(data) {
 			$("#pageContentFrame").html(data);
 		}
-		function initDialog() {
+		 function initDialog() {
 			if (${not empty success }== true) {
 				$("#resultMessage").html("绑定成功！");
 				$("#errorModal").modal();
 			}
-		}
+		}   
 	</script>
 
 </body>

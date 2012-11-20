@@ -1,5 +1,7 @@
 package com.source3g.hermes.merchant.api;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +64,12 @@ public class MerchantApi {
 		logger.debug("update merchant....");
 		merchantService.update(merchant);
 		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value="/findByDeviceIds/{ids}",method=RequestMethod.GET)
+	@ResponseBody
+	public List<Merchant> update(@PathVariable String ids){
+		logger.debug("find merchant....");
+		return merchantService.findByDeviceIds(ids);
 	}
 }

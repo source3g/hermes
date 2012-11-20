@@ -29,7 +29,7 @@
 		<div class="control-group">
 			<label class="control-label" for="password">密码：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户密码..."
+				<input type="password" class="input-xlarge" placeholder="请输入商户密码..."
 					id="password" name="password" value="${merchant.password}">
 				<span class="help-inline"></span>
 			</div>
@@ -38,8 +38,8 @@
 		<div class="control-group">
 			<label class="control-label" for="password">重复确认密码：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请重新输入商户密码..."
-					id="password" name="password" value="${merchant.password}">
+				<input type="password" class="input-xlarge" placeholder="请重新输入商户密码..."
+					id="password1" name="password1" value="${merchant.password}">
 				<span class="help-inline"></span>
 			</div>
 		</div>
@@ -104,7 +104,7 @@
 				<input type="text" class="input-xlarge" placeholder="请输入盒子SN编码..."
 					id="deviceSn" name="sn"> <input type="button"
 					class="btn btn-primary " id="deviceId" onclick="findDevice()"
-					value="增加">
+					value="增加"><span id="resultMessage"></span>
 			</div>
 		</div>
 		<table
@@ -186,6 +186,11 @@
 						required : true,
 						minlength : 2	
 					}, 
+					password1:{
+						required : true,
+						minlength : 2,
+						equalTo: "#password" 
+					}, 
 					name : {
 						required : true,
 						minlength : 2
@@ -197,12 +202,17 @@
 				},
 				messages : {
 					account : {
-						required : "请填写商户名称",
+						required : "请填写账号",
 						minlength : "至少输入两个字符"
 					},
 				    password : {
-						required : "请填写商户名称",
+						required : "请填写密码",
 						minlength : "至少输入两个字符"
+					}, 
+					password1:{
+						required : "请填写密码",
+						minlength : "至少输入两个字符",
+						equalTo: "密码必须一致"
 					}, 
 					name : {
 						required : "请填写商户名称",
@@ -235,9 +245,9 @@
 			return false;
 		});
 		$('#addMerchantForm').submit(function() {
-		//	if (!$("#addMerchantForm").valid()) {
-		//		return false;
-		//	}
+			if (!$("#addMerchantForm").valid()) {
+				return false;
+			}
 			 var options = {
 				success : toList
 			}; 
@@ -246,9 +256,9 @@
 			return false;
 
 		});
+		
+		
 	});
-	
-	
 	function findDevice(){
 		var sn=$("#deviceSn").val();
 		var isInTable=false;
@@ -261,6 +271,7 @@
 		});
 		
 		if(isInTable==true){
+			$('#resultMessage').html("  盒子已存在表格中").css("color","red");
 			return;
 		}
 		
@@ -274,7 +285,7 @@
 	}
 	
 	function showError(){
-		alert("该盒子已被绑定");
+		$('#resultMessage').html("  请输入盒子名称").css("color","red");
 	}
 	
 		function select(id, name) {
@@ -323,8 +334,14 @@
 
 
 		function showDevices(data){
+			if( data.sn==null){
+				$('#resultMessage').html(data).css("color","red");
+				return ;
+			}else{
+			$('#resultMessage').html("");
 			var str = $("<tr><td class='deviceSnTd'>"+data.sn+ "</td><td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this)' value='删除'><input type='hidden' name='deviceIds' value='"+data.id+"'></td></tr>")
 			$('#deviceTable').append(str);
+			}
 		}
 		function deleteDevice(deleteBtn){
 			$(deleteBtn).parents("tr").remove();

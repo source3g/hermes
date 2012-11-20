@@ -69,7 +69,7 @@
 			});
 		});
 		function goToPage(pageNo) {
-			//$("#pageNo").attr("value",pageNo);
+			$("#pageNo").attr("value",pageNo);
 			var options = {
 				url : "${pageContext.request.contextPath}/admin/device/list/",
 				success : showList, // post-submit callback
@@ -124,7 +124,7 @@
 					goToPage(${page.nextPageNo});
 				});
 				$("#lastPage").click(function (){
-					goToPage(${page.totalPageCount});
+					goToPage(${page.lastPageNo});
 				});
 				
 			}else if(${page.currentPage}==${page.totalPageCount}){

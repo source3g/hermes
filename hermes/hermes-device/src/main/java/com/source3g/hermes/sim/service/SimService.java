@@ -47,10 +47,18 @@ public class SimService extends BaseService {
 				collectionName);
 	}
 
+	public Sim findByNo(String no) {
+		return mongoTemplate.findOne(new Query(Criteria.where("no").is(no)),Sim.class,collectionName);
+	}
+	
+	public Sim findById(String id) {
+		ObjectId objId = new ObjectId(id);
+		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(objId)),Sim.class,collectionName);
+	}
 	@Override
 	public String getCollectionName() {
-
-		return null;
+		
+		return collectionName;
 	}
 
 }

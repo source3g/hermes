@@ -45,7 +45,7 @@
 
 	<script type="text/javascript">
 	$(document).ready(function(){
-		/* $('#addDeviceForm').validate({
+		$('#addDeviceForm').validate({
 			rules : {
 				sn : {
 					required : true
@@ -56,7 +56,7 @@
 					required : "请填写SN名称"
 				}
 			}
-		});  */
+		});  
 		
 		 var options={
 			success:toAdd,
@@ -64,9 +64,9 @@
 		 };
 		 
 		$('#addDeviceForm').submit(function(){
-			 /* if (!$("#addDeviceForm").valid()) {
+			  if (!$("#addDeviceForm").valid()) {
 				return false;
-			}  */
+			}  
 			$(this).ajaxSubmit(options);
 			return false;
 		});

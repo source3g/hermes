@@ -58,6 +58,9 @@ public class DeviceService extends BaseService
 	public void update(Device device){
 		mongoTemplate.save(device, collectionName);
 	}
+	public Device findBySimId(ObjectId simId) {
+		return mongoTemplate.findOne(new Query(Criteria.where("simId").is(simId)), Device.class, collectionName);
+	}
 	@Override
 	public String getCollectionName() {
 		

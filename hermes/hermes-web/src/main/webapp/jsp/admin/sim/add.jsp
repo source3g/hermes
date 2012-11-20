@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>增加盒子</title>
+<title>增加SIM卡</title>
 <%-- <%@ include file="../../include/header.jsp"%> --%>
 </head>
 <body>
@@ -19,6 +19,7 @@
 				<input type="text" class="input-xlarge" placeholder="请输SIM卡号..."
 					id="no" name="no" value="${sim.no}"> <span
 					class="help-inline"><font color="red">*</font></span>
+		
 			</div>
 		</div>
 		<div class="form-actions">
@@ -47,7 +48,7 @@
 
 	<script type="text/javascript">
 	$(document).ready(function(){
-		$('#addSimForm').validate({
+ 		$('#addSimForm').validate({
 			rules : {
 				no : {
 					required : true
@@ -58,7 +59,7 @@
 					required : "请填写SIM卡号"
 				}
 			}
-		});
+		}); 
 		
 		 var options={
 			success:toAdd,
@@ -68,7 +69,7 @@
 		$('#addSimForm').submit(function(){
 			if (!$("#addSimForm").valid()) {
 				return false;
-			}
+			} 
 			$(this).ajaxSubmit(options);
 			return false;
 		});
