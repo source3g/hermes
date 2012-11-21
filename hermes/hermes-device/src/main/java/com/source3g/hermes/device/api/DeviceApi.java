@@ -3,6 +3,7 @@ package com.source3g.hermes.device.api;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,11 @@ public class DeviceApi
 		return deviceService.findBySn(sn);
 	}
 	
+	@RequestMapping(value="/simId/{simId}" , method=RequestMethod.GET)
+	@ResponseBody
+	public Device getDeviceInfoBySimId(@PathVariable ObjectId simId ) {
+		return deviceService.findBySimId(simId);
+	}
 	@RequestMapping(value="/update" , method=RequestMethod.POST)
 	@ResponseBody
 	public String update(@RequestBody Device device){
