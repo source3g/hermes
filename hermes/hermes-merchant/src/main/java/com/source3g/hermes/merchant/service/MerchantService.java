@@ -18,5 +18,7 @@ public interface MerchantService {
 	public void update(Merchant merchant);
 	
 	public Page list(int pageNo,Merchant merchant);
+
+	public  List<Merchant>  findByDeviceIds(String ids);
 	
 }

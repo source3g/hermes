@@ -67,7 +67,7 @@ public class DeviceApi
 	public Device getDeviceInfoBySn(@PathVariable String sn) {
 		return deviceService.findBySn(sn);
 	}
-	
+
 	@RequestMapping(value="/simId/{simId}" , method=RequestMethod.GET)
 	@ResponseBody
 	public Device getDeviceInfoBySimId(@PathVariable ObjectId simId ) {

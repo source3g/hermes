@@ -1,5 +1,6 @@
 package com.source3g.hermes.merchant.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -60,9 +61,23 @@ public class MerchantServiceImpl extends BaseService implements MerchantService 
 
 	public void update(Merchant merchant) {
 		mongoTemplate.save(merchant, collectionName);
-
+		
 	}
 
+	@Override
+	public List<Merchant> findByDeviceIds(String ids) {
+		List<ObjectId> deviceIds=new ArrayList<ObjectId>();
+		String[] idArray=ids.split(",");
+		for(String id:idArray){
+			ObjectId ObjId=new ObjectId(id);
+			 deviceIds.add(ObjId);
+		}
+		 Query query=new Query();
+			query.addCriteria(Criteria.where("deviceIds").in(deviceIds));
+		return mongoTemplate.find(query, Merchant.class, collectionName);
+		
+	}
+	
 	@Override
 	public String getCollectionName() {
 		return collectionName;

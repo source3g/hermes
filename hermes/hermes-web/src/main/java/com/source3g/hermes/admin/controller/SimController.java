@@ -46,7 +46,7 @@ public class SimController {
 		String uri = ConfigParams.getBaseUrl() + "sim/add";
 		HttpEntity<Sim> entity = new HttpEntity<Sim>(sim);
 		String result = restTemplate.postForObject(uri, entity, String.class);
-		if (ReturnConstants.SUCCESS_WIDTH_QUOT.equals(result)) {
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("admin/sim/add", model);

@@ -46,9 +46,23 @@ public class SimApi {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String delete(@PathVariable String id) {
-		logger.debug("delete merchant....");
+		logger.debug("delete sim....");
 		simService.deleteById(id);
 		return ReturnConstants.SUCCESS;
 	}
-
+	
+	@RequestMapping(value = "/no/{no}", method = RequestMethod.GET)
+	@ResponseBody
+	public Sim findByNo(@PathVariable String no){
+		logger.debug("find sim..");
+		return simService.findByNo(no);
+	}
+	
+	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public Sim findById(@PathVariable String id){
+		logger.debug("find sim..");
+		return simService.findById(id);
+	}
+	
 }
