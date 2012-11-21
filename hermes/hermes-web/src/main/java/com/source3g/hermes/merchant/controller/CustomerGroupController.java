@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -69,4 +70,12 @@ public class CustomerGroupController {
 		CustomerGroup[] customerGroups = restTemplate.getForObject(uri, CustomerGroup[].class);
 		return Arrays.asList(customerGroups);
 	}
+
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public ModelAndView delete(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "customerGroup/delete/" + id + "/";
+		restTemplate.getForObject(uri, String.class);
+		return new ModelAndView("redirect:/merchant/customerGroup/");
+	}
+
 }

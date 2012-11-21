@@ -39,4 +39,11 @@ public class CustomerGroupApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String delete(@PathVariable String id) {
+		customerGroupService.deleteById(id);
+		return ReturnConstants.SUCCESS;
+	}
+
 }

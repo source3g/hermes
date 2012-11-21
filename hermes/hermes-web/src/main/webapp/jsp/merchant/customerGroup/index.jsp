@@ -27,7 +27,8 @@
 		<c:forEach items="${customerGroups }" var="customerGroup">
 			<tr>
 				<td>${customerGroup.name }</td>
-				<td>删除</td>
+				<td><a class="btn btn-danger" href="javascript:void();"
+					onclick="deleteById('${customerGroup.id}');">删除</a></td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -60,6 +61,18 @@
 				return false;
 			});
 		});
+
+		function deleteById(id) {
+			$.ajax({
+				url : "${pageContext.request.contextPath}/merchant/customerGroup/delete/" + id + "/",
+				type : "get",
+				success : showList
+			});
+		}
+		
+		function showList(data) {
+			$("#pageContentFrame").html(data);
+		}
 	</script>
 </body>
 </html>

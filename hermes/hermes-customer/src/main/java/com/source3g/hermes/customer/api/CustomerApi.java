@@ -1,5 +1,6 @@
 package com.source3g.hermes.customer.api;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class CustomerApi {
 		int pageNoInt = Integer.valueOf(pageNo);
 		Customer customer = new Customer();
 		customer.setName(name);
-		customer.setMerchantId(merchantId);
+		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
 		return customerService.list(pageNoInt, customer);
 	}
@@ -52,7 +53,7 @@ public class CustomerApi {
 	@ResponseBody
 	public String update(@RequestBody Customer customer) {
 		logger.debug("update customer....");
-		customerService.update(customer);
+		customerService.updateExcludeProperties(customer, "merchantId", "callRecords");
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -73,4 +74,17 @@ public class CustomerApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
+
+	@RequestMapping(value = "/newCustomerList/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Page newCustomerList(String pageNo, String name, String phone, @PathVariable String merchantId) {
+		int pageNoInt = Integer.valueOf(pageNo);
+		Customer customer = new Customer();
+		customer.setName(name);
+		customer.setMerchantId(new ObjectId(merchantId));
+		customer.setPhone(phone);
+		return customerService.list(pageNoInt, customer, true);
+	}
+	
+
 }

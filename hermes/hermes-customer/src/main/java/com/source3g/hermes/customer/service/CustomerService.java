@@ -2,17 +2,28 @@ package com.source3g.hermes.customer.service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.CollectionNameConstant;
+import com.source3g.hermes.constants.JmsConstants;
+import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
@@ -23,6 +34,9 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class CustomerService extends BaseService {
 
+	@Autowired
+	private JmsTemplate jmsTemplate;
+
 	private String collectionName = CollectionNameConstant.CUSTOMER;
 
 	public Customer add(Customer customer) {
@@ -31,16 +45,36 @@ public class CustomerService extends BaseService {
 		return customer;
 	}
 
+	@Override
+	public <T extends AbstractEntity> void updateExcludeProperties(T entity, String... properties) {
+		super.updateExcludeProperties(entity, properties);
+		final String id = entity.getId().toString();
+		jmsTemplate.send(new MessageCreator() {
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				TextMessage createTextMessage = session.createTextMessage();
+				createTextMessage.setText(id);
+				createTextMessage.setStringProperty(JmsConstants.MESSAGE_TYPE, JmsConstants.UPDATE_CUSTOMER);
+				return createTextMessage;
+			}
+		});
+	}
+
 	public List<Customer> listAll() {
 		return mongoTemplate.findAll(Customer.class, collectionName);
 	}
 
-	public Page list(int pageNo, Customer customer) {
+	public Page list(int pageNo, Customer customer, boolean isNew) {
+		Query query = new Query();
 		if (customer.getMerchantId() == null) {
 			return null;
+		} else {
+			query.addCriteria(Criteria.where("merchantId").is(customer.getMerchantId()));
 		}
-		Query query = new Query();
-		if (StringUtils.isNotEmpty(customer.getName())) {
+
+		if (isNew == true) {
+			query.addCriteria(Criteria.where("name").is(null));
+		} else if (StringUtils.isNotEmpty(customer.getName())) {
 			Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}
@@ -56,6 +90,10 @@ public class CustomerService extends BaseService {
 		List<Customer> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Customer.class, collectionName);
 		page.setData(list);
 		return page;
+	}
+
+	public Page list(int pageNo, Customer customer) {
+		return list(pageNo, customer, false);
 	}
 
 	@Override
@@ -78,27 +116,18 @@ public class CustomerService extends BaseService {
 		if (merchant == null) {
 			throw new Exception("盒子所属商户不存在");
 		}
-		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())), Customer.class, collectionName);
-		if (customer == null) {
-			customer = new Customer();
-			customer.setPhone(phone);
-			customer.setId(ObjectId.get());
-		}
-
-		List<CallRecord> records = customer.getCallRecords();
-		if (records == null) {
-			records = new ArrayList<CallRecord>();
-		}
 		CallRecord record = new CallRecord();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date callInTime = null;
 		try {
-			record.setCallTime(dateFormat.parse(time));
+			callInTime = dateFormat.parse(time);
 		} catch (Exception e) {
 			throw new Exception("接听时间格式不正确");
 		}
+		record.setCallTime(callInTime);
 		record.setCallDuration(Integer.parseInt(duration));
-		records.add(record);
-		customer.setCallRecords(records);
-		mongoTemplate.save(customer, collectionName);
+		Update update = new Update();
+		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, collectionName);
 	}
 }

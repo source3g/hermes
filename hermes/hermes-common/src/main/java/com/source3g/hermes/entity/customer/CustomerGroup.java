@@ -1,5 +1,6 @@
 package com.source3g.hermes.entity.customer;
 
+import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -8,7 +9,7 @@ public class CustomerGroup extends AbstractEntity {
 	@NotEmpty(message = "{customer.group.name.not.null}")
 	private String name;
 
-	private Object merchantId;
+	private ObjectId merchantId;
 
 	public String getName() {
 		return name;
@@ -18,11 +19,11 @@ public class CustomerGroup extends AbstractEntity {
 		this.name = name;
 	}
 
-	public Object getMerchantId() {
+	public ObjectId getMerchantId() {
 		return merchantId;
 	}
 
-	public void setMerchantId(Object merchantId) {
+	public void setMerchantId(ObjectId merchantId) {
 		this.merchantId = merchantId;
 	}
 

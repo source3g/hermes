@@ -3,9 +3,10 @@ package com.source3g.hermes.entity;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.springframework.data.annotation.Id;
 
 public abstract class AbstractEntity {
-
+	@Id
 	private ObjectId id;
 
 	public ObjectId getId() {

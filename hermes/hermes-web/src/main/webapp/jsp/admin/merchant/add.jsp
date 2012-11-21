@@ -235,9 +235,9 @@
 			return false;
 		});
 		$('#addMerchantForm').submit(function() {
-		//	if (!$("#addMerchantForm").valid()) {
-		//		return false;
-		//	}
+		 	if (!$("#addMerchantForm").valid()) {
+		 		return false;
+			 }
 			 var options = {
 				success : toList
 			}; 

@@ -130,7 +130,7 @@
 						success : addSuccess
 				};
 				if(${not empty update }==true){
-					options.url="${pageContext.request.contextPath}/merchant/customer/update/";
+					options.url="${pageContext.request.contextPath}${action}";
 				}
 				$(this).ajaxSubmit(options);
 				return false;
@@ -178,7 +178,7 @@
 		
 		function initDialog(){
 			if(${not empty success}==true){
-				//$('#addMerchantForm').clearForm();
+				$('#addCustomerForm').clearForm();
 				$("#resultMessage").html("操作成功！");
 				$("#errorModal").modal();
 			}

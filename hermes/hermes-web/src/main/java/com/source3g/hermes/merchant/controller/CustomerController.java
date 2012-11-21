@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.WebUtils;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
+import com.source3g.hermes.utils.LoginUtils;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -37,11 +37,13 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView add(Customer customer, BindingResult errorResult) {
+	public ModelAndView add(Customer customer, BindingResult errorResult, HttpServletRequest req) throws Exception {
 		if (errorResult.hasErrors()) {
 			return new ModelAndView("merchant/customer/add");
 		}
 		handleCustomer(customer);
+		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
+		customer.setMerchantId(merchant.getId());
 		String uri = ConfigParams.getBaseUrl() + "customer/add/";
 		HttpEntity<Customer> httpEntity = new HttpEntity<Customer>(customer);
 		String result = restTemplate.postForObject(uri, httpEntity, String.class);
@@ -55,11 +57,8 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(Customer customer, String pageNo, HttpServletRequest req) {
-		Merchant merchant = (Merchant) WebUtils.getSessionAttribute(req, "loginUser");
-		if (merchant == null) {
-			return new ModelAndView("/merchant/error");
-		}
+	public ModelAndView list(Customer customer, String pageNo, HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
@@ -82,21 +81,23 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/toUpdate/{id}", method = RequestMethod.GET)
-	public ModelAndView toUpdate(@PathVariable String id) {
+	public ModelAndView toUpdate(@PathVariable String id, boolean isNewCustomer) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String uri = ConfigParams.getBaseUrl() + "customer/" + id + "/";
 		Customer customer = restTemplate.getForObject(uri, Customer.class);
 		model.put("customer", customer);
 		model.put(ReturnConstants.UPDATE, true);
+		if (isNewCustomer == true) {
+			model.put("action", "/merchant/customer/updateNew/");
+		} else {
+			model.put("action", "/merchant/customer/update/");
+		}
 		return new ModelAndView("/merchant/customer/add", model);
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public ModelAndView update(Customer customer) {
-		handleCustomer(customer);
-		String uri = ConfigParams.getBaseUrl() + "customer/update/";
-		HttpEntity<Customer> httpEntity = new HttpEntity<Customer>(customer);
-		String result = restTemplate.postForObject(uri, httpEntity, String.class);
+		String result = updateCustomer(customer);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
@@ -104,6 +105,26 @@ public class CustomerController {
 		} else {
 			return new ModelAndView("merchant/error");
 		}
+	}
+
+	@RequestMapping(value = "/updateNew", method = RequestMethod.POST)
+	public ModelAndView updateNew(Customer customer) {
+		String result = updateCustomer(customer);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+			return new ModelAndView("redirect:/merchant/customer/newCustomerList/", model);
+		} else {
+			return new ModelAndView("merchant/error");
+		}
+	}
+
+	private String updateCustomer(Customer customer) {
+		handleCustomer(customer);
+		String uri = ConfigParams.getBaseUrl() + "customer/update/";
+		HttpEntity<Customer> httpEntity = new HttpEntity<Customer>(customer);
+		String result = restTemplate.postForObject(uri, httpEntity, String.class);
+		return result;
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
@@ -115,6 +136,30 @@ public class CustomerController {
 		} else {
 			return new ModelAndView("/merchant/error");
 		}
+	}
+
+	@RequestMapping(value = "/newCustomerList", method = RequestMethod.GET)
+	public ModelAndView newCustomerList(Customer customer, String pageNo, HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		StringBuffer uriBuffer = new StringBuffer();
+		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/newCustomerList/");//
+		uriBuffer.append(merchant.getId());
+		uriBuffer.append("/?pageNo=" + pageNo);
+		if (StringUtils.isNotEmpty(customer.getPhone())) {
+			uriBuffer.append("&phone=" + customer.getPhone());
+		}
+		Page page = restTemplate.getForObject(uriBuffer.toString(), Page.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("page", page);
+		return new ModelAndView("/merchant/customer/newCustomerList", model);
+	}
+	
+	@RequestMapping(value = "/import", method = RequestMethod.GET)
+	public ModelAndView toImport() {
+		return new ModelAndView("/merchant/customer/import");
 	}
 
 	private void handleCustomer(Customer customer) {

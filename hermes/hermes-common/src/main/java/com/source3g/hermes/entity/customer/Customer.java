@@ -1,26 +1,34 @@
 package com.source3g.hermes.entity.customer;
 
+import java.util.Date;
 import java.util.List;
+
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
 
+@Document
+@CompoundIndexes({ @CompoundIndex(name = "merchant_phone", def = "{'phone': 1, 'merchantId': -1}", unique = true) })
 public class Customer extends AbstractEntity {
 	private String name;
 	private Sex sex;
 	private String birthday;
 	private String phone;
-	private String customerId;
 	private boolean blackList;
 	private String address;
 	private List<String> otherPhones;
 	private String qq;
 	private String email;
 	private String note;
-	
+
 	private List<CallRecord> callRecords;
 	private List<Remind> reminds;
-	private String merchantId;
+	private ObjectId merchantId;
+	private Date lastCallInTime; // 最后通电话时间
 
 	public String getBirthday() {
 		return birthday;
@@ -36,14 +44,6 @@ public class Customer extends AbstractEntity {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public String getCustomerId() {
-		return customerId;
-	}
-
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
 	}
 
 	public boolean isBlackList() {
@@ -110,11 +110,11 @@ public class Customer extends AbstractEntity {
 		this.name = name;
 	}
 
-	public String getMerchantId() {
+	public ObjectId getMerchantId() {
 		return merchantId;
 	}
 
-	public void setMerchantId(String merchantId) {
+	public void setMerchantId(ObjectId merchantId) {
 		this.merchantId = merchantId;
 	}
 
@@ -132,5 +132,13 @@ public class Customer extends AbstractEntity {
 
 	public void setCallRecords(List<CallRecord> callRecords) {
 		this.callRecords = callRecords;
+	}
+
+	public Date getLastCallInTime() {
+		return lastCallInTime;
+	}
+
+	public void setLastCallInTime(Date lastCallInTime) {
+		this.lastCallInTime = lastCallInTime;
 	}
 }

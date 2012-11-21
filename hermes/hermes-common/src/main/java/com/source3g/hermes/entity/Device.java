@@ -4,11 +4,12 @@ import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class Device extends AbstractEntity {
-	
-	@NotEmpty(message="{device.sn.not.null}")
+
+	@NotEmpty(message = "{device.sn.not.null}")
 	private String sn;
-	@NotEmpty(message="{device.simId.not.null}")
+
 	private ObjectId simId;
+
 	public String getSn() {
 		return sn;
 	}
@@ -24,6 +25,5 @@ public class Device extends AbstractEntity {
 	public void setSimId(ObjectId simId) {
 		this.simId = simId;
 	}
-	
-	
+
 }

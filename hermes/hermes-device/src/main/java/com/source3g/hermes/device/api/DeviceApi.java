@@ -66,6 +66,7 @@ public class DeviceApi
 	public Device getDeviceInfoBySn(@PathVariable String sn) {
 		return deviceService.findBySn(sn);
 	}
+	
 	@RequestMapping(value="/update" , method=RequestMethod.POST)
 	@ResponseBody
 	public String update(@RequestBody Device device){

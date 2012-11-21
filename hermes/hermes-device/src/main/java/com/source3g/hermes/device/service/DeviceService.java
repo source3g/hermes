@@ -17,11 +17,7 @@ import com.source3g.hermes.utils.Page;
 public class DeviceService extends BaseService
 {
 	private String collectionName = "device";
-	
-	public void add(Device device) {
-		device.setId(ObjectId.get());
-		mongoTemplate.insert(device, collectionName);
-	}
+
 	public Page list(int pageNo, Device device) {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(device.getSn())) {
@@ -58,6 +54,7 @@ public class DeviceService extends BaseService
 	public void update(Device device){
 		mongoTemplate.save(device, collectionName);
 	}
+	
 	@Override
 	public String getCollectionName() {
 		
