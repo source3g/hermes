@@ -1,20 +1,17 @@
 package com.source3g.hermes.entity.customer;
 
-import java.util.Date;
 import java.util.List;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
 
 @Document
-@CompoundIndexes({ @CompoundIndex(name = "merchant_phone", def = "{'phone': 1, 'merchantId': -1}", unique = true) })
-public class Customer extends AbstractEntity {
-	private static final long serialVersionUID = 6014996097125743375L;
+public class CustomerImportItem {
+	@DBRef
+	private CustomerImportLog importLog;
+
 	private String name;
 	private Sex sex;
 	private String birthday;
@@ -25,11 +22,31 @@ public class Customer extends AbstractEntity {
 	private String qq;
 	private String email;
 	private String note;
+	private String ImportStatus;
 
-	private List<CallRecord> callRecords;
-	private List<Remind> reminds;
-	private ObjectId merchantId;
-	private Date lastCallInTime; // 最后通电话时间
+	public CustomerImportLog getImportLog() {
+		return importLog;
+	}
+
+	public void setImportLog(CustomerImportLog importLog) {
+		this.importLog = importLog;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Sex getSex() {
+		return sex;
+	}
+
+	public void setSex(Sex sex) {
+		this.sex = sex;
+	}
 
 	public String getBirthday() {
 		return birthday;
@@ -95,51 +112,11 @@ public class Customer extends AbstractEntity {
 		this.note = note;
 	}
 
-	public Sex getSex() {
-		return sex;
+	public String getImportStatus() {
+		return ImportStatus;
 	}
 
-	public void setSex(Sex sex) {
-		this.sex = sex;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public ObjectId getMerchantId() {
-		return merchantId;
-	}
-
-	public void setMerchantId(ObjectId merchantId) {
-		this.merchantId = merchantId;
-	}
-
-	public List<Remind> getReminds() {
-		return reminds;
-	}
-
-	public void setReminds(List<Remind> reminds) {
-		this.reminds = reminds;
-	}
-
-	public List<CallRecord> getCallRecords() {
-		return callRecords;
-	}
-
-	public void setCallRecords(List<CallRecord> callRecords) {
-		this.callRecords = callRecords;
-	}
-
-	public Date getLastCallInTime() {
-		return lastCallInTime;
-	}
-
-	public void setLastCallInTime(Date lastCallInTime) {
-		this.lastCallInTime = lastCallInTime;
+	public void setImportStatus(String importStatus) {
+		ImportStatus = importStatus;
 	}
 }

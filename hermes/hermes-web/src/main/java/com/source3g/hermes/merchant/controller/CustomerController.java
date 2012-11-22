@@ -1,24 +1,37 @@
 package com.source3g.hermes.merchant.controller;
 
+import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
@@ -156,10 +169,49 @@ public class CustomerController {
 		model.put("page", page);
 		return new ModelAndView("/merchant/customer/newCustomerList", model);
 	}
-	
+
 	@RequestMapping(value = "/import", method = RequestMethod.GET)
 	public ModelAndView toImport() {
 		return new ModelAndView("/merchant/customer/import");
+	}
+
+	@RequestMapping(value = "/import", method = RequestMethod.POST)
+	@ResponseBody
+	public String importCustomer(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
+		File fileToCopy = new File("/temp/file/" + new Date().getTime());
+		try {
+			Merchant merchant = LoginUtils.getLoginMerchant(req);
+			String uri = ConfigParams.getBaseUrl() + "customer/import/" + merchant.getId() + "/";
+			FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
+			Resource resource = new FileSystemResource(fileToCopy);
+			MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+			formData.add("file", resource);
+			formData.add("oldName", new String(file.getOriginalFilename()));
+
+			HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+			HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
+			String result = restTemplate.postForObject(uri, requestEntity, String.class);
+			System.out.println(result);
+			// ResponseEntity<String> response = restTemplate.exchange(uri,
+			// HttpMethod.POST, requestEntity, String.class);
+			// System.out.println(response.getBody());
+		} catch (Exception e) {
+			return "上传失败";
+		} finally {
+			fileToCopy.delete();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/importLog", method = RequestMethod.GET)
+	public ModelAndView importLog(HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "customer/importLog/merchant/" + merchant.getId() + "/";
+		CustomerImportLog[] logs = restTemplate.getForObject(uri, CustomerImportLog[].class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("importLogs", logs);
+		return new ModelAndView("/merchant/customer/importLog", model);
 	}
 
 	private void handleCustomer(Customer customer) {

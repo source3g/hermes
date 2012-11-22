@@ -26,6 +26,11 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.source3g.hermes</groupId>
+			<artifactId>hermes-api-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
   </dependencies>
   
   <build>

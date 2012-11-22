@@ -78,7 +78,7 @@ body {
 								<li><a href="javascript:void();" id="newCustomerList">新顾客列表</a></li>
 								<li><a href="javascript:void();" id="callInList">来电顾客列表</a></li>
 								<li><a href="javascript:void();" id="importCustomer">导入顾客信息</a></li>
-								<li><a href="javascript:void();" id="importResult">导入日志</a></li>
+								<li><a href="javascript:void();" id="importLog">导入日志</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -126,6 +126,9 @@ body {
 		
 		$("#importCustomer").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/import/");
+		});
+		$("#importLog").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customer/importLog/");
 		});
 
 	});

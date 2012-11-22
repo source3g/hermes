@@ -20,6 +20,8 @@
 				</value>
 				<value>classpath*:jms.properties
 				</value>
+				<value>classpath*:system.properties
+				</value>
 			</list>
 		</property>
 	</bean>

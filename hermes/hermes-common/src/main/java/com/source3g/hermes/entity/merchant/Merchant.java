@@ -8,6 +8,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.source3g.hermes.entity.AbstractEntity;
 
 public class Merchant extends AbstractEntity {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9148277944381440756L;
 	@NotEmpty(message = "{merchant.name.not.null}")
 	private String name;
 	private String addr;

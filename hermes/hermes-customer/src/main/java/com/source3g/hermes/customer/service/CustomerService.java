@@ -6,27 +6,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.CollectionNameConstant;
-import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
@@ -34,10 +27,14 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class CustomerService extends BaseService {
 
-	@Autowired
-	private JmsTemplate jmsTemplate;
+//	@Autowired
+//	private JmsTemplate jmsTemplate;
 
 	private String collectionName = CollectionNameConstant.CUSTOMER;
+	
+	@Value(value = "${temp.import.log.dir}")
+	private String tempDir;
+	
 
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
@@ -48,16 +45,17 @@ public class CustomerService extends BaseService {
 	@Override
 	public <T extends AbstractEntity> void updateExcludeProperties(T entity, String... properties) {
 		super.updateExcludeProperties(entity, properties);
-		final String id = entity.getId().toString();
-		jmsTemplate.send(new MessageCreator() {
-			@Override
-			public Message createMessage(Session session) throws JMSException {
-				TextMessage createTextMessage = session.createTextMessage();
-				createTextMessage.setText(id);
-				createTextMessage.setStringProperty(JmsConstants.MESSAGE_TYPE, JmsConstants.UPDATE_CUSTOMER);
-				return createTextMessage;
-			}
-		});
+		/*
+		 * final String id = entity.getId().toString();
+		 * 
+		 * jmsTemplate.send(new MessageCreator() {
+		 * 
+		 * @Override public Message createMessage(Session session) throws
+		 * JMSException { TextMessage createTextMessage =
+		 * session.createTextMessage(); createTextMessage.setText(id);
+		 * createTextMessage.setStringProperty(JmsConstants.MESSAGE_TYPE,
+		 * JmsConstants.UPDATE_CUSTOMER); return createTextMessage; } });
+		 */
 	}
 
 	public List<Customer> listAll() {
@@ -130,4 +128,18 @@ public class CustomerService extends BaseService {
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, collectionName);
 	}
+
+	public String getTempDir() {
+		return tempDir;
+	}
+
+	public void setTempDir(String tempDir) {
+		this.tempDir = tempDir;
+	}
+
+	public void addImportLog(CustomerImportLog importLog) {
+		mongoTemplate.insert(importLog);
+	}
+	
+	
 }

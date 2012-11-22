@@ -1,19 +1,39 @@
 package com.source3g.hermes.customer.api;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+
+import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerImportLog;
+import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -23,6 +43,15 @@ public class CustomerApi {
 
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private CustomerImportService customerImportService;
+	
+	@Autowired
+	private Destination customerDestination;
+
+	@Autowired
+	private JmsTemplate jmsTemplate;
 
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)
 	@ResponseBody
@@ -86,5 +115,42 @@ public class CustomerApi {
 		return customerService.list(pageNoInt, customer, true);
 	}
 	
+	
+	@RequestMapping(value = "/importLog/merchant/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CustomerImportLog> importLog( @PathVariable String merchantId) {
+		return customerImportService.findImportLog(merchantId);
+	}
 
+	@RequestMapping(value = "/import/{merchantId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String importCustomer(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @PathVariable String merchantId) {// MultipartFile
+		String dir = customerService.getTempDir() + file.getOriginalFilename();
+		File fileToCopy = new File(dir);
+		try {
+			FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
+		} catch (IOException e) {
+			return "拷贝失败";
+		}
+		CustomerImportLog importLog = new CustomerImportLog();
+		importLog.setId(ObjectId.get());
+		Merchant merchant = new Merchant();
+		merchant.setId(new ObjectId(merchantId));
+		importLog.setMerchant(merchant);
+		importLog.setName(oldName);
+		importLog.setNewName(file.getOriginalFilename());
+		importLog.setStatus(ImportStatus.已接收准备导入.toString());
+		importLog.setFilePath(fileToCopy.getAbsolutePath());
+		customerService.addImportLog(importLog);
+		final CustomerImportLog importLogFinal = importLog;
+		jmsTemplate.send(customerDestination,new MessageCreator() {
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				ObjectMessage objectMessage = session.createObjectMessage(importLogFinal);
+				objectMessage.setStringProperty(JmsConstants.IMPORT_CUSTOMER, JmsConstants.IMPORT_CUSTOMER);
+				return objectMessage;
+			}
+		});
+		return ReturnConstants.SUCCESS;
+	}
 }

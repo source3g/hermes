@@ -4,6 +4,7 @@ import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class Device extends AbstractEntity {
+	private static final long serialVersionUID = -4975323959505730113L;
 
 	@NotEmpty(message = "{device.sn.not.null}")
 	private String sn;

@@ -1,11 +1,14 @@
 package com.source3g.hermes.entity;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.data.annotation.Id;
 
-public abstract class AbstractEntity {
+public abstract class AbstractEntity implements Serializable{
+	private static final long serialVersionUID = -6918623741108611406L;
 	@Id
 	private ObjectId id;
 
