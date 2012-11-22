@@ -28,7 +28,9 @@
 		<c:forEach items="${page.data}" var="merchantGroup">
 			<tr>
 				<td>${merchantGroup.name }</td>
-				<td><a class="btn btn-success" href="javascript:void();"
+				<td><a class="btn btn-success" href="javascript:void();" 
+					onclick="showMerchants('${merchantGroup.id}');">详细信息</a>
+					<a class="btn btn-success" href="javascript:void();"
 					onclick="toUpdate('${merchantGroup.id}');">修改</a> <a
 					class="btn btn-danger" href="javascript:void();"
 					onclick="deleteById('${merchantGroup.id}');">删除</a></td>
@@ -67,6 +69,13 @@
 				return false;
 			});
 		});
+		function showMerchants(id){
+			$.ajax({
+				url:"${pageContext.request.contextPath}/admin/merchantGroup/toUpdate/"+id+"/",
+				type:"get",
+				success:showList
+			});
+		}
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);
 			var options = {
@@ -86,6 +95,9 @@
 			});
 		}
 		function showList(data) {
+			if(${not empty merchants }==true){
+				$("#pageContentFrame").html(data);	
+			}
 			$("#pageContentFrame").html(data);
 		}
 		function toUpdate(id) {

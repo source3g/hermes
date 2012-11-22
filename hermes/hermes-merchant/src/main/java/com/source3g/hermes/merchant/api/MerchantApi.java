@@ -72,4 +72,11 @@ public class MerchantApi {
 		logger.debug("find merchant....");
 		return merchantService.findByDeviceIds(ids);
 	}
+	
+	@RequestMapping(value="/findmerchantsByMerchantGroupId/{id}",method=RequestMethod.GET)
+	@ResponseBody
+	public List<Merchant> merchantByMerchantGroupId(@PathVariable String id){
+		logger.debug("find merchants....");
+		return merchantService.findmerchantsByMerchantGroupId(id);
+	}
 }

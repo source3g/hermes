@@ -83,6 +83,7 @@ public class DeviceController {
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/device/list/");
 	}
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/sn/{sn}", method=RequestMethod.GET)
 	@ResponseBody
 	public Object findBySn(@PathVariable String sn){

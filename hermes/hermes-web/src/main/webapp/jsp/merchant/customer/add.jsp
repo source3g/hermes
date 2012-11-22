@@ -45,6 +45,7 @@
 				<td><label class="control-label">顾客组：</label></td>
 				<td><select id="customerGroupSel" name="customerGroupId"
 					class="input-medium">
+						
 				</select></td>
 				<td><label class="control-label">黑名单：</label></td>
 				<td><input type="checkbox" name="blackList"
@@ -52,7 +53,7 @@
 			</tr>
 			<tr>
 				<td><label class="control-label">家庭地址：</label></td>
-				<td colspan="3"><input type="text" class="span8"
+				<td colspan="3"><input type="text" class="span8" name="address"
 					placeholder="请输入地址..." value="${customer.address }" /></td>
 			</tr>
 
@@ -67,10 +68,10 @@
 
 			<tr>
 				<td><label class="control-label">QQ：</label></td>
-				<td><input type="text" class="span8" name="qq"
+				<td><input type="text" class="input-medium" name="qq"
 					value="${customer.qq }" /></td>
 				<td><label class="control-label">email：</label></td>
-				<td><input type="text" class="span8" name="email"
+				<td><input type="text" class="input-medium" name="email"
 					value="${customer.email }" /></td>
 			</tr>
 			<tr>
@@ -121,9 +122,67 @@
 	<script type="text/javascript">
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
 		$(document).ready(function() {
+			var validateoptions={
+					rules: {
+						name:{
+							rangelength:[0,50]
+						},
+			 			phone:{
+			 				rangelength:[11,11],
+							number:true,
+							digits:true 
+						},
+						customerGroupId:{
+							required : true
+						},
+						address:{
+							rangelength:[0,50]
+						},
+						qq:{
+							number:true,
+							digits:true 
+						}, 
+						email:{
+							email:true
+						},
+						note:{
+							rangelength:[0,50]
+						}
+					},
+					messages: {
+						name:{
+							rangelength:"姓名不得超过50字"
+						},
+				 		phone:{
+				 			rangelength:"输入长度必须为11位有效数字",
+							number:"请输入合法的数字",
+							digits:"请输入整数"
+						},
+						customerGroupId:{
+							required : "客户组不能为空"
+						},
+						address:{
+							rangelength:"地址不得超过50字"
+						},
+						qq:{
+							number:"请输入合法的数字",
+							digits:"请输入整数"
+						}, 
+						email:{
+							email:"请输入正确的email格式"
+						},
+						note:{
+							rangelength:"备注不得超过50字"
+						}
+					}
+			};
+			$('#addCustomerForm').validate(validateoptions);
 			initCustomerGroupList();
 			initDialog();
 			$("#addCustomerForm").submit(function() {
+				if(!$('#addCustomerForm').valid()){
+					return false;
+				}
 				var options={
 						url : "${pageContext.request.contextPath}/merchant/customer/add/",
 						type : "post",
@@ -151,15 +210,20 @@
 		}
 		function initCustomerSelection(data) {
 			for ( var i = 0; i < data.length; i++) {
-				$("#customerGroupSel").append("<option value='"+data[i].id+"'>" + data[i].name + "</option>");
+				if(data[i].id=='${customer.customerGroupId }'){
+					$("#customerGroupSel").append("<option value='"+data[i].id+"' selected>" + data[i].name + "</option>");	
+				}else{
+					$("#customerGroupSel").append("<option value='"+data[i].id+"'>" + data[i].name + "</option>");
+				}
 			}
-		}
+			
+		} 	
 		function addRemind() {
 			if ($(".remindItem").length == 0) {
 				$("#addRemindBtn")
 						.before(
 								"<div  class=\"remindItem\">事项：<input type=\"text\" name=\"reminds[0].name\" class=\"input-medium\"></input> 时间：<input type=\"text\" name=\"reminds[0].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\"> 提前<input type=\"text\" name=\"reminds[0].advancedTime\"  class=\"input-mini\"/>天 <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/> </div> ");
-			} else {
+			} else {2
 				$(".remindItem:last")
 						.after(
 								"<div  class=\"remindItem\">事项：<input type=\"text\" name=\"reminds["+remindIndex+"].name\" class=\"input-medium\"></input> 时间：<input type=\"text\" name=\"reminds["

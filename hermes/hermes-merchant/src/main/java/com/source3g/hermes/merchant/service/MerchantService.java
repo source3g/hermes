@@ -20,5 +20,7 @@ public interface MerchantService {
 	public Page list(int pageNo,Merchant merchant);
 
 	public  List<Merchant>  findByDeviceIds(String ids);
+
+	public List<Merchant> findmerchantsByMerchantGroupId(String id);
 	
 }

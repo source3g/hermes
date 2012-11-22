@@ -245,15 +245,9 @@
 			return false;
 		});
 		$('#addMerchantForm').submit(function() {
-<<<<<<< HEAD
-		 	if (!$("#addMerchantForm").valid()) {
-		 		return false;
-			 }
-=======
 			if (!$("#addMerchantForm").valid()) {
 				return false;
 			}
->>>>>>> branch 'master' of https://github.com/source3g/hermes.git
 			 var options = {
 				success : toList
 			}; 
