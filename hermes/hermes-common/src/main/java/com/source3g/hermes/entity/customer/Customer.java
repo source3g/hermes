@@ -30,7 +30,7 @@ public class Customer extends AbstractEntity {
 	private List<Remind> reminds;
 	private ObjectId merchantId;
 	private Date lastCallInTime; // 最后通电话时间
-
+	private ObjectId customerGroupId;
 	public String getBirthday() {
 		return birthday;
 	}
@@ -142,4 +142,14 @@ public class Customer extends AbstractEntity {
 	public void setLastCallInTime(Date lastCallInTime) {
 		this.lastCallInTime = lastCallInTime;
 	}
+
+	public ObjectId getCustomerGroupId() {
+		return customerGroupId;
+	}
+
+	public void setCustomerGroupId(ObjectId customerGroupId) {
+		this.customerGroupId = customerGroupId;
+	}
+
+
 }
