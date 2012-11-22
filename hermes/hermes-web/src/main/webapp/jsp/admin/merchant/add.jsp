@@ -38,9 +38,9 @@
 		<div class="control-group">
 			<label class="control-label" for="password">重复确认密码：</label>
 			<div class="controls">
-				<input type="password" class="input-xlarge"
-					placeholder="请重新输入商户密码..." id="password1" name="password1"
-					value="${merchant.password}"> <span class="help-inline"></span>
+				<input type="password" class="input-xlarge" placeholder="请重新输入商户密码..."
+					id="password1" name="password1" value="${merchant.password}">
+				<span class="help-inline"></span>
 			</div>
 		</div>
 

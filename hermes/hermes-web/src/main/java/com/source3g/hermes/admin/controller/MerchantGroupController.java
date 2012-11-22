@@ -1,6 +1,7 @@
 package com.source3g.hermes.admin.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
@@ -100,6 +102,13 @@ public class MerchantGroupController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("merchantGroup", merchantGroup);
 		model.put("update", true);
+		String uriMerchants=ConfigParams.getBaseUrl()+"merchant/findmerchantsByMerchantGroupId/"+id+"/";
+		@SuppressWarnings("unchecked")
+		List<Merchant> merchants=restTemplate.getForObject(uriMerchants, List.class);
+		if(merchants!=null&&merchants.size()>0){
+			model.put("merchants", merchants);
+			return new ModelAndView("admin/merchantGroup/merchantGroupInfo",model);
+		}
 		return new ModelAndView("admin/merchantGroup/add", model);
 	}
 
@@ -120,7 +129,4 @@ public class MerchantGroupController {
 			return new ModelAndView("admin/error");
 		}
 	}
-	
-	
-
 }
