@@ -102,7 +102,7 @@ public class MerchantGroupController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("merchantGroup", merchantGroup);
 		model.put("update", true);
-		String uriMerchants=ConfigParams.getBaseUrl()+"merchant/findmerchantsByMerchantGroupId/"+id+"/";
+		String uriMerchants=ConfigParams.getBaseUrl()+"merchant/findByGroupId/"+id+"/";
 		@SuppressWarnings("unchecked")
 		List<Merchant> merchants=restTemplate.getForObject(uriMerchants, List.class);
 		if(merchants!=null&&merchants.size()>0){

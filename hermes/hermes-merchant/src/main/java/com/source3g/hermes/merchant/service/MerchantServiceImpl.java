@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.CollectionNameConstant;
@@ -78,10 +79,26 @@ public class MerchantServiceImpl extends BaseService implements MerchantService 
 		
 	}
 	@Override
-	public List<Merchant> findmerchantsByMerchantGroupId(String id) {
+	public List<Merchant> findByGroupId(String id) {
 		ObjectId objId=new ObjectId(id);
 		return mongoTemplate.find(new Query(Criteria.where("merchantGroupId").is(objId)), Merchant.class);
 	}
+	/**
+	 * 给短信充值 count等于负数时做减法
+	 */
+	@Override
+	public void chargeMsg(String id, int count) {
+		
+		Update update=new Update();
+		update.inc("shortMessage.totalMsg", count);
+		if(count>0){
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id))), update, Merchant.class);
+		}else{
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id)).and("shortMessage.totalMsg").gte(0-count)), update, Merchant.class);
+		}
+		
+	}
+	
 	@Override
 	public String getCollectionName() {
 		return collectionName;

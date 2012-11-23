@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
@@ -73,10 +74,20 @@ public class MerchantApi {
 		return merchantService.findByDeviceIds(ids);
 	}
 	
-	@RequestMapping(value="/findmerchantsByMerchantGroupId/{id}",method=RequestMethod.GET)
+	@RequestMapping(value="/findByGroupId/{id}",method=RequestMethod.GET)
 	@ResponseBody
-	public List<Merchant> merchantByMerchantGroupId(@PathVariable String id){
+	public List<Merchant> findByGroupId(@PathVariable String id){
 		logger.debug("find merchants....");
-		return merchantService.findmerchantsByMerchantGroupId(id);
+		return merchantService.findByGroupId(id);
+	}
+	@RequestMapping(value="/chargeMsg/{id}",method=RequestMethod.POST)
+	@ResponseBody
+	public String chargeMsg(@PathVariable String id, String type,   String count){
+		int countInt=Integer.parseInt(count);
+		if(type.equals("cut")){
+			countInt=0-countInt;
+		}
+		 merchantService.chargeMsg(id,countInt);
+		 return ReturnConstants.SUCCESS;
 	}
 }

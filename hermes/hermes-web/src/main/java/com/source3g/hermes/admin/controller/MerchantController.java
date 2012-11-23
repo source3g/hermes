@@ -10,7 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -119,5 +123,59 @@ public class MerchantController {
 		} else {
 			return new ModelAndView("admin/error");
 		}
+	}
+
+	@RequestMapping(value = "/msgMinutes", method = RequestMethod.GET)
+	// msgMinutes短信记录
+	public ModelAndView msgMinutes(Merchant merchant, String pageNo) {
+		logger.debug("list.......");
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		String uri = ConfigParams.getBaseUrl() + "merchant/list/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(merchant.getName())) {
+			uri += "&name=" + merchant.getName();
+		}
+		Page page = restTemplate.getForObject(uri, Page.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("page", page);
+		return new ModelAndView("admin/shortMessage/shortMessageInfo", model);
+	}
+
+	/**
+	 * reservedMsg 预存短信
+	 * 
+	 * @param id
+	 *            商户Id
+	 * @return 商户短信预存界面
+	 */
+	@RequestMapping(value = "/toChargeMsg/{id}", method = RequestMethod.GET)
+	public ModelAndView reservedMsg(@PathVariable String id) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
+		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
+		model.put("merchant", merchant);
+		return new ModelAndView("admin/shortMessage/reservedMessage", model);
+	}
+
+	@RequestMapping(value = "/chargeMsg/{id}", method = RequestMethod.POST)
+	public ModelAndView chargeMsg(@PathVariable String id, String type, String count) {
+
+		MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();
+		formData.add("type", type);
+		formData.add("count", count);
+		/*
+		 * HttpHeaders httpHeaders=new HttpHeaders();
+		 * httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		 * HttpEntity<MultiValueMap<String, Object>> entity=new
+		 * HttpEntity<MultiValueMap<String, Object>>(formData); 
+		 */
+		String uri = ConfigParams.getBaseUrl() + "merchant/chargeMsg/" + id + "/";
+
+		String result = restTemplate.postForObject(uri, formData, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("admin/shortMessage/shortMessageInfo");
+		}
+		return new ModelAndView("admin/error");
 	}
 }

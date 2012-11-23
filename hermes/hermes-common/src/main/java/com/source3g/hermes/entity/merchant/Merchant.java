@@ -19,7 +19,8 @@ public class Merchant extends AbstractEntity {
 	private ObjectId merchantGroupId;
 
 	private List<ObjectId> deviceIds;
-
+	
+	private ShortMessage shortMessage;
 	public String getName() {
 		return name;
 	}
@@ -68,4 +69,14 @@ public class Merchant extends AbstractEntity {
 		this.password = password;
 	}
 
+	public ShortMessage getShortMessage() {
+		return shortMessage;
+	}
+
+	public void setShortMessage(ShortMessage shortMessage) {
+		this.shortMessage = shortMessage;
+	}
+
+
+	
 }
