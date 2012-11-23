@@ -31,8 +31,7 @@ import com.source3g.hermes.utils.Page;
 @Controller
 @RequestMapping("/admin/device")
 public class DeviceController {
-	private static final Logger logger = LoggerFactory
-			.getLogger(MerchantController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MerchantController.class);
 
 	@Autowired
 	private RestTemplate restTemplate;
@@ -49,104 +48,107 @@ public class DeviceController {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/device/add", model);
 		}
-		String uri= ConfigParams.getBaseUrl()+"device/add";
+		String uri = ConfigParams.getBaseUrl() + "device/add";
 		HttpEntity<Device> entity = new HttpEntity<Device>(device);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
-			model.put( ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("admin/device/add", model);
 		} else {
 			return new ModelAndView("admin/error");
 		}
 	}
-	
-	@RequestMapping( value="/list", method = RequestMethod.GET)
-	public ModelAndView list(Device device,String pageNo) {
+
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public ModelAndView list(Device device, String pageNo) {
 		logger.debug("list.......");
-		if(StringUtils.isEmpty(pageNo)){
-			pageNo="1";
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
 		}
-		String uri = ConfigParams.getBaseUrl()+"device/list/?pageNo="+pageNo;
-		if(StringUtils.isNotEmpty(device.getSn())){
-			uri+="&sn="+device.getSn();
+		String uri = ConfigParams.getBaseUrl() + "device/list/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(device.getSn())) {
+			uri += "&sn=" + device.getSn();
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
 		return new ModelAndView("admin/device/list", model);
 	}
-	
-	@RequestMapping(value="/delete/{id}", method=RequestMethod.GET)
-	public ModelAndView deleteById(@PathVariable String id){
-		String uri=ConfigParams.getBaseUrl()+"device/delete/" + id+"/";
+
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	public ModelAndView deleteById(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "device/delete/" + id + "/";
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/device/list/");
 	}
+
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/sn/{sn}", method=RequestMethod.GET)
+	@RequestMapping(value = "/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public Object findBySn(@PathVariable String sn){
-		String uri = ConfigParams.getBaseUrl()+"device/sn/"+sn;
-		Device device=restTemplate.getForObject(uri, Device.class);
-		if(device==null){
+	public Object findBySn(@PathVariable String sn) {
+		String uri = ConfigParams.getBaseUrl() + "device/sn/" + sn;
+		Device device = restTemplate.getForObject(uri, Device.class);
+		if (device == null) {
 			return "   盒子名称输入有误";
 		}
-		String uriMerchant=ConfigParams.getBaseUrl()+"merchant/findByDeviceIds/"+device.getId()+"/";
-		List<Merchant> merchant=restTemplate.getForObject(uriMerchant, List.class);
-		if(merchant!=null&&merchant.size()>0){
-			
+		String uriMerchant = ConfigParams.getBaseUrl() + "merchant/findByDeviceIds/" + device.getId() + "/";
+		List<Merchant> merchant = restTemplate.getForObject(uriMerchant, List.class);
+		if (merchant != null && merchant.size() > 0) {
+
 			return "   该盒子已被绑定";
 		}
-		return  device;
+		return device;
 	}
-	@RequestMapping(value="/findById/{id}", method=RequestMethod.GET)
-	public ModelAndView findById(@PathVariable String id){
+
+	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
+	public ModelAndView findById(@PathVariable String id) {
 		Map<String, Object> model = new HashMap<String, Object>();
-		String uri=ConfigParams.getBaseUrl()+"device/"+id+"/";
-		Device[] devices=restTemplate.getForObject(uri, Device[].class);
-		if(devices==null||devices.length!=1){
-			 return new ModelAndView(("/admin/error"));
+		String uri = ConfigParams.getBaseUrl() + "device/" + id + "/";
+		Device[] devices = restTemplate.getForObject(uri, Device[].class);
+		if (devices == null || devices.length != 1) {
+			return new ModelAndView(("/admin/error"));
 		}
-		if(devices[0].getSimId()!=null){
-			String uriSim=ConfigParams.getBaseUrl()+"sim/id/"+devices[0].getSimId()+"/";
-			Sim sim=restTemplate.getForObject(uriSim, Sim.class);
+		if (devices[0].getSimId() != null) {
+			String uriSim = ConfigParams.getBaseUrl() + "sim/id/" + devices[0].getSimId() + "/";
+			Sim sim = restTemplate.getForObject(uriSim, Sim.class);
 			model.put("sim", sim);
 		}
 		model.put("device", devices[0]);
-		return new ModelAndView(("/admin/device/deviceInfo"),model);
+		return new ModelAndView(("/admin/device/deviceInfo"), model);
 	}
-	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public ModelAndView update(@Valid Device device, String no,BindingResult errorResult){
+
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public ModelAndView update(@Valid Device device, String no, BindingResult errorResult) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/device/deviceInfo", model);
 		}
-			String uriSim=ConfigParams.getBaseUrl()+"sim/no/"+no+"/";
-			Sim sim=restTemplate.getForObject(uriSim, Sim.class);
-			if(sim==null){
-				errorResult.addError(new ObjectError("simIsNull","SIM卡号不存在"));
-				model.put("errors", errorResult.getAllErrors());
-				return new ModelAndView("/admin/device/deviceInfo",model);
-			}
-				String uriDevice=ConfigParams.getBaseUrl() +"device/simId/"+sim.getId()+"/";
-				Device findDevice=restTemplate.getForObject(uriDevice, Device.class);
-				if(findDevice!=null){
-					errorResult.addError(new ObjectError("findDevice","SIM卡已被使用"));
-					model.put("errors", errorResult.getAllErrors());
-					return new ModelAndView("/admin/device/deviceInfo",model);
-				}
-					device.setSimId(sim.getId());
-					String uri = ConfigParams.getBaseUrl() + "device/update/";
-					HttpEntity<Device> entity = new HttpEntity<Device>(device);
-					String result = restTemplate.postForObject(uri, entity, String.class);
-					if (ReturnConstants.SUCCESS.equals(result)) {
-						model.put("success", "success");
-						return new ModelAndView("/admin/device/deviceInfo",model);
-					} else {
-						return new ModelAndView("admin/error");
-					}
-		
+		String uriSim = ConfigParams.getBaseUrl() + "sim/no/" + no + "/";
+		Sim sim = restTemplate.getForObject(uriSim, Sim.class);
+		if (sim == null) {
+			errorResult.addError(new ObjectError("simIsNull", "SIM卡号不存在"));
+			model.put("errors", errorResult.getAllErrors());
+			return new ModelAndView("/admin/device/deviceInfo", model);
+		}
+		String uriDevice = ConfigParams.getBaseUrl() + "device/simId/" + sim.getId() + "/";
+		Device findDevice = restTemplate.getForObject(uriDevice, Device.class);
+		if (findDevice != null) {
+			errorResult.addError(new ObjectError("findDevice", "SIM卡已被使用"));
+			model.put("errors", errorResult.getAllErrors());
+			return new ModelAndView("/admin/device/deviceInfo", model);
+		}
+		device.setSimId(sim.getId());
+		String uri = ConfigParams.getBaseUrl() + "device/update/";
+		HttpEntity<Device> entity = new HttpEntity<Device>(device);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			model.put("success", "success");
+			return new ModelAndView("/admin/device/deviceInfo", model);
+		} else {
+			return new ModelAndView("admin/error");
+		}
+
 	}
 }

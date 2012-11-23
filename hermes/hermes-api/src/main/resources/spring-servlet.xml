@@ -49,6 +49,8 @@
 						</list>
 					</property>
 				</bean>
+				<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" ></bean>
+				<bean class="org.springframework.http.converter.ResourceHttpMessageConverter" ></bean>
 			</list>
 		</property>
 	</bean>
@@ -146,7 +148,7 @@
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<!--one of the properties available;the maximum file size in bytes -->
-		<property name="maxUploadSize" value="100000" />
+		<property name="maxUploadSize" value="1000000000" />
 	</bean>
 
 	<bean id="customEditorConfigurer"

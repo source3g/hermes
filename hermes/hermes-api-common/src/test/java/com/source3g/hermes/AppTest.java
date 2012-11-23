@@ -1,4 +1,4 @@
-package com.source3g.hermes.merchant.api;
+package com.source3g.hermes;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

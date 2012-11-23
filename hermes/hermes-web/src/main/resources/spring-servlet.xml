@@ -47,6 +47,10 @@
 						</list>
 					</property>
 				</bean>
+				<bean
+					class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean>
+				<bean
+					class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean>
 			</list>
 		</property>
 	</bean>
@@ -139,7 +143,7 @@
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<!--one of the properties available;the maximum file size in bytes -->
-		<property name="maxUploadSize" value="100000" />
+		<property name="maxUploadSize" value="10000000000000" />
 	</bean>
 
 	<!-- 控制器异常处理 -->
@@ -159,6 +163,25 @@
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonConverter" />
+				<bean
+					class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean>
+				<bean
+					class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean>
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.BufferedImageHttpMessageConverter" />
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<bean class="org.springframework.http.MediaType">
+								<constructor-arg index="0" value="text" />
+								<constructor-arg index="1" value="plain" />
+								<constructor-arg index="2" value="UTF-8" />
+							</bean>
+						</list>
+					</property>
+				</bean>
 			</list>
 		</property>
 	</bean>

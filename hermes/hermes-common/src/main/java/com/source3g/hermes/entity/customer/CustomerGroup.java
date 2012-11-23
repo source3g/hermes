@@ -6,6 +6,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.source3g.hermes.entity.AbstractEntity;
 
 public class CustomerGroup extends AbstractEntity {
+	private static final long serialVersionUID = 5514478207740377728L;
+
 	@NotEmpty(message = "{customer.group.name.not.null}")
 	private String name;
 

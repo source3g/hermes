@@ -14,6 +14,7 @@ import com.source3g.hermes.enums.Sex;
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "merchant_phone", def = "{'phone': 1, 'merchantId': -1}", unique = true) })
 public class Customer extends AbstractEntity {
+	private static final long serialVersionUID = 6014996097125743375L;
 	private String name;
 	private Sex sex;
 	private String birthday;
