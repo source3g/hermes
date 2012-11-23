@@ -104,7 +104,7 @@
 				<input type="text" class="input-xlarge" placeholder="请输入盒子SN编码..."
 					id="deviceSn" name="sn"> <input type="button"
 					class="btn btn-primary " id="deviceId" onclick="findDevice()"
-					value="增加"><span id="resultMessage"></span>
+					value="增加"><span id="deviceMessage"></span>
 			</div>
 		</div>
 		<table
@@ -245,9 +245,9 @@
 			return false;
 		});
 		$('#addMerchantForm').submit(function() {
-			if (!$("#addMerchantForm").valid()) {
-				return false;
-			}
+		 	if (!$("#addMerchantForm").valid()) {
+		 		return false;
+			 }
 			 var options = {
 				success : toList
 			}; 
@@ -271,7 +271,7 @@
 		});
 		
 		if(isInTable==true){
-			$('#resultMessage').html("  盒子已存在表格中").css("color","red");
+			$('#deviceMessage').html("  盒子已存在表格中").css("color","red");
 			return;
 		}
 		
@@ -285,7 +285,7 @@
 	}
 	
 	function showError(){
-		$('#resultMessage').html("  请输入盒子名称").css("color","red");
+		$('#deviceMessgae').html("  请输入盒子名称").css("color","red");
 	}
 	
 		function select(id, name) {
@@ -335,10 +335,10 @@
 
 		function showDevices(data){
 			if( data.sn==null){
-				$('#resultMessage').html(data).css("color","red");
+				$('#deviceMessage').html(data).css("color","red");
 				return ;
 			}else{
-			$('#resultMessage').html("");
+			$('#deviceMessage').html("");
 			var str = $("<tr><td class='deviceSnTd'>"+data.sn+ "</td><td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this)' value='删除'><input type='hidden' name='deviceIds' value='"+data.id+"'></td></tr>")
 			$('#deviceTable').append(str);
 			}
