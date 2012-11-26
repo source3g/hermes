@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -159,18 +161,14 @@ public class MerchantController {
 	@RequestMapping(value = "/toChargeMsg/{id}", method = RequestMethod.POST)
 	public ModelAndView chargeMsg(@PathVariable String id, String type, String count) {
 
-		MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();
+		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("type", type);
 		formData.add("count", count);
-		/*
-		 * HttpHeaders httpHeaders=new HttpHeaders();
-		 * httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		 * HttpEntity<MultiValueMap<String, Object>> entity=new
-		 * HttpEntity<MultiValueMap<String, Object>>(formData); 
-		 */
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		String uri = ConfigParams.getBaseUrl() + "merchant/chargeMsg/" + id + "/";
-
-		String result = restTemplate.postForObject(uri, formData, String.class);
+		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("admin/shortMessage/shortMessageInfo");
 		}

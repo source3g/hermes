@@ -68,7 +68,7 @@
 	} 
 	 function reservedMsgNotes(id){
 		 $.ajax({
-			url:"",
+			url:"${pageContext.request.contextPath}/admin/merchant/toChargeMsg/"+id+"/",
 			type:"get",
 			success:toNotes
 		 });
