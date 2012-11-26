@@ -163,13 +163,12 @@
 		<property name="messageConverters">
 			<list>
 				<ref bean="jsonConverter" />
-				<bean
-					class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean>
-				<bean
-					class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean>
+				<bean class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter"></bean>
+				<!-- <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean> -->
+				<!-- <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean> -->
 				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
-				<bean
-					class="org.springframework.http.converter.BufferedImageHttpMessageConverter" />
+				<!-- <bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" 
+					/> -->
 				<bean
 					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
