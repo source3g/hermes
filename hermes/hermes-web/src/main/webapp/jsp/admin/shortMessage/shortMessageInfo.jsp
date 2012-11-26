@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>短信预存记录</title>
+<title>短信预存明细</title>
 </head>
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
@@ -22,7 +22,7 @@
 				<th width="15%">预存短信数量</th>
 				<th width="15%">已使用短信数量</th>
 				<th width="15%">可用短信数量</th>
-				<th width="35%">短信预存</th>
+				<th width="35%">短信操作</th>
 			</tr>
 		</thead>
 		<c:forEach items="${page.data}" var="merchant">
@@ -32,8 +32,10 @@
 				<td>${merchant.shortMessage.sendMsg}</td>
 				<td>${merchant.shortMessage.surplusMsg}</td>
 				<td><a class="btn btn-success" href="javascript:void();"
-					onclick="reservedMsg('${merchant.id}');">短信预存</a>			
-				</td>
+					onclick="reservedMsg('${merchant.id}');">短信预存</a>
+					<a class="btn btn-success" href="javascript:void();"
+					onclick="reservedMsgNotes('${merchant.id}');">短信记录</a>						
+				</td>					
 			</tr>
 		</c:forEach>
 	</table>
@@ -52,6 +54,7 @@
 	
 	$(document).ready(function(){
 		initPage();
+		
 	});
 	function reservedMsg(id){   //reserved预存
 	 	$.ajax({
@@ -63,6 +66,16 @@
 	 function toRecharge(data){   //Recharge充值
 		$("#pageContentFrame").html(data);
 	} 
+	 function reservedMsgNotes(id){
+		 $.ajax({
+			url:"",
+			type:"get",
+			success:toNotes
+		 });
+	 }
+	 function toNotes(data){
+		 $("#pageContentFrame").html(data);
+	 }
     function initPage(){
     	$('#pageOk').click(function(){
     		var pageNoToGo=$('#pageNoToGo').val();

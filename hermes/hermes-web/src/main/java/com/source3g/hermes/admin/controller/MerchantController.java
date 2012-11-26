@@ -123,7 +123,7 @@ public class MerchantController {
 		}
 	}
 
-	@RequestMapping(value = "/msgMinutes", method = RequestMethod.GET)
+	@RequestMapping(value = "/MsgNotes", method = RequestMethod.GET)
 	// msgMinutes短信记录
 	public ModelAndView msgMinutes(Merchant merchant, String pageNo) {
 		logger.debug("list.......");
@@ -156,7 +156,7 @@ public class MerchantController {
 		return new ModelAndView("admin/shortMessage/reservedMessage", model);
 	}
 
-	@RequestMapping(value = "/chargeMsg/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/toChargeMsg/{id}", method = RequestMethod.POST)
 	public ModelAndView chargeMsg(@PathVariable String id, String type, String count) {
 
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<String, String>();

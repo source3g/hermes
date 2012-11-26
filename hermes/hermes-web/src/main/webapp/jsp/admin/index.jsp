@@ -117,9 +117,7 @@ body {
 							<ul id="sim-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
-								<li><a href="javascript:void();" id="shortMsgInfo">预存记录</a></li>
-								<li><a href="javascript:void();" id="prestoreMsg">预存明细</a></li>
-								<li><a href="javascript:void();" id="sendMsg">发送记录</a></li>
+								<li><a href="javascript:void();" id="shortMsgInfo">预存明细</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -178,7 +176,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/admin/sim/list/");
 		});
 		$("#shortMsgInfo").click(function(){
-			loadPage("${pageContext.request.contextPath}/admin/merchant/msgMinutes/");
+			loadPage("${pageContext.request.contextPath}/admin/merchant/MsgNotes/");
 		})
 		
 	});
