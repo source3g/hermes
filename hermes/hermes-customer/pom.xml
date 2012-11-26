@@ -1,17 +1,18 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.source3g.hermes</groupId>
-    <artifactId>hermes-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
-  <artifactId>hermes-customer</artifactId>
-  <name>hermes-customer</name>
-  <url>http://maven.apache.org</url>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.source3g.hermes</groupId>
+		<artifactId>hermes-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>hermes-customer</artifactId>
+	<name>hermes-customer</name>
+	<url>http://maven.apache.org</url>
 
-  <dependencies>
+	<dependencies>
 		<dependency>
 			<groupId>com.source3g.hermes</groupId>
 			<artifactId>hermes-common</artifactId>
@@ -31,31 +32,50 @@
 			<artifactId>hermes-api-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-  </dependencies>
-  
-  <build>
-  	<plugins>
-  		<!-- jar插件 -->
-				<!-- <plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.4</version>
-					<configuration>
-						<archive>
-							<manifest>
-								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-								<addClasspath>true</addClasspath>
-							</manifest>
-						</archive>
-						<excludes>
-							<exclude>applicationContext-jms-simple.xml</exclude>
-						</excludes>
-						
-					</configuration>
-				</plugin> -->
-  	</plugins>
-  
-  </build>
-  
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>openxml4j</artifactId>
+			<version>1.0-beta</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<url>http://repo2.maven.org/maven2</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<!-- jar插件 -->
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+				<version>2.4</version> <configuration> <archive> <manifest> <addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
+				<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries> <addClasspath>true</addClasspath> 
+				</manifest> </archive> <excludes> <exclude>applicationContext-jms-simple.xml</exclude> 
+				</excludes> </configuration> </plugin> -->
+		</plugins>
+
+	</build>
+
 </project>

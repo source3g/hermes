@@ -6,15 +6,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.constants.CollectionNameConstant;
+import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CallRecord;
@@ -27,18 +36,18 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class CustomerService extends BaseService {
 
-//	@Autowired
-//	private JmsTemplate jmsTemplate;
-
-	private String collectionName = CollectionNameConstant.CUSTOMER;
-	
 	@Value(value = "${temp.import.log.dir}")
 	private String tempDir;
-	
+
+	@Autowired
+	private Destination customerDestination;
+
+	@Autowired
+	private JmsTemplate jmsTemplate;
 
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
-		mongoTemplate.insert(customer, collectionName);
+		mongoTemplate.insert(customer);
 		return customer;
 	}
 
@@ -59,7 +68,7 @@ public class CustomerService extends BaseService {
 	}
 
 	public List<Customer> listAll() {
-		return mongoTemplate.findAll(Customer.class, collectionName);
+		return mongoTemplate.findAll(Customer.class);
 	}
 
 	public Page list(int pageNo, Customer customer, boolean isNew) {
@@ -82,10 +91,10 @@ public class CustomerService extends BaseService {
 		}
 
 		Page page = new Page();
-		Long totalCount = mongoTemplate.count(query, collectionName);
+		Long totalCount = mongoTemplate.count(query, Customer.class);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
-		List<Customer> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Customer.class, collectionName);
+		List<Customer> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Customer.class);
 		page.setData(list);
 		return page;
 	}
@@ -94,23 +103,18 @@ public class CustomerService extends BaseService {
 		return list(pageNo, customer, false);
 	}
 
-	@Override
-	public String getCollectionName() {
-		return collectionName;
-	}
-
 	public Customer get(String id) {
-		return mongoTemplate.findById(new ObjectId(id), Customer.class, collectionName);
+		return mongoTemplate.findById(new ObjectId(id), Customer.class);
 	}
 
 	public void callIn(String deviceSn, String phone, String time, String duration) throws Exception {
-		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class, CollectionNameConstant.DEVICE);
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);
 		if (device == null) {
 			throw new Exception("盒子编号不存在");
 		}
 		Query findMerchantByDeviceSn = new Query();
 		findMerchantByDeviceSn.addCriteria(Criteria.where("deviceIds").is(device.getId()));
-		Merchant merchant = mongoTemplate.findOne(findMerchantByDeviceSn, Merchant.class, CollectionNameConstant.MERCHANT);
+		Merchant merchant = mongoTemplate.findOne(findMerchantByDeviceSn, Merchant.class);
 		if (merchant == null) {
 			throw new Exception("盒子所属商户不存在");
 		}
@@ -126,7 +130,7 @@ public class CustomerService extends BaseService {
 		record.setCallDuration(Integer.parseInt(duration));
 		Update update = new Update();
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
-		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, collectionName);
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 	}
 
 	public String getTempDir() {
@@ -137,9 +141,20 @@ public class CustomerService extends BaseService {
 		this.tempDir = tempDir;
 	}
 
-	public void addImportLog(CustomerImportLog importLog) {
+	public void addImportLog(CustomerImportLog importLog) throws Exception {
 		mongoTemplate.insert(importLog);
+		final CustomerImportLog importLogFinal = importLog;
+		try{
+		jmsTemplate.send(customerDestination,new MessageCreator() {
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				ObjectMessage objectMessage = session.createObjectMessage(importLogFinal);
+				objectMessage.setStringProperty(JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER);
+				return objectMessage;
+			}
+		});
+		}catch(Exception e){
+			throw new Exception("日志接收失败");
+		}
 	}
-	
-	
 }

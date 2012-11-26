@@ -7,5 +7,7 @@ public interface JmsConstants {
 	public String UPDATE_CUSTOMER="updateCustomer";
 	
 	public String IMPORT_CUSTOMER="importCustomer";
+	
+	public String TYPE="type";
 
 }

@@ -213,6 +213,8 @@ public class CustomerController {
 		model.put("importLogs", logs);
 		return new ModelAndView("/merchant/customer/importLog", model);
 	}
+	
+	
 
 	private void handleCustomer(Customer customer) {
 		List<Remind> reminds = customer.getReminds();

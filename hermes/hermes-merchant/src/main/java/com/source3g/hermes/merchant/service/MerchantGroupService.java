@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.constants.CollectionNameConstant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
@@ -17,11 +16,9 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class MerchantGroupService extends BaseService {
 
-	protected String collectionName = CollectionNameConstant.MERCHANT_GROUP;
-
 	public void add(MerchantGroup merchantGroup) {
 		merchantGroup.setId(ObjectId.get());
-		mongoTemplate.insert(merchantGroup, collectionName);
+		mongoTemplate.insert(merchantGroup);
 	}
 
 	public Page list(int pageNo, MerchantGroup merchantGroup) {
@@ -32,10 +29,10 @@ public class MerchantGroupService extends BaseService {
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}
 		Page page = new Page();
-		Long totalCount = mongoTemplate.count(query, collectionName);
+		Long totalCount = mongoTemplate.count(query, MerchantGroup.class);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
-		List<MerchantGroup> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), MerchantGroup.class, collectionName);
+		List<MerchantGroup> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), MerchantGroup.class);
 		page.setData(list);
 		return page;
 	}
@@ -47,26 +44,19 @@ public class MerchantGroupService extends BaseService {
 			Pattern pattern = Pattern.compile("^.*" + merchantGroup.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}
-		List<MerchantGroup> list = mongoTemplate.find(query, MerchantGroup.class, collectionName);
+		List<MerchantGroup> list = mongoTemplate.find(query, MerchantGroup.class);
 		return list;
 	}
 
 	public void deleteById(String id) {
-		ObjectId objId = new ObjectId(id);
-		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)), collectionName);
+		super.deleteById(id, MerchantGroup.class);
 	}
 
 	public void update(MerchantGroup merchantGroup) {
-		mongoTemplate.save(merchantGroup, collectionName);
+		mongoTemplate.save(merchantGroup);
 	}
 
 	public MerchantGroup get(String id) {
-		return mongoTemplate.findById(new ObjectId(id), MerchantGroup.class, collectionName);
+		return mongoTemplate.findById(new ObjectId(id), MerchantGroup.class);
 	}
-
-	@Override
-	public String getCollectionName() {
-		return collectionName;
-	}
-
 }

@@ -25,10 +25,10 @@ public class CustomerImportLog extends AbstractEntity {
 	private String newName;
 	private String status;
 	private int totalCount;
-	private int importCount;
 	private Date importTime;
 	private String filePath;
 	private String failedReason;
+	private int failedCount;
 
 	public Merchant getMerchant() {
 		return merchant;
@@ -62,14 +62,6 @@ public class CustomerImportLog extends AbstractEntity {
 		this.totalCount = totalCount;
 	}
 
-	public int getImportCount() {
-		return importCount;
-	}
-
-	public void setImportCount(int importCount) {
-		this.importCount = importCount;
-	}
-
 	public Date getImportTime() {
 		return importTime;
 	}
@@ -100,6 +92,14 @@ public class CustomerImportLog extends AbstractEntity {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public int getFailedCount() {
+		return failedCount;
+	}
+
+	public void setFailedCount(int failedCount) {
+		this.failedCount = failedCount;
 	}
 
 }

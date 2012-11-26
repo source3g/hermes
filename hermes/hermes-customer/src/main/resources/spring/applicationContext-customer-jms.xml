@@ -61,7 +61,7 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 		<property name="messageListener" ref="customerImportMessageListener" />
 		<property name="subscriptionDurable" value="true" />
 		<property name="durableSubscriptionName" value="customer_import" />
-		<property name="messageSelector" value="importCustomer is not null"></property>
+		<property name="messageSelector" value="type='importCustomer'"></property>
 	</bean>
 
 </beans>
