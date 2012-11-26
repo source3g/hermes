@@ -2,7 +2,10 @@ package com.source3g.hermes.entity;
 
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+
+@Document
 public class Device extends AbstractEntity {
 	private static final long serialVersionUID = -4975323959505730113L;
 

@@ -1,7 +1,9 @@
 package com.source3g.hermes.entity;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class Sim extends AbstractEntity {
 	private static final long serialVersionUID = 3387120404561117471L;
 	@NotEmpty(message = "{device.sn.not.null}")

@@ -31,7 +31,39 @@
 			<artifactId>hermes-api-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>openxml4j</artifactId>
+			<version>1.0-beta</version>
+		</dependency>
   </dependencies>
+  
+<!--   <repositories>  
+    <repository>  
+      <snapshots>  
+        <enabled>false</enabled>  
+      </snapshots>  
+      <id>central</id>  
+      <name>Maven Repository Switchboard</name>  
+      <url>http://repo2.maven.org/maven2</url>  
+    </repository>  
+  </repositories>   -->
   
   <build>
   	<plugins>

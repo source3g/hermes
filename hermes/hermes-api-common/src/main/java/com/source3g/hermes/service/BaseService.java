@@ -21,9 +21,9 @@ public abstract class BaseService {
 	@Autowired
 	protected MongoTemplate mongoTemplate;
 
-	public void deleteById(String id) {
+	public <T> void deleteById(String id, Class<T> t) {
 		ObjectId objId = new ObjectId(id);
-		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)), getCollectionName());
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)), t);
 	}
 
 	public <T extends AbstractEntity> void add(T entity) {
@@ -32,7 +32,7 @@ public abstract class BaseService {
 		} else if (entity.getId() == null) {
 			entity.setId(ObjectId.get());
 		}
-		mongoTemplate.insert(entity, getCollectionName());
+		mongoTemplate.insert(entity);
 	}
 
 	public <T extends AbstractEntity> void update(T entity) {
@@ -40,7 +40,7 @@ public abstract class BaseService {
 			return;
 		}
 		// mongoTemplate.updateFirst(query, new Update()., collectionName)
-		mongoTemplate.save(entity, getCollectionName());
+		mongoTemplate.save(entity);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -78,7 +78,7 @@ public abstract class BaseService {
 					// setMethod.invoke(entityInDb, new Object[] { value });
 				}
 			}
-			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(entity.getId())), update, getCollectionName());
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(entity.getId())), update, entity.getClass());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -92,7 +92,7 @@ public abstract class BaseService {
 			for (int i = 0; i < properties.length; i++) {
 				String fieldName = properties[i];
 				String firstLetter = fieldName.substring(0, 1).toUpperCase();
-				Field field=classType.getDeclaredField(fieldName);
+				Field field = classType.getDeclaredField(fieldName);
 				// 获得和属性对应的getXXX()方法的名字
 				String getMethodName;
 				if (field.getType() == boolean.class) {
@@ -100,7 +100,7 @@ public abstract class BaseService {
 				} else {
 					getMethodName = "get" + firstLetter + fieldName.substring(1);
 				}
-				
+
 				// 下面是组装对应的get/set方法
 				Method getMethod = classType.getMethod(getMethodName, new Class[] {});
 
@@ -110,13 +110,9 @@ public abstract class BaseService {
 				// setMethod.invoke(entityInDb, new Object[] { value });
 				update.set(fieldName, value);
 			}
-			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(entity.getId())), update, getCollectionName());
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(entity.getId())), update, entity.getClass());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	public abstract String getCollectionName();
-	
-
 }

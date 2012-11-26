@@ -34,7 +34,7 @@
 				<td>${importLog.newName }</td>
 				<td>${importLog.status }</td>
 				<td>${importLog.totalCount }</td>
-				<td>${importLog.importCount }</td>
+				<td>${importLog.totalCount - importLog.failedCount }</td>
 				<td>${importLog.importTime }</td>
 				<td>详情</td>
 			</tr>

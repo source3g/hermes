@@ -1,28 +1,39 @@
 package com.source3g.hermes.entity.customer;
 
-import java.util.List;
-
+import org.bson.types.ObjectId;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
 
 @Document
-public class CustomerImportItem {
+public class CustomerImportItem extends AbstractEntity {
+	private static final long serialVersionUID = -1666811215606533985L;
+
 	@DBRef
 	private CustomerImportLog importLog;
-
+	
 	private String name;
 	private Sex sex;
 	private String birthday;
+	@NotEmpty(message="电话号码不能为空")
+	@Length(max=11,min=11,message="{电话号码位数不对}")
 	private String phone;
-	private boolean blackList;
+	
 	private String address;
-	private List<String> otherPhones;
 	private String qq;
 	private String email;
 	private String note;
+	private ObjectId merchantId;
+	
+	private String customerGroupName;
+	private ObjectId customerImportLogId;
+	
 	private String ImportStatus;
+	private String failedReason;
 
 	public CustomerImportLog getImportLog() {
 		return importLog;
@@ -64,14 +75,6 @@ public class CustomerImportItem {
 		this.phone = phone;
 	}
 
-	public boolean isBlackList() {
-		return blackList;
-	}
-
-	public void setBlackList(boolean blackList) {
-		this.blackList = blackList;
-	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -80,13 +83,6 @@ public class CustomerImportItem {
 		this.address = address;
 	}
 
-	public List<String> getOtherPhones() {
-		return otherPhones;
-	}
-
-	public void setOtherPhones(List<String> otherPhones) {
-		this.otherPhones = otherPhones;
-	}
 
 	public String getQq() {
 		return qq;
@@ -118,5 +114,37 @@ public class CustomerImportItem {
 
 	public void setImportStatus(String importStatus) {
 		ImportStatus = importStatus;
+	}
+
+	public String getCustomerGroupName() {
+		return customerGroupName;
+	}
+
+	public void setCustomerGroupName(String customerGroupName) {
+		this.customerGroupName = customerGroupName;
+	}
+
+	public ObjectId getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(ObjectId merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public ObjectId getCustomerImportLogId() {
+		return customerImportLogId;
+	}
+
+	public void setCustomerImportLogId(ObjectId customerImportLogId) {
+		this.customerImportLogId = customerImportLogId;
+	}
+
+	public String getFailedReason() {
+		return failedReason;
+	}
+
+	public void setFailedReason(String failedReason) {
+		this.failedReason = failedReason;
 	}
 }

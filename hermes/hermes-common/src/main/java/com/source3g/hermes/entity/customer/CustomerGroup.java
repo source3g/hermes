@@ -2,9 +2,10 @@ package com.source3g.hermes.entity.customer;
 
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
-
+@Document
 public class CustomerGroup extends AbstractEntity {
 	private static final long serialVersionUID = 5514478207740377728L;
 

@@ -42,7 +42,7 @@ public class CustomerGroupApi {
 	@RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String delete(@PathVariable String id) {
-		customerGroupService.deleteById(id);
+		customerGroupService.deleteById(id,CustomerGroup.class);
 		return ReturnConstants.SUCCESS;
 	}
 

@@ -15,7 +15,6 @@ import com.source3g.hermes.utils.Page;
 
 @Service
 public class DeviceService extends BaseService {
-	private String collectionName = "device";
 
 	public Page list(int pageNo, Device device) {
 		Query query = new Query();
@@ -24,45 +23,38 @@ public class DeviceService extends BaseService {
 			query.addCriteria(Criteria.where("sn").is(pattern));
 		}
 		Page page = new Page();
-		Long totalCount = mongoTemplate.count(query, collectionName);
+		Long totalCount = mongoTemplate.count(query, Device.class);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
-		List<Device> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Device.class, collectionName);
+		List<Device> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
 		page.setData(list);
 		return page;
 	}
 
 	public void deleteById(String id) {
-		ObjectId objId = new ObjectId(id);
-		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)), collectionName);
+		super.deleteById(id, Device.class);
 	}
 
 	public List<Device> findByIds(List<String> ids) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").in(ids));
-		return mongoTemplate.find(query, Device.class, collectionName);
+		return mongoTemplate.find(query, Device.class);
 	}
 
 	public Device findBySn(String sn) {
-		return mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class, collectionName);
+		return mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 	}
 
 	public Device findById(String id) {
-		Device device = mongoTemplate.findById(new ObjectId(id), Device.class, collectionName);
+		Device device = mongoTemplate.findById(new ObjectId(id), Device.class);
 		return device;
 	}
 
 	public void update(Device device) {
-		mongoTemplate.save(device, collectionName);
+		mongoTemplate.save(device);
 	}
 
 	public Device findBySimId(ObjectId simId) {
-		return mongoTemplate.findOne(new Query(Criteria.where("simId").is(simId)), Device.class, collectionName);
-	}
-
-	@Override
-	public String getCollectionName() {
-
-		return collectionName;
+		return mongoTemplate.findOne(new Query(Criteria.where("simId").is(simId)), Device.class);
 	}
 }
