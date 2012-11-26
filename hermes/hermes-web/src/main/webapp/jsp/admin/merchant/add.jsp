@@ -66,7 +66,7 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="addr">集团商户：</label>
+			<label class="control-label" for="merchantGroup">集团商户：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge"
 					placeholder="请选择集团商户，如果没有则不选..." id="merchantGroupSel"

@@ -154,7 +154,7 @@
 							rangelength:"姓名不得超过50字"
 						},
 				 		phone:{
-				 			rangelength:"输入长度必须为11位有效数字",
+				 			rangelength:"输入长度必须为11位的有效数字",
 							number:"请输入合法的数字",
 							digits:"请输入整数"
 						},

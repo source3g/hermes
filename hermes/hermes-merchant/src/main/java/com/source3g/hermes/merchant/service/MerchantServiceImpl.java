@@ -77,7 +77,7 @@ public class MerchantServiceImpl extends BaseService implements MerchantService 
 
 	@Override
 	public List<Merchant> findByGroupId(String id) {
-		ObjectId objId = new ObjectId(id);
+		ObjectId objId=new ObjectId(id);
 		return mongoTemplate.find(new Query(Criteria.where("merchantGroupId").is(objId)), Merchant.class);
 	}
 	/**

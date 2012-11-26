@@ -51,12 +51,16 @@
  		$('#addSimForm').validate({
 			rules : {
 				no : {
-					required : true
+					required : true,
+					rangelength:[11,11],
+ 					number:"请输入合法的数字"
 				}
 			},
 			messages : {
 				no : {
-					required : "请填写SIM卡号"
+					required : "请填写SIM卡号",
+					rangelength:"输入长度必须为11位的有效数字",
+					number:"请输入合法的数字"
 				}
 			}
 		}); 

@@ -10,7 +10,7 @@
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
 	<label class="control-label" for="name">名称：</label>
-	<input type="text" name="name" value="${merchantGroup.name}" placeholder="请输入商户名称...">
+	<input type="text" name="name" value="${merchant.name}" placeholder="请输入商户名称...">
 	<input id="pageNo" name="pageNo" type="hidden">
 	<input type="submit" class="btn btn-primary"
 			value="查询">

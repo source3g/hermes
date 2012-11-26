@@ -21,6 +21,8 @@ public interface MerchantService {
 
 	public  List<Merchant>  findByDeviceIds(String ids);
 
-	public List<Merchant> findmerchantsByMerchantGroupId(String id);
+	public List<Merchant> findByGroupId(String id);
+
+	public void chargeMsg(String id, int count);
 	
 }
