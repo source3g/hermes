@@ -125,7 +125,7 @@ public class MerchantController {
 		}
 	}
 
-	@RequestMapping(value = "/msgMinutes", method = RequestMethod.GET)
+	@RequestMapping(value = "/MessagesLogs", method = RequestMethod.GET)
 	// msgMinutes短信记录
 	public ModelAndView msgMinutes(Merchant merchant, String pageNo) {
 		logger.debug("list.......");
@@ -149,8 +149,8 @@ public class MerchantController {
 	 *            商户Id
 	 * @return 商户短信预存界面
 	 */
-	@RequestMapping(value = "/toChargeMsg/{id}", method = RequestMethod.GET)
-	public ModelAndView reservedMsg(@PathVariable String id) {
+	@RequestMapping(value = "/toReservedMsg/{id}", method = RequestMethod.GET)
+	public ModelAndView toReservedMsg(@PathVariable String id) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
 		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
@@ -158,9 +158,8 @@ public class MerchantController {
 		return new ModelAndView("admin/shortMessage/reservedMessage", model);
 	}
 
-	@RequestMapping(value = "/chargeMsg/{id}", method = RequestMethod.POST)
-	public ModelAndView chargeMsg(@PathVariable String id, String type, String count) {
-
+	@RequestMapping(value = "/reservedMsg/{id}", method = RequestMethod.POST)
+	public ModelAndView chargeMsg(@PathVariable String id, String type, String count) {	
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("type", type);
 		formData.add("count", count);
@@ -169,9 +168,24 @@ public class MerchantController {
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		String uri = ConfigParams.getBaseUrl() + "merchant/chargeMsg/" + id + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
-		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("redirect:/admin/merchant/msgMinutes/");
+		if (ReturnConstants.SUCCESS.equals(result)) {	
+				return new ModelAndView("redirect:/admin/merchant/MessagesLogs/");
 		}
 		return new ModelAndView("admin/error");
+	}
+	
+	@RequestMapping(value = "/reservedMsgLog/{id}", method = RequestMethod.GET)
+	public ModelAndView reservedMsgLog(@PathVariable String id,String pageNo){
+		Map<String, Object> model = new HashMap<String, Object>();
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
+		Merchant merchant=restTemplate.getForObject(uri, Merchant.class);
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo;
+		Page page = restTemplate.getForObject(uriMsgLog, Page.class);
+		model.put("page", page);
+		model.put("merchant", merchant);
+		return new ModelAndView("admin/shortMessage/reservedMessageLog",model);
 	}
 }

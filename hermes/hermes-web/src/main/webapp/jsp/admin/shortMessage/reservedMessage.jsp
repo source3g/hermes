@@ -63,7 +63,7 @@
 			}
 			var merchantId=$('#merchantId').val();
 			 var options = {
-					 		url:"${pageContext.request.contextPath}/admin/merchant/chargeMsg/"+merchantId+"/",
+					 		url:"${pageContext.request.contextPath}/admin/merchant/reservedMsg/"+merchantId+"/",
 							type:"post",
 							success : toList
 					};

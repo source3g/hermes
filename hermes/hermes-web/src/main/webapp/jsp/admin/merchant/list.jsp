@@ -41,7 +41,7 @@
 			<li id="frontPage"><a href="javascript:void();">前一页</a></li>
 			<li id="nextPage"><a href="javascript:void();">后一页</a></li>
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
-			<li >当前第${page.currentPage}/${page.totalPageCount}页 转到第<input
+			<li >当前第${page.currentPage}/${page.totalPageCount}页共${page.totalRecords }条 转到第<input
 			type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input
 			type="button" id="pageOk" class="btn" value="确定"></input></li>
 		</ul>

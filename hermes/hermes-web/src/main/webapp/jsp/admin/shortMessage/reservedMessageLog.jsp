@@ -5,38 +5,28 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>短信预存明细</title>
+<title>商户个人短信预存记录</title>
 </head>
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
-		<label class="control-label" for="name">名称：</label> <input type="text"
-			name="name" value="${merchant.name}" placeholder="请输入商户名称...">
-		<input id="pageNo" name="pageNo" type="hidden"> <input
-			type="submit" class="btn btn-primary" value="查询">
+
+		<input id="pageNo" name="pageNo" type="hidden"> 
 	</form>
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="20%">商户名称</th>
-				<th width="15%">预存短信数量</th>
-				<th width="15%">已使用短信数量</th>
-				<th width="15%">可用短信数量</th>
-				<th width="35%">短信操作</th>
+				<th width="30%">商户名称</th>
+				<th width="35%">预存记录</th>
+				<th width="35%">日期</th>
 			</tr>
 		</thead>
-		<c:forEach items="${page.data}" var="merchant">
-			<tr>
-				<td>${merchant.name }</td>
-				<td>${merchant.shortMessage.totalMsg}</td>
-				<td>${merchant.shortMessage.sendMsg}</td>
-				<td>${merchant.shortMessage.surplusMsg}</td>
-				<td><a class="btn btn-success" href="javascript:void();"
-					onclick="toReservedMsg('${merchant.id}');">短信预存</a>
-					<a class="btn btn-success" href="javascript:void();"
-					onclick="reservedMsgLog('${merchant.id}');">短信记录</a>						
-				</td>					
-			</tr>
+		<c:forEach items="${page.data}" var="msgLog">
+		<tr>
+			<td>${merchant.name }</td>
+			<td>${msgLog.count}</td>
+			<td>${msgLog.chargeTime}</td>
+		</tr>
 		</c:forEach>
 	</table>
 	<div>
@@ -45,37 +35,16 @@
 			<li id="frontPage"><a href="javascript:void();">前一页</a></li>
 			<li id="nextPage"><a href="javascript:void();">后一页</a></li>
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
-			<li>当前第${page.currentPage}/${page.totalPageCount}页 共${page.totalRecords }条转到第<input
+			<li>当前第${page.currentPage}/${page.totalPageCount}页共${page.totalRecords }条 转到第<input
 				type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input
 				type="button" id="pageOk" class="btn" value="确定"></input></li>
 		</ul>
 	</div>
 	<script type="text/javascript">
-	
 	$(document).ready(function(){
 		initPage();
 		
 	});
-	function toReservedMsg(id){   //reserved预存
-	 	$.ajax({
-			url : "${pageContext.request.contextPath}/admin/merchant/toReservedMsg/"+id+"/",
-			type : "get",
-			success : toCharge
-		}); 
-	}
-	 function toCharge(data){   //charge充值
-		$("#pageContentFrame").html(data);
-	} 
-	 function reservedMsgLog(id){
-		 $.ajax({
-			url:"${pageContext.request.contextPath}/admin/merchant/reservedMsgLog/"+id+"/",
-			type:"get",
-			success:toLogs
-		 });
-	 }
-	 function toLogs(data){
-		 $("#pageContentFrame").html(data);
-	 }
     function initPage(){
     	$('#pageOk').click(function(){
     		var pageNoToGo=$('#pageNoToGo').val();
@@ -127,7 +96,17 @@
 				});
 		}
     }
-    function showList(data){
+	function goToPage(pageNo){
+		$("#pageNo").attr("value",pageNo);
+		var options={
+			    url:"${pageContext.request.contextPath}/admin/merchant/reservedMsgLog/${merchant.id}/",
+				success:showList,
+				error:showError
+		};
+		$('#queryForm').ajaxSubmit(options);
+		
+	}
+	function showList(data){
 		$("#pageContentFrame").html(data);
 	}
 	function showError() {
