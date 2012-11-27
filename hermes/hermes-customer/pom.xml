@@ -55,7 +55,7 @@
 		</dependency>
 	</dependencies>
 
-	<repositories>
+	<!-- <repositories>
 		<repository>
 			<snapshots>
 				<enabled>false</enabled>
@@ -64,7 +64,7 @@
 			<name>Maven Repository Switchboard</name>
 			<url>http://repo2.maven.org/maven2</url>
 		</repository>
-	</repositories>
+	</repositories> -->
 
 	<build>
 		<plugins>

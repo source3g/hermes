@@ -82,7 +82,7 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/chargeMsg/{id}", method = RequestMethod.POST)
 	@ResponseBody
-	public String chargeMsg(String count, String type, @PathVariable String id) {// //
+	public String chargeMsg(String count, String type, @PathVariable String id) {
 		int countInt = Integer.parseInt(count);
 		if (type.equals("cut")) {
 			countInt = 0 - countInt;
@@ -90,4 +90,11 @@ public class MerchantApi {
 		merchantService.chargeMsg(id, countInt);
 		return ReturnConstants.SUCCESS;
 	}
+	@RequestMapping(value = "/msgLogList", method = RequestMethod.GET)
+	@ResponseBody
+	public Page msgLogList(String pageNo) {
+		int pageNoInt = Integer.valueOf(pageNo);
+		return merchantService.msgLogList(pageNoInt);
+	}
+
 }

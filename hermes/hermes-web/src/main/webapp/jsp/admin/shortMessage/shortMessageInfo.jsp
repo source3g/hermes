@@ -32,9 +32,9 @@
 				<td>${merchant.shortMessage.sendMsg}</td>
 				<td>${merchant.shortMessage.surplusMsg}</td>
 				<td><a class="btn btn-success" href="javascript:void();"
-					onclick="reservedMsg('${merchant.id}');">短信预存</a>
+					onclick="toReservedMsg('${merchant.id}');">短信预存</a>
 					<a class="btn btn-success" href="javascript:void();"
-					onclick="reservedMsgNotes('${merchant.id}');">短信记录</a>						
+					onclick="reservedMsgLog('${merchant.id}');">短信记录</a>						
 				</td>					
 			</tr>
 		</c:forEach>
@@ -45,7 +45,7 @@
 			<li id="frontPage"><a href="javascript:void();">前一页</a></li>
 			<li id="nextPage"><a href="javascript:void();">后一页</a></li>
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
-			<li>当前第${page.currentPage}/${page.totalPageCount}页 转到第<input
+			<li>当前第${page.currentPage}/${page.totalPageCount}页 共${page.totalRecords }条转到第<input
 				type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input
 				type="button" id="pageOk" class="btn" value="确定"></input></li>
 		</ul>
@@ -56,24 +56,24 @@
 		initPage();
 		
 	});
-	function reservedMsg(id){   //reserved预存
+	function toReservedMsg(id){   //reserved预存
 	 	$.ajax({
-			url : "${pageContext.request.contextPath}/admin/merchant/toChargeMsg/"+id+"/",
+			url : "${pageContext.request.contextPath}/admin/merchant/toReservedMsg/"+id+"/",
 			type : "get",
-			success : toRecharge
+			success : toCharge
 		}); 
 	}
-	 function toRecharge(data){   //Recharge充值
+	 function toCharge(data){   //charge充值
 		$("#pageContentFrame").html(data);
 	} 
-	 function reservedMsgNotes(id){
+	 function reservedMsgLog(id){
 		 $.ajax({
-			url:"${pageContext.request.contextPath}/admin/merchant/toChargeMsg/"+id+"/",
+			url:"${pageContext.request.contextPath}/admin/merchant/reservedMsgLog/"+id+"/",
 			type:"get",
-			success:toNotes
+			success:toLogs
 		 });
 	 }
-	 function toNotes(data){
+	 function toLogs(data){
 		 $("#pageContentFrame").html(data);
 	 }
     function initPage(){
@@ -127,6 +127,13 @@
 				});
 		}
     }
+    function showList(data){
+		$("#pageContentFrame").html(data);
+	}
+	function showError() {
+		$("#resultMessage").html("操作失败，请重试");
+		$("#errorModal").modal();
+	}
 	</script>
 </body>
 </html>
