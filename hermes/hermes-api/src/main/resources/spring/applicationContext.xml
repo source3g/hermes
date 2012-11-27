@@ -47,7 +47,6 @@
 	<!-- 开启AOP监听 只对当前配置文件有效 -->
 	<aop:aspectj-autoproxy expose-proxy="true" />
 
-	<task:annotation-driven />
 	<bean id="rejectedExecutionHandler"
 		class="java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy">
 	</bean>
@@ -59,5 +58,15 @@
 		<property name="queueCapacity" value="20000" />
 		<property name="rejectedExecutionHandler" ref="rejectedExecutionHandler" />
 	</bean>
+	
+		<!-- 为了支持异步注解 -->
+	<task:annotation-driven executor="taskExecutor"
+		scheduler="syncScheduler" />
+
+	<task:scheduler id="syncScheduler" pool-size="1000" />
+	<task:scheduled-tasks scheduler="syncScheduler">
+		<task:scheduled ref="incrementScheduler" method="packageIncrement"
+			cron="${sync.increment.cron}" />
+	</task:scheduled-tasks>
 
 </beans>

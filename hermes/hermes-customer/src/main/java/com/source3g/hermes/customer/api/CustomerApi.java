@@ -106,12 +106,6 @@ public class CustomerApi {
 		return customerImportService.findImportLog(merchantId);
 	}
 
-	@RequestMapping(value = "/importA", method = RequestMethod.POST)
-	@ResponseBody
-	public String testImport(String a) throws Exception {
-		System.out.println(a);
-		return ReturnConstants.SUCCESS;
-	}
 
 	@RequestMapping(value = "/import/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody

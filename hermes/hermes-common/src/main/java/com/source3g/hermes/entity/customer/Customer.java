@@ -1,9 +1,16 @@
 package com.source3g.hermes.entity.customer;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ser.FilterProvider;
+import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
+import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -27,10 +34,13 @@ public class Customer extends AbstractEntity {
 	private String note;
 
 	private List<CallRecord> callRecords;
+
 	private List<Remind> reminds;
 	private ObjectId merchantId;
 	private Date lastCallInTime; // 最后通电话时间
 	private ObjectId customerGroupId;
+	private Date operateTime;
+
 	public String getBirthday() {
 		return birthday;
 	}
@@ -151,5 +161,25 @@ public class Customer extends AbstractEntity {
 		this.customerGroupId = customerGroupId;
 	}
 
+	public Date getOperateTime() {
+		return operateTime;
+	}
+
+	public void setOperateTime(Date operateTime) {
+		this.operateTime = operateTime;
+	}
+
+	public String toInsertOrUpdateSql() throws JsonGenerationException, JsonMappingException, IOException {
+// 	FilterProvider filterProvider = new SimpleFilterProvider().addFilter("filterPropreties", SimpleBeanPropertyFilter.serializeAllExcept("otherPhones", "callRecords", "operateTime"));
+		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("otherPhones", "callRecords", "operateTime");
+		FilterProvider fp = new SimpleFilterProvider().addFilter("onlyAFilter", filter);
+		ObjectMapper objectMapper = new ObjectMapper();
+		String strJson = objectMapper.filteredWriter(fp).writeValueAsString(this);
+		return "REPLACE INTO CUSTOMER (phone,context) values(" + phone + "," + strJson + "); ";
+	}
+
+	public String toDeleteSql() {
+		return "delete from  CUSTOMER where phone=" + phone;
+	}
 
 }

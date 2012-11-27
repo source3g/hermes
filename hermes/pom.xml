@@ -15,6 +15,7 @@
    		 <module>hermes-merchant</module>
     <module>hermes-device</module>
     <module>hermes-api-common</module>
+    <module>hermes-sync</module>
   </modules>
 	<build>
 		<finalName>${project.name}</finalName>

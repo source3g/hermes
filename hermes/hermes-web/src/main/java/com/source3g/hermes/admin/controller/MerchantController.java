@@ -170,7 +170,7 @@ public class MerchantController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/chargeMsg/" + id + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("admin/shortMessage/shortMessageInfo");
+			return new ModelAndView("redirect:/admin/merchant/msgMinutes/");
 		}
 		return new ModelAndView("admin/error");
 	}

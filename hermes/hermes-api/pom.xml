@@ -37,5 +37,10 @@
 			<version>2.5</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.source3g.hermes</groupId>
+			<artifactId>hermes-sync</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

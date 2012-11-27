@@ -2,6 +2,7 @@ package com.source3g.hermes.customer.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -67,6 +68,7 @@ public class CustomerImportService extends BaseService {
 			customer.setPhone(customerImportItem.getPhone());
 			customer.setQq(customerImportItem.getQq());
 			customer.setSex(customerImportItem.getSex());
+			customer.setOperateTime(new Date());
 			mongoTemplate.save(customer);
 			customerImportItem.setImportStatus(ImportStatus.导入成功.toString());
 			mongoTemplate.save(customerImportItem);
@@ -89,7 +91,7 @@ public class CustomerImportService extends BaseService {
 			mongoTemplate.save(customerImportItem);
 			return false;
 		} else {
-			Customer customerInDb = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerImportItem.getPhone())), Customer.class);
+			Customer customerInDb = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerImportItem.getPhone()).and("merchantId").is(customerImportItem.getMerchantId())), Customer.class);
 			if (customerInDb != null) {
 				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
 				customerImportItem.setFailedReason("电话号码已存在");
@@ -179,9 +181,9 @@ public class CustomerImportService extends BaseService {
 			birthStr = birthStr.replace("日", "-");
 			customerImportItem.setId(ObjectId.get());
 			customerImportItem.setBirthday(birthStr);
-			customerImportItem.setPhone(String.valueOf(row.get(phoneIndex).getNumericCellValue()));
+			customerImportItem.setPhone(String.valueOf((long)row.get(phoneIndex).getNumericCellValue()));
 			customerImportItem.setAddress(row.get(addrIndex).getStringCellValue());
-			customerImportItem.setQq(String.valueOf(row.get(qqIndex).getNumericCellValue()));
+			customerImportItem.setQq(String.valueOf((long)row.get(qqIndex).getNumericCellValue()));
 			customerImportItem.setEmail(row.get(emailIndex).getStringCellValue());
 			customerImportItem.setNote(row.get(noteIndex).getStringCellValue());
 			customerImportItem.setMerchantId(new ObjectId(merchantId));

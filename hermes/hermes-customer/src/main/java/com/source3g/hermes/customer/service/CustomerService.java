@@ -24,7 +24,6 @@ import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
-import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
@@ -47,13 +46,14 @@ public class CustomerService extends BaseService {
 
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
+		customer.setOperateTime(new Date());
 		mongoTemplate.insert(customer);
 		return customer;
 	}
 
-	@Override
-	public <T extends AbstractEntity> void updateExcludeProperties(T entity, String... properties) {
-		super.updateExcludeProperties(entity, properties);
+	public void updateExcludeProperties(Customer customer, String... properties) {
+		customer.setOperateTime(new Date());
+		super.updateExcludeProperties(customer, properties);
 		/*
 		 * final String id = entity.getId().toString();
 		 * 
