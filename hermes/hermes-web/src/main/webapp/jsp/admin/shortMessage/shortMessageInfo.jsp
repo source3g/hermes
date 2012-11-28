@@ -28,13 +28,15 @@
 		<c:forEach items="${page.data}" var="merchant">
 			<tr>
 				<td>${merchant.name }</td>
-				<td>${merchant.shortMessage.totalMsg}</td>
-				<td>${merchant.shortMessage.sendMsg}</td>
-				<td>${merchant.shortMessage.surplusMsg}</td>
+				<td>${merchant.shortMessage.totalCount}</td>
+				<td>${merchant.shortMessage.sendCount}</td>
+				<td>${merchant.shortMessage.surplusMsgCount}</td>
 				<td><a class="btn btn-success" href="javascript:void();"
 					onclick="toReservedMsg('${merchant.id}');">短信预存</a>
 					<a class="btn btn-success" href="javascript:void();"
-					onclick="reservedMsgLog('${merchant.id}');">短信记录</a>						
+					onclick="reservedMsgLog('${merchant.id}');">短信记录</a>		
+					<a class="btn btn-success" href="javascript:void();"
+					onclick="updateQuota('${merchant.id}');">额度调整</a>				
 				</td>					
 			</tr>
 		</c:forEach>
@@ -51,11 +53,13 @@
 		</ul>
 	</div>
 	<script type="text/javascript">
-	
 	$(document).ready(function(){
+    	$('#queryForm').submit(function(){
+    		goToPage(1);
+    		return false;
+    	});
 		initPage();
-		
-	});
+});
 	function toReservedMsg(id){   //reserved预存
 	 	$.ajax({
 			url : "${pageContext.request.contextPath}/admin/merchant/toReservedMsg/"+id+"/",
@@ -76,6 +80,17 @@
 	 function toLogs(data){
 		 $("#pageContentFrame").html(data);
 	 }
+	 function updateQuota(id){
+		 $.ajax({
+			url:"${pageContext.request.contextPath}/admin/merchant/toUpdateQuota/"+id+"/",
+			type:"get",
+			success:toUpdate
+			 });
+	 }
+	 function toUpdate(data){
+		 $("#pageContentFrame").html(data);
+	 }
+	 
     function initPage(){
     	$('#pageOk').click(function(){
     		var pageNoToGo=$('#pageNoToGo').val();
@@ -127,6 +142,16 @@
 				});
 		}
     }
+	function goToPage(pageNo){
+		$("#pageNo").attr("value",pageNo);
+		var options={
+				url:"${pageContext.request.contextPath}/admin/merchant/messageInfo/list/",
+				success:showList,
+				error:showError
+		};
+		$('#queryForm').ajaxSubmit(options);
+		
+	}
     function showList(data){
 		$("#pageContentFrame").html(data);
 	}

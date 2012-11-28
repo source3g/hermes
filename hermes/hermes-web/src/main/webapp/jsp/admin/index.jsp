@@ -176,7 +176,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/admin/sim/list/");
 		});
 		$("#shortMsgInfo").click(function(){
-			loadPage("${pageContext.request.contextPath}/admin/merchant/MessagesLogs/");
+			loadPage("${pageContext.request.contextPath}/admin/merchant/messageInfo/list/");
 		})
 		
 	});

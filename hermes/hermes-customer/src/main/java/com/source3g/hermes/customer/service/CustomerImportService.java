@@ -28,6 +28,7 @@ import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.service.BaseService;
+import com.source3g.hermes.utils.Page;
 
 @Service
 public class CustomerImportService extends BaseService {
@@ -37,12 +38,24 @@ public class CustomerImportService extends BaseService {
 		updateIncludeProperties(customerImportLog, "status");
 	}
 
-	public List<CustomerImportLog> findImportLog(String merchantId) {
+	public Page findImportLog(String merchantId,int pageNoInt,Date startTime ,Date endTime ) {
 		Query query = new Query();
+		if(startTime!=null){
+			query.addCriteria(Criteria.where("importTime").gte(startTime));
+		}
+		if(endTime!=null){
+			query.addCriteria(Criteria.where("importTime").lte(endTime));
+		}
 		Merchant merchant = new Merchant();
 		merchant.setId(merchantId);
 		query.addCriteria(Criteria.where("merchant").is(merchant));
-		return mongoTemplate.find(query, CustomerImportLog.class);
+		Page page = new Page();
+		Long totalCount = mongoTemplate.count(query, CustomerImportLog.class);
+		page.setTotalRecords(totalCount);
+		page.gotoPage(pageNoInt);
+		List<CustomerImportLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), CustomerImportLog.class);
+		page.setData(list);
+		return page ;
 	}
 
 	public void importCustomer(List<CustomerImportItem> customerImportItems, String merchantId, String customerImportLogId) {
@@ -194,6 +207,12 @@ public class CustomerImportService extends BaseService {
 			result.add(customerImportItem);
 		}
 		return result;
+	}
+
+	public List<CustomerImportItem> importLogMerchantInfo(String merchantId) {
+		ObjectId objId=new ObjectId(merchantId);
+		List<CustomerImportItem> customerImportItem= mongoTemplate.find(new Query(Criteria.where("customerImportLogId").is(objId)), CustomerImportItem.class);
+		 return customerImportItem;
 	}
 
 }

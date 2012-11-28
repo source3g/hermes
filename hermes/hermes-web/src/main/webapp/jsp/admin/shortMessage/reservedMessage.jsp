@@ -21,7 +21,6 @@
 			<td>
 			<select id="shortMessage" name="type"class="input-medium">
 			<option value="add">递增</option>
-			<option value="cut">递减</option>
 			</select>
 			</td>
 		</tr>
@@ -33,7 +32,7 @@
 		</tr>
 		<tr>
 			<td>
-			<input type="submit" id="" class="btn btn-primary" value="确定">
+			<input type="submit" class="btn btn-primary" value="确定">
 			</td>
 		</tr>
 		</table>

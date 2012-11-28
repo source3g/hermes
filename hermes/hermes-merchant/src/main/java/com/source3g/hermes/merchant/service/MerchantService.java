@@ -77,13 +77,12 @@ public class MerchantService extends BaseService {
 	 * 给短信充值 count等于负数时做减法
 	 */
 	public void chargeMsg(String id, int count) {
-
 		Update update = new Update();
-		update.inc("shortMessage.totalMsg", count);
+		update.inc("shortMessage.totalCount", count);
 		if (count > 0) {
 			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id))), update, Merchant.class);
 		} else {
-			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id)).and("shortMessage.totalMsg").gte(0 - count)), update, Merchant.class);
+			return;
 		}
 		MessageLog msgLog = new MessageLog();
 		msgLog.setMerchantId(new ObjectId(id));
@@ -112,6 +111,17 @@ public class MerchantService extends BaseService {
 
 	public void updateInfo(Merchant merchant) {
 		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds");
+	}
+
+	public void UpdateQuota(String id, int countInt) {
+		Merchant merchant = mongoTemplate.findById(new ObjectId(id), Merchant.class);
+		if(merchant.getShortMessage().getSurplusMsgCount()+countInt<0
+				||merchant.getShortMessage().getSurplusMsgCount()+countInt>merchant.getShortMessage().getTotalCount()){
+			return;
+		}
+		Update update = new Update();
+		update.inc("shortMessage.surplusMsgCount", countInt);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id))), update, Merchant.class);	
 	}
 
 }
