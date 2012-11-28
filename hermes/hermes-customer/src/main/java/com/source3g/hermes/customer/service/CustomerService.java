@@ -29,6 +29,7 @@ import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
 
@@ -141,7 +142,6 @@ public class CustomerService extends BaseService {
 	}
 
 	public void addImportLog(CustomerImportLog importLog) throws Exception {
-		mongoTemplate.insert(importLog);
 		final CustomerImportLog importLogFinal = importLog;
 		try {
 			jmsTemplate.send(customerDestination, new MessageCreator() {
@@ -155,6 +155,8 @@ public class CustomerService extends BaseService {
 		} catch (Exception e) {
 			throw new Exception("日志接收失败");
 		}
+		importLog.setStatus(ImportStatus.导入失败.toString());
+		mongoTemplate.insert(importLog);
 	}
 
 	public void updateInfo(Customer customer) {
