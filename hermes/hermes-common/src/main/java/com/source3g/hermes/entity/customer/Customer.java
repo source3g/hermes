@@ -1,22 +1,33 @@
 package com.source3g.hermes.entity.customer;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.Version;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ser.FilterProvider;
-import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
-import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.SerializerProvider;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
+import com.source3g.hermes.utils.DateFormateUtils;
 
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "merchant_phone", def = "{'phone': 1, 'merchantId': -1}", unique = true) })
@@ -169,17 +180,72 @@ public class Customer extends AbstractEntity {
 		this.operateTime = operateTime;
 	}
 
+	@JsonIgnore
 	public String toInsertOrUpdateSql() throws JsonGenerationException, JsonMappingException, IOException {
-// 	FilterProvider filterProvider = new SimpleFilterProvider().addFilter("filterPropreties", SimpleBeanPropertyFilter.serializeAllExcept("otherPhones", "callRecords", "operateTime"));
-		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("otherPhones", "callRecords", "operateTime");
-		FilterProvider fp = new SimpleFilterProvider().addFilter("onlyAFilter", filter);
+		// FilterProvider filterProvider = new
+		// SimpleFilterProvider().addFilter("filterPropreties",
+		// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
+		// "callRecords", "operateTime"));
+	//	SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("otherPhones", "callRecords", "operateTime");
+	//	FilterProvider fp = new SimpleFilterProvider().addFilter("filterForSync", filter);
 		ObjectMapper objectMapper = new ObjectMapper();
-		String strJson = objectMapper.filteredWriter(fp).writeValueAsString(this);
+		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
+		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
+		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
+		objectMapper.registerModule(module);
+		  SerializationConfig serializationConfig = objectMapper.getSerializationConfig();  
+		serializationConfig.addMixInAnnotations(Customer.class, CustomerForSyncIntf.class);
+		String strJson = objectMapper.writer().writeValueAsString(this);
+
+		// {"otherPhones":null,"merchantId":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false},"callRecords":null,"lastCallInTime":1353986159566,"customerGroupId":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false},"operateTime":null,"birthday":"80-15","phone":"13644058759","blackList":false,"qq":"123456","email":"123@123.com","note":"爱吃红烧肉","sex":"MALE","reminds":[{"alreadyRemind":true,"advancedTime":"1","remindTime":1353986159568,"name":"红酒到期"},{"alreadyRemind":true,"advancedTime":"1","remindTime":1353986159568,"name":"红酒到期"}],"name":"张三","address":"北京市","id":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false}}
+		// StringBuffer stringBuffer=new StringBuffer();
+		// String quote="\"";
+		// stringBuffer.append("{name:");
+		// stringBuffer.append(quote);
+		// stringBuffer.append(name);
+		// stringBuffer.append(quote);
+
 		return "REPLACE INTO CUSTOMER (phone,context) values(" + phone + "," + strJson + "); ";
 	}
 
+	@JsonIgnore
 	public String toDeleteSql() {
 		return "delete from  CUSTOMER where phone=" + phone;
+	}
+
+	public class ObjectIdSerializer extends JsonSerializer<ObjectId> {
+		@Override
+		public void serialize(ObjectId value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+			jgen.writeString(value.toString());
+		}
+	}
+
+	public class ObjectIdDeserializer extends JsonDeserializer<ObjectId> {
+		@Override
+		public ObjectId deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+			String objectIdStr = jp.getText();
+			if (StringUtils.isEmpty(objectIdStr)) {
+				return null;
+			}
+			return new ObjectId(objectIdStr);
+		}
+	}
+
+	public class CustomDateSerializer extends JsonSerializer<Date> {
+		@Override
+		public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+			SimpleDateFormat formatterLong = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String formattedDate = formatterLong.format(value);
+			jgen.writeString(formattedDate);
+		}
+	}
+
+	public class CustomDateDeserializer extends JsonDeserializer<Date> {
+		@Override
+		public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+			String unformatedDate = jp.getText();
+			return DateFormateUtils.getDate(unformatedDate);
+		}
 	}
 
 }

@@ -1,11 +1,7 @@
-package com.source3g.hermes.entity;
+package com.source3g.hermes.sync.entity;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document
-public class Task extends AbstractEntity{
+public class Task {
 	
-	private static final long serialVersionUID = -6381822236940621106L;
 	private String remoteUri = "";
 	private String md5 = "";
 	

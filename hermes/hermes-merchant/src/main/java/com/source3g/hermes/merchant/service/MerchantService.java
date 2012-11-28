@@ -85,10 +85,10 @@ public class MerchantService extends BaseService {
 		} else {
 			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id)).and("shortMessage.totalMsg").gte(0 - count)), update, Merchant.class);
 		}
-		MessageLog msgLog=new MessageLog();
+		MessageLog msgLog = new MessageLog();
 		msgLog.setMerchantId(new ObjectId(id));
 		msgLog.setCount(count);
-		Date chargeTime=new Date();
+		Date chargeTime = new Date();
 		msgLog.setChargeTime(chargeTime);
 		addMsgLog(msgLog);
 
@@ -99,7 +99,7 @@ public class MerchantService extends BaseService {
 	}
 
 	public Page msgLogList(int pageNoInt) {
-		Query query=new Query();
+		Query query = new Query();
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, MessageLog.class);
 		page.setTotalRecords(totalCount);
@@ -107,7 +107,11 @@ public class MerchantService extends BaseService {
 		List<MessageLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), MessageLog.class);
 		page.setData(list);
 		return page;
-		
+
+	}
+
+	public void updateInfo(Merchant merchant) {
+		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds");
 	}
 
 }

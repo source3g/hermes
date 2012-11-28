@@ -62,13 +62,13 @@ public class MerchantApi {
 	@ResponseBody
 	public String update(@RequestBody Merchant merchant) {
 		logger.debug("update merchant....");
-		merchantService.update(merchant);
+		merchantService.updateInfo(merchant);
 		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/findByDeviceIds/{ids}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Merchant> update(@PathVariable String ids) {
+	public List<Merchant> findByDeviceIds(@PathVariable String ids) {
 		logger.debug("find merchant....");
 		return merchantService.findByDeviceIds(ids);
 	}
@@ -90,6 +90,7 @@ public class MerchantApi {
 		merchantService.chargeMsg(id, countInt);
 		return ReturnConstants.SUCCESS;
 	}
+	
 	@RequestMapping(value = "/msgLogList", method = RequestMethod.GET)
 	@ResponseBody
 	public Page msgLogList(String pageNo) {

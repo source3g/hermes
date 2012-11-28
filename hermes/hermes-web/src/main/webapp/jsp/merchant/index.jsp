@@ -83,6 +83,81 @@ body {
 							<!-- </div> -->
 						</div>
 					</div>
+
+
+					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseTwo"> 短信管理 </a>
+						</div>
+						<div id="collapseTwo" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="message-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<li><a href="javascript:void();" id="messageList">短信列表</a></li>
+								<li><a href="javascript:void();" id="messageAdd">短信发送</a></li>
+								<li><a href="javascript:void();" id="messageFastSend">快捷发送</a></li>
+								<li><a href="javascript:void();" id="messageSentLog">发送记录</a></li>
+								<li><a href="javascript:void();" id="messageLog">预存记录</a></li>
+								<li><a href="javascript:void();" id="messageAutoSend">挂机短信</a></li>
+								<li><a href="javascript:void();" id="messageTemplate">短信模板</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseThree"> 商户销售管理 </a>
+						</div>
+						<div id="collapseThree" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="message-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<li><a href="javascript:void();" id="customerList">销售列表</a></li>
+								<li><a href="javascript:void();" id="customerAdd">销售新增</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
+					</div>
+
+					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseFour"> 备忘录 </a>
+						</div>
+						<div id="collapseFour" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="message-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<li><a href="javascript:void();" id="passwordChange">备忘录列表</a></li>
+								<li><a href="javascript:void();" id="merchantSwitch">新增</a></li>
+								<li><a href="javascript:void();" id="merchantRemind">历史记录</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
+					</div>
+
+
+					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseFive"> 商户中心 </a>
+						</div>
+						<div id="collapseFive" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="message-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<li><a href="javascript:void();" id="passwordChange">密码修改</a></li>
+								<li><a href="javascript:void();" id="infoChange">信息修改</a></li>
+								<li><a href="javascript:void();" id="merchantSwitch">商户开关</a></li>
+								<li><a href="javascript:void();" id="merchantRemind">提醒</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
+					</div>
+
+
 				</div>
 			</div>
 
@@ -123,7 +198,7 @@ body {
 		$("#callInList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/callIn/list/");
 		});
-		
+
 		$("#importCustomer").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/import/");
 		});

@@ -38,27 +38,24 @@ public class CustomerTest {
 		remind.setAlreadyRemind(true);
 		remind.setName("红酒到期");
 		remind.setRemindTime(new Date());
-		
-		Remind remind1= new Remind();
+
+		Remind remind1 = new Remind();
 		remind1.setAdvancedTime("1");
 		remind1.setAlreadyRemind(true);
 		remind1.setName("红酒到期");
 		remind1.setRemindTime(new Date());
-		
-		List<Remind> reminds=new ArrayList<Remind>();
+
+		List<Remind> reminds = new ArrayList<Remind>();
 		reminds.add(remind);
 		reminds.add(remind);
 		customer.setReminds(reminds);
 		try {
 			System.out.println(customer.toInsertOrUpdateSql());
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

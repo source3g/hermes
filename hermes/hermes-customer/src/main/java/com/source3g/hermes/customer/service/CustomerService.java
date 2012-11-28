@@ -52,7 +52,6 @@ public class CustomerService extends BaseService {
 	}
 
 	public void updateExcludeProperties(Customer customer, String... properties) {
-		customer.setOperateTime(new Date());
 		super.updateExcludeProperties(customer, properties);
 		/*
 		 * final String id = entity.getId().toString();
@@ -144,17 +143,32 @@ public class CustomerService extends BaseService {
 	public void addImportLog(CustomerImportLog importLog) throws Exception {
 		mongoTemplate.insert(importLog);
 		final CustomerImportLog importLogFinal = importLog;
-		try{
-		jmsTemplate.send(customerDestination,new MessageCreator() {
-			@Override
-			public Message createMessage(Session session) throws JMSException {
-				ObjectMessage objectMessage = session.createObjectMessage(importLogFinal);
-				objectMessage.setStringProperty(JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER);
-				return objectMessage;
-			}
-		});
-		}catch(Exception e){
+		try {
+			jmsTemplate.send(customerDestination, new MessageCreator() {
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					ObjectMessage objectMessage = session.createObjectMessage(importLogFinal);
+					objectMessage.setStringProperty(JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER);
+					return objectMessage;
+				}
+			});
+		} catch (Exception e) {
 			throw new Exception("日志接收失败");
 		}
+	}
+
+	public void updateInfo(Customer customer) {
+		customer.setOperateTime(new Date());
+		super.updateIncludeProperties(customer, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "reminds", "customerGroupId", "operateTime");
+	}
+
+	public Customer findBySnAndPhone(String sn, String phone) {
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
+		if (device == null)
+			return null;
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+		if (merchant == null)
+			return null;
+		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), Customer.class);
 	}
 }

@@ -44,6 +44,13 @@ public class CustomerApi {
 		customerService.add(customer);
 		return "success";
 	}
+	
+	
+	@RequestMapping(value = "/get/{sn}/{phone}", method = RequestMethod.GET)
+	@ResponseBody
+	public Customer getBySn(@PathVariable String sn,@PathVariable String phone) {
+		return customerService.findBySnAndPhone(sn,phone);
+	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
@@ -67,7 +74,7 @@ public class CustomerApi {
 	@ResponseBody
 	public String update(@RequestBody Customer customer) {
 		logger.debug("update customer....");
-		customerService.updateExcludeProperties(customer, "merchantId", "callRecords");
+		customerService.updateInfo(customer);
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -105,7 +112,6 @@ public class CustomerApi {
 	public List<CustomerImportLog> importLog(@PathVariable String merchantId) {
 		return customerImportService.findImportLog(merchantId);
 	}
-
 
 	@RequestMapping(value = "/import/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
