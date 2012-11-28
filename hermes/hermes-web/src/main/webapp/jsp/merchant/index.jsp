@@ -205,6 +205,9 @@ body {
 		$("#importLog").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/importLog/");
 		});
+		$("#messageLog").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customer/reservedMsgLog/");
+		});
 
 	});
 
