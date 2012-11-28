@@ -84,9 +84,6 @@ public class MerchantApi {
 	@ResponseBody
 	public String chargeMsg(String count, String type, @PathVariable String id) {
 		int countInt = Integer.parseInt(count);
-		if (type.equals("cut")) {
-			countInt = 0 - countInt;
-		}
 		merchantService.chargeMsg(id, countInt);
 		return ReturnConstants.SUCCESS;
 	}
@@ -96,5 +93,14 @@ public class MerchantApi {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return merchantService.msgLogList(pageNoInt);
 	}
-
+	@RequestMapping(value = "/UpdateQuota/{id}", method = RequestMethod.POST)
+	@ResponseBody
+	public String  UpdateQuota(@PathVariable String id,String count,String type) {
+		int countInt = Integer.parseInt(count);
+		if(type.equals("cut")){
+			countInt=0-countInt;
+		}
+		merchantService.UpdateQuota(id, countInt);
+		return ReturnConstants.SUCCESS;
+	}
 }

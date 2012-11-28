@@ -125,7 +125,7 @@ public class MerchantController {
 		}
 	}
 
-	@RequestMapping(value = "/MessagesLogs", method = RequestMethod.GET)
+	@RequestMapping(value = "/messageInfo/list", method = RequestMethod.GET)
 	// msgMinutes短信记录
 	public ModelAndView msgMinutes(Merchant merchant, String pageNo) {
 		logger.debug("list.......");
@@ -169,10 +169,10 @@ public class MerchantController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/chargeMsg/" + id + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {	
-				return new ModelAndView("redirect:/admin/merchant/MessagesLogs/");
+				return new ModelAndView("redirect:/admin/merchant/messageInfo/list/");
 		}
 		return new ModelAndView("admin/error");
-	}
+	}	
 	
 	@RequestMapping(value = "/reservedMsgLog/{id}", method = RequestMethod.GET)
 	public ModelAndView reservedMsgLog(@PathVariable String id,String pageNo){
@@ -187,5 +187,28 @@ public class MerchantController {
 		model.put("page", page);
 		model.put("merchant", merchant);
 		return new ModelAndView("admin/shortMessage/reservedMessageLog",model);
+	}
+	@RequestMapping(value="/toUpdateQuota/{id}", method=RequestMethod.GET)
+	public ModelAndView reservedMsgLog(@PathVariable String id){
+		Map<String, Object> model = new HashMap<String, Object>();
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
+		Merchant merchant=restTemplate.getForObject(uri, Merchant.class);
+		model.put("merchant", merchant);
+		return new ModelAndView("admin/shortMessage/updateQuota",model);
+	}
+	@RequestMapping(value="/UpdateQuota/{id}", method=RequestMethod.POST)
+	public ModelAndView UpdateQuota(@PathVariable String id,String type,String count){
+		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+		formData.add("type", type);
+		formData.add("count", count);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
+		String uri = ConfigParams.getBaseUrl() + "merchant/UpdateQuota/" + id + "/";
+		String result = restTemplate.postForObject(uri, requestEntity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {	
+				return new ModelAndView("redirect:/admin/merchant/messageInfo/list/");
+		}
+		return new ModelAndView("admin/error");
 	}
 }

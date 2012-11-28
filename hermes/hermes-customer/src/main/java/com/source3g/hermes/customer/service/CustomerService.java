@@ -157,4 +157,5 @@ public class CustomerService extends BaseService {
 			throw new Exception("日志接收失败");
 		}
 	}
+
 }

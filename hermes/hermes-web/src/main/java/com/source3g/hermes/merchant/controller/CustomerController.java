@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.Customer;
-import com.source3g.hermes.entity.customer.CustomerImportLog;
+import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
@@ -205,17 +205,35 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/importLog", method = RequestMethod.GET)
-	public ModelAndView importLog(HttpServletRequest req) throws Exception {
+	public ModelAndView importLog(HttpServletRequest req,String pageNo,String startTime ,String endTime ) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "customer/importLog/merchant/" + merchant.getId() + "/";
-		CustomerImportLog[] logs = restTemplate.getForObject(uri, CustomerImportLog[].class);
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		String uri = ConfigParams.getBaseUrl() + "customer/importLog/merchant/" + merchant.getId() + "/?pageNo=" + pageNo;
+		if(StringUtils.isNotEmpty(startTime)){
+			uri+="&startTime="+startTime;
+		}
+		if(StringUtils.isNotEmpty(endTime)){
+			uri+="&endTime="+endTime;
+		}
+		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("importLogs", logs);
+		model.put("page", page);
+		model.put("startTime", startTime);
+		model.put("endTime",endTime);
 		return new ModelAndView("/merchant/customer/importLog", model);
 	}
+	@RequestMapping(value = "/importLog/merchantInfo/{id}", method = RequestMethod.GET)
+	public ModelAndView importLogMerchantInfo(@PathVariable String id ) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		String uri=ConfigParams.getBaseUrl()+"customer/importLog/merchantInfo/"+ id +"/";
+		@SuppressWarnings("unchecked")
+		List<CustomerImportItem> customerImportItem=restTemplate.getForObject(uri, List.class);
+		model.put("customerImportItem", customerImportItem);
+		return new ModelAndView("/merchant/customer/importLogMerchantInfo", model);
+	}
 	
-	
-
 	private void handleCustomer(Customer customer) {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {

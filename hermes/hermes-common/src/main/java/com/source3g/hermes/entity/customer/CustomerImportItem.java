@@ -28,12 +28,12 @@ public class CustomerImportItem extends AbstractEntity {
 	private String email;
 	private String note;
 	private ObjectId merchantId;
-	
+
 	private String customerGroupName;
 	private ObjectId customerImportLogId;
 	
-	private String ImportStatus;
-	private String failedReason;
+	private String importStatus;//导入状态
+	private String failedReason;//失败原因
 
 	public CustomerImportLog getImportLog() {
 		return importLog;
@@ -108,12 +108,14 @@ public class CustomerImportItem extends AbstractEntity {
 		this.note = note;
 	}
 
+
+
 	public String getImportStatus() {
-		return ImportStatus;
+		return importStatus;
 	}
 
 	public void setImportStatus(String importStatus) {
-		ImportStatus = importStatus;
+		this.importStatus = importStatus;
 	}
 
 	public String getCustomerGroupName() {

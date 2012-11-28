@@ -42,9 +42,9 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
+    
 		initPage();
-		
-	});
+});
     function initPage(){
     	$('#pageOk').click(function(){
     		var pageNoToGo=$('#pageNoToGo').val();

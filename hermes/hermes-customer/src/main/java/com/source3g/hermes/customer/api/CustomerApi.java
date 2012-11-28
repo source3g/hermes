@@ -2,6 +2,7 @@ package com.source3g.hermes.customer.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -22,6 +23,7 @@ import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
@@ -102,8 +104,9 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/importLog/merchant/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<CustomerImportLog> importLog(@PathVariable String merchantId) {
-		return customerImportService.findImportLog(merchantId);
+	public Page importLog(@PathVariable String merchantId,String pageNo,Date startTime ,Date endTime ) {
+		int pageNoInt=Integer.parseInt(pageNo);
+		return customerImportService.findImportLog(merchantId, pageNoInt, startTime , endTime );
 	}
 
 
@@ -121,6 +124,8 @@ public class CustomerApi {
 		importLog.setId(ObjectId.get());
 		Merchant merchant = new Merchant();
 		merchant.setId(new ObjectId(merchantId));
+		Date importTime=new Date();
+		importLog.setImportTime(importTime);
 		importLog.setMerchant(merchant);
 		importLog.setName(oldName);
 		importLog.setNewName(file.getOriginalFilename());
@@ -132,5 +137,10 @@ public class CustomerApi {
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
+	}
+	@RequestMapping(value = "/importLog/merchantInfo/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CustomerImportItem> importLogMerchantInfo(@PathVariable String id){
+		return customerImportService.importLogMerchantInfo(id);
 	}
 }
