@@ -16,6 +16,7 @@
     <module>hermes-device</module>
     <module>hermes-api-common</module>
     <module>hermes-sync</module>
+    <module>hermes-message</module>
   </modules>
 	<build>
 		<finalName>${project.name}</finalName>

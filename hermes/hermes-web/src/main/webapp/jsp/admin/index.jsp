@@ -80,6 +80,8 @@ body {
 							</ul>
 							<!-- </div> -->
 						</div>
+					</div>
+					<div class="accordion-group">
 						<div class="accordion-heading" style="background-color: #EEE;">
 							<a class="accordion-toggle" data-toggle="collapse"
 								data-parent="#accordion2" href="#collapseTwo"> 盒子 </a>
@@ -94,6 +96,8 @@ body {
 							</ul>
 							<!-- </div> -->
 						</div>
+					</div>
+					<div class="accordion-group">
 						<div class="accordion-heading" style="background-color: #EEE;">
 							<a class="accordion-toggle" data-toggle="collapse"
 								data-parent="#accordion2" href="#collapseThree"> SIM卡 </a>
@@ -108,6 +112,8 @@ body {
 							</ul>
 							<!-- </div> -->
 						</div>
+					</div>
+					<div class="accordion-group">
 						<div class="accordion-heading" style="background-color: #EEE;">
 							<a class="accordion-toggle" data-toggle="collapse"
 								data-parent="#accordion2" href="#collapseFour">短信管理 </a>
@@ -158,11 +164,11 @@ body {
 		$("#addMerchantGroup").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/add/");
 		});
-		
+
 		$("#listMerchantGroup").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/list/");
 		});
-		
+
 		$("#addDevice").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/device/add/");
 		});
@@ -175,20 +181,20 @@ body {
 		$("#listSim").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/sim/list/");
 		});
-		$("#shortMsgInfo").click(function(){
+		$("#shortMsgInfo").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/merchant/messageInfo/list/");
 		})
-		
+
 	});
 
 	function loadPage(url) {
-	/*  	 $.get(url, function(data) {
-			$("#pageContentFrame").html(data)
-		}); 
-	*/
+		/*  	 $.get(url, function(data) {
+				$("#pageContentFrame").html(data)
+			}); 
+		 */
 		//$("#pageContentFrame").attr("src", url);
 		$("#pageContentFrame").load(url);
-//		$("#pageContentFrame").html(url);
+		//		$("#pageContentFrame").html(url);
 	}
 </script>
 </html>

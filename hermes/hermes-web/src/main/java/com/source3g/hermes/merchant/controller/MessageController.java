@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
 import com.source3g.hermes.utils.Page;
@@ -22,16 +23,24 @@ import com.source3g.hermes.utils.Page;
 @Controller
 @RequestMapping(value = "/merchant/message")
 public class MessageController {
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@RequestMapping(value = "/template", method = RequestMethod.GET)
 	public ModelAndView template() {
 
 		return new ModelAndView("/merchant/shortMessage/messageTemplate");
 	}
-	
+
+	@RequestMapping(value = "/template/add", method = RequestMethod.POST)
+	public ModelAndView addTemplate(HttpServletRequest req, MessageTemplate messageTemplate) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		messageTemplate.setMerchantId(merchant.getId());
+		//String uri = ConfigParams.getBaseUrl() + "shortMessage/template/add";
+		return new ModelAndView("/merchant/shortMessage/messageTemplate");
+	}
+
 	@RequestMapping(value = "/reservedMsgLog", method = RequestMethod.GET)
 	public ModelAndView reservedMsgLog(HttpServletRequest req,String pageNo) throws Exception {
 			Merchant merchant = LoginUtils.getLoginMerchant(req);	
