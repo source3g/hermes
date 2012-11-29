@@ -2,8 +2,6 @@ package com.source3g.hermes.service;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -11,10 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -30,6 +29,7 @@ import com.source3g.hermes.enums.TaskStatus;
 import com.source3g.hermes.sync.entity.DeviceStatus;
 import com.source3g.hermes.sync.entity.TaskLog;
 import com.source3g.hermes.sync.entity.TaskPackage;
+import com.source3g.hermes.sync.utils.TarGZipUtils;
 import com.source3g.hermes.utils.MD5;
 
 @Service
@@ -47,7 +47,7 @@ public class TaskService extends BaseService {
 	}
 
 	@Deprecated
-	public List<TaskPackage> genTasks(String sn) {
+	public List<TaskPackage> genTasksByCreateTime(String sn) {
 		DeviceStatus deviceStatus = findStatus(sn);
 		if (deviceStatus == null) {
 			deviceStatus = new DeviceStatus();
@@ -68,8 +68,9 @@ public class TaskService extends BaseService {
 		return tasks;
 	}
 
-	public TaskPackage genTask(String sn) {
-		TaskPackage result;
+	public List<TaskPackage> genTasks(String sn) {
+		List<TaskPackage> result = new ArrayList<TaskPackage>();
+		TaskPackage taskPackage;
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		DeviceStatus deviceStatus = findStatus(sn);
@@ -79,14 +80,15 @@ public class TaskService extends BaseService {
 			deviceStatus.setDeviceSn(sn);
 		}
 		if (deviceStatus.getLastTaskId() == null) {
-			result = findFirstPackage(merchant.getId());
+			taskPackage = findFirstPackage(merchant.getId());
 		} else {
-			result = findIncrementPackage(merchant.getId(), deviceStatus.getLastTaskId());
+			taskPackage = findIncrementPackage(merchant.getId(), deviceStatus.getLastTaskId());
 		}
-		if (result != null) {
-			deviceStatus.setRequestTaskId(result.getTaskId());
+		if (taskPackage != null) {
+			deviceStatus.setRequestTaskId(taskPackage.getTaskId());
 			mongoTemplate.save(deviceStatus);
-			handleTaskUrl(result);
+			handleTaskUrl(taskPackage);
+			result.add(taskPackage);
 		}
 		return result;
 	}
@@ -111,7 +113,7 @@ public class TaskService extends BaseService {
 	 * @param task
 	 */
 	private void handleTaskUrl(TaskPackage task) {
-		task.setRemoteUrl(localUrl + "package/" + task.getRemoteUrl());
+		task.setRemoteUrl(localUrl + "package/" + task.getRemoteUrl() + "/");
 	}
 
 	/**
@@ -242,17 +244,20 @@ public class TaskService extends BaseService {
 		taskPackage.setId(ObjectId.get());
 		taskPackage.setMerchantId(merchant.getId());
 		taskPackage.setType(TaskConstants.INCREMENT_PACKAGE);
+		// 文件名
+		String fileName = String.valueOf(createTime.getTime());
 		// 产生文件路径
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		// 所在商户的相对路径
 		String merchantPath = dateFormat.format(createTime) + "/" + merchant.getId().toString() + "/";
 		// 所在商户绝对路径
 		String folderPath = taskPackagePath + merchantPath;
-		// gzip文件的相对路径
-		String relativeGzipPath = merchantPath + createTime.getTime();
-		// gzip文件的绝对路径
-		String gzipFilePath = taskPackagePath + relativeGzipPath;
-		String txtFilePath = gzipFilePath + ".txt";
+		// 文件的相对路径
+		String relativeFilePath = merchantPath + fileName;
+		// 文件的绝对路径
+		String absoluteFilePath = taskPackagePath + relativeFilePath;
+
+		String txtFilePath = absoluteFilePath + ".sql";
 		File taskFolder = new File(folderPath);
 		if (!taskFolder.exists()) {
 			taskFolder.mkdirs();
@@ -265,24 +270,34 @@ public class TaskService extends BaseService {
 			bw.flush();
 		}
 		bw.close();
-		File gzipFile = new File(gzipFilePath);
-		gzipFile.createNewFile();
-		// 建立压缩文件输出流
-		FileOutputStream fout = new FileOutputStream(gzipFile);
-		// 建立gzip压缩输出流
-		GZIPOutputStream gzout = new GZIPOutputStream(fout);
-		byte[] buf = new byte[1024];// 设定读入缓冲区尺寸
-		int num;
-		FileInputStream fin = new FileInputStream(file);
-		while ((num = fin.read(buf)) != -1) {
-			gzout.write(buf, 0, num);
+		// File gzipFile = new File(gzipFilePath);
+		Resource resource = new ClassPathResource("taskfiles/1.sh");
+
+		// gzipFile.createNewFile();
+		// // 建立压缩文件输出流
+		// FileOutputStream fout = new FileOutputStream(gzipFile);
+		// // 建立gzip压缩输出流
+		// GZIPOutputStream gzout = new GZIPOutputStream(fout);
+		// byte[] buf = new byte[1024];// 设定读入缓冲区尺寸
+		// int num;
+		// FileInputStream fin = new FileInputStream(file);
+		// while ((num = fin.read(buf)) != -1) {
+		// gzout.write(buf, 0, num);
+		// }
+		// gzout.finish();
+		// gzout.close();// !!!关闭流,必须关闭所有输入输出流.保证输入输出完整和释放系统资源.
+		// fout.close();
+		// fin.close();
+		try {
+			File[] files = { new File(txtFilePath), resource.getFile() };
+			File gzipFile = TarGZipUtils.tarGzip(fileName + "/", files, absoluteFilePath);
+
+			String relativeGzipPath = merchantPath + gzipFile.getName();
+			taskPackage.setRemoteUrl(relativeGzipPath);
+			taskPackage.setMd5(MD5.md5sum(gzipFile.getAbsolutePath()));
+			mongoTemplate.save(taskPackage);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		gzout.finish();
-		gzout.close();// !!!关闭流,必须关闭所有输入输出流.保证输入输出完整和释放系统资源.
-		fout.close();
-		fin.close();
-		taskPackage.setRemoteUrl(relativeGzipPath);
-		taskPackage.setMd5(MD5.md5sum(gzipFile.getAbsolutePath()));
-		mongoTemplate.save(taskPackage);
 	}
 }

@@ -5,7 +5,11 @@ $(document).ready(function() {
 });
 
 
-function showInfo(data) {
+function showPage(data) {
 	$("#pageContentFrame").html(data)
 }
+function showError(data) {
+	 alert("出错了");
+}
+
 

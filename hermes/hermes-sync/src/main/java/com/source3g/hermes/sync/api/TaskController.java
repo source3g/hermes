@@ -1,5 +1,7 @@
 package com.source3g.hermes.sync.api;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +21,8 @@ public class TaskController {
 
 	@RequestMapping(value = "/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public TaskPackage taskList(@PathVariable String sn) {
-		return taskService.genTask(sn);
+	public List<TaskPackage> taskList(@PathVariable String sn) {
+		return taskService.genTasks(sn);
 	}
 
 	@RequestMapping(value = "/report/{sn}/{result}", method = RequestMethod.GET)
