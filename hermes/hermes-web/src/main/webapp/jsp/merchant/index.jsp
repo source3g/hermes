@@ -211,7 +211,9 @@ body {
 		$("#messageTemplate").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/template/");
 		});
-
+		$("#messageAdd").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageSend/");
+		});
 	});
 		
 	function loadPage(url) {

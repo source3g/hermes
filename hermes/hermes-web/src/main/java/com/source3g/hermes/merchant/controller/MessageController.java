@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
@@ -42,7 +43,22 @@ public class MessageController {
 			Page page = restTemplate.getForObject(uriMsgLog, Page.class);
 			model.put("page", page);
 			model.put("merchant", merchant);
-			return new ModelAndView("admin/shortMessage/reservedMessageLog",model);
+			return new ModelAndView("merchant/shortMessage/reservedMessageLog",model);
 	}
-
+	@RequestMapping(value = "/toMessageSend", method = RequestMethod.GET)
+	public ModelAndView toMessageSend(HttpServletRequest req)throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();	
+			Merchant merchant=LoginUtils.getLoginMerchant(req);
+			String uriCustomerGroup = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
+			CustomerGroup[] customerGroups = restTemplate.getForObject(uriCustomerGroup, CustomerGroup[].class);
+			String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/";
+			Merchant merchant1=restTemplate.getForObject(uri, Merchant.class);
+			model.put("merchant",merchant1);
+			model.put("customerGroups",customerGroups);
+		return new ModelAndView("merchant/shortMessage/messageSend",model); 
+	}
+	public ModelAndView messageSend()throws Exception {
+	   String uri=ConfigParams.getBaseUrl() +"";
+		return new ModelAndView("merchant/shortMessage/messageSend"); 
+	}
 }
