@@ -34,7 +34,7 @@
 				<td><a class="btn btn-success" href="javascript:void();"
 					onclick="toReservedMsg('${merchant.id}');">短信预存</a>
 					<a class="btn btn-success" href="javascript:void();"
-					onclick="reservedMsgLog('${merchant.id}');">短信记录</a>		
+					onclick="reservedMsgLog('${merchant.id}');">预存记录</a>		
 					<a class="btn btn-success" href="javascript:void();"
 					onclick="updateQuota('${merchant.id}');">额度调整</a>				
 				</td>					

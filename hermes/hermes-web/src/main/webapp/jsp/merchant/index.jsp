@@ -205,12 +205,15 @@ body {
 		$("#importLog").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/importLog/");
 		});
+		$("#messageLog").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/message/reservedMsgLog/");
+		});
 		$("#messageTemplate").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/template/");
 		});
 
 	});
-
+		
 	function loadPage(url) {
 		$("#pageContentFrame").load(url);
 	}

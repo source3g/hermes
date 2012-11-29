@@ -38,12 +38,13 @@ public class CustomerImportService extends BaseService {
 		updateIncludeProperties(customerImportLog, "status");
 	}
 
-	public Page findImportLog(String merchantId,int pageNoInt,Date startTime ,Date endTime ) {
+	public Page findImportLog(String merchantId, int pageNoInt, Date startTime, Date endTime) {
 		Query query = new Query();
-		if(startTime!=null){
+		if (startTime != null && endTime != null) {
+			query.addCriteria(Criteria.where("importTime").gte(startTime).lte(endTime));
+		} else if (startTime != null) {
 			query.addCriteria(Criteria.where("importTime").gte(startTime));
-		}
-		if(endTime!=null){
+		} else if (endTime != null) {
 			query.addCriteria(Criteria.where("importTime").lte(endTime));
 		}
 		Merchant merchant = new Merchant();
@@ -55,7 +56,7 @@ public class CustomerImportService extends BaseService {
 		page.gotoPage(pageNoInt);
 		List<CustomerImportLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), CustomerImportLog.class);
 		page.setData(list);
-		return page ;
+		return page;
 	}
 
 	public void importCustomer(List<CustomerImportItem> customerImportItems, String merchantId, String customerImportLogId) {
@@ -194,9 +195,9 @@ public class CustomerImportService extends BaseService {
 			birthStr = birthStr.replace("日", "-");
 			customerImportItem.setId(ObjectId.get());
 			customerImportItem.setBirthday(birthStr);
-			customerImportItem.setPhone(String.valueOf((long)row.get(phoneIndex).getNumericCellValue()));
+			customerImportItem.setPhone(String.valueOf((long) row.get(phoneIndex).getNumericCellValue()));
 			customerImportItem.setAddress(row.get(addrIndex).getStringCellValue());
-			customerImportItem.setQq(String.valueOf((long)row.get(qqIndex).getNumericCellValue()));
+			customerImportItem.setQq(String.valueOf((long) row.get(qqIndex).getNumericCellValue()));
 			customerImportItem.setEmail(row.get(emailIndex).getStringCellValue());
 			customerImportItem.setNote(row.get(noteIndex).getStringCellValue());
 			customerImportItem.setMerchantId(new ObjectId(merchantId));
@@ -210,9 +211,9 @@ public class CustomerImportService extends BaseService {
 	}
 
 	public List<CustomerImportItem> importLogMerchantInfo(String merchantId) {
-		ObjectId objId=new ObjectId(merchantId);
-		List<CustomerImportItem> customerImportItem= mongoTemplate.find(new Query(Criteria.where("customerImportLogId").is(objId)), CustomerImportItem.class);
-		 return customerImportItem;
+		ObjectId objId = new ObjectId(merchantId);
+		List<CustomerImportItem> customerImportItem = mongoTemplate.find(new Query(Criteria.where("customerImportLogId").is(objId)), CustomerImportItem.class);
+		return customerImportItem;
 	}
 
 }

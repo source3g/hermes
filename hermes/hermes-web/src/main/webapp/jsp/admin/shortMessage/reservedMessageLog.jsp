@@ -8,7 +8,7 @@
 <title>商户个人短信预存记录</title>
 </head>
 <body>
-	<form id="queryForm" class="well form-inline " method="get">
+	<form id="queryForm"  method="get">
 
 		<input id="pageNo" name="pageNo" type="hidden"> 
 	</form>
@@ -23,7 +23,7 @@
 		</thead>
 		<c:forEach items="${page.data}" var="msgLog">
 		<tr>
-			<td>${merchant.name }</td>
+			<td>${merchant.name}</td>
 			<td>${msgLog.count}</td>
 			<td>${msgLog.chargeTime}</td>
 		</tr>
