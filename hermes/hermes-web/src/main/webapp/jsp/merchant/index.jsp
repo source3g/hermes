@@ -214,10 +214,14 @@ body {
 		$("#messageAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageSend/");
 		});
+		$("#messageFastSend").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/message/fastSend/");
+		});
 	});
 		
 	function loadPage(url) {
 		$("#pageContentFrame").load(url);
 	}
+	
 </script>
 </html>

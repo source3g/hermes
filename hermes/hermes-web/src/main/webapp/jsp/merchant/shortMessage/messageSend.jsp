@@ -32,8 +32,7 @@
 			 <td colspan="3"> 
 			<c:if test="${not empty customerGroups }">
 				<c:forEach items="${customerGroups}" var="customerGroup">
-					 <input type=checkbox name="customerGroupName" value="${customerGroup.name}">${customerGroup.name}
-					 <input type=hidden name="name" value="${customerGroup.name}">
+					 <input type=checkbox name="ids" value="${customerGroup.id}">${customerGroup.name}
 				</c:forEach>
 			</c:if>
 			
@@ -57,14 +56,29 @@
 	</form>
 	<script type="text/javascript">
 	$(document).ready(function() {
-	
+		var validateOptions = {
+				rules : { 
+					messageInfo:{
+						required : true
+					}
+				},
+				messages:{
+					messageInfo	:{
+						required : "短信输入不能为空"
+					}
+				}
+		};
+		$('#messageSendForm').validate(validateOptions); 
 	 $('#messageSendForm').submit(function() {
+		 if (!$('#messageSendForm').valid()) {
+				return false;
+			}
 		 var options = {
 				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
 				 type:"post",
 			success : showList
 		}; 
-		alert("aaa");
+		
 		$(this).ajaxSubmit(options);
 		return false;
 

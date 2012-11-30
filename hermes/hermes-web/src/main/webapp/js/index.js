@@ -4,12 +4,9 @@ $(document).ready(function() {
 	});
 });
 
-
-function showPage(data) {
+function showContentInfo(data) {
 	$("#pageContentFrame").html(data)
 }
 function showError(data) {
 	 alert("出错了");
 }
-
-
