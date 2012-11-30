@@ -120,6 +120,7 @@ public class MessageController {
 	}
 	@RequestMapping(value = "/fastSend", method = RequestMethod.GET)
 	public ModelAndView fastSend()throws Exception {
+		
 	 return new ModelAndView("merchant/shortMessage/fastSend");
 	}
 }

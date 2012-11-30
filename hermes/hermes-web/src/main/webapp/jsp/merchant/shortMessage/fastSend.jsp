@@ -33,6 +33,14 @@
 					<td colspan="4"><textarea class="span8" rows="5" name="customerPhone" ></textarea>
 				 </td>
 			  </tr>
+			  
+			   <tr>
+				 <td>
+					<label class="control-label">输入客户电话号码已封号隔开：</label> </td>
+					<td colspan="4"><textarea class="span8" rows="5" name="customerPhone" ></textarea>
+				 </td>
+			  </tr>
+			  
 			<tr>
 			<td>
 				<label class="control-label">编辑短信内容：</label> </td>
