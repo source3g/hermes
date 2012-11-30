@@ -7,12 +7,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.MessageTemplate;
@@ -66,8 +72,20 @@ public class MessageController {
 			model.put("customerGroups",customerGroups);
 		return new ModelAndView("merchant/shortMessage/messageSend",model); 
 	}
-	public ModelAndView messageSend()throws Exception {
-	   String uri=ConfigParams.getBaseUrl() +"";
-		return new ModelAndView("merchant/shortMessage/messageSend"); 
+	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
+	public ModelAndView messageSend(String name ,String messageInfo )throws Exception {
+		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+		formData.add("merchantGroupName", name);
+		formData.add("messageInfo",messageInfo);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
+	  	String uri=ConfigParams.getBaseUrl() +"shortMessage/messageSend/";
+	  	String result = restTemplate.postForObject(uri,requestEntity,String.class);
+	   if(ReturnConstants.SUCCESS.equals(result)){
+		   return new ModelAndView("merchant/shortMessage/messageSend"); 
+	   }
+		return new ModelAndView("admin/error"); 
+	   
 	}
 }

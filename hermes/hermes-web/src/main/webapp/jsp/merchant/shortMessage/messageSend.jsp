@@ -9,7 +9,7 @@
 <title>短信发送</title>
 </head>
 <body>
-	<form class="well ">
+	<form id="messageSendForm" class="well ">
 		<table class="table table-bordered">
 		<thead>
 			<tr>
@@ -32,7 +32,8 @@
 			 <td colspan="3"> 
 			<c:if test="${not empty customerGroups }">
 				<c:forEach items="${customerGroups}" var="customerGroup">
-					 <input type=checkbox >${customerGroup.name}
+					 <input type=checkbox name="customerGroupName" value="${customerGroup.name}">${customerGroup.name}
+					 <input type=hidden name="name" value="${customerGroup.name}">
 				</c:forEach>
 			</c:if>
 			
@@ -41,18 +42,37 @@
 			<tr>
 			<td>
 				<label class="control-label">编辑短信内容：</label> </td>
-				<td colspan="4"><textarea class="span8" rows="5" name=""></textarea>
+				<td colspan="4"><textarea class="span8" rows="5" name="messageInfo" ></textarea>
 			 </td>
 			 </tr>
 			 
 			<tr>
 			<td colspan="4">
-				<input type="submit" class="btn btn-primary" value="发送">
+				<input type="submit" class="btn btn-primary" value="发送" >
 				<td>
 		    </tr>
 		
 	</tbody>
 		</table>
 	</form>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	
+	 $('#messageSendForm').submit(function() {
+		 var options = {
+				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
+				 type:"post",
+			success : showList
+		}; 
+		alert("aaa");
+		$(this).ajaxSubmit(options);
+		return false;
+
+		}); 
+	});
+		function showList(data){
+			$("#pageContentFrame").html(data);
+		}
+		</script>
 </body>
 </html>
