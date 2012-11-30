@@ -38,4 +38,8 @@ public class MessageService extends BaseService {
 		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), MessageTemplate.class);
 	}
 
+	public void save(MessageTemplate messageTemplate) {
+		mongoTemplate.save(messageTemplate);
+	}
+
 }

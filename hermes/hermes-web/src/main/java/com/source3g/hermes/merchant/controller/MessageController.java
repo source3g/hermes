@@ -15,12 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
@@ -48,27 +48,54 @@ public class MessageController {
 
 	@RequestMapping(value = "/template/add", method = RequestMethod.POST)
 	public ModelAndView addTemplate(HttpServletRequest req, @Valid MessageTemplate messageTemplate, BindingResult errorResult) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("/merchant/shortMessage/messageTemplate", model);
 		}
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		messageTemplate.setMerchantId(merchant.getId());
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/template/add/";
+		messageTemplate.setId("");
 		HttpEntity<MessageTemplate> entity = new HttpEntity<MessageTemplate>(messageTemplate);
 		restTemplate.postForObject(uri, entity, String.class);
-		return new ModelAndView("/merchant/shortMessage/messageTemplate");
+		model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+		return new ModelAndView("/merchant/shortMessage/messageTemplate", model);
 	}
 
-	@RequestMapping(value = "/template/list", method = RequestMethod.GET)
-	public ModelAndView listTemplate(HttpServletRequest req) throws Exception {
+	@RequestMapping(value = "/template/save", method = RequestMethod.POST)
+	public ModelAndView saveTemplate(HttpServletRequest req, @Valid MessageTemplate messageTemplate, BindingResult errorResult) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		if (errorResult.hasErrors()) {
+			model.put("errors", errorResult.getAllErrors());
+			return new ModelAndView("/merchant/shortMessage/messageTemplate", model);
+		}
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		messageTemplate.setMerchantId(merchant.getId());
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/template/save/";
+		HttpEntity<MessageTemplate> entity = new HttpEntity<MessageTemplate>(messageTemplate);
+		restTemplate.postForObject(uri, entity, String.class);
+		model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+		return new ModelAndView("/merchant/shortMessage/messageTemplate", model);
+	}
+
+	@RequestMapping(value = "/template/listJson", method = RequestMethod.GET)
+	@ResponseBody
+	public MessageTemplate[] listTemplate(HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/template/list/" + merchant.getId() + "/";
 		MessageTemplate[] templates = restTemplate.getForObject(uri, MessageTemplate[].class);
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("templates", templates);
-		return new ModelAndView("/merchant/shortMessage/messageTemplate", model);
+		return templates;
+	}
+
+	@RequestMapping(value = "/template/delete/{id}", method = RequestMethod.GET)
+	public ModelAndView deleteTemplate(@PathVariable String id) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/template/delete/" + id + "/";
+		String result = restTemplate.getForObject(uri, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("redirect:/merchant/message/template/");
+		}
+		return new ModelAndView("error");
 	}
 
 	@RequestMapping(value = "/reservedMsgLog", method = RequestMethod.GET)

@@ -186,14 +186,17 @@ public class Customer extends AbstractEntity {
 		// SimpleFilterProvider().addFilter("filterPropreties",
 		// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
 		// "callRecords", "operateTime"));
-	//	SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("otherPhones", "callRecords", "operateTime");
-	//	FilterProvider fp = new SimpleFilterProvider().addFilter("filterForSync", filter);
+		// SimpleBeanPropertyFilter filter =
+		// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
+		// "callRecords", "operateTime");
+		// FilterProvider fp = new
+		// SimpleFilterProvider().addFilter("filterForSync", filter);
 		ObjectMapper objectMapper = new ObjectMapper();
 		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
 		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
 		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
 		objectMapper.registerModule(module);
-		  SerializationConfig serializationConfig = objectMapper.getSerializationConfig();  
+		SerializationConfig serializationConfig = objectMapper.getSerializationConfig();
 		serializationConfig.addMixInAnnotations(Customer.class, CustomerForSyncIntf.class);
 		String strJson = objectMapper.writer().writeValueAsString(this);
 
@@ -205,7 +208,7 @@ public class Customer extends AbstractEntity {
 		// stringBuffer.append(name);
 		// stringBuffer.append(quote);
 
-		return "REPLACE INTO CUSTOMER (phone,context) values(" + phone + "," + strJson + "); ";
+		return "REPLACE INTO CUSTOMER (phone,content) values(" + phone + ",'" + strJson + "'); ";
 	}
 
 	@JsonIgnore
