@@ -271,7 +271,7 @@ public class TaskService extends BaseService {
 		}
 		bw.close();
 		// File gzipFile = new File(gzipFilePath);
-		Resource resource = new ClassPathResource("taskfiles/1.sh");
+		Resource resource = new ClassPathResource("taskfiles/customer/task.sh");
 
 		// gzipFile.createNewFile();
 		// // 建立压缩文件输出流

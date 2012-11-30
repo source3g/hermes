@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ include file="../../include/import.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -9,7 +10,16 @@
 <body>
 	<div class="well">
 		<div>
-			选择模板： <select></select>
+			选择模板： <select id="sel">
+				<option>请选择</option>
+				<c:forEach items="${templates}" var="template">
+					<option value="${template.id}">${template.title }</option>
+				</c:forEach>
+			</select>
+			<c:forEach items="${templates}" var="template">
+				<span id="${template.id}" style="display: none;">${template.content}</span>
+			</c:forEach>
+
 		</div>
 	</div>
 	<div>
@@ -24,12 +34,13 @@
 				</thead>
 				<tr>
 					<td width="20%"><label class="control-label">标题：</label></td>
-					<td width="80%"><input type="text" name="title"
-						class="input-xlarge" placeholder="请输入模板标题..." /></td>
+					<td width="80%"><input type="hidden" id="id" name="id" /> <input
+						type="text" id="title" name="title" class="input-xlarge"
+						placeholder="请输入模板标题..." /></td>
 				</tr>
 				<tr>
 					<td width="20%"><label class="control-label">内容：</label></td>
-					<td width="80%"><textarea rows="16" class="span8"
+					<td width="80%"><textarea id="content" rows="16" class="span8"
 							name="content"></textarea></td>
 				</tr>
 				<tr>
@@ -44,13 +55,36 @@
 				</tr>
 			</table>
 		</form>
+		<c:if test="${not empty errors }">
+			<div class="alert alert-error">
+				<ul>
+					<c:forEach items="${errors }" var="error">
+						<li>${error.defaultMessage }</li>
+					</c:forEach>
+				</ul>
+			</div>
+		</c:if>
 	</div>
 	<script type="text/javascript">
+		$(document).ready(function() {
+			$("#sel").change(function() {
+				var content = $("#" + $(this).val()).text();
+				var title = $("#sel").find("option:selected").text();
+				if (title == '请选择') {
+					$("#id").html("");
+					$("#title").attr("value", "");
+					$("#content").html("");
+					return;
+				}
+				$("#id").html($(this).val());
+				$("#title").attr("value", title);
+				$("#content").html(content);
+			});
+		});
 		function add() {
-			alert("aaaa");
 			$("#messageTemplateForm").ajaxSubmit({
 				url : "${pageContext.request.contextPath}/merchant/message/template/add",
-				success : showInfo,
+				success : showContentInfo,
 				error : showError
 			});
 		}
