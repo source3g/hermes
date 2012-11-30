@@ -28,9 +28,24 @@ public class MessageApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/template/save", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveTemplate(@RequestBody MessageTemplate messageTemplate) {
+		messageService.save(messageTemplate);
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/template/delete/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String saveTemplate(@PathVariable String id) {
+		messageService.deleteById(id, MessageTemplate.class);
+		return ReturnConstants.SUCCESS;
+	}
+
 	@RequestMapping(value = "/template/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<MessageTemplate> listTemplate(@PathVariable String merchantId) {
 		return messageService.listAll(merchantId);
 	}
+
 }

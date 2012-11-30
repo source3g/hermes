@@ -32,6 +32,8 @@ public abstract class AbstractEntity implements Serializable{
 	public void setId(String id) {
 		if (!StringUtils.isEmpty(id)) {
 			this.id = new ObjectId(id);
+		}else{
+			this.id=null;
 		}
 	}
 
