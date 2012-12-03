@@ -38,10 +38,18 @@
 			
 			  </td>	
 			  </tr>
+			  <tr>
+			  <td>
+			  		<label class="control-label">选择短信模板：</label> </td>
+			  		<td colspan="4"> <select id="sel">
+								<option>请选择</option>
+									</select>
+			  	</td>
+			  </tr>
 			<tr>
 			<td>
 				<label class="control-label">编辑短信内容：</label> </td>
-				<td colspan="4"><textarea class="span8" rows="5" name="messageInfo" ></textarea>
+				<td colspan="4"><textarea class="span8" rows="5" name="content" id="content"></textarea>
 			 </td>
 			 </tr>
 			 
@@ -58,12 +66,12 @@
 	$(document).ready(function() {
 		var validateOptions = {
 				rules : { 
-					messageInfo:{
+					content:{
 						required : true
 					}
 				},
 				messages:{
-					messageInfo	:{
+					content	:{
 						required : "短信输入不能为空"
 					}
 				}
@@ -83,7 +91,36 @@
 		return false;
 
 		}); 
+	 
+	 //短信模板
+		$.ajax({
+			url : "${pageContext.request.contextPath}/merchant/message/template/listJson/",
+			dataType : "json",
+			success : initSel
+		});
+
+		$("#sel").change(function() {
+			var content = $("#" + $(this).val()).text();
+			var title = $("#sel").find("option:selected").text();
+			if (title == '请选择') {
+				$("#id").html("");
+				$("#title").attr("value", "");
+				$("#content").html("");
+				return;
+			}
+			$("#id").attr("value", $(this).val());
+			$("#title").attr("value", title);
+			$("#content").html(content);
+		});
 	});
+	
+		function initSel(data) {
+			for ( var i = 0; i < data.length; i++) {
+				$("#sel").append("<option value='"+data[i].id+"'>" + data[i].title + "</option>");
+				$("#sel").after("<span id="+data[i].id+" style='display: none;'>" + data[i].content + "</span>");
+			}
+		}
+	
 		function showList(data){
 			$("#pageContentFrame").html(data);
 		}

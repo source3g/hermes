@@ -1,6 +1,7 @@
 package com.source3g.hermes.message.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -15,7 +16,7 @@ import com.source3g.hermes.service.BaseService;
 @Service
 public class MessageService extends BaseService {
 
-	public void messageSend(String[] ids, String messageInfo) {
+	public void messageSend(String[] ids, String content) {
 		Query query = new Query();
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
 		for(String id:ids){
@@ -26,7 +27,7 @@ public class MessageService extends BaseService {
 		query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
 		List<Customer> customers=mongoTemplate.find(query, Customer.class);
 		for(Customer customer:customers){
-			System.out.println("已向"+customer.getName()+"发送"+messageInfo);
+			System.out.println("已向"+customer.getName()+"发送"+content);
 		}
 		
 	}
@@ -37,6 +38,15 @@ public class MessageService extends BaseService {
 
 	public void save(MessageTemplate messageTemplate) {
 		mongoTemplate.save(messageTemplate);
+	}
+
+	public void fastSend(String type, String[] customerPhoneArray, String content) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("phone").in(Arrays.asList(customerPhoneArray)));
+		List<Customer> customers=mongoTemplate.find(query, Customer.class);
+		for(Customer customer:customers){
+			System.out.println("已向"+customer.getName()+"发送"+content);
+		}
 	}
 
 }

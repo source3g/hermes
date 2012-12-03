@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
@@ -125,12 +126,12 @@ public class MessageController {
 		return new ModelAndView("merchant/shortMessage/messageSend",model); 
 	}
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
-	public ModelAndView messageSend(String[] ids ,String messageInfo )throws Exception {
+	public ModelAndView messageSend(String[] ids ,String content )throws Exception {
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		for (String id:ids){
 			formData.add("ids", id);
 		}
-		formData.add("messageInfo",messageInfo);
+		formData.add("content",content);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		 httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
@@ -145,9 +146,30 @@ public class MessageController {
 		return new ModelAndView("admin/error"); 
 	   
 	}
-	@RequestMapping(value = "/fastSend", method = RequestMethod.GET)
-	public ModelAndView fastSend()throws Exception {
-		
-	 return new ModelAndView("merchant/shortMessage/fastSend");
+	@RequestMapping(value = "/toFastSend", method = RequestMethod.GET)
+	public ModelAndView fastSend(HttpServletRequest req)throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();	
+		Merchant merchant=LoginUtils.getLoginMerchant(req);
+		model.put("merchant",merchant);
+	
+	 return new ModelAndView("merchant/shortMessage/fastSend",model);
 	}
+	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
+	public ModelAndView fastSend(String type,String customerPhones,String content)throws Exception {
+		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+		formData.add("type",type);
+		formData.add("customerPhones",customerPhones);
+		formData.add("content",content);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
+	  	String uri=ConfigParams.getBaseUrl() +"shortMessage/fastSend/";
+	  	String result = restTemplate.postForObject(uri,requestEntity,String.class); 
+	  	 if(ReturnConstants.SUCCESS.equals(result)){
+			   return new ModelAndView("merchant/shortMessage/messageSend"); 
+		   }
+			return new ModelAndView("admin/error"); 
+	}
+	
 }

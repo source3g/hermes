@@ -221,7 +221,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageSend/");
 		});
 		$("#messageFastSend").click(function() {
-			loadPage("${pageContext.request.contextPath}/merchant/message/fastSend/");
+			loadPage("${pageContext.request.contextPath}/merchant/message/toFastSend/");
 		});
 		$("#noteAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/note/add/");
