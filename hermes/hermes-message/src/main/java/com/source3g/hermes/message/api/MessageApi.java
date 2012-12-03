@@ -48,8 +48,20 @@ public class MessageApi {
 	}
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
 	@ResponseBody
-	public String messageSend(String[] ids ,String messageInfo) {
-		messageService.messageSend(ids, messageInfo);
+	public String messageSend(String[] ids ,String content) {
+		messageService.messageSend(ids, content);
+		return ReturnConstants.SUCCESS;
+	}
+	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
+	@ResponseBody
+	public String fastSend(String type,String customerPhones,String content) {
+		if(type.equals("enter")){
+			String customerPhoneArray[]=customerPhones.split("\n");
+			messageService.fastSend( type, customerPhoneArray, content);
+		}else if(type.equals("semicolon")){
+			String customerPhoneArray[]=customerPhones.split(";");
+			messageService.fastSend( type, customerPhoneArray, content);	
+		}
 		return ReturnConstants.SUCCESS;
 	}
 }

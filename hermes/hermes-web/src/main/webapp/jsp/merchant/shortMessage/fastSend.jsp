@@ -9,87 +9,166 @@
 <title>短信发送</title>
 </head>
 <body>
-	<form id="messageSendForm" class="well ">
+	<form id="fastSendForm" class="well ">
 		<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th colspan="4"><center>
-							<h4>短信录入 </h4>
+			<thead>
+				<tr>
+					<th colspan="4"><center>
+							<h4>短信录入</h4>
 						</center></th>
 				</tr>
-		</thead>
-		<tbody>
-			<tr>
-			<td width="20%" ><label class="control-label">商户短信数据 :</label></td>
-			<td width="26%" >短信预存数量：${merchant.shortMessage.totalCount}</td>
-			<td width="27%" >短信可用数量：${merchant.shortMessage.surplusMsgCount}</td>
-			<td width="27%" >短信已发送数量：</td>
-				
-			</tr>
-			
-			 <tr>
-				 <td>
-					<label class="control-label">输入客户电话号码已封号隔开：</label> </td>
-					<td colspan="4"><textarea class="span8" rows="5" name="customerPhone" ></textarea>
-				 </td>
-			  </tr>
-			  
-			   <tr>
-				 <td>
-					<label class="control-label">输入客户电话号码已封号隔开：</label> </td>
-					<td colspan="4"><textarea class="span8" rows="5" name="customerPhone" ></textarea>
-				 </td>
-			  </tr>
-			  
-			<tr>
-			<td>
-				<label class="control-label">编辑短信内容：</label> </td>
-				<td colspan="4"><textarea class="span8" rows="5" name="messageInfo" ></textarea>
-			 </td>
-			 </tr>
-			 
-			<tr>
-			<td colspan="4">
-				<input type="submit" class="btn btn-primary" value="发送" >
-				<td>
-		    </tr>
-		
-	</tbody>
+			</thead>
+			<tbody>
+				<tr>
+					<td width="20%"><label class="control-label">商户短信数据 :</label></td>
+					<td width="26%">短信预存数量：${merchant.shortMessage.totalCount}</td>
+					<td width="27%">短信可用数量：${merchant.shortMessage.surplusMsgCount}</td>
+					<td width="27%">短信已发送数量：</td>
+
+				</tr>
+
+				<tr>
+					<td>客户电话号码分隔类型：</td>
+					<td colspan="3"><select id="shortMessage" name="type"
+						class="input-medium">
+							<option value="enter">号码以回车分隔</option>
+							<option value="semicolon">号码以分号分隔</option>
+					</select></td>
+				</tr>
+
+				<tr>
+					<td><label class="control-label">输入客户电话号码：</label></td>
+					<td colspan="4">
+						<!-- <textarea class="span8" rows="5"
+							name="customerPhones" id="customerPhones"></textarea> -->
+						<div style="background-color: white; height: 150px; width: 500px;"
+							id="customerPhones" contentEditable="true" ></div>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label class="control-label">选择短信模板：</label></td>
+					<td colspan="4"><select id="sel">
+							<option>请选择</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td><label class="control-label">编辑短信内容：</label></td>
+					<td colspan="4"><textarea class="span8" rows="5"
+							name="content" id="content"></textarea></td>
+				</tr>
+
+				<tr>
+					<td colspan="4"><input type="submit" class="btn btn-primary"
+						value="发送"> <input type="button" class="btn btn-primary"
+						onclick="test();" value="測試">
+					<td>
+				</tr>
+
+			</tbody>
 		</table>
 	</form>
 	<script type="text/javascript">
-	$(document).ready(function() {
-		var validateOptions = {
-				rules : { 
-					messageInfo:{
-						required : true
-					}
-				},
-				messages:{
-					messageInfo	:{
-						required : "短信输入不能为空"
-					}
-				}
-		};
-		$('#messageSendForm').validate(validateOptions); 
-	 $('#messageSendForm').submit(function() {
-		 if (!$('#messageSendForm').valid()) {
-				return false;
-			}
-		 var options = {
-				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
-				 type:"post",
-			success : showList
-		}; 
-		
-		$(this).ajaxSubmit(options);
-		return false;
+		$(document).ready(
+						function() {
+							var validateOptions = {
+								rules : {
+									content : {
+										required : true
+									}
+								},
+								messages : {
+									content : {
+										required : "短信输入不能为空"
+									}
+								}
+							};
+							$('#fastSendForm').validate(validateOptions);
+							
 
-		}); 
-	});
-		function showList(data){
+							$('#fastSendForm').submit(
+											function() {
+												if ((!$('#fastSendForm').valid())||(!testCustomerPhones())) {
+													return false;
+												}
+												var options = {
+													url : "${pageContext.request.contextPath}/merchant/message/fastSend/",
+													type : "post",
+													success : showList
+												};
+												$(this).ajaxSubmit(options);
+												return false;
+
+											});
+
+							//短信模板
+							$.ajax({
+										url : "${pageContext.request.contextPath}/merchant/message/template/listJson/",
+										dataType : "json",
+										success : initSel
+									});
+
+							$("#sel").change(
+									function() {
+										var content = $("#" + $(this).val())
+												.text();
+										var title = $("#sel").find(
+												"option:selected").text();
+										if (title == '请选择') {
+											$("#id").html("");
+											$("#title").attr("value", "");
+											$("#content").html("");
+											return;
+										}
+										$("#id").attr("value", $(this).val());
+										$("#title").attr("value", title);
+										$("#content").html(content);
+									});
+						});
+
+		function initSel(data) {
+			for ( var i = 0; i < data.length; i++) {
+				$("#sel").append(
+						"<option value='"+data[i].id+"'>" + data[i].title
+								+ "</option>");
+				$("#sel").after(
+						"<span id="+data[i].id+" style='display: none;'>"
+								+ data[i].content + "</span>");
+			}
+		}
+		function showList(data) {
 			$("#pageContentFrame").html(data);
 		}
-		</script>
+
+		function testCustomerPhones() {
+			var j = 1;
+			var customerPhones = $('#customerPhones').text();
+			customerPhones.replace("<span id=\"wrongPhone\" >","");
+			customerPhones.replace("</span>","");
+			var re = /^[0-9]*$/;
+			for ( var i = 0; i < customerPhones.length; i++) {
+				if (customerPhones[i] == ';') {
+					if (i == j * 12 - 1
+							&& re.test(customerPhones.substring(i - 11, i - 1))) {
+						j++;
+					} else {
+						var str1 = customerPhones.substring(0, (j - 1) * 12);
+						var str2 = customerPhones.substring((j - 1) * 12, i);
+						var str3 = customerPhones.substring(i,
+								customerPhones.length);
+						var str = str1 + "<span id=\"wrongPhone\" >" + str2
+								+ "</span>" + str3;
+
+						$('#customerPhones').html(str);
+						$('#wrongPhone').css('color', 'red');
+						alert("电话号码不合法");
+						return false;
+					}
+				}
+			}
+			$('#customerPhones').html(customerPhones);
+			return true;
+		}
+	</script>
 </body>
 </html>
