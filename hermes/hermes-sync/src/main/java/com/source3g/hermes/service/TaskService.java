@@ -228,15 +228,13 @@ public class TaskService extends BaseService {
 
 	public void packageIncrement(Merchant merchant) throws IOException {
 		Date date = findLastPackageTime(merchant);
-		List<Customer> list;
-		if (date == null) {
-			list = mongoTemplate.findAll(Customer.class);
-		} else {
-			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date)), Customer.class);
-		}
-		if (list.size() == 0) {
+		List<Customer> addOrUpdateList = findAddOrUpdateList(date);
+
+		List<Customer> deleteList = findDeleteList(date);
+		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {
 			return;
 		}
+
 		Date createTime = new Date();
 		TaskPackage taskPackage = new TaskPackage();
 		taskPackage.setCreateTime(createTime);
@@ -264,8 +262,13 @@ public class TaskService extends BaseService {
 		}
 		File file = new File(txtFilePath);
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-		for (Customer c : list) {
+		for (Customer c : addOrUpdateList) {
 			bw.write(c.toInsertOrUpdateSql());
+			bw.newLine();
+			bw.flush();
+		}
+		for (Customer c : deleteList) {
+			bw.write(c.toDeleteSql());
 			bw.newLine();
 			bw.flush();
 		}
@@ -299,5 +302,20 @@ public class TaskService extends BaseService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private List<Customer> findDeleteList(Date date) {
+		List<Customer> list = new ArrayList<Customer>();
+		return list;
+	}
+
+	private List<Customer> findAddOrUpdateList(Date date) {
+		List<Customer> list = new ArrayList<Customer>();
+		if (date == null) {
+			list = mongoTemplate.findAll(Customer.class);
+		} else {
+			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date)), Customer.class);
+		}
+		return list;
 	}
 }

@@ -9,9 +9,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.customer.Customer;
-import com.source3g.hermes.entity.customer.CustomerGroup;
-import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.service.BaseService;
 

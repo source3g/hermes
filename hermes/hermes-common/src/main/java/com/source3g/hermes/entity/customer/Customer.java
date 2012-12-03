@@ -195,6 +195,7 @@ public class Customer extends AbstractEntity {
 		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
 		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
 		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
+		objectMapper.getSerializationConfig().setSerializationInclusion(org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
 		objectMapper.registerModule(module);
 		SerializationConfig serializationConfig = objectMapper.getSerializationConfig();
 		serializationConfig.addMixInAnnotations(Customer.class, CustomerForSyncIntf.class);
@@ -208,12 +209,12 @@ public class Customer extends AbstractEntity {
 		// stringBuffer.append(name);
 		// stringBuffer.append(quote);
 
-		return "REPLACE INTO CUSTOMER (phone,content) values(" + phone + ",'" + strJson + "'); ";
+		return "REPLACE INTO CUSTOMER (phone,content) values('" + phone + "','" + strJson + "'); ";
 	}
 
 	@JsonIgnore
 	public String toDeleteSql() {
-		return "delete from  CUSTOMER where phone=" + phone;
+		return "delete from  CUSTOMER where phone='" + phone + "'";
 	}
 
 	public class ObjectIdSerializer extends JsonSerializer<ObjectId> {

@@ -2,6 +2,7 @@ package com.source3g.hermes.customer.api;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
@@ -46,12 +47,11 @@ public class CustomerApi {
 		customerService.add(customer);
 		return "success";
 	}
-	
-	
+
 	@RequestMapping(value = "/get/{sn}/{phone}", method = RequestMethod.GET)
 	@ResponseBody
-	public Customer getBySn(@PathVariable String sn,@PathVariable String phone) {
-		return customerService.findBySnAndPhone(sn,phone);
+	public Customer getBySn(@PathVariable String sn, @PathVariable String phone) {
+		return customerService.findBySnAndPhone(sn, phone);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -69,7 +69,23 @@ public class CustomerApi {
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
-		return customerService.list(pageNoInt, customer);
+		return customerService.listByPage(pageNoInt, customer);
+	}
+
+	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String export(String name, String phone, @PathVariable String merchantId) {
+		Customer customer = new Customer();
+		customer.setName(name);
+		customer.setMerchantId(new ObjectId(merchantId));
+		customer.setPhone(phone);
+		String result = "";
+		try {
+			result = customerService.export(customer);
+		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -83,7 +99,7 @@ public class CustomerApi {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String delete(@PathVariable String id) {
-		customerService.deleteById(id, Customer.class);
+		customerService.deleteById(id);
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -111,9 +127,9 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/importLog/merchant/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Page importLog(@PathVariable String merchantId,String pageNo,Date startTime ,Date endTime ) {
-		int pageNoInt=Integer.parseInt(pageNo);
-		return customerImportService.findImportLog(merchantId, pageNoInt, startTime , endTime );
+	public Page importLog(@PathVariable String merchantId, String pageNo, Date startTime, Date endTime) {
+		int pageNoInt = Integer.parseInt(pageNo);
+		return customerImportService.findImportLog(merchantId, pageNoInt, startTime, endTime);
 	}
 
 	@RequestMapping(value = "/import/{merchantId}", method = RequestMethod.POST)
@@ -130,7 +146,7 @@ public class CustomerApi {
 		importLog.setId(ObjectId.get());
 		Merchant merchant = new Merchant();
 		merchant.setId(new ObjectId(merchantId));
-		Date importTime=new Date();
+		Date importTime = new Date();
 		importLog.setImportTime(importTime);
 		importLog.setMerchant(merchant);
 		importLog.setName(oldName);
@@ -144,9 +160,10 @@ public class CustomerApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
+
 	@RequestMapping(value = "/importLog/merchantInfo/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<CustomerImportItem> importLogMerchantInfo(@PathVariable String id){
+	public List<CustomerImportItem> importLogMerchantInfo(@PathVariable String id) {
 		return customerImportService.importLogMerchantInfo(id);
 	}
 }
