@@ -51,6 +51,7 @@
 				name="pageNo" class="input-mini">页<input type="button"
 				id="pageOk" class="btn" value="确定"></input>
 			</li>
+			<li><button onclick="exportCustomer();">导出</button></li>
 		</ul>
 	</div>
 	<div id="errorModal" class="modal hide fade">
@@ -150,6 +151,20 @@
 					goToPage(${page.lastPageNo});			
 					});
 			}
+	    }
+	    
+	    function exportCustomer(){
+	    	$("#pageNo").attr("value",pageNo);
+			var options={
+					url:"${pageContext.request.contextPath}/merchant/customer/export/",
+					dataType:'json',
+					success:function (data){
+						//alert(data);
+						window.open(data);
+					},
+					error:showError
+			};
+			$('#queryForm').ajaxSubmit(options);
 	    }
 	</script>
 </body>

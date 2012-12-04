@@ -1,6 +1,7 @@
 package com.source3g.hermes.customer.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,14 +13,16 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.bson.types.ObjectId;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.customer.utils.ExcelUtils;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
@@ -127,11 +130,22 @@ public class CustomerImportService extends BaseService {
 
 	public List<CustomerImportItem> fromExcelToDb(Resource resource, String merchantId, String customerImportLogId) throws InvalidFormatException, IOException {
 		List<CustomerImportItem> result = new ArrayList<CustomerImportItem>();
-		List<List<Cell>> rows = ExcelUtils.readExcel(resource);
-		if (rows.size() <= 1) {
+		// 创建文件输入流对象
+		InputStream is = resource.getInputStream();
+		// 创建 POI文件系统对象
+		Workbook wb = WorkbookFactory.create(is);
+		// 获取工作薄
+		Sheet sheet = wb.getSheetAt(0);
+
+		if (sheet.getLastRowNum() <= 1) {
 			return result;
 		}
-		List<Cell> header = rows.get(0);
+
+		// 声明行对象
+		Row row = null;
+		// 通过循环获取每一行
+
+		Row header = sheet.getRow(0);
 		int nameIndex = 0;
 		int sexIndex = 0;
 		int birthIndex = 0;
@@ -141,67 +155,87 @@ public class CustomerImportService extends BaseService {
 		int emailIndex = 0;
 		int noteIndex = 0;
 		int customerGroupIndex = 0;
-		for (int headerIndex = 0; headerIndex < header.size(); headerIndex++) {
-			if ("姓名".equals(header.get(headerIndex).getStringCellValue())) {
+		for (int headerIndex = 0; header.getCell(headerIndex) != null; headerIndex++) {
+			if ("姓名".equals(header.getCell(headerIndex).getStringCellValue())) {
 				nameIndex = headerIndex;
 				continue;
 			}
-			if ("性别".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("性别".equals(header.getCell(headerIndex).getStringCellValue())) {
 				sexIndex = headerIndex;
 				continue;
 			}
-			if ("生日".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("生日".equals(header.getCell(headerIndex).getStringCellValue())) {
 				birthIndex = headerIndex;
 				continue;
 			}
-			if ("电话".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("电话".equals(header.getCell(headerIndex).getStringCellValue())) {
 				phoneIndex = headerIndex;
 				continue;
 			}
-			if ("地址".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("地址".equals(header.getCell(headerIndex).getStringCellValue())) {
 				addrIndex = headerIndex;
 				continue;
 			}
-			if ("qq".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("qq".equals(header.getCell(headerIndex).getStringCellValue())) {
 				qqIndex = headerIndex;
 				continue;
 			}
-			if ("email".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("email".equals(header.getCell(headerIndex).getStringCellValue())) {
 				emailIndex = headerIndex;
 				continue;
 			}
-			if ("备注".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("备注".equals(header.getCell(headerIndex).getStringCellValue())) {
 				noteIndex = headerIndex;
 				continue;
 			}
-			if ("顾客组名".equals(header.get(headerIndex).getStringCellValue())) {
+			if ("顾客组名".equals(header.getCell(headerIndex).getStringCellValue())) {
 				customerGroupIndex = headerIndex;
 				continue;
 			}
 		}
-
-		for (int i = 1; i < rows.size(); i++) {
-			List<Cell> row = rows.get(i);
+		for (int i = 1; sheet.getRow(i) != null; i++) {
+			// }
+			// for (int i = 1; i < rows.size(); i++) {
+			row = sheet.getRow(i);
 			CustomerImportItem customerImportItem = new CustomerImportItem();
-			customerImportItem.setName(row.get(nameIndex).getStringCellValue());
-			String sexStr = row.get(sexIndex).getStringCellValue();
-			if ("男".equals(sexStr)) {
-				customerImportItem.setSex(Sex.MALE);
-			} else {
-				customerImportItem.setSex(Sex.FEMALE);
-			}
-			String birthStr = row.get(birthIndex).getStringCellValue();
-			birthStr = birthStr.replace("月", "-");
-			birthStr = birthStr.replace("日", "-");
 			customerImportItem.setId(ObjectId.get());
-			customerImportItem.setBirthday(birthStr);
-			customerImportItem.setPhone(String.valueOf((long) row.get(phoneIndex).getNumericCellValue()));
-			customerImportItem.setAddress(row.get(addrIndex).getStringCellValue());
-			customerImportItem.setQq(String.valueOf((long) row.get(qqIndex).getNumericCellValue()));
-			customerImportItem.setEmail(row.get(emailIndex).getStringCellValue());
-			customerImportItem.setNote(row.get(noteIndex).getStringCellValue());
 			customerImportItem.setMerchantId(new ObjectId(merchantId));
-			customerImportItem.setCustomerGroupName(row.get(customerGroupIndex).getStringCellValue());
+			if (row.getCell(nameIndex) != null) {
+				customerImportItem.setName(row.getCell(nameIndex).getStringCellValue());
+			}
+			if (row.getCell(sexIndex) != null) {
+				String sexStr = row.getCell(sexIndex).getStringCellValue();
+				if ("男".equals(sexStr)) {
+					customerImportItem.setSex(Sex.MALE);
+				} else {
+					customerImportItem.setSex(Sex.FEMALE);
+				}
+			}
+			if (row.getCell(birthIndex) != null) {
+				String birthStr = row.getCell(birthIndex).getStringCellValue();
+				birthStr = birthStr.replace("月", "-");
+				birthStr = birthStr.replace("日", "-");
+				customerImportItem.setBirthday(birthStr);
+			}
+			if (row.getCell(phoneIndex) != null) {
+				customerImportItem.setPhone(String.valueOf((long) row.getCell(phoneIndex).getNumericCellValue()));
+			}
+			if (row.getCell(addrIndex) != null) {
+				customerImportItem.setAddress(row.getCell(addrIndex).getStringCellValue());
+			}
+			if (row.getCell(qqIndex) != null) {
+				customerImportItem.setQq(String.valueOf((long) row.getCell(qqIndex).getNumericCellValue()));
+			}
+			if (row.getCell(emailIndex) != null) {
+				customerImportItem.setEmail(row.getCell(emailIndex).getStringCellValue());
+			}
+			if (row.getCell(noteIndex) != null) {
+				customerImportItem.setNote(row.getCell(noteIndex).getStringCellValue());
+			}
+			if (row.getCell(customerGroupIndex) != null) {
+				customerImportItem.setCustomerGroupName(row.getCell(customerGroupIndex).getStringCellValue());
+			}
+
 			customerImportItem.setImportStatus(ImportStatus.未导入.toString());
 			customerImportItem.setCustomerImportLogId(new ObjectId(customerImportLogId));
 			mongoTemplate.insert(customerImportItem);

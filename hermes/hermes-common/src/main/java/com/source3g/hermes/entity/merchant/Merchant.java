@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.entity.note.Note;
 
 @Document
 public class Merchant extends AbstractEntity {
@@ -27,6 +28,9 @@ public class Merchant extends AbstractEntity {
 	private List<ObjectId> deviceIds;
 	
 	private ShortMessage shortMessage;
+	
+	private List<Note> notes;
+	
 	public String getName() {
 		return name;
 	}
@@ -83,6 +87,12 @@ public class Merchant extends AbstractEntity {
 		this.shortMessage = shortMessage;
 	}
 
+	public List<Note> getNotes() {
+		return notes;
+	}
 
+	public void setNotes(List<Note> notes) {
+		this.notes = notes;
+	}
 	
 }

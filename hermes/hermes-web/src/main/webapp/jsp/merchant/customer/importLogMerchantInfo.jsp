@@ -27,20 +27,25 @@
 		</thead>
 		<c:forEach items="${customerImportItem}" var="customerImportItem">
 			<tr>
-			<td> ${customerImportItem.name }</td>
-	 		<td> ${customerImportItem.sex }</td>
-			<td> ${customerImportItem.birthday }</td>
-			<td> ${customerImportItem.phone }</td>
-			<td> ${customerImportItem.address }</td>
-			<td> ${customerImportItem.qq }</td>
-			<td> ${customerImportItem.email }</td>
-			<td> ${customerImportItem.note }</td>
-			<td> ${customerImportItem.customerGroupName }</td> 
-			<td> ${customerImportItem.importStatus }</td> 
-			<td> ${customerImportItem.failedReason }</td> 
-			
+				<td>${customerImportItem.name }</td>
+				<c:if test="${customerImportItem.sex eq 'MALE'}">
+					<td>男</td>
+				</c:if>
+				<c:if test="${customerImportItem.sex eq 'FEMALE'}">
+					<td>女</td>
+				</c:if>
+				<td>${customerImportItem.birthday }</td>
+				<td>${customerImportItem.phone }</td>
+				<td>${customerImportItem.address }</td>
+				<td>${customerImportItem.qq }</td>
+				<td>${customerImportItem.email }</td>
+				<td>${customerImportItem.note }</td>
+				<td>${customerImportItem.customerGroupName }</td>
+				<td>${customerImportItem.importStatus }</td>
+				<td>${customerImportItem.failedReason }</td>
+
 			</tr>
-			</c:forEach>
-		</table>
+		</c:forEach>
+	</table>
 </body>
 </html>

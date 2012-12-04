@@ -93,6 +93,27 @@ public class CustomerController {
 		return new ModelAndView("/merchant/customer/list", model);
 	}
 
+	@RequestMapping(value = "/export", method = RequestMethod.GET)
+	@ResponseBody
+	public String export(Customer customer, HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		StringBuffer uriBuffer = new StringBuffer();
+		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/export/");//
+		uriBuffer.append(merchant.getId());
+		uriBuffer.append("/?pageNo=1");
+
+		if (StringUtils.isNotEmpty(customer.getName())) {
+			uriBuffer.append("&name=" + customer.getName());
+		}
+		if (StringUtils.isNotEmpty(customer.getPhone())) {
+			uriBuffer.append("&phone=" + customer.getPhone());
+		}
+		String result = restTemplate.getForObject(uriBuffer.toString(), String.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("result", result);
+		return result;
+	}
+
 	@RequestMapping(value = "/toUpdate/{id}", method = RequestMethod.GET)
 	public ModelAndView toUpdate(@PathVariable String id, boolean isNewCustomer) {
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -205,35 +226,36 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/importLog", method = RequestMethod.GET)
-	public ModelAndView importLog(HttpServletRequest req,String pageNo,String startTime ,String endTime ) throws Exception {
+	public ModelAndView importLog(HttpServletRequest req, String pageNo, String startTime, String endTime) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
 		String uri = ConfigParams.getBaseUrl() + "customer/importLog/merchant/" + merchant.getId() + "/?pageNo=" + pageNo;
-		if(StringUtils.isNotEmpty(startTime)){
-			uri+="&startTime="+startTime;
+		if (StringUtils.isNotEmpty(startTime)) {
+			uri += "&startTime=" + startTime;
 		}
-		if(StringUtils.isNotEmpty(endTime)){
-			uri+="&endTime="+endTime;
+		if (StringUtils.isNotEmpty(endTime)) {
+			uri += "&endTime=" + endTime;
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
 		model.put("startTime", startTime);
-		model.put("endTime",endTime);
+		model.put("endTime", endTime);
 		return new ModelAndView("/merchant/customer/importLog", model);
 	}
+
 	@RequestMapping(value = "/importLog/merchantInfo/{id}", method = RequestMethod.GET)
-	public ModelAndView importLogMerchantInfo(@PathVariable String id ) throws Exception {
+	public ModelAndView importLogMerchantInfo(@PathVariable String id) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
-		String uri=ConfigParams.getBaseUrl()+"customer/importLog/merchantInfo/"+ id +"/";
+		String uri = ConfigParams.getBaseUrl() + "customer/importLog/merchantInfo/" + id + "/";
 		@SuppressWarnings("unchecked")
-		List<CustomerImportItem> customerImportItem=restTemplate.getForObject(uri, List.class);
+		List<CustomerImportItem> customerImportItem = restTemplate.getForObject(uri, List.class);
 		model.put("customerImportItem", customerImportItem);
 		return new ModelAndView("/merchant/customer/importLogMerchantInfo", model);
 	}
-	
+
 	private void handleCustomer(Customer customer) {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {

@@ -130,9 +130,9 @@ body {
 							<!-- <div class="accordion-inner"> -->
 							<ul id="message-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
-								<li><a href="javascript:void();" id="passwordChange">备忘录列表</a></li>
-								<li><a href="javascript:void();" id="merchantSwitch">新增</a></li>
-								<li><a href="javascript:void();" id="merchantRemind">历史记录</a></li>
+								<li><a href="javascript:void();" id="noteList">备忘录列表</a></li>
+								<li><a href="javascript:void();" id="noteAdd">新增</a></li>
+								<li><a href="javascript:void();" id="noteHistory">历史记录</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -175,10 +175,16 @@ body {
 
 			<div class="span10" id="pageContentFrame"></div>
 		</div>
+		<div class="alert alert-error"
+			style="width: 200px; height: 20px; position: fixed; bottom: 5px; right: 5px;">
+			<a class="close" data-dismiss="alert">×</a> <strong>提醒！</strong>
+		</div>
 		<%@include file="../include/copyright.jsp"%>
 		<!-- row  -->
 	</div>
 	<!--/.fluid-container-->
+
+
 </body>
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -217,14 +223,18 @@ body {
 		$("#messageFastSend").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toFastSend/");
 		});
+
 		$("#messageList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageList/");
 		});
-	});
 		
+		$("#noteAdd").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/note/add/");
+		});
+	
+
 	function loadPage(url) {
 		$("#pageContentFrame").load(url);
 	}
-	
 </script>
 </html>

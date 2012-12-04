@@ -95,7 +95,7 @@ public class MessageController {
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/template/delete/" + id + "/";
 		String result = restTemplate.getForObject(uri, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("redirect:/merchant/message/template/");
+			return new ModelAndView("/merchant/shortMessage/messageTemplate");
 		}
 		return new ModelAndView("error");
 	}

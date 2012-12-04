@@ -1,36 +1,46 @@
 package com.source3g.hermes.customer.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
+import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.service.BaseService;
+import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.Page;
 
 @Service
@@ -38,13 +48,24 @@ public class CustomerService extends BaseService {
 
 	@Value(value = "${temp.import.log.dir}")
 	private String tempDir;
+	@Value(value = "${customer.export.temp.dir}")
+	private String exportDir;
+	
+	@Value(value = "${local.url}")
+	private String localUrl;
+	
+	
+	
 
 	@Autowired
 	private Destination customerDestination;
 
-	@Autowired
-	private JmsTemplate jmsTemplate;
+	//@Autowired
+	//private JmsTemplate jmsTemplate;
 
+	@Autowired
+	private JmsService jmsService;
+	
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
 		customer.setOperateTime(new Date());
@@ -99,8 +120,135 @@ public class CustomerService extends BaseService {
 		return page;
 	}
 
-	public Page list(int pageNo, Customer customer) {
+	public Page listByPage(int pageNo, Customer customer) {
 		return list(pageNo, customer, false);
+	}
+
+	public List<Customer> list(Customer customer) {
+		Query query = new Query();
+		if (customer.getMerchantId() == null) {
+			return null;
+		} else {
+			query.addCriteria(Criteria.where("merchantId").is(customer.getMerchantId()));
+		}
+		if (StringUtils.isNotEmpty(customer.getName())) {
+			Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("name").is(pattern));
+		}
+		if (StringUtils.isNotEmpty(customer.getPhone())) {
+			Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("phone").is(pattern));
+		}
+		List<Customer> list = mongoTemplate.find(query, Customer.class);
+		return list;
+	}
+
+	public String export(Customer customer) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		List<Customer> list = list(customer);
+		Date createTime = new Date();
+		// 文件名
+		String fileName = String.valueOf(createTime.getTime()) + ".xls";
+		// 产生文件路径
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		// 所在商户的相对路径
+		String merchantPath = dateFormat.format(createTime) + "/" + customer.getMerchantId().toString() + "/";
+		String absoluteDir = exportDir + merchantPath;
+		String absoluteFile = absoluteDir + fileName;
+		String relativePath=merchantPath+fileName;
+		File absoluteFolder = new File(absoluteDir);
+		absoluteFolder.mkdirs();
+		String headers[] = { "姓名", "性别", "生日", "电话", "地址", "qq", "email", "备注", "顾客组名" };
+		Map<String, String> headerFieldMap = new HashMap<String, String>();
+		headerFieldMap.put("姓名", "name");
+		headerFieldMap.put("性别", "sex");
+		headerFieldMap.put("生日", "birthday");
+		headerFieldMap.put("电话", "phone");
+		headerFieldMap.put("地址", "address");
+		headerFieldMap.put("qq", "qq");
+		headerFieldMap.put("email", "email");
+		headerFieldMap.put("备注", "note");
+		headerFieldMap.put("顾客组名", "customerGroupName");
+
+		File file = new File(absoluteFile);
+		// 声明一个工作薄
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		// 生成一个表格
+		HSSFSheet sheet = workbook.createSheet("work1");
+		// 产生表格标题行
+
+		HSSFRow row = sheet.createRow(0);
+		for (int i = 0; i < headers.length; i++) {
+			HSSFCell cell = row.createCell(i);
+			HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+			cell.setCellValue(text);
+			if ("电话".equals(headers[i])||"qq".equals(headers[i])) {
+				sheet.setColumnWidth(i, 256 * 15);
+			}
+		}
+
+		int index = 0;
+		for (Customer c : list) {
+			index++;
+			row = sheet.createRow(index);
+			for (int i = 0; i < headers.length; i++) {
+				String fieldName = headerFieldMap.get(headers[i]);
+				Object value = null;
+				if ("customerGroupName".equals(fieldName)) {
+					CustomerGroup group = mongoTemplate.findOne(new Query(Criteria.where("_id").is(c.getCustomerGroupId())), CustomerGroup.class);
+					if (group != null) {
+						value = group.getName();
+					}
+					HSSFCell cell = row.createCell(i);
+					if (value != null) {
+						HSSFRichTextString richString = new HSSFRichTextString(value.toString());
+						cell.setCellValue(richString);
+					}
+				} else {
+
+					String firstLetter = fieldName.substring(0, 1).toUpperCase();
+					Field field = c.getClass().getDeclaredField(fieldName);
+					// 获得和属性对应的getXXX()方法的名字
+					String getMethodName;
+					if (field.getType() == boolean.class) {
+						getMethodName = "is" + firstLetter + fieldName.substring(1);
+					} else {
+						getMethodName = "get" + firstLetter + fieldName.substring(1);
+					}
+					Method getMethod = c.getClass().getMethod(getMethodName, new Class[] {});
+					if ("sex".equals(fieldName)) {
+						if (Sex.FEMALE.equals(value)) {
+							value = "女";
+						} else {
+							value = "男";
+						}
+						HSSFCell cell = row.createCell(i);
+						if (value != null) {
+							HSSFRichTextString richString = new HSSFRichTextString(value.toString());
+							cell.setCellValue(richString);
+						}
+					} else if ("phone".equals(fieldName) || "qq".equals(fieldName)) {
+						value = getMethod.invoke(c, new Object[] {});
+						HSSFCell cell = row.createCell(i);
+						if (value != null) {
+							double val = Double.parseDouble(value.toString());
+							cell.setCellValue(val);
+						}
+					} else {
+						value = getMethod.invoke(c, new Object[] {});
+						HSSFCell cell = row.createCell(i);
+						if (value != null) {
+							HSSFRichTextString richString = new HSSFRichTextString(value.toString());
+							cell.setCellValue(richString);
+						}
+					}
+				}
+
+			}
+		}
+		FileOutputStream fos = new FileOutputStream(file);
+		workbook.write(fos);
+		fos.close();
+		return relativePath;
 	}
 
 	public Customer get(String id) {
@@ -144,18 +292,11 @@ public class CustomerService extends BaseService {
 	public void addImportLog(CustomerImportLog importLog) throws Exception {
 		final CustomerImportLog importLogFinal = importLog;
 		try {
-			jmsTemplate.send(customerDestination, new MessageCreator() {
-				@Override
-				public Message createMessage(Session session) throws JMSException {
-					ObjectMessage objectMessage = session.createObjectMessage(importLogFinal);
-					objectMessage.setStringProperty(JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER);
-					return objectMessage;
-				}
-			});
+			jmsService.sendObject(customerDestination, importLogFinal, JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER);
 		} catch (Exception e) {
+			importLog.setStatus(ImportStatus.导入失败.toString());
 			throw new Exception("日志接收失败");
 		}
-		importLog.setStatus(ImportStatus.导入失败.toString());
 		mongoTemplate.insert(importLog);
 	}
 
@@ -173,4 +314,26 @@ public class CustomerService extends BaseService {
 			return null;
 		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), Customer.class);
 	}
+
+	public void deleteById(String id) {
+		super.deleteById(id, Customer.class);
+	}
+
+	public String getExportDir() {
+		return exportDir;
+	}
+
+	public void setExportDir(String exportDir) {
+		this.exportDir = exportDir;
+	}
+
+	public String getLocalUrl() {
+		return localUrl;
+	}
+
+	public void setLocalUrl(String localUrl) {
+		this.localUrl = localUrl;
+	}
+	
+	
 }
