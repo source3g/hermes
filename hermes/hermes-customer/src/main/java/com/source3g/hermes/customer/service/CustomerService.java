@@ -15,10 +15,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -32,8 +28,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
@@ -46,6 +40,7 @@ import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.service.BaseService;
+import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.Page;
 
 @Service
@@ -55,13 +50,22 @@ public class CustomerService extends BaseService {
 	private String tempDir;
 	@Value(value = "${customer.export.temp.dir}")
 	private String exportDir;
+	
+	@Value(value = "${local.url}")
+	private String localUrl;
+	
+	
+	
 
 	@Autowired
 	private Destination customerDestination;
 
-	@Autowired
-	private JmsTemplate jmsTemplate;
+	//@Autowired
+	//private JmsTemplate jmsTemplate;
 
+	@Autowired
+	private JmsService jmsService;
+	
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
 		customer.setOperateTime(new Date());
@@ -150,6 +154,7 @@ public class CustomerService extends BaseService {
 		String merchantPath = dateFormat.format(createTime) + "/" + customer.getMerchantId().toString() + "/";
 		String absoluteDir = exportDir + merchantPath;
 		String absoluteFile = absoluteDir + fileName;
+		String relativePath=merchantPath+fileName;
 		File absoluteFolder = new File(absoluteDir);
 		absoluteFolder.mkdirs();
 		String headers[] = { "姓名", "性别", "生日", "电话", "地址", "qq", "email", "备注", "顾客组名" };
@@ -243,7 +248,7 @@ public class CustomerService extends BaseService {
 		FileOutputStream fos = new FileOutputStream(file);
 		workbook.write(fos);
 		fos.close();
-		return file.getAbsolutePath();
+		return relativePath;
 	}
 
 	public Customer get(String id) {
@@ -287,14 +292,7 @@ public class CustomerService extends BaseService {
 	public void addImportLog(CustomerImportLog importLog) throws Exception {
 		final CustomerImportLog importLogFinal = importLog;
 		try {
-			jmsTemplate.send(customerDestination, new MessageCreator() {
-				@Override
-				public Message createMessage(Session session) throws JMSException {
-					ObjectMessage objectMessage = session.createObjectMessage(importLogFinal);
-					objectMessage.setStringProperty(JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER);
-					return objectMessage;
-				}
-			});
+			jmsService.sendObject(customerDestination, importLogFinal, JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER);
 		} catch (Exception e) {
 			importLog.setStatus(ImportStatus.导入失败.toString());
 			throw new Exception("日志接收失败");
@@ -319,6 +317,23 @@ public class CustomerService extends BaseService {
 
 	public void deleteById(String id) {
 		super.deleteById(id, Customer.class);
-
 	}
+
+	public String getExportDir() {
+		return exportDir;
+	}
+
+	public void setExportDir(String exportDir) {
+		this.exportDir = exportDir;
+	}
+
+	public String getLocalUrl() {
+		return localUrl;
+	}
+
+	public void setLocalUrl(String localUrl) {
+		this.localUrl = localUrl;
+	}
+	
+	
 }

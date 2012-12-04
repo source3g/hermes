@@ -1,10 +1,16 @@
 package com.source3g.hermes.customer.api;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
@@ -40,6 +46,29 @@ public class CustomerApi {
 
 	@Autowired
 	private CustomerImportService customerImportService;
+
+	@RequestMapping(value = "/export/download/{year}/{month}/{day}/{merchantId}/{fileName}", method = RequestMethod.GET)
+	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName,HttpServletRequest request, HttpServletResponse response) throws IOException {
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+
+		String downLoadPath = customerService.getExportDir() + year + "/" + month + "/" + day + "/" + merchantId + "/" + fileName;
+
+		long fileLength = new File(downLoadPath).length();
+
+		response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+		response.setHeader("Content-Length", String.valueOf(fileLength));
+
+		bis = new BufferedInputStream(new FileInputStream(downLoadPath));
+		bos = new BufferedOutputStream(response.getOutputStream());
+		byte[] buff = new byte[2048];
+		int bytesRead;
+		while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+			bos.write(buff, 0, bytesRead);
+		}
+		bis.close();
+		bos.close();
+	}
 
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)
 	@ResponseBody
@@ -85,7 +114,7 @@ public class CustomerApi {
 		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return customerService.getLocalUrl()+"customer/export/download/"+result+"/";
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)

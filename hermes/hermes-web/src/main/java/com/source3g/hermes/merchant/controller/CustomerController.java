@@ -94,7 +94,8 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
-	public ModelAndView export(Customer customer, HttpServletRequest req) throws Exception {
+	@ResponseBody
+	public String export(Customer customer, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		StringBuffer uriBuffer = new StringBuffer();
 		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/export/");//
@@ -110,7 +111,7 @@ public class CustomerController {
 		String result = restTemplate.getForObject(uriBuffer.toString(), String.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("result", result);
-		return new ModelAndView("/merchant/customer/list", model);
+		return result;
 	}
 
 	@RequestMapping(value = "/toUpdate/{id}", method = RequestMethod.GET)
