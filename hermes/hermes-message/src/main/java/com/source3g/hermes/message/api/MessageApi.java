@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.message.service.MessageService;
+import com.source3g.hermes.utils.Page;
 
 @Controller
 @RequestMapping(value = "/shortMessage")
@@ -63,5 +64,12 @@ public class MessageApi {
 			messageService.fastSend( type, customerPhoneArray, content);	
 		}
 		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/toMessageList", method = RequestMethod.POST)
+	@ResponseBody
+	public Page toMessageList( String merchantId ,String pageNo ) {
+		int pageNoInt = Integer.valueOf(pageNo);
+		return messageService.list(pageNoInt, merchantId);
 	}
 }

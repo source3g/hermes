@@ -217,6 +217,9 @@ body {
 		$("#messageFastSend").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toFastSend/");
 		});
+		$("#messageList").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageList/");
+		});
 	});
 		
 	function loadPage(url) {

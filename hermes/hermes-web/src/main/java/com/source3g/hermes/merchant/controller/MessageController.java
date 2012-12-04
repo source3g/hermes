@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
@@ -171,5 +172,16 @@ public class MessageController {
 		   }
 			return new ModelAndView("admin/error"); 
 	}
-	
+	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
+	public ModelAndView toMessageList(HttpServletRequest req ,String pageNo)throws Exception {
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		Map<String, Object> model = new HashMap<String, Object>();	
+		Merchant merchant=LoginUtils.getLoginMerchant(req);
+		String uri=ConfigParams.getBaseUrl() +"shortMessage/toMessageList/?pageNo=" + pageNo+"&merchantId="+merchant.getId()+"/";
+		Page page = restTemplate.getForObject(uri, Page.class); 
+		model.put("page",page );
+			return new ModelAndView("merchant/shortMessage/MessageList"); 
+	}
 }

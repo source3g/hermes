@@ -10,8 +10,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.service.BaseService;
+import com.source3g.hermes.utils.Page;
 
 @Service
 public class MessageService extends BaseService {
@@ -47,6 +50,17 @@ public class MessageService extends BaseService {
 		for(Customer customer:customers){
 			System.out.println("已向"+customer.getName()+"发送"+content);
 		}
+	}
+
+	public Page list(int pageNoInt, String merchantId) {
+		Query query = new Query();
+		Page page = new Page();
+		Long totalCount = mongoTemplate.count(query, Merchant.class);
+		page.setTotalRecords(totalCount);
+		page.gotoPage(pageNoInt);
+		List<MessageSendLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), MessageSendLog.class);
+		page.setData(list);
+		return page;
 	}
 
 }
