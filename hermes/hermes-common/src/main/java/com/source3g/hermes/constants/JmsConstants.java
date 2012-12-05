@@ -9,5 +9,9 @@ public interface JmsConstants {
 	public String IMPORT_CUSTOMER="importCustomer";
 	
 	public String TYPE="type";
+	
+	public String SEND_MESSAGE="sendMessage";
+	
+	public String LOG_MESSAGE="logMessage";
 
 }

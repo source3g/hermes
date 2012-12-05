@@ -5,9 +5,6 @@
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
 
-	<bean id="customerDestination" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg value="com.source3g.hermes.customer" />
-	</bean>
 
 	<bean id="customerTopicListenerConnectionFactory"
 		class="org.springframework.jms.connection.CachingConnectionFactory">
@@ -48,9 +45,7 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 		<property name="subscriptionDurable" value="true" />
 		<property name="durableSubscriptionName" value="clientId_customer1" />
 	</bean>
-
-
-
+	
 	<bean id="customerImportListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
 		<property name="connectionFactory" ref="customerTopicListenerConnectionFactory" />
@@ -63,5 +58,4 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 		<property name="durableSubscriptionName" value="customer_import" />
 		<property name="messageSelector" value="type='importCustomer'"></property>
 	</bean>
-
 </beans>

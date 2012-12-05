@@ -227,11 +227,10 @@ body {
 		$("#messageList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageList/");
 		});
-		
 		$("#noteAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/note/add/");
 		});
-	
+	});
 
 	function loadPage(url) {
 		$("#pageContentFrame").load(url);

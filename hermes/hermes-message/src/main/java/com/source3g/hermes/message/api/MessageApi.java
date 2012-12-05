@@ -56,17 +56,12 @@ public class MessageApi {
 	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
 	@ResponseBody
 	public String fastSend(String type,String customerPhones,String content) {
-		if(type.equals("enter")){
-			String customerPhoneArray[]=customerPhones.split("\n");
-			messageService.fastSend( type, customerPhoneArray, content);
-		}else if(type.equals("semicolon")){
 			String customerPhoneArray[]=customerPhones.split(";");
 			messageService.fastSend( type, customerPhoneArray, content);	
-		}
 		return ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value = "/toMessageList", method = RequestMethod.POST)
+	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
 	@ResponseBody
 	public Page toMessageList( String merchantId ,String pageNo ) {
 		int pageNoInt = Integer.valueOf(pageNo);

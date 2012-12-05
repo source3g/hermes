@@ -29,11 +29,9 @@
 
 				<tr>
 					<td>客户电话号码分隔类型：</td>
-					<td colspan="3"><select id="shortMessage" name="type"
-						class="input-medium">
-							<option value="enter">号码以回车分隔</option>
-							<option value="semicolon">号码以分号分隔</option>
-					</select></td>
+					<td colspan="3" style="color:red">
+						电话号码以分号分隔
+					</td>
 				</tr>
 
 				<tr>
@@ -41,6 +39,7 @@
 					<td colspan="4">
 						<!-- <textarea class="span8" rows="5"
 							name="customerPhones" id="customerPhones"></textarea> -->
+							<input id="customerPhonesInput" name="customerPhones" type="hidden" >
 						<div style="background-color: white; height: 150px; width: 500px;"
 							id="customerPhones" contentEditable="true" ></div>
 					</td>
@@ -61,7 +60,7 @@
 				<tr>
 					<td colspan="4"><input type="submit" class="btn btn-primary"
 						value="发送"> <input type="button" class="btn btn-primary"
-						onclick="test();" value="測試">
+						onclick="testCustomerPhones1();" value="測試">
 					<td>
 				</tr>
 
@@ -91,6 +90,8 @@
 												if ((!$('#fastSendForm').valid())||(!testCustomerPhones())) {
 													return false;
 												}
+												$("#customerPhonesInput").attr("value",$('#customerPhones').text());
+												
 												var options = {
 													url : "${pageContext.request.contextPath}/merchant/message/fastSend/",
 													type : "post",
@@ -169,6 +170,7 @@
 			$('#customerPhones').html(customerPhones);
 			return true;
 		}
+
 	</script>
 </body>
 </html>
