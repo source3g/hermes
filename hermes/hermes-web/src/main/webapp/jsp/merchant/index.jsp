@@ -23,8 +23,10 @@ body {
 					data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
-				</a> <a class="brand" href="index/"> <img alt="旺财宝"
-					src="${pageContext.request.contextPath}/img/logo.png" /> <span>旺财宝</span></a>
+				</a> <a class="brand" target="_self"
+					href="${pageContext.request.contextPath}/index/"> <img
+					alt="旺财宝" src="${pageContext.request.contextPath}/img/logo.png" />
+					<span>旺财宝</span></a>
 
 				<!-- theme selector starts -->
 				<div class="btn-group pull-right theme-container">
@@ -76,7 +78,7 @@ body {
 								<li><a href="javascript:void();" id="customerAdd">顾客新增</a></li>
 								<li><a href="javascript:void();" id="customerGroup">顾客组管理</a></li>
 								<li><a href="javascript:void();" id="newCustomerList">新顾客列表</a></li>
-								<li><a href="javascript:void();" id="callInList">来电顾客列表</a></li>
+								<li><a href="javascript:void();" id="callInStatistics">来电顾客统计</a></li>
 								<li><a href="javascript:void();" id="importCustomer">导入顾客信息</a></li>
 								<li><a href="javascript:void();" id="importLog">导入日志</a></li>
 							</ul>
@@ -188,6 +190,8 @@ body {
 </body>
 <script type="text/javascript">
 	$(document).ready(function() {
+		loadPage("${pageContext.request.contextPath}/merchant/main/");
+
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 		});
@@ -201,8 +205,8 @@ body {
 		$("#newCustomerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/newCustomerList/");
 		});
-		$("#callInList").click(function() {
-			loadPage("${pageContext.request.contextPath}/merchant/customer/callIn/list/");
+		$("#callInStatistics").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customer/callInStatistics/");
 		});
 
 		$("#importCustomer").click(function() {
@@ -227,11 +231,16 @@ body {
 		$("#messageList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageList/");
 		});
-		
+
 		$("#noteAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/note/add/");
 		});
-	
+
+		$("#messageAutoSend").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/message/autoSend/");
+		});
+
+	});
 
 	function loadPage(url) {
 		$("#pageContentFrame").load(url);

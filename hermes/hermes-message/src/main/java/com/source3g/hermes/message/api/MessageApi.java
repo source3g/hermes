@@ -28,6 +28,7 @@ public class MessageApi {
 		messageService.add(messageTemplate);
 		return ReturnConstants.SUCCESS;
 	}
+
 	@RequestMapping(value = "/template/save", method = RequestMethod.POST)
 	@ResponseBody
 	public String saveTemplate(@RequestBody MessageTemplate messageTemplate) {
@@ -47,28 +48,30 @@ public class MessageApi {
 	public List<MessageTemplate> listTemplate(@PathVariable String merchantId) {
 		return messageService.listAll(merchantId);
 	}
+
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
 	@ResponseBody
-	public String messageSend(String[] ids ,String content) {
+	public String messageSend(String[] ids, String content) {
 		messageService.messageSend(ids, content);
 		return ReturnConstants.SUCCESS;
 	}
+
 	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
 	@ResponseBody
-	public String fastSend(String type,String customerPhones,String content) {
-		if(type.equals("enter")){
-			String customerPhoneArray[]=customerPhones.split("\n");
-			messageService.fastSend( type, customerPhoneArray, content);
-		}else if(type.equals("semicolon")){
-			String customerPhoneArray[]=customerPhones.split(";");
-			messageService.fastSend( type, customerPhoneArray, content);	
+	public String fastSend(String type, String customerPhones, String content) {
+		if (type.equals("enter")) {
+			String customerPhoneArray[] = customerPhones.split("\n");
+			messageService.fastSend(type, customerPhoneArray, content);
+		} else if (type.equals("semicolon")) {
+			String customerPhoneArray[] = customerPhones.split(";");
+			messageService.fastSend(type, customerPhoneArray, content);
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.POST)
 	@ResponseBody
-	public Page toMessageList( String merchantId ,String pageNo ) {
+	public Page toMessageList(String merchantId, String pageNo) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return messageService.list(pageNoInt, merchantId);
 	}

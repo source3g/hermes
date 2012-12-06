@@ -25,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
@@ -101,87 +100,96 @@ public class MessageController {
 	}
 
 	@RequestMapping(value = "/reservedMsgLog", method = RequestMethod.GET)
-	public ModelAndView reservedMsgLog(HttpServletRequest req,String pageNo) throws Exception {
-			Merchant merchant = LoginUtils.getLoginMerchant(req);	
-			Map<String, Object> model = new HashMap<String, Object>();	
-			if (StringUtils.isEmpty(pageNo)) {
-				pageNo = "1";
-			}
-			String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo;
-			Page page = restTemplate.getForObject(uriMsgLog, Page.class);
-			model.put("page", page);
-			model.put("merchant", merchant);
-			return new ModelAndView("merchant/shortMessage/reservedMessageLog",model);
+	public ModelAndView reservedMsgLog(HttpServletRequest req, String pageNo) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		Map<String, Object> model = new HashMap<String, Object>();
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo;
+		Page page = restTemplate.getForObject(uriMsgLog, Page.class);
+		model.put("page", page);
+		model.put("merchant", merchant);
+		return new ModelAndView("merchant/shortMessage/reservedMessageLog", model);
 	}
 
 	@RequestMapping(value = "/toMessageSend", method = RequestMethod.GET)
-	public ModelAndView toMessageSend(HttpServletRequest req)throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();	
-			Merchant merchant=LoginUtils.getLoginMerchant(req);
-			String uriCustomerGroup = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
-			CustomerGroup[] customerGroups = restTemplate.getForObject(uriCustomerGroup, CustomerGroup[].class);
-			String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/";
-			Merchant merchant1=restTemplate.getForObject(uri, Merchant.class);
-			model.put("merchant",merchant1);
-			model.put("customerGroups",customerGroups);
-		return new ModelAndView("merchant/shortMessage/messageSend",model); 
+	public ModelAndView toMessageSend(HttpServletRequest req) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uriCustomerGroup = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
+		CustomerGroup[] customerGroups = restTemplate.getForObject(uriCustomerGroup, CustomerGroup[].class);
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/";
+		Merchant merchant1 = restTemplate.getForObject(uri, Merchant.class);
+		model.put("merchant", merchant1);
+		model.put("customerGroups", customerGroups);
+		return new ModelAndView("merchant/shortMessage/messageSend", model);
 	}
+
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
-	public ModelAndView messageSend(String[] ids ,String content )throws Exception {
+	public ModelAndView messageSend(String[] ids, String content) throws Exception {
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
-		for (String id:ids){
+		for (String id : ids) {
 			formData.add("ids", id);
 		}
-		formData.add("content",content);
+		formData.add("content", content);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		 httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-		//httpHeaders.set("charset", "UTF-8");
-	
+		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		// httpHeaders.set("charset", "UTF-8");
+
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
-	  	String uri=ConfigParams.getBaseUrl() +"shortMessage/messageSend/";
-	  	String result = restTemplate.postForObject(uri,requestEntity,String.class);
-	   if(ReturnConstants.SUCCESS.equals(result)){
-		   return new ModelAndView("merchant/shortMessage/messageSend"); 
-	   }
-		return new ModelAndView("admin/error"); 
-	   
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/messageSend/";
+		String result = restTemplate.postForObject(uri, requestEntity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("merchant/shortMessage/messageSend");
+		}
+		return new ModelAndView("admin/error");
+
 	}
+
 	@RequestMapping(value = "/toFastSend", method = RequestMethod.GET)
-	public ModelAndView fastSend(HttpServletRequest req)throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();	
-		Merchant merchant=LoginUtils.getLoginMerchant(req);
-		model.put("merchant",merchant);
-	
-	 return new ModelAndView("merchant/shortMessage/fastSend",model);
+	public ModelAndView fastSend(HttpServletRequest req) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		model.put("merchant", merchant);
+
+		return new ModelAndView("merchant/shortMessage/fastSend", model);
 	}
+
 	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
-	public ModelAndView fastSend(String type,String customerPhones,String content)throws Exception {
+	public ModelAndView fastSend(String type, String customerPhones, String content) throws Exception {
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
-		formData.add("type",type);
-		formData.add("customerPhones",customerPhones);
-		formData.add("content",content);
+		formData.add("type", type);
+		formData.add("customerPhones", customerPhones);
+		formData.add("content", content);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
-	  	String uri=ConfigParams.getBaseUrl() +"shortMessage/fastSend/";
-	  	String result = restTemplate.postForObject(uri,requestEntity,String.class); 
-	  	 if(ReturnConstants.SUCCESS.equals(result)){
-			   return new ModelAndView("merchant/shortMessage/messageSend"); 
-		   }
-			return new ModelAndView("admin/error"); 
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/fastSend/";
+		String result = restTemplate.postForObject(uri, requestEntity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("merchant/shortMessage/messageSend");
+		}
+		return new ModelAndView("admin/error");
 	}
+
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
-	public ModelAndView toMessageList(HttpServletRequest req ,String pageNo)throws Exception {
+	public ModelAndView toMessageList(HttpServletRequest req, String pageNo) throws Exception {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		Map<String, Object> model = new HashMap<String, Object>();	
-		Merchant merchant=LoginUtils.getLoginMerchant(req);
-		String uri=ConfigParams.getBaseUrl() +"shortMessage/toMessageList/?pageNo=" + pageNo+"&merchantId="+merchant.getId()+"/";
-		Page page = restTemplate.getForObject(uri, Page.class); 
-		model.put("page",page );
-			return new ModelAndView("merchant/shortMessage/MessageList"); 
+		Map<String, Object> model = new HashMap<String, Object>();
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/toMessageList/?pageNo=" + pageNo + "&merchantId=" + merchant.getId() + "/";
+		Page page = restTemplate.getForObject(uri, Page.class);
+		model.put("page", page);
+		return new ModelAndView("merchant/shortMessage/MessageList");
+	}
+
+	@RequestMapping(value = "/autoSend", method = RequestMethod.GET)
+	public ModelAndView toAutoSend() {
+		return new ModelAndView("/merchant/shortMessage/autoSend");
 	}
 }

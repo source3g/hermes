@@ -1,6 +1,7 @@
 package com.source3g.hermes.merchant.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -29,6 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.source3g.hermes.constants.Constants;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
@@ -246,14 +249,32 @@ public class CustomerController {
 		return new ModelAndView("/merchant/customer/importLog", model);
 	}
 
-	@RequestMapping(value = "/importLog/merchantInfo/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/importLog/items/{id}", method = RequestMethod.GET)
 	public ModelAndView importLogMerchantInfo(@PathVariable String id) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
-		String uri = ConfigParams.getBaseUrl() + "customer/importLog/merchantInfo/" + id + "/";
+		String uri = ConfigParams.getBaseUrl() + "customer/importLog/items/" + id + "/";
 		@SuppressWarnings("unchecked")
 		List<CustomerImportItem> customerImportItem = restTemplate.getForObject(uri, List.class);
 		model.put("customerImportItem", customerImportItem);
-		return new ModelAndView("/merchant/customer/importLogMerchantInfo", model);
+		return new ModelAndView("/merchant/customer/importItems", model);
+	}
+
+	@RequestMapping(value = "/callInStatistics", method = RequestMethod.GET)
+	public ModelAndView callInList(HttpServletRequest req, String startTime, String endTime) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_OF_DAY);
+		Date date = new Date();
+		if (StringUtils.isEmpty(endTime)) {
+			endTime = sdf.format(date);
+		}
+		if (StringUtils.isEmpty(startTime)) {
+			startTime = sdf.format(DateUtils.addDays(date, -30));
+		}
+		String uri = ConfigParams.getBaseUrl() + "customer/callInStatistics/" + merchant.getId() + "/" + startTime + "/" + endTime + "/";
+
+		String result = restTemplate.getForObject(uri, String.class);
+		System.out.println(result);
+		return new ModelAndView("/merchant/customer/callInStatistics");
 	}
 
 	private void handleCustomer(Customer customer) {

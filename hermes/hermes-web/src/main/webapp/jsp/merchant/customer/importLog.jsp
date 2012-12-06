@@ -138,7 +138,7 @@ function initPage(){
 }
 	function importLogInfo(id){
 		$.ajax({
-			url:"${pageContext.request.contextPath}/merchant/customer/importLog/merchantInfo/"+id+"/",
+			url:"${pageContext.request.contextPath}/merchant/customer/importLog/items/"+id+"/",
 			type:"get",
 		success:showList
 		});

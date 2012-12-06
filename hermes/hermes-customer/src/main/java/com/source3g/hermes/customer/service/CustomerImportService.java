@@ -244,9 +244,9 @@ public class CustomerImportService extends BaseService {
 		return result;
 	}
 
-	public List<CustomerImportItem> importLogMerchantInfo(String merchantId) {
-		ObjectId objId = new ObjectId(merchantId);
-		List<CustomerImportItem> customerImportItem = mongoTemplate.find(new Query(Criteria.where("customerImportLogId").is(objId)), CustomerImportItem.class);
+	public List<CustomerImportItem> findImportItems(String importLogId) {
+		ObjectId importLogObjId = new ObjectId(importLogId);
+		List<CustomerImportItem> customerImportItem = mongoTemplate.find(new Query(Criteria.where("customerImportLogId").is(importLogObjId)), CustomerImportItem.class);
 		return customerImportItem;
 	}
 

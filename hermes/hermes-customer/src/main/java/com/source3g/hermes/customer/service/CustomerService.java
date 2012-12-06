@@ -25,6 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -50,22 +51,16 @@ public class CustomerService extends BaseService {
 	private String tempDir;
 	@Value(value = "${customer.export.temp.dir}")
 	private String exportDir;
-	
+
 	@Value(value = "${local.url}")
 	private String localUrl;
-	
-	
-	
 
 	@Autowired
 	private Destination customerDestination;
 
-	//@Autowired
-	//private JmsTemplate jmsTemplate;
-
 	@Autowired
 	private JmsService jmsService;
-	
+
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
 		customer.setOperateTime(new Date());
@@ -75,17 +70,6 @@ public class CustomerService extends BaseService {
 
 	public void updateExcludeProperties(Customer customer, String... properties) {
 		super.updateExcludeProperties(customer, properties);
-		/*
-		 * final String id = entity.getId().toString();
-		 * 
-		 * jmsTemplate.send(new MessageCreator() {
-		 * 
-		 * @Override public Message createMessage(Session session) throws
-		 * JMSException { TextMessage createTextMessage =
-		 * session.createTextMessage(); createTextMessage.setText(id);
-		 * createTextMessage.setStringProperty(JmsConstants.MESSAGE_TYPE,
-		 * JmsConstants.UPDATE_CUSTOMER); return createTextMessage; } });
-		 */
 	}
 
 	public List<Customer> listAll() {
@@ -154,7 +138,7 @@ public class CustomerService extends BaseService {
 		String merchantPath = dateFormat.format(createTime) + "/" + customer.getMerchantId().toString() + "/";
 		String absoluteDir = exportDir + merchantPath;
 		String absoluteFile = absoluteDir + fileName;
-		String relativePath=merchantPath+fileName;
+		String relativePath = merchantPath + fileName;
 		File absoluteFolder = new File(absoluteDir);
 		absoluteFolder.mkdirs();
 		String headers[] = { "姓名", "性别", "生日", "电话", "地址", "qq", "email", "备注", "顾客组名" };
@@ -181,7 +165,7 @@ public class CustomerService extends BaseService {
 			HSSFCell cell = row.createCell(i);
 			HSSFRichTextString text = new HSSFRichTextString(headers[i]);
 			cell.setCellValue(text);
-			if ("电话".equals(headers[i])||"qq".equals(headers[i])) {
+			if ("电话".equals(headers[i]) || "qq".equals(headers[i])) {
 				sheet.setColumnWidth(i, 256 * 15);
 			}
 		}
@@ -319,6 +303,19 @@ public class CustomerService extends BaseService {
 		super.deleteById(id, Customer.class);
 	}
 
+	public Long findNewCustomerCountByDay(String merchantId,Date startTime, Date endTime) {
+		
+		Query query = new Query();
+		query.addCriteria(Criteria.where("callRecords.callTime").gt(startTime).lt(endTime).and("merchantId").is(new ObjectId(merchantId)));
+		
+		MapReduceResults<ObjectValue> results= mongoTemplate.mapReduce(query,"customer",  "classpath:mapreduce/callRecordsByDayMap.js","classpath:mapreduce/callRecordsByDayReduce.js",ObjectValue.class);
+		
+		for (ObjectValue result:results){
+			System.out.println("==============="+result.getValue());
+		}
+		return 0L;
+	}
+
 	public String getExportDir() {
 		return exportDir;
 	}
@@ -334,6 +331,5 @@ public class CustomerService extends BaseService {
 	public void setLocalUrl(String localUrl) {
 		this.localUrl = localUrl;
 	}
-	
-	
+
 }

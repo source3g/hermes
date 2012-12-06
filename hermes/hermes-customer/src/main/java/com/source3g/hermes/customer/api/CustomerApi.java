@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.source3g.hermes.constants.Constants;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
@@ -48,7 +51,7 @@ public class CustomerApi {
 	private CustomerImportService customerImportService;
 
 	@RequestMapping(value = "/export/download/{year}/{month}/{day}/{merchantId}/{fileName}", method = RequestMethod.GET)
-	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName,HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
 
@@ -114,7 +117,7 @@ public class CustomerApi {
 		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
 			e.printStackTrace();
 		}
-		return customerService.getLocalUrl()+"customer/export/download/"+result+"/";
+		return customerService.getLocalUrl() + "customer/export/download/" + result + "/";
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -190,9 +193,24 @@ public class CustomerApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/importLog/merchantInfo/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/importLog/items/{logId}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<CustomerImportItem> importLogMerchantInfo(@PathVariable String id) {
-		return customerImportService.importLogMerchantInfo(id);
+	public List<CustomerImportItem> findImportItems(@PathVariable String logId) {
+		return customerImportService.findImportItems(logId);
+	}
+
+	@RequestMapping(value = "/callInStatistics/{id}/{startTime}/{endTime}", method = RequestMethod.GET)
+	@ResponseBody
+	public String callInStatistics(@PathVariable String id,@PathVariable String startTime, @PathVariable String endTime) {
+		SimpleDateFormat sdf=new SimpleDateFormat(Constants.DATE_FORMAT_OF_DAY);
+		Date startTimeDate;
+		try {
+			startTimeDate = sdf.parse(startTime);
+			Date endTimeDate=sdf.parse(endTime);
+			customerService.findNewCustomerCountByDay(id, startTimeDate, endTimeDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 }
