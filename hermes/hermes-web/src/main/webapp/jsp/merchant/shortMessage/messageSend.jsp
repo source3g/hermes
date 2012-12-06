@@ -58,12 +58,21 @@
 				<input type="submit" class="btn btn-primary" value="发送" >
 				<td>
 		    </tr>
-		
-	</tbody>
+			</tbody>
 		</table>
 	</form>
+	<div id="errorModal" class="modal hide fade">
+		<div class="modal-body">
+			<p id="resultMessage"></p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">确定</a>
+		</div>
+	</div>
 	<script type="text/javascript">
 	$(document).ready(function() {
+		//initDialog();
+		
 		var validateOptions = {
 				rules : { 
 					content:{
@@ -84,7 +93,10 @@
 		 var options = {
 				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
 				 type:"post",
-			success : showList
+			success : function (data){
+				alert("发送成功");
+				showList(data);
+			}
 		}; 
 		
 		$(this).ajaxSubmit(options);
@@ -124,6 +136,18 @@
 		function showList(data){
 			$("#pageContentFrame").html(data);
 		}
+		
+/* 		function initDialog(){
+			if(${not empty success }==true){
+				$('#messageSendForm').clearForm();
+				$("#resultMessage").html("操作成功！");
+				$("#errorModal").modal({
+					backdrop:true,
+				    keyboard:true,
+				    show:true
+				});
+			}
+		}  */
 		</script>
 </body>
 </html>

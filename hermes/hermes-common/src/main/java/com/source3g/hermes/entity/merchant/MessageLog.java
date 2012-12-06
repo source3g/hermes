@@ -3,9 +3,11 @@ package com.source3g.hermes.entity.merchant;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
+@Document
 public class MessageLog extends AbstractEntity {
 
 	/**

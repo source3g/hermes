@@ -231,15 +231,12 @@ body {
 		$("#messageList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageList/");
 		});
-
 		$("#noteAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/note/add/");
 		});
-
 		$("#messageAutoSend").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/autoSend/");
 		});
-
 	});
 
 	function loadPage(url) {

@@ -59,16 +59,16 @@ public class MessageApi {
 
 	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
 	@ResponseBody
-	public String fastSend(String type,String customerPhones,String content) {
-			String customerPhoneArray[]=customerPhones.split(";");
-			messageService.fastSend( type, customerPhoneArray, content);	
+	public String fastSend(String type, String customerPhones, String content) {
+		String customerPhoneArray[] = customerPhones.split(";");
+		messageService.fastSend(type, customerPhoneArray, content);
 		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
 	@ResponseBody
-	public Page toMessageList( String merchantId ,String pageNo,Date startTime, Date endTime,String phone,String customerGroupName  ) {
+	public Page toMessageList(String merchantId, String pageNo, Date startTime, Date endTime, String phone, String customerGroupName) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return messageService.list(pageNoInt, merchantId, startTime,endTime,phone,customerGroupName );
+		return messageService.list(pageNoInt, merchantId, startTime, endTime, phone, customerGroupName);
 	}
 }

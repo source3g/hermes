@@ -12,7 +12,7 @@
 		<label class="control-label" for="name">导入时间：</label> <input
 			type="text" class="input-medium" name="startTime"
 			placeholder="起始日期..." onclick="WdatePicker();"
-			value="${startTime}"/> -
+			value="${startTime}"/> 
 		<input type="text" class="input-medium" name="endTime"
 			placeholder="结束日期..." onclick="WdatePicker();"
 			value="${endTime}"/> <input
