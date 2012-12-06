@@ -11,9 +11,9 @@ import com.source3g.hermes.enums.MessageType;
 public class MessageSendLog {
 	private String customerName;
 	private String customerGroupName;
-	private String pnone; // 电话号码
+	private String phone; // 电话号码
 	private int sendCount; // 发送数量
-	private Date date; // 发送时间
+	private Date sendTime; // 发送时间
 	private MessageType type; // 发送形式
 	private ObjectId merchantId;// 商户Id
 	private MessageStatus status;
@@ -34,12 +34,12 @@ public class MessageSendLog {
 		this.customerGroupName = customerGroupName;
 	}
 
-	public String getPnone() {
-		return pnone;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setPnone(String pnone) {
-		this.pnone = pnone;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public int getSendCount() {
@@ -50,12 +50,12 @@ public class MessageSendLog {
 		this.sendCount = sendCount;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getSendTime() {
+		return sendTime;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setSendTime(Date sendTime) {
+		this.sendTime = sendTime;
 	}
 
 	public ObjectId getMerchantId() {

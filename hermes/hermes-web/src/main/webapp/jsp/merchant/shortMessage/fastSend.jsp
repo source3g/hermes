@@ -59,14 +59,14 @@
 
 				<tr>
 					<td colspan="4"><input type="submit" class="btn btn-primary"
-						value="发送"> <input type="button" class="btn btn-primary"
-						onclick="testCustomerPhones1();" value="測試">
+						value="发送"> 
 					<td>
 				</tr>
 
 			</tbody>
 		</table>
 	</form>
+
 	<script type="text/javascript">
 		$(document).ready(
 						function() {
@@ -74,7 +74,7 @@
 								rules : {
 									content : {
 										required : true
-									}
+									}					
 								},
 								messages : {
 									content : {
@@ -95,7 +95,10 @@
 												var options = {
 													url : "${pageContext.request.contextPath}/merchant/message/fastSend/",
 													type : "post",
-													success : showList
+													success : function (data){
+														alert("发送成功");
+														showList(data);
+													}
 												};
 												$(this).ajaxSubmit(options);
 												return false;
@@ -137,6 +140,7 @@
 								+ data[i].content + "</span>");
 			}
 		}
+		
 		function showList(data) {
 			$("#pageContentFrame").html(data);
 		}
@@ -147,6 +151,10 @@
 			customerPhones.replace("<span id=\"wrongPhone\" >","");
 			customerPhones.replace("</span>","");
 			var re = /^[0-9]*$/;
+			if(customerPhones.length==0){
+				alert("请输入有效手机号码");
+				return false;
+			}
 			for ( var i = 0; i < customerPhones.length; i++) {
 				if (customerPhones[i] == ';') {
 					if (i == j * 12 - 1
@@ -167,10 +175,17 @@
 					}
 				}
 			}
-			$('#customerPhones').html(customerPhones);
-			return true;
+			if(customerPhones[customerPhones.length-1]!= ';'){
+				var str4=customerPhones+";";
+				$('#customerPhones').text(str4);
+				return true;
+			}else{
+			alert($('#customerPhones').text());
+			$('#customerPhones').text(customerPhones);
+			return true; 
+			}
 		}
-
+		
 	</script>
 </body>
 </html>

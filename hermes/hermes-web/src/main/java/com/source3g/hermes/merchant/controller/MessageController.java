@@ -127,6 +127,7 @@ public class MessageController {
 	}
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
 	public ModelAndView messageSend(String[] ids ,String content )throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		for (String id:ids){
 			formData.add("ids", id);
@@ -141,7 +142,8 @@ public class MessageController {
 	  	String uri=ConfigParams.getBaseUrl() +"shortMessage/messageSend/";
 	  	String result = restTemplate.postForObject(uri,requestEntity,String.class);
 	   if(ReturnConstants.SUCCESS.equals(result)){
-		   return new ModelAndView("merchant/shortMessage/messageSend"); 
+			model.put("success", "success");
+		   return new ModelAndView("redirect:/merchant/message/toMessageSend/",model); 
 	   }
 		return new ModelAndView("admin/error"); 
 	   
@@ -167,18 +169,31 @@ public class MessageController {
 	  	String uri=ConfigParams.getBaseUrl() +"shortMessage/fastSend/";
 	  	String result = restTemplate.postForObject(uri,requestEntity,String.class); 
 	  	 if(ReturnConstants.SUCCESS.equals(result)){
-			   return new ModelAndView("merchant/shortMessage/messageSend"); 
+			   return new ModelAndView("redirect:/merchant/message/toFastSend/"); 
 		   }
 			return new ModelAndView("admin/error"); 
 	}
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
-	public ModelAndView toMessageList(HttpServletRequest req ,String pageNo)throws Exception {
+	public ModelAndView toMessageList(HttpServletRequest req ,String pageNo,String startTime, String endTime,String phone,String customerGroupName )throws Exception {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
 		Map<String, Object> model = new HashMap<String, Object>();	
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
 		String uri=ConfigParams.getBaseUrl() +"shortMessage/toMessageList/?pageNo=" + pageNo+"&merchantId="+merchant.getId()+"/";
+		if (StringUtils.isNotEmpty(startTime)) {
+			uri += "&startTime=" + startTime;
+		}
+		if (StringUtils.isNotEmpty(endTime)) {
+			uri += "&endTime=" + endTime;
+		}
+		if(StringUtils.isNotEmpty(phone)){
+			uri += "&phone=" + phone;
+		}
+		if(StringUtils.isNotEmpty(customerGroupName)){
+			uri += "&customerGroupName=" + customerGroupName;
+		}
+		
 		Page page = restTemplate.getForObject(uri, Page.class); 
 		model.put("page",page );
 			return new ModelAndView("merchant/shortMessage/MessageList",model); 

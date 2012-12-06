@@ -9,8 +9,15 @@
 </head>
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
-		<label class="control-label" for="name">名称：</label> <input type="text"
-			name="name" value="${merchant.name}" placeholder="请输入商户名称...">
+		<label class="control-label" for="name">名称：</label> 
+			<input type="text"name="phone" value="${messageSendLog.phone}" placeholder="请输电话号码...">
+			<label class="control-label" for="name">日期：</label>
+			<input type="text" class="input-medium" name="startTime"placeholder="起始日期..." onclick="WdatePicker();"value="${startTime}"/> 
+			<input type="text" class="input-medium" name="endTime"placeholder="结束日期..." onclick="WdatePicker();"value="${endTime}"/>
+			<label class="control-label" for="name">集团商户：</label>
+			<select id=customerName name="type"class="input-medium">
+			<option value="choice">请选择</option>
+			</select>
 		<input id="pageNo" name="pageNo" type="hidden"> <input
 			type="submit" class="btn btn-primary" value="查询">
 	</form>
@@ -33,11 +40,12 @@
 			<tr>
 				<td width="14%">${messageSendLog.customerName }</td>
 				<td width="14%">${messageSendLog.customerGroupName }</td>
-				<td width="14%">${messageSendLog.pnone }</td>
+				<td width="14%">${messageSendLog.phone }</td>
 				<td width="8%">${messageSendLog.sendCount }</td>
-				<td width="18%" id="content" title="${messageSendLog.content }"  ><div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${messageSendLog.content }</div></td>
+				<td width="18%" id="content" title="${messageSendLog.content }"  >
+				<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${messageSendLog.content }</div></td>
 				<td width="14%">${messageSendLog.type }</td>
-				<td width="18%">${messageSendLog.date }</td>
+				<td width="18%">${messageSendLog.sendTime }</td>
 		</c:forEach>
 	</table>
 	
@@ -58,6 +66,10 @@
 	 $(document).ready(function(){
 		// $('#content').popover(show);
 			initPage();
+			$('#queryForm').submit(function(){
+				goToPage(1);
+				return false;
+			});
 	});
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);

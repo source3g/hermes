@@ -1,5 +1,6 @@
 package com.source3g.hermes.message.api;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,8 +64,8 @@ public class MessageApi {
 	
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
 	@ResponseBody
-	public Page toMessageList( String merchantId ,String pageNo ) {
+	public Page toMessageList( String merchantId ,String pageNo,Date startTime, Date endTime,String phone,String customerGroupName  ) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return messageService.list(pageNoInt, merchantId);
+		return messageService.list(pageNoInt, merchantId, startTime,endTime,phone,customerGroupName );
 	}
 }
