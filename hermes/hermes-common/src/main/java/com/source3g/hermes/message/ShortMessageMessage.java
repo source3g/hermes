@@ -2,21 +2,23 @@ package com.source3g.hermes.message;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.enums.MessageType;
 
 public class ShortMessageMessage implements Serializable {
 
 	private static final long serialVersionUID = 4430012271716760588L;
 	
-	private List<Customer> customers;
+	private List<Map<String, Object>>  customers;
+
 	private String content;
 	private MessageType messageType;
-	public List<Customer> getCustomers() {
+	
+	public List<Map<String, Object>> getCustomers() {
 		return customers;
 	}
-	public void setCustomers(List<Customer> customers) {
+	public void setCustomers(List<Map<String, Object>> customers) {
 		this.customers = customers;
 	}
 	public String getContent() {
