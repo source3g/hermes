@@ -1,5 +1,6 @@
 package com.source3g.hermes.message.api;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,21 +59,16 @@ public class MessageApi {
 
 	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
 	@ResponseBody
-	public String fastSend(String type, String customerPhones, String content) {
-		if (type.equals("enter")) {
-			String customerPhoneArray[] = customerPhones.split("\n");
-			messageService.fastSend(type, customerPhoneArray, content);
-		} else if (type.equals("semicolon")) {
-			String customerPhoneArray[] = customerPhones.split(";");
-			messageService.fastSend(type, customerPhoneArray, content);
-		}
+	public String fastSend(String type,String customerPhones,String content) {
+			String customerPhoneArray[]=customerPhones.split(";");
+			messageService.fastSend( type, customerPhoneArray, content);	
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/toMessageList", method = RequestMethod.POST)
+	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
 	@ResponseBody
-	public Page toMessageList(String merchantId, String pageNo) {
+	public Page toMessageList( String merchantId ,String pageNo,Date startTime, Date endTime,String phone,String customerGroupName  ) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return messageService.list(pageNoInt, merchantId);
+		return messageService.list(pageNoInt, merchantId, startTime,endTime,phone,customerGroupName );
 	}
 }
