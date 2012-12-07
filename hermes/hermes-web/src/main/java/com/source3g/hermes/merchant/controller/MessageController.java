@@ -201,4 +201,10 @@ public class MessageController {
 		model.put("page", page);
 		return new ModelAndView("merchant/shortMessage/MessageList", model);
 	}
+
+	@RequestMapping(value = "/autoSend", method = RequestMethod.GET)
+	public ModelAndView toAutoSend(HttpServletRequest req) throws Exception {
+		return new ModelAndView("merchant/shortMessage/autoSend");
+	}
+
 }

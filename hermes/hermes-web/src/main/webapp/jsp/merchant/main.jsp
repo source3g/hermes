@@ -6,7 +6,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>统计信息</title>
 
-
 </head>
 <body>
 	<div class="thumbnail span10">
@@ -49,6 +48,16 @@
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/chart.js">
 		
+	</script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$.ajax({
+				url : "${pageContext.request.contextPath}/merchant/customer/callInStatisticsJson/",
+				dataType : "json",
+				success : reDraw
+			});
+		});
 	</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.source3g.hermes.customer.service;
+package com.source3g.hermes.entity;
 
 public class ObjectValue {
 

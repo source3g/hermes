@@ -1,7 +1,10 @@
 package com.source3g.hermes.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class DateFormateUtils {
 
@@ -19,6 +22,40 @@ public class DateFormateUtils {
 			return null;
 		}
 		return retVal;
+	}
+
+	/**
+	 * 获取从开始日期到结束日期的时间字符串，以天为单位，格式形如 yyyy-MM-dd
+	 * 
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	public static List<String> getDays(Date startTime, Date endTime) {
+		List<String> result = new ArrayList<String>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cStart = Calendar.getInstance();
+		Calendar cEnd = Calendar.getInstance();
+		cStart.setTime(startTime);
+		cEnd.setTime(endTime);
+		result.add(sdf.format(startTime));
+		while (cStart.before(cEnd)) {
+			cStart.add(Calendar.DAY_OF_YEAR, 1);
+			result.add(sdf.format(cStart.getTime()));
+		}
+		return result;
+	}
+
+	/**
+	 * 获取某天的0点0分0秒的时间
+	 * @param time
+	 * @return
+	 */
+	public static Date getStartDateOfDay(Date time) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+		return calendar.getTime();
 	}
 
 }

@@ -1,7 +1,6 @@
 package com.source3g.hermes.merchant.controller;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -31,7 +29,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.source3g.hermes.constants.Constants;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
@@ -40,6 +37,7 @@ import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.vo.CallInStatistics;
 
 @Controller
 @RequestMapping("/merchant/customer")
@@ -261,20 +259,30 @@ public class CustomerController {
 
 	@RequestMapping(value = "/callInStatistics", method = RequestMethod.GET)
 	public ModelAndView callInList(HttpServletRequest req, String startTime, String endTime) throws Exception {
+		CallInStatistics result = findCallInStatistics(req, startTime, endTime);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("callInStatistics", result);
+		return new ModelAndView("/merchant/customer/callInStatistics", model);
+	}
+
+	@RequestMapping(value = "/callInStatisticsJson", method = RequestMethod.GET)
+	@ResponseBody
+	public CallInStatistics callInStatisticsJson(HttpServletRequest req, String startTime, String endTime) throws Exception {
+		CallInStatistics result = findCallInStatistics(req, startTime, endTime);
+		return result;
+	}
+
+	private CallInStatistics findCallInStatistics(HttpServletRequest req, String startTime, String endTime) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_OF_DAY);
-		Date date = new Date();
+		String uri = ConfigParams.getBaseUrl() + "customer/callInStatistics/" + merchant.getId() + "/?a=1";
 		if (StringUtils.isEmpty(endTime)) {
-			endTime = sdf.format(date);
+			uri += "&endTime=" + endTime;
 		}
 		if (StringUtils.isEmpty(startTime)) {
-			startTime = sdf.format(DateUtils.addDays(date, -30));
+			uri += "&startTime=" + startTime;
 		}
-		String uri = ConfigParams.getBaseUrl() + "customer/callInStatistics/" + merchant.getId() + "/" + startTime + "/" + endTime + "/";
-
-		String result = restTemplate.getForObject(uri, String.class);
-		System.out.println(result);
-		return new ModelAndView("/merchant/customer/callInStatistics");
+		CallInStatistics callInStatistics = restTemplate.getForObject(uri, CallInStatistics.class);
+		return callInStatistics;
 	}
 
 	private void handleCustomer(Customer customer) {

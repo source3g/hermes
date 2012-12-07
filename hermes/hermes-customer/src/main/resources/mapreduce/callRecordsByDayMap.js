@@ -2,7 +2,15 @@ function(){
 	if(this.callRecords!=null){
 	this.callRecords.forEach(function(record)
 	{
-	emit(record.callTime.getFullYear()+"-"+record.callTime.getMonth()+"-"+ +record.callTime.getDay(),{count:1});
+		var month=(record.callTime.getMonth()+1).toString();
+		if(month.length==1){
+			month="0"+month;
+		}
+		var day=record.callTime.getDate().toString();
+		if(day.length==1){
+			day="0"+day;
+		}
+	emit(record.callTime.getFullYear()+"-"+month+"-"+day,{count:1});
 	});
 	}
 }

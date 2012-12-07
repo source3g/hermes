@@ -28,6 +28,7 @@
 
 	<bean id="apiExceptionHandler" class="com.source3g.hermes.api.exception.ApiExceptionHandler" />
 
+
 	<!-- 开启支持@Controller 和 @RequestMapping注解的处理器。 处理器映射RequestMappingHandlerMapping 
 		和 处理器适配器RequestMappingHandlerAdapter组合来代替Spring2.5开始的处理器映射DefaultAnnotationHandlerMapping和处理器适配器AnnotationMethodHandlerAdapter，提供更多的扩展点。 -->
 	<bean
@@ -40,17 +41,19 @@
 				<bean
 					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
+						<!-- <list> <bean class="org.springframework.http.MediaType"> <constructor-arg 
+							index="0" value="text" /> <constructor-arg index="1" value="plain" /> <constructor-arg 
+							index="2" value="UTF-8" /> </bean> </list> -->
+
 						<list>
-							<bean class="org.springframework.http.MediaType">
-								<constructor-arg index="0" value="text" />
-								<constructor-arg index="1" value="plain" />
-								<constructor-arg index="2" value="UTF-8" />
-							</bean>
+							<value>text/plain;charset=UTF-8</value>
 						</list>
 					</property>
 				</bean>
-				<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" ></bean>
-				<bean class="org.springframework.http.converter.ResourceHttpMessageConverter" ></bean>
+				<bean
+					class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean>
+				<bean
+					class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean>
 			</list>
 		</property>
 	</bean>

@@ -6,8 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,10 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,16 +31,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.source3g.hermes.constants.Constants;
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.customer.dto.CallRecordDto;
+import com.source3g.hermes.customer.dto.NewCustomerDto;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
+import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
+import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.vo.CallInStatistics;
 
 @Controller
 @RequestMapping("/customer")
@@ -49,6 +57,9 @@ public class CustomerApi {
 
 	@Autowired
 	private CustomerImportService customerImportService;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	@RequestMapping(value = "/export/download/{year}/{month}/{day}/{merchantId}/{fileName}", method = RequestMethod.GET)
 	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -199,18 +210,91 @@ public class CustomerApi {
 		return customerImportService.findImportItems(logId);
 	}
 
-	@RequestMapping(value = "/callInStatistics/{id}/{startTime}/{endTime}", method = RequestMethod.GET)
+	@RequestMapping(value = "/callInStatistics/{id}/", method = RequestMethod.GET)
 	@ResponseBody
-	public String callInStatistics(@PathVariable String id,@PathVariable String startTime, @PathVariable String endTime) {
-		SimpleDateFormat sdf=new SimpleDateFormat(Constants.DATE_FORMAT_OF_DAY);
-		Date startTimeDate;
-		try {
-			startTimeDate = sdf.parse(startTime);
-			Date endTimeDate=sdf.parse(endTime);
-			customerService.findNewCustomerCountByDay(id, startTimeDate, endTimeDate);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return "";
+	public CallInStatistics callInStatistics(@PathVariable String id, Date startTime, Date endTime) {
+		return findCallInStatistics(id, startTime, endTime);
 	}
+
+	@RequestMapping(value = "/callInStatistics/sn/{sn}/", method = RequestMethod.GET)
+	@ResponseBody
+	public CallInStatistics callInStatisticsBySn(@PathVariable String sn, Date startTime, Date endTime) {
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+		return findCallInStatistics(merchant.getId().toString(), startTime, endTime);
+	}
+
+	private CallInStatistics findCallInStatistics(String merchantId, Date startTime, Date endTime) {
+		if (endTime == null) {
+			endTime = new Date();
+		}
+		if (startTime == null) {
+			startTime = DateUtils.addDays(endTime, -30);
+		}
+		CallInStatistics callInStatistics = new CallInStatistics();
+		callInStatistics.setAllList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 0));
+		callInStatistics.setNewList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 1));
+		callInStatistics.setOldList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 2));
+		return callInStatistics;
+	}
+
+	@RequestMapping(value = "/listCallRecord/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<CallRecordDto> listCallRecord(@PathVariable String sn, Date startTime, Date endTime) {
+
+		if (startTime == null) {
+			startTime = DateFormateUtils.getStartDateOfDay(new Date());
+		}
+		if (endTime == null) {
+			endTime = new Date();
+		}
+		List<Customer> customers = customerService.findByCallRecords(sn, startTime, endTime);
+		List<CallRecordDto> result = new ArrayList<CallRecordDto>();
+		filterCallRecord(startTime, endTime, customers, result);
+		return result;
+	}
+
+	@RequestMapping(value = "/newCustomerCount/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public long newCustomerCount(@PathVariable String sn,Date startTime) {
+		if(startTime==null){
+			startTime=DateFormateUtils.getStartDateOfDay(new Date());
+		}
+		return customerService.findNewCustomerCount(sn,startTime);
+	}
+	
+	@RequestMapping(value = "/newCustomerList/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<NewCustomerDto> newCustomerList(@PathVariable String sn,Date startTime) {
+		if(startTime==null){
+			startTime=DateFormateUtils.getStartDateOfDay(new Date());
+		}
+		List<Customer> customers= customerService.findNewCustomers(sn,startTime);
+		List<NewCustomerDto> customerDtos=new ArrayList<NewCustomerDto>();
+		for (Customer c:customers){
+			NewCustomerDto newCustomerDto=new NewCustomerDto();
+			newCustomerDto.setLastCallTime(c.getLastCallInTime());
+			newCustomerDto.setPhone(c.getPhone());
+			customerDtos.add(newCustomerDto);
+		}
+		return customerDtos;
+	}
+	
+	
+
+	private void filterCallRecord(Date startTime, Date endTime, List<Customer> customers, List<CallRecordDto> result) {
+		for (Customer customer : customers) {
+			for (CallRecord r : customer.getCallRecords()) {
+				if (r.getCallTime().getTime() >= startTime.getTime() && r.getCallTime().getTime() <= endTime.getTime()) {
+					CallRecordDto callRecordDto = new CallRecordDto();
+					callRecordDto.setCallDuration(r.getCallDuration());
+					callRecordDto.setCallTime(r.getCallTime());
+					callRecordDto.setCustomerName(customer.getName());
+					callRecordDto.setPhone(customer.getPhone());
+					result.add(callRecordDto);
+				}
+			}
+		}
+	}
+
 }

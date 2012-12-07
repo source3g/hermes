@@ -11,14 +11,15 @@
 		<div class="caption">
 			<h3>查询条件</h3>
 		</div>
-		<form class="form-inline " method="get">
+		<form id="queryForm" class="form-inline " method="get">
 			<label class="control-label" for="startTime">时间：</label> <input
-				type="text" name="startTime" onclick="WdatePicker();" class="input-medium"
-				placeholder="请选择起始时间...">&nbsp;- <input type="text"
-				name="endTime" class="input-medium"  onclick="WdatePicker();" placeholder="请选择结束时间...">
-				<input type="button" class="btn btn-primary" value="查询">
+				type="text" id="startTime" name="startTime" onclick="WdatePicker();"
+				class="input-medium" placeholder="请选择起始时间...">&nbsp;- <input
+				type="text" id="endTime" name="endTime" class="input-medium"
+				onclick="WdatePicker();" placeholder="请选择结束时间..."> <input
+				type="submit" class="btn btn-primary" value="查询">
 		</form>
-		<button  onclick='reDraw(this);' >测试</button>
+		<button onclick='reDraw(this);'>测试</button>
 	</div>
 	<div id="chartContainer"></div>
 
@@ -33,6 +34,35 @@
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/chart.js">
 		
+	</script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$.ajax({
+				url : "${pageContext.request.contextPath}/merchant/customer/callInStatisticsJson/",
+				dataType : "json",
+				success : reDraw
+			});
+			
+			$("#queryForm").submit(function() {
+				$("#queryForm").ajaxSubmit({
+					url : "${pageContext.request.contextPath}/merchant/customer/callInStatisticsJson/",
+					dataType : "json",
+					success : reDraw
+				});
+				return false;
+			});
+		});
+
+		/* function callInStatisticsJson(){
+			var startTime=("#startTime").val();
+			var endTime=("#endTime").val();
+			$.ajax({
+				url:"${pageContext.request.contextPath}/merchant/customer/callInStatisticsJson/",
+				type:"get",
+				dataType:"json",
+				success:reDraw(data)
+			});
+		} */
 	</script>
 </body>
 </html>

@@ -8,8 +8,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.ObjectValue;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
@@ -42,6 +45,7 @@ import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
+import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 
 @Service
@@ -76,6 +80,15 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.findAll(Customer.class);
 	}
 
+	/**
+	 * 顾客列表
+	 * 
+	 * @param pageNo
+	 * @param customer
+	 * @param isNew
+	 *            是否为新顾客
+	 * @return
+	 */
 	public Page list(int pageNo, Customer customer, boolean isNew) {
 		Query query = new Query();
 		if (customer.getMerchantId() == null) {
@@ -261,6 +274,11 @@ public class CustomerService extends BaseService {
 		record.setCallTime(callInTime);
 		record.setCallDuration(Integer.parseInt(duration));
 		Update update = new Update();
+
+		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phone).and("merchantId").is(merchant.getId())), Customer.class);
+		if (c == null || StringUtils.isEmpty(c.getName())) {
+			record.setNewCustomer(true);
+		}
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 	}
@@ -286,6 +304,12 @@ public class CustomerService extends BaseService {
 
 	public void updateInfo(Customer customer) {
 		customer.setOperateTime(new Date());
+		if (customer.getId() == null) {
+			Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customer.getPhone())), Customer.class);
+			if (c != null) {
+				customer.setId(c.getId());
+			}
+		}
 		super.updateIncludeProperties(customer, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "reminds", "customerGroupId", "operateTime");
 	}
 
@@ -303,17 +327,49 @@ public class CustomerService extends BaseService {
 		super.deleteById(id, Customer.class);
 	}
 
-	public Long findNewCustomerCountByDay(String merchantId,Date startTime, Date endTime) {
-		
+	/**
+	 * 以天为单位统计来电次数
+	 * 
+	 * @param merchantId
+	 * @param startTime
+	 * @param endTime
+	 * @param type
+	 *            0为全部,1为新顾客,2为老顾客
+	 * @return
+	 */
+	public List<ObjectValue> findCallInCountByDay(String merchantId, Date startTime, Date endTime, int type) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("callRecords.callTime").gt(startTime).lt(endTime).and("merchantId").is(new ObjectId(merchantId)));
-		
-		MapReduceResults<ObjectValue> results= mongoTemplate.mapReduce(query,"customer",  "classpath:mapreduce/callRecordsByDayMap.js","classpath:mapreduce/callRecordsByDayReduce.js",ObjectValue.class);
-		
-		for (ObjectValue result:results){
-			System.out.println("==============="+result.getValue());
+		Criteria criteria = Criteria.where("callRecords.callTime").gt(startTime).lt(endTime).and("merchantId").is(new ObjectId(merchantId));
+		if (type == 1) {
+			criteria.and("callRecords.newCustomer").is(true);
+		} else if (type == 2) {
+			criteria.and("callRecords.newCustomer").is(false);
 		}
-		return 0L;
+		query.addCriteria(criteria);
+		MapReduceResults<ObjectValue> results = mongoTemplate.mapReduce(query, "customer", "classpath:mapreduce/callRecordsByDayMap.js", "classpath:mapreduce/callRecordsByDayReduce.js", ObjectValue.class);
+		List<ObjectValue> values = new ArrayList<ObjectValue>();
+		List<String> daysHasValue = new ArrayList<String>();
+		List<String> allDays = DateFormateUtils.getDays(startTime, endTime);
+		for (String day : allDays) {
+			boolean hasDay = false;
+			for (ObjectValue value : results) {
+				if (day.equals(value.getId())) {
+					daysHasValue.add(value.getId());
+					values.add(value);
+					hasDay = true;
+				}
+			}
+			if (!hasDay) {
+				ObjectValue v = new ObjectValue();
+				v.setId(day);
+				LinkedHashMap<Object, Object> valueMap = new LinkedHashMap<Object, Object>();
+				valueMap.put("count", 0.0);
+				v.setValue(valueMap);
+				values.add(v);
+			}
+		}
+
+		return values;
 	}
 
 	public String getExportDir() {
@@ -330,6 +386,31 @@ public class CustomerService extends BaseService {
 
 	public void setLocalUrl(String localUrl) {
 		this.localUrl = localUrl;
+	}
+
+	public List<Customer> findByCallRecords(String deviceSn, Date startTime, Date endTime) {
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+		return findByCallRecords(merchant.getId(), startTime, endTime);
+	}
+
+	public List<Customer> findByCallRecords(ObjectId merchantId, Date startTime, Date endTime) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("merchantId").is(merchantId).and("callRecords.callTime").gt(startTime).lt(endTime));
+		return mongoTemplate.find(query, Customer.class);
+	}
+
+	public long findNewCustomerCount(String sn, Date startTime) {
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+		long count = mongoTemplate.count(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
+		return count;
+	}
+
+	public List<Customer> findNewCustomers(String sn, Date startTime) {
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+		return mongoTemplate.find(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
 	}
 
 }
