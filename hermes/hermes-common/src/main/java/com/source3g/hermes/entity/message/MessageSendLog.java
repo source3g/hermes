@@ -5,10 +5,13 @@ import java.util.Date;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 @Document
-public class MessageSendLog {
+public class MessageSendLog extends AbstractEntity{
+
+	private static final long serialVersionUID = -5667989745723926234L;
 	private String customerName;
 	private String customerGroupName;
 	private String phone; // 电话号码
