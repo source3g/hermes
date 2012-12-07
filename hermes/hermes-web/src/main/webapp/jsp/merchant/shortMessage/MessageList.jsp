@@ -26,12 +26,13 @@
 		<thead>
 			<tr>
 				<th width="14%">顾客姓名</th>
-				<th width="14%">顾客组别</th>
-				<th width="14%">顾客手机号</th>
+				<th width="12%">顾客组别</th>
+				<th width="12%">顾客手机号</th>
 				<th width="8%">发送数量</th>
-				<th width="18%">发送内容</th>
-				<th width="14%">发送形式</th>
-				<th width="18%">发送时间</th>
+				<th width="10%">发送状态</th>
+				<th width="16%">发送内容</th>
+				<th width="12%">发送形式</th>
+				<th width="16%">发送时间</th>
 				
 				
 			</tr>
@@ -42,6 +43,7 @@
 				<td width="14%">${messageSendLog.customerGroupName }</td>
 				<td width="14%">${messageSendLog.phone }</td>
 				<td width="8%">${messageSendLog.sendCount }</td>
+				<td width="8%">${messageSendLog.status }</td>
 				<td width="18%" id="content" title="${messageSendLog.content }"  >
 				<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${messageSendLog.content }</div></td>
 				<td width="14%">${messageSendLog.type }</td>

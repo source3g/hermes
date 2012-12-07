@@ -15,6 +15,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
@@ -48,7 +49,7 @@ public class MessageService extends BaseService {
 		query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
 		ShortMessageMessage message = new ShortMessageMessage();
-		List<Map<String, Object>> customersInfo = handleCustomers(customers);
+		List<Map<String, Object>> customersInfo = handleCustomers(customers, content, MessageType.群发);
 		message.setContent(content);
 		message.setCustomers(customersInfo);
 		message.setMessageType(MessageType.群发);
@@ -56,16 +57,33 @@ public class MessageService extends BaseService {
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
 
-	private List<Map<String, Object>> handleCustomers(List<Customer> customers) {
+	private List<Map<String, Object>> handleCustomers(List<Customer> customers, String content, MessageType type) {
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		for (Customer c : customers) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("name", c.getName());
 			map.put("phone", c.getPhone());
 			map.put("merchantId", c.getMerchantId());
+			MessageSendLog log = genMessageSendLog(c, content, type);
+			mongoTemplate.save(log);
+			map.put("messageSendLogId", log.getId());
 			result.add(map);
 		}
 		return result;
+	}
+
+	private MessageSendLog genMessageSendLog(Customer c, String content, MessageType type) {
+		MessageSendLog log = new MessageSendLog();
+		log.setId(ObjectId.get());
+		log.setContent(content);
+		log.setCustomerName(c.getName());
+		log.setSendTime(new Date());
+		log.setMerchantId(c.getMerchantId());
+		log.setPhone(c.getPhone());
+		log.setSendCount(1);
+		log.setType(type);
+		log.setStatus(MessageStatus.发送中);
+		return log;
 	}
 
 	public List<MessageTemplate> listAll(String merchantId) {
@@ -80,8 +98,8 @@ public class MessageService extends BaseService {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("phone").in(Arrays.asList(customerPhoneArray)));
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-		List<Map<String, Object>> customersInfo = handleCustomers(customers);
 		ShortMessageMessage message = new ShortMessageMessage();
+		List<Map<String, Object>> customersInfo = handleCustomers(customers, content, MessageType.群发);
 		message.setContent(content);
 		message.setCustomers(customersInfo);
 		message.setMessageType(MessageType.群发);
@@ -119,6 +137,13 @@ public class MessageService extends BaseService {
 
 	public void addLog(MessageSendLog log) {
 		mongoTemplate.insert(log);
+	}
+
+	public void updateLog(ObjectId id, Date date, MessageStatus status) {
+		Update update = new Update();
+		update.set("sendTime", date);
+		update.set("status", status);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, MessageSendLog.class);
 	}
 
 	public MessageStatus send(String phoneNumber, String content) {

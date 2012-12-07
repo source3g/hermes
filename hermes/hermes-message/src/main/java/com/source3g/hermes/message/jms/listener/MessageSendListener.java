@@ -1,6 +1,5 @@
 package com.source3g.hermes.message.jms.listener;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +11,12 @@ import javax.jms.ObjectMessage;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
-import com.source3g.hermes.entity.message.MessageSendLog;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.message.service.MessageService;
@@ -25,11 +27,13 @@ public class MessageSendListener implements MessageListener {
 	@Autowired
 	private MessageService messageService;
 
+	@Autowired
+	protected MongoTemplate mongoTemplate;
+
 	@Override
 	public void onMessage(Message message) {
 		if (message instanceof ObjectMessage) {
 			ObjectMessage objectMessage = (ObjectMessage) message;
-			List<MessageSendLog> logs = new ArrayList<MessageSendLog>();
 			try {
 				Object obj = objectMessage.getObject();
 				if (obj instanceof ShortMessageMessage) {
@@ -37,23 +41,18 @@ public class MessageSendListener implements MessageListener {
 					List<Map<String, Object>> customersInfo = shortMessageMessage.getCustomers();
 					String content = shortMessageMessage.getContent();
 					for (Map<String, Object> map : customersInfo) {
-						// System.out.println("向" + c.getName() + "发送" +
-						// content);
-						MessageStatus status = messageService.send((String) map.get("phone"), content);
-						if (MessageStatus.已发送.equals(status)) {
-							// TODO 消息发送成功处理
+						Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is((ObjectId) map.get("merchantId"))), Merchant.class);
+						if (merchant.getShortMessage().getSurplusMsgCount() <= 0) {
+							messageService.updateLog((ObjectId) map.get("messageSendLogId"), new Date(), MessageStatus.余额不足发送失败);
+						} else {
+							merchant.getShortMessage().setSurplusMsgCount(merchant.getShortMessage().getSurplusMsgCount() - 1);
+							merchant.getShortMessage().setTotalCount(merchant.getShortMessage().getTotalCount() - 1);
+							merchant.getShortMessage().setSentCount(merchant.getShortMessage().getSentCount() + 1);
+							mongoTemplate.save(merchant);
+							messageService.send((String) map.get("phone"), content);
+							messageService.updateLog((ObjectId) map.get("messageSendLogId"), new Date(), MessageStatus.已发送);
+
 						}
-						MessageSendLog log = new MessageSendLog();
-						log.setContent(content);
-						log.setCustomerName((String) map.get("name"));
-						log.setSendTime(new Date());
-						log.setMerchantId((ObjectId) map.get("merchantId"));
-						log.setPhone((String) map.get("phone"));
-						log.setSendCount(1);
-						log.setType(shortMessageMessage.getMessageType());
-						log.setStatus(MessageStatus.已发送);
-						logs.add(log);
-						messageService.addLog(log);
 					}
 				}
 			} catch (JMSException e) {

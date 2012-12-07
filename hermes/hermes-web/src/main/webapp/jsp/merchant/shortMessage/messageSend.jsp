@@ -23,7 +23,7 @@
 			<td width="20%" ><label class="control-label">商户短信数据 :</label></td>
 			<td width="26%" >短信预存数量：${merchant.shortMessage.totalCount}</td>
 			<td width="27%" >短信可用数量：${merchant.shortMessage.surplusMsgCount}</td>
-			<td width="27%" >短信已发送数量：</td>
+			<td width="27%" >短信已发送数量：${merchant.shortMessage.sentCount}</td>
 				
 			</tr>
 			
@@ -94,7 +94,11 @@
 				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
 				 type:"post",
 			success : function (data){
-				alert("发送成功");
+				if(${merchant.shortMessage.surplusMsgCount}==0){
+					alert("可发送短信数量不足,请充值");
+				}else{
+				alert("短信息已向后台发送,请在短信列表中查看");
+				}
 				showList(data);
 			}
 		}; 
@@ -136,18 +140,6 @@
 		function showList(data){
 			$("#pageContentFrame").html(data);
 		}
-		
-/* 		function initDialog(){
-			if(${not empty success }==true){
-				$('#messageSendForm').clearForm();
-				$("#resultMessage").html("操作成功！");
-				$("#errorModal").modal({
-					backdrop:true,
-				    keyboard:true,
-				    show:true
-				});
-			}
-		}  */
 		</script>
 </body>
 </html>

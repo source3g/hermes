@@ -23,7 +23,7 @@
 					<td width="20%"><label class="control-label">商户短信数据 :</label></td>
 					<td width="26%">短信预存数量：${merchant.shortMessage.totalCount}</td>
 					<td width="27%">短信可用数量：${merchant.shortMessage.surplusMsgCount}</td>
-					<td width="27%">短信已发送数量：</td>
+					<td width="27%">短信已发送数量：${merchant.shortMessage.sentCount}</td>
 
 				</tr>
 
@@ -96,7 +96,11 @@
 													url : "${pageContext.request.contextPath}/merchant/message/fastSend/",
 													type : "post",
 													success : function (data){
-														alert("发送成功");
+														if(${merchant.shortMessage.surplusMsgCount}==0){
+															alert("可发送短信数量不足,请充值");
+														}else{
+														alert("短信息已向后台发送,请在短信列表中查看");
+														}
 														showList(data);
 													}
 												};
@@ -177,8 +181,31 @@
 			}
 			if(customerPhones[customerPhones.length-1]!= ';'){
 				var str4=customerPhones+";";
-				$('#customerPhones').text(str4);
-				return true;
+				customerPhones1=$('#customerPhones').text(str4);
+				for ( var i = 0; i < customerPhones1.length; i++) {
+					
+					if (customerPhones[i] == ';') {
+						if (i == j * 12 - 1
+								&& re.test(customerPhones.substring(i - 11, i - 1))) {
+							$('#customerPhones').text(str4);
+							return true;
+						} else {
+							//alert(str4);
+							var str1 = customerPhones.substring(0, (j - 1) * 12);
+							
+							var str2 = customerPhones.substring((j - 1) * 12, customerPhones1.length);
+							var str = str1 + "<span id=\"wrongPhone\" >" + str2
+									+ "</span>" ;
+									alert(str4);
+									alert(str2);
+							$('#customerPhones').html(str);
+							$('#wrongPhone').css('color', 'red');
+							alert("电话号码不合法");
+							return false;
+						}
+					}
+				}
+				
 			}else{
 			alert($('#customerPhones').text());
 			$('#customerPhones').text(customerPhones);
