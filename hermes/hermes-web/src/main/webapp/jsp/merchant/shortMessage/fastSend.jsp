@@ -156,6 +156,11 @@
 				alert("请输入有效手机号码");
 				return false;
 			}
+			if(customerPhones[customerPhones.length-1]!= ';'){
+				customerPhones=customerPhones+";";
+				$('#customerPhones').text(customerPhones);
+			}
+			
 			for ( var i = 0; i < customerPhones.length; i++) {
 				if (customerPhones[i] == ';') {
 					if (i == j * 12 - 1
@@ -176,36 +181,7 @@
 					}
 				}
 			}
-			if(customerPhones[customerPhones.length-1]!= ';'){
-				var str4=customerPhones+";";
-				customerPhones1=$('#customerPhones').text(str4);
-				for ( var i = 0; i < customerPhones1.length; i++) {
-					
-					if (customerPhones[i] == ';') {
-						if (i == j * 12 - 1
-								&& re.test(customerPhones.substring(i - 11, i - 1))) {
-							$('#customerPhones').text(str4);
-							return true;
-						} else {
-							
-							var str1 = customerPhones.substring(0, (j - 1) * 12);
-							
-							var str2 = customerPhones.substring((j - 1) * 12, customerPhones1.length);
-							var str = str1 + "<span id=\"wrongPhone\" >" + str2
-									+ "</span>" ;
-								
-							$('#customerPhones').html(str);
-							$('#wrongPhone').css('color', 'red');
-							alert("电话号码不合法");
-							return false;
-						}
-					}
-				}
-				
-			}else{
-			$('#customerPhones').text(customerPhones);
-			return true; 
-			}
+			return true;
 		}
 		
 	</script>

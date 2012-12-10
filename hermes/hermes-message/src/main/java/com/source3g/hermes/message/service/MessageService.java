@@ -1,11 +1,8 @@
 package com.source3g.hermes.message.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.jms.Destination;
@@ -21,10 +18,12 @@ import org.springframework.stereotype.Service;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
+import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
+import com.source3g.hermes.message.PhoneInfo;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
@@ -39,53 +38,67 @@ public class MessageService extends BaseService {
 	@Autowired
 	private Destination messageDestination;
 
-	public void messageSend(String[] ids, String content) {
+	public void messageSend(ObjectId merchantId, String[] ids, String content) {
 		Query query = new Query();
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
 		for (String id : ids) {
 			ObjectId ObjId = new ObjectId(id);
 			customerGroupIds.add(ObjId);
-
 		}
 		query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
 		ShortMessageMessage message = new ShortMessageMessage();
-		List<Map<String, Object>> customersInfo = handleCustomers(customers, content, MessageType.群发);
+		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customers, content, MessageType.群发);
 		message.setContent(content);
-		message.setCustomers(customersInfo);
+		message.setPhoneInfos(phoneInfos);
 		message.setMessageType(MessageType.群发);
+		message.setMerchantId(merchantId);
 
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
 
-	private List<Map<String, Object>> handleCustomers(List<Customer> customers, String content, MessageType type) {
-		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+	private List<PhoneInfo> genPhoneInfos(ObjectId merchantId, List<Customer> customers, String content, MessageType type) {
+		List<PhoneInfo> result = new ArrayList<PhoneInfo>();
 		for (Customer c : customers) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("name", c.getName());
-			map.put("phone", c.getPhone());
-			map.put("merchantId", c.getMerchantId());
-			CustomerGroup customerGroup =mongoTemplate.findById(c.getCustomerGroupId(), CustomerGroup.class);
-			MessageSendLog log = genMessageSendLog(c, content, type,customerGroup.getName());
-			mongoTemplate.save(log);
-			map.put("messageSendLogId", log.getId());
-			result.add(map);
+			CustomerGroup customerGroup = mongoTemplate.findById(c.getCustomerGroupId(), CustomerGroup.class);
+			String customerGroupName = null;
+			if (customerGroup != null) {
+				customerGroupName = customerGroup.getName();
+			}
+			MessageSendLog log = genMessageSendLog(c.getName(), merchantId, c.getPhone(), 1, content, type, customerGroupName);
+			PhoneInfo phoneInfo = new PhoneInfo(c.getPhone(), content, log.getId());
+			result.add(phoneInfo);
 		}
 		return result;
 	}
 
-	private MessageSendLog genMessageSendLog(Customer c, String content, MessageType type,String customerGroupName) {
+	private MessageSendLog genMessageSendLog(String name, ObjectId merchantId, String phone, int sendCount, String content, MessageType type, String customerGroupName) {
 		MessageSendLog log = new MessageSendLog();
 		log.setId(ObjectId.get());
 		log.setContent(content);
-		log.setCustomerName(c.getName());
+		log.setCustomerName(name);
 		log.setCustomerGroupName(customerGroupName);
-		log.setSendTime(new Date());
-		log.setMerchantId(c.getMerchantId());
-		log.setPhone(c.getPhone());
-		log.setSendCount(1);
+		log.setMerchantId(merchantId);
+		log.setPhone(phone);
+		log.setSendCount(sendCount);
 		log.setType(type);
 		log.setStatus(MessageStatus.发送中);
+		mongoTemplate.save(log);
+		return log;
+	}
+
+	private MessageSendLog genMessageSendLog(String phone, ObjectId merchantId, String content, MessageType type) {
+		String customerName = null;
+		String customerGroupName = null;
+		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phone)), Customer.class);
+		if (c != null) {
+			customerName = c.getName();
+			CustomerGroup customerGroup = mongoTemplate.findById(c.getCustomerGroupId(), CustomerGroup.class);
+			if (customerGroup != null) {
+				customerGroupName = customerGroup.getName();
+			}
+		}
+		MessageSendLog log = genMessageSendLog(customerName, merchantId, phone, 1, content, type, customerGroupName);
 		return log;
 	}
 
@@ -97,37 +110,60 @@ public class MessageService extends BaseService {
 		mongoTemplate.save(messageTemplate);
 	}
 
-	public void fastSend(String type, String[] customerPhoneArray, String content) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("phone").in(Arrays.asList(customerPhoneArray)));
-		List<Customer> customers = mongoTemplate.find(query, Customer.class);
+	public void fastSend(ObjectId merchantId, String[] customerPhoneArray, String content) {
 		ShortMessageMessage message = new ShortMessageMessage();
-		List<Map<String, Object>> customersInfo = handleCustomers(customers, content, MessageType.群发);
+		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customerPhoneArray, content, MessageType.快捷发送);
 		message.setContent(content);
-		message.setCustomers(customersInfo);
-		message.setMessageType(MessageType.群发);
+		message.setPhoneInfos(phoneInfos);
+		message.setMessageType(MessageType.快捷发送);
+		message.setMerchantId(merchantId);
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
 
-	public Page list(int pageNoInt, String merchantId, Date startTime, Date endTime, String phone, String customerGroupName) {
+	/**
+	 * 生成电话信息，并生成发送日志
+	 * 
+	 * @param merchantId
+	 * @param messageSendLogId
+	 * @param customerPhoneArray
+	 * @param content
+	 * @param type
+	 * @return
+	 */
+	private List<PhoneInfo> genPhoneInfos(ObjectId merchantId, String[] customerPhoneArray, String content, MessageType type) {
+		List<PhoneInfo> result = new ArrayList<PhoneInfo>();
+		for (String phone : customerPhoneArray) {
+			// 生成发送记录
+			MessageSendLog log = genMessageSendLog(phone, merchantId, content, type);
+			// 发送记录生成完成
+			PhoneInfo phoneInfo = new PhoneInfo(phone, content, log.getId());
+			result.add(phoneInfo);
+		}
+		return result;
+	}
+
+	public Page list(int pageNoInt, ObjectId merchantId, Date startTime, Date endTime, String phone, String customerGroupName) {
 		Query query = new Query();
+		Criteria criteria = Criteria.where("merchantId").is(merchantId);
 		if (StringUtils.isNotEmpty(phone)) {
 			Pattern pattern = Pattern.compile("^.*" + phone + ".*$", Pattern.CASE_INSENSITIVE);
-			query.addCriteria(Criteria.where("phone").is(pattern));
+			criteria.and("phone").is(pattern);
 		}
-		
-		 if(StringUtils.isNotEmpty(customerGroupName))
-		 { Pattern pattern1 = Pattern.compile("^.*" +phone + ".*$", Pattern.CASE_INSENSITIVE);
-		  query.addCriteria(Criteria.where("customerGroupName").is(pattern1 )); 
-		  }
-		
+
+		if (StringUtils.isNotEmpty(customerGroupName)) {
+			// Pattern pattern1 = Pattern.compile("^.*" + phone + ".*$",
+			// Pattern.CASE_INSENSITIVE);
+			// query.addCriteria(Criteria.where("customerGroupName").is(pattern1));
+		}
+
 		if (startTime != null && endTime != null) {
-			query.addCriteria(Criteria.where("sendTime").gte(startTime).lte(endTime));
+			criteria.and("sendTime").gte(startTime).lte(endTime);
 		} else if (startTime != null) {
-			query.addCriteria(Criteria.where("sendTime").gte(startTime));
+			criteria.and("sendTime").gte(startTime);
 		} else if (endTime != null) {
-			query.addCriteria(Criteria.where("sendTime").lte(endTime));
+			criteria.and("sendTime").lte(endTime);
 		}
+		query.addCriteria(criteria);
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, MessageSendLog.class);
 		page.setTotalRecords(totalCount);
@@ -152,6 +188,17 @@ public class MessageService extends BaseService {
 		// TODO 发送消息
 		System.out.println("向" + phoneNumber + "发送" + content);
 		return MessageStatus.已发送;
+	}
+
+	public void saveMessageAutoSend(MessageAutoSend messageAutoSend) {
+		Update update = new Update();
+		update.set("newMessageCotent", messageAutoSend.getNewMessageCotent());
+		update.set("oldMessageCotent", messageAutoSend.getOldMessageCotent());
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(messageAutoSend.getMerchantId())), update, MessageAutoSend.class);
+	}
+
+	public MessageAutoSend getMessageAutoSend(ObjectId merchantId) {
+		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), MessageAutoSend.class);
 	}
 
 }

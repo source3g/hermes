@@ -3,6 +3,7 @@ package com.source3g.hermes.message.api;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,32 +52,38 @@ public class MessageApi {
 		return messageService.listAll(merchantId);
 	}
 
-	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
+	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String messageSend(String[] ids, String content) {
-		messageService.messageSend(ids, content);
+	public String messageSend(@PathVariable String merchantId, String[] ids, String content) {
+		messageService.messageSend(new ObjectId(merchantId), ids, content);
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
+	@RequestMapping(value = "/fastSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String fastSend(String type, String customerPhones, String content) {
+	public String fastSend(@PathVariable String merchantId, String customerPhones, String content) {
 		String customerPhoneArray[] = customerPhones.split(";");
-		messageService.fastSend(type, customerPhoneArray, content);
+		messageService.fastSend(new ObjectId(merchantId), customerPhoneArray, content);
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
+	@RequestMapping(value = "/messageSendLog/{merchantId}/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page toMessageList(String merchantId, String pageNo, Date startTime, Date endTime, String phone, String customerGroupName) {
+	public Page listMessageSendLog(@PathVariable String merchantId, String pageNo, Date startTime, Date endTime, String phone, String customerGroupName) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return messageService.list(pageNoInt, merchantId, startTime, endTime, phone, customerGroupName);
+		return messageService.list(pageNoInt, new ObjectId(merchantId), startTime, endTime, phone, customerGroupName);
+	}
+
+	@RequestMapping(value = "/autoSend/messageInfo/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public MessageAutoSend getMessageAutoSend(@PathVariable String merchantId) {
+		return messageService.getMessageAutoSend(new ObjectId(merchantId));
 	}
 	
-	@RequestMapping(value = "/autoSend", method = RequestMethod.POST)
+	@RequestMapping(value = "/autoSend/messageInfo", method = RequestMethod.POST)
 	@ResponseBody
 	public String autoSend(@RequestBody MessageAutoSend messageAutoSend) {
-		messageService.add(messageAutoSend);
+		messageService.saveMessageAutoSend(messageAutoSend);
 		return ReturnConstants.SUCCESS;
 	}
 }
