@@ -68,30 +68,27 @@
 	</form>
 
 	<script type="text/javascript">
-		$(document).ready(
-						function() {
-							var validateOptions = {
-								rules : {
-									content : {
-										required : true
-									}					
-								},
-								messages : {
-									content : {
-										required : "短信输入不能为空"
+		$(document).ready(function() {
+			
+			
+			var validateOptions = {
+					rules : {
+						content : {
+							required : true
+						}					
+					},
+					messages : {
+						content : {
+							required : "短信输入不能为空"
+						}
+					}
+				};
+				$('#fastSendForm').validate(validateOptions);
+							$('#fastSendForm').submit(function() {
+									if ((!$('#fastSendForm').valid())||(!testCustomerPhones())) {
+										return false;
 									}
-								}
-							};
-							$('#fastSendForm').validate(validateOptions);
-							
-
-							$('#fastSendForm').submit(
-											function() {
-												if ((!$('#fastSendForm').valid())||(!testCustomerPhones())) {
-													return false;
-												}
-												$("#customerPhonesInput").attr("value",$('#customerPhones').text());
-												
+									$("#customerPhonesInput").attr("value",$('#customerPhones').text());
 												var options = {
 													url : "${pageContext.request.contextPath}/merchant/message/fastSend/",
 													type : "post",
@@ -190,14 +187,13 @@
 							$('#customerPhones').text(str4);
 							return true;
 						} else {
-							//alert(str4);
+							
 							var str1 = customerPhones.substring(0, (j - 1) * 12);
 							
 							var str2 = customerPhones.substring((j - 1) * 12, customerPhones1.length);
 							var str = str1 + "<span id=\"wrongPhone\" >" + str2
 									+ "</span>" ;
-									alert(str4);
-									alert(str2);
+								
 							$('#customerPhones').html(str);
 							$('#wrongPhone').css('color', 'red');
 							alert("电话号码不合法");
@@ -207,7 +203,6 @@
 				}
 				
 			}else{
-			alert($('#customerPhones').text());
 			$('#customerPhones').text(customerPhones);
 			return true; 
 			}

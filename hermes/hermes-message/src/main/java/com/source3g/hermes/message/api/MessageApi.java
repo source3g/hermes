@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.message.service.MessageService;
 import com.source3g.hermes.utils.Page;
@@ -70,5 +71,12 @@ public class MessageApi {
 	public Page toMessageList(String merchantId, String pageNo, Date startTime, Date endTime, String phone, String customerGroupName) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return messageService.list(pageNoInt, merchantId, startTime, endTime, phone, customerGroupName);
+	}
+	
+	@RequestMapping(value = "/autoSend", method = RequestMethod.POST)
+	@ResponseBody
+	public String autoSend(@RequestBody MessageAutoSend messageAutoSend) {
+		messageService.add(messageAutoSend);
+		return ReturnConstants.SUCCESS;
 	}
 }

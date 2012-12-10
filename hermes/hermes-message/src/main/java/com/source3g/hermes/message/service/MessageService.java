@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.enums.MessageStatus;
@@ -64,7 +65,8 @@ public class MessageService extends BaseService {
 			map.put("name", c.getName());
 			map.put("phone", c.getPhone());
 			map.put("merchantId", c.getMerchantId());
-			MessageSendLog log = genMessageSendLog(c, content, type);
+			CustomerGroup customerGroup =mongoTemplate.findById(c.getCustomerGroupId(), CustomerGroup.class);
+			MessageSendLog log = genMessageSendLog(c, content, type,customerGroup.getName());
 			mongoTemplate.save(log);
 			map.put("messageSendLogId", log.getId());
 			result.add(map);
@@ -72,11 +74,12 @@ public class MessageService extends BaseService {
 		return result;
 	}
 
-	private MessageSendLog genMessageSendLog(Customer c, String content, MessageType type) {
+	private MessageSendLog genMessageSendLog(Customer c, String content, MessageType type,String customerGroupName) {
 		MessageSendLog log = new MessageSendLog();
 		log.setId(ObjectId.get());
 		log.setContent(content);
 		log.setCustomerName(c.getName());
+		log.setCustomerGroupName(customerGroupName);
 		log.setSendTime(new Date());
 		log.setMerchantId(c.getMerchantId());
 		log.setPhone(c.getPhone());
@@ -112,13 +115,12 @@ public class MessageService extends BaseService {
 			Pattern pattern = Pattern.compile("^.*" + phone + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("phone").is(pattern));
 		}
-		/*
-		 * if(StringUtils.isNotEmpty(customerGroupName)){ Pattern pattern =
-		 * Pattern.compile("^.*" +phone + ".*$", Pattern.CASE_INSENSITIVE);
-		 * query
-		 * .addCriteria(Criteria.where("customerGroupName").is(customerGroupName
-		 * )); }
-		 */
+		
+		 if(StringUtils.isNotEmpty(customerGroupName))
+		 { Pattern pattern1 = Pattern.compile("^.*" +phone + ".*$", Pattern.CASE_INSENSITIVE);
+		  query.addCriteria(Criteria.where("customerGroupName").is(pattern1 )); 
+		  }
+		
 		if (startTime != null && endTime != null) {
 			query.addCriteria(Criteria.where("sendTime").gte(startTime).lte(endTime));
 		} else if (startTime != null) {
