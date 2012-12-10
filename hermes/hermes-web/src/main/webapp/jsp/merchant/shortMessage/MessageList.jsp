@@ -14,9 +14,12 @@
 			<label class="control-label" for="name">日期：</label>
 			<input type="text" class="input-medium" name="startTime"placeholder="起始日期..." onclick="WdatePicker();"value="${startTime}"/> 
 			<input type="text" class="input-medium" name="endTime"placeholder="结束日期..." onclick="WdatePicker();"value="${endTime}"/>
-			<label class="control-label" for="name">集团商户：</label>
+			<label class="control-label" for="name">顾客组：</label>
 			<select id=customerName name="type"class="input-medium">
-			<option value="choice">请选择</option>
+			<!--  <option value="choice">请选择</option>-->
+			<c:forEach items="${page.data}" var="messageSendLog">
+			<option value=${messageSendLog.customerGroupName}>${messageSendLog.customerGroupName }</option>
+			</c:forEach>
 			</select>
 		<input id="pageNo" name="pageNo" type="hidden"> <input
 			type="submit" class="btn btn-primary" value="查询">
@@ -66,7 +69,10 @@
 	</div>
 	<script type="text/javascript">
 	 $(document).ready(function(){
-		// $('#content').popover(show);
+		 $('#customerName option').each(function(index){
+			 alert($(this).val());
+		 });
+		 
 			initPage();
 			$('#queryForm').submit(function(){
 				goToPage(1);

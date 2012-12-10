@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
@@ -202,9 +203,22 @@ public class MessageController {
 		return new ModelAndView("merchant/shortMessage/MessageList", model);
 	}
 
-	@RequestMapping(value = "/autoSend", method = RequestMethod.GET)
+	@RequestMapping(value = "/toAutoSend", method = RequestMethod.GET)
 	public ModelAndView toAutoSend(HttpServletRequest req) throws Exception {
 		return new ModelAndView("merchant/shortMessage/autoSend");
 	}
-
+	@RequestMapping(value = "/autoSend", method = RequestMethod.POST)
+	public ModelAndView autoSend(MessageAutoSend messageAutoSend) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/";
+		HttpEntity<MessageAutoSend> entity = new HttpEntity<MessageAutoSend>(messageAutoSend);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("success", "success");
+		return new ModelAndView("merchant/shortMessage/autoSend");
+	}else {
+		return new ModelAndView("admin/error");
+	}
+		
+	}
 }
