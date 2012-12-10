@@ -204,6 +204,10 @@ public class MessageController {
 
 		Page page = restTemplate.getForObject(uri, Page.class);
 		model.put("page", page);
+		model.put("startTime", startTime);
+		model.put("endTime", endTime);
+		model.put("phone", phone);
+		model.put("customerGroupName", customerGroupName);
 		return new ModelAndView("merchant/shortMessage/messageList", model);
 	}
 
