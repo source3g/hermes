@@ -99,7 +99,7 @@ body {
 								<li><a href="javascript:void();" id="messageList">短信列表</a></li>
 								<li><a href="javascript:void();" id="messageAdd">短信发送</a></li>
 								<li><a href="javascript:void();" id="messageFastSend">快捷发送</a></li>
-								<li><a href="javascript:void();" id="messageSentLog">发送记录</a></li>
+								<!--  <li><a href="javascript:void();" id="messageSentLog">发送记录</a></li>-->
 								<li><a href="javascript:void();" id="messageLog">预存记录</a></li>
 								<li><a href="javascript:void();" id="messageAutoSend">挂机短信</a></li>
 								<li><a href="javascript:void();" id="messageTemplate">短信模板</a></li>
