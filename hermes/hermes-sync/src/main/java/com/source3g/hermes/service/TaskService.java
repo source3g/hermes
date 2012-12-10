@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -274,7 +274,9 @@ public class TaskService extends BaseService {
 		}
 		bw.close();
 		// File gzipFile = new File(gzipFilePath);
-		Resource resource = new ClassPathResource("taskfiles/customer/task.sh");
+		DefaultResourceLoader defaultResourceLoader=new DefaultResourceLoader();
+		
+		Resource resource = defaultResourceLoader.getResource("taskfiles/customer/task.sh");//new ClassPathResource("classpath*:taskfiles/customer/task.sh");
 
 		// gzipFile.createNewFile();
 		// // 建立压缩文件输出流

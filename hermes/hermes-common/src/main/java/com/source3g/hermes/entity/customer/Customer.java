@@ -195,6 +195,9 @@ public class Customer extends AbstractEntity {
 		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
 		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
 		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
+		module.addSerializer(Date.class, new CustomDateSerializer());
+		module.addDeserializer(Date.class, new CustomDateDeserializer());
+		
 		objectMapper.getSerializationConfig().setSerializationInclusion(org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
 		objectMapper.registerModule(module);
 		SerializationConfig serializationConfig = objectMapper.getSerializationConfig();

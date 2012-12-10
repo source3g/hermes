@@ -35,7 +35,16 @@ public abstract class BaseService {
 		}
 		mongoTemplate.insert(entity);
 	}
-
+	
+	public <T extends AbstractEntity> void save(T entity) {
+		if (entity == null) {
+			return;
+		} else if (entity.getId() == null) {
+			entity.setId(ObjectId.get());
+		}
+		mongoTemplate.save(entity);
+	}
+	
 	public <T extends AbstractEntity> void update(T entity) {
 		if (entity == null || entity.getId() == null) {
 			return;

@@ -128,7 +128,8 @@ public class MessageController {
 	}
 
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
-	public ModelAndView messageSend(String[] ids, String content) throws Exception {
+	public ModelAndView messageSend(HttpServletRequest req, String[] ids, String content) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		Map<String, Object> model = new HashMap<String, Object>();
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		for (String id : ids) {
@@ -141,7 +142,7 @@ public class MessageController {
 		// httpHeaders.set("charset", "UTF-8");
 
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/messageSend/";
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/messageSend/" + merchant.getId() + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			model.put("success", "success");
@@ -155,12 +156,12 @@ public class MessageController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		model.put("merchant", merchant);
-
 		return new ModelAndView("merchant/shortMessage/fastSend", model);
 	}
 
 	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
-	public ModelAndView fastSend(String type, String customerPhones, String content) throws Exception {
+	public ModelAndView fastSend(HttpServletRequest req, String type, String customerPhones, String content) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("type", type);
 		formData.add("customerPhones", customerPhones);
@@ -169,7 +170,7 @@ public class MessageController {
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/fastSend/";
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/fastSend/" + merchant.getId() + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/merchant/message/toFastSend/");
@@ -184,7 +185,8 @@ public class MessageController {
 		}
 		Map<String, Object> model = new HashMap<String, Object>();
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/toMessageList/?pageNo=" + pageNo + "&merchantId=" + merchant.getId() + "/";
+
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/messageSendLog/" + merchant.getId() + "/list/?pageNo=" + pageNo;
 		if (StringUtils.isNotEmpty(startTime)) {
 			uri += "&startTime=" + startTime;
 		}
@@ -205,20 +207,28 @@ public class MessageController {
 
 	@RequestMapping(value = "/toAutoSend", method = RequestMethod.GET)
 	public ModelAndView toAutoSend(HttpServletRequest req) throws Exception {
-		return new ModelAndView("merchant/shortMessage/autoSend");
+		Merchant merchant=LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/messageInfo/"+merchant.getId()+"/";
+		MessageAutoSend  messageAutoSend = restTemplate.getForObject(uri, MessageAutoSend.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("messageAutoSend", messageAutoSend);
+		return new ModelAndView("merchant/shortMessage/autoSend",model);
 	}
+
 	@RequestMapping(value = "/autoSend", method = RequestMethod.POST)
-	public ModelAndView autoSend(MessageAutoSend messageAutoSend) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/";
+	public ModelAndView autoSend(HttpServletRequest req,MessageAutoSend messageAutoSend) throws Exception {
+		Merchant merchant=LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/messageInfo/";
+		messageAutoSend.setMerchantId(merchant.getId());
 		HttpEntity<MessageAutoSend> entity = new HttpEntity<MessageAutoSend>(messageAutoSend);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("success", "success");
-		return new ModelAndView("merchant/shortMessage/autoSend");
-	}else {
-		return new ModelAndView("admin/error");
-	}
-		
+			return new ModelAndView("merchant/shortMessage/autoSend");
+		} else {
+			return new ModelAndView("admin/error");
+		}
+
 	}
 }
