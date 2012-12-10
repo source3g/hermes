@@ -95,7 +95,7 @@
 				 type:"post",
 			success : function (data){
 				if(${merchant.shortMessage.surplusMsgCount}==0){
-					alert("可发送短信数量不足,请充值");
+					alert("短信可用数量不足,请充值");
 				}else{
 				alert("短信息已向后台发送,请在短信列表中查看");
 				}

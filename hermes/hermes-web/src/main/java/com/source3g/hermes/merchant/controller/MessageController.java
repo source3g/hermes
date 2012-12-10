@@ -155,7 +155,9 @@ public class MessageController {
 	public ModelAndView fastSend(HttpServletRequest req) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		model.put("merchant", merchant);
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/";
+		Merchant merchant1 = restTemplate.getForObject(uri, Merchant.class);
+		model.put("merchant", merchant1);
 		return new ModelAndView("merchant/shortMessage/fastSend", model);
 	}
 
@@ -202,7 +204,7 @@ public class MessageController {
 
 		Page page = restTemplate.getForObject(uri, Page.class);
 		model.put("page", page);
-		return new ModelAndView("merchant/shortMessage/MessageList", model);
+		return new ModelAndView("merchant/shortMessage/messageList", model);
 	}
 
 	@RequestMapping(value = "/toAutoSend", method = RequestMethod.GET)

@@ -21,7 +21,7 @@
 		</thead>
 		<c:forEach items="${page.data}" var="msgLog">
 		<tr>
-			<td>${msgLog.count}</td>
+			<td>预存${msgLog.count}条短信</td>
 			<td>${msgLog.chargeTime}</td>
 		</tr>
 		</c:forEach>

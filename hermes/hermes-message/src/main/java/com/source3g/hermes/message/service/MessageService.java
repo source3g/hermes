@@ -151,9 +151,9 @@ public class MessageService extends BaseService {
 		}
 
 		if (StringUtils.isNotEmpty(customerGroupName)) {
-			// Pattern pattern1 = Pattern.compile("^.*" + phone + ".*$",
-			// Pattern.CASE_INSENSITIVE);
+			 Pattern pattern1 = Pattern.compile("^.*" + customerGroupName + ".*$",Pattern.CASE_INSENSITIVE);
 			// query.addCriteria(Criteria.where("customerGroupName").is(pattern1));
+			criteria.and("customerGroupName").is(pattern1);
 		}
 
 		if (startTime != null && endTime != null) {
