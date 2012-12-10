@@ -19,7 +19,6 @@
 				onclick="WdatePicker();" placeholder="请选择结束时间..."> <input
 				type="submit" class="btn btn-primary" value="查询">
 		</form>
-		<button onclick='reDraw(this);'>测试</button>
 	</div>
 	<div id="chartContainer"></div>
 

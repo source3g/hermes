@@ -275,10 +275,10 @@ public class CustomerController {
 	private CallInStatistics findCallInStatistics(HttpServletRequest req, String startTime, String endTime) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "customer/callInStatistics/" + merchant.getId() + "/?a=1";
-		if (StringUtils.isEmpty(endTime)) {
+		if (StringUtils.isNotEmpty(endTime)) {
 			uri += "&endTime=" + endTime;
 		}
-		if (StringUtils.isEmpty(startTime)) {
+		if (StringUtils.isNotEmpty(startTime)) {
 			uri += "&startTime=" + startTime;
 		}
 		CallInStatistics callInStatistics = restTemplate.getForObject(uri, CallInStatistics.class);

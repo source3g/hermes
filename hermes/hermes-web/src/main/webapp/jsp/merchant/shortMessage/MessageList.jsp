@@ -10,10 +10,10 @@
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
 		<label class="control-label" for="name">名称：</label> 
-			<input type="text"name="phone" value="${messageSendLog.phone}" placeholder="请输电话号码...">
+			<input type="text"name="phone" value="${phone}" placeholder="请输电话号码...">
 			<label class="control-label" for="name">日期：</label>
-			<input type="text" class="input-medium" name="startTime"placeholder="起始日期..." onclick="WdatePicker();"value="${startTime}"/> 
-			<input type="text" class="input-medium" name="endTime"placeholder="结束日期..." onclick="WdatePicker();"value="${endTime}"/>
+			<input type="text" class="input-medium" name="startTime"placeholder="起始日期..." onclick="WdatePicker();" value="${startTime}"/> 
+			<input type="text" class="input-medium" name="endTime"placeholder="结束日期..." onclick="WdatePicker();" value="${endTime}"/>
 			<label class="control-label" for="name">顾客组：</label>
 			<select id=customerName name="type"class="input-medium">
 			<!--  <option value="choice">请选择</option>-->
