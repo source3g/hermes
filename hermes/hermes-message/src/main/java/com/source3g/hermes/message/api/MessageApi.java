@@ -55,7 +55,7 @@ public class MessageApi {
 	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String messageSend(@PathVariable String merchantId, String[] ids, String content) {
-		messageService.messageSend(new ObjectId(merchantId), ids, content);
+		messageService.messageGroupSend(new ObjectId(merchantId), ids, content);
 		return ReturnConstants.SUCCESS;
 	}
 
