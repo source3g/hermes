@@ -43,6 +43,7 @@ import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
+import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.DateFormateUtils;
@@ -64,6 +65,8 @@ public class CustomerService extends BaseService {
 
 	@Autowired
 	private JmsService jmsService;
+	
+
 
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
@@ -281,8 +284,17 @@ public class CustomerService extends BaseService {
 		}
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
+		
+		CallInMessage callInMessage=new CallInMessage();
+		callInMessage.setDeviceSn(deviceSn);
+		callInMessage.setDuration(duration);
+		callInMessage.setMerchantId(merchant.getId());
+		callInMessage.setPhone(phone);
+		callInMessage.setTime(time);
+		jmsService.sendObject(customerDestination, callInMessage, JmsConstants.TYPE, JmsConstants.CALL_IN);
 	}
 
+	
 	public String getTempDir() {
 		return tempDir;
 	}

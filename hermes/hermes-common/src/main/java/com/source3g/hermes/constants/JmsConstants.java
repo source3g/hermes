@@ -8,6 +8,8 @@ public interface JmsConstants {
 	
 	public String IMPORT_CUSTOMER="importCustomer";
 	
+	public String CALL_IN="callIn";
+	
 	public String TYPE="type";
 	
 	public String SEND_MESSAGE="sendMessage";
