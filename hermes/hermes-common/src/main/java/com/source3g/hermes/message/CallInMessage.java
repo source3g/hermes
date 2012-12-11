@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 
-import com.source3g.hermes.entity.customer.Customer;
-
 public class CallInMessage implements Serializable {
 	
 
