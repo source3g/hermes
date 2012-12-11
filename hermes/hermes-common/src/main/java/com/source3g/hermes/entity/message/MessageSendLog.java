@@ -25,6 +25,7 @@ public class MessageSendLog extends AbstractEntity{
 		return customerName;
 	}
 
+	
 	public void setCustomerName(String customerName) {
 		this.customerName = customerName;
 	}

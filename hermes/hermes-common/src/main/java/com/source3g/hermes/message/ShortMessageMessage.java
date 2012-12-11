@@ -12,10 +12,20 @@ public class ShortMessageMessage implements Serializable {
 	private static final long serialVersionUID = 4430012271716760588L;
 
 	private List<PhoneInfo> phoneInfos;
-
+	private PhoneInfo phoneInfo;
 	private String content;
 	private MessageType messageType;
 	private ObjectId merchantId;
+
+	
+	
+	public PhoneInfo getPhoneInfo() {
+		return phoneInfo;
+	}
+
+	public void setPhoneInfo(PhoneInfo phoneInfo) {
+		this.phoneInfo = phoneInfo;
+	}
 
 	public List<PhoneInfo> getPhoneInfos() {
 		return phoneInfos;

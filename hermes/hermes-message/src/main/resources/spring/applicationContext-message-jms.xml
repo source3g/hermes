@@ -42,4 +42,16 @@
 		<property name="messageSelector" value="type='logMessage'"></property>
 	</bean>
 	
+	<bean id="messageCallInListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="messageTopicListenerConnectionFactory" />
+		<property name="destination" ref="customerDestination" />
+		<property name="pubSubDomain" value="true" />
+		<property name="sessionTransacted" value="true" />
+		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
+		<property name="messageListener" ref="autoSendListener" />
+		<property name="subscriptionDurable" value="true" />
+		<property name="durableSubscriptionName" value="message_callIn" />
+		<property name="messageSelector" value="type='callIn'"></property>
+	</bean>
 </beans>
