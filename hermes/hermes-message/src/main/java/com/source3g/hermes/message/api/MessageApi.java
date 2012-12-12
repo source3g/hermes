@@ -56,7 +56,7 @@ public class MessageApi {
 	@ResponseBody
 	public String messageSend(@PathVariable String merchantId, String[] ids, String content) {
 		try {
-			messageService.messageSend(new ObjectId(merchantId), ids, content);
+			messageService.messageGroupSend(new ObjectId(merchantId), ids, content);
 		} catch (Exception e) {
 			return e.getMessage();
 		}

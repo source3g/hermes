@@ -33,7 +33,7 @@ public class DateFormateUtils {
 	 */
 	public static List<String> getDays(Date startTime, Date endTime) {
 		List<String> result = new ArrayList<String>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");//yyyy-
 		Calendar cStart = Calendar.getInstance();
 		Calendar cEnd = Calendar.getInstance();
 		cStart.setTime(startTime);

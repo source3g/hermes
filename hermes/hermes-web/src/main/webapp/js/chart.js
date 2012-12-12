@@ -65,8 +65,56 @@ var options = {
 	} ]
 };
 
+var pieChart;
+var pieChartOptions={
+        chart: {
+            renderTo: 'dayChartContainer',
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: '来电次数统计'
+        },
+        tooltip: {
+    	    pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+        	percentageDecimals: 1
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    color: '#000000',
+                    connectorColor: '#000000',
+                    formatter: function() {
+                        return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            name: '来电次数',
+            data: [
+                ['老顾客',       26.8],
+                {
+                    name: '新顾客',
+                    y: 12.8,
+                    sliced: true,
+                    selected: true
+                }
+            ]
+        }]
+    };
+
+
+
+
 $(document).ready(function() {
 	chart = new Highcharts.Chart(options);
+	pieChart=new Highcharts.Chart(pieChartOptions);
 });
 
 function reDraw(data) {

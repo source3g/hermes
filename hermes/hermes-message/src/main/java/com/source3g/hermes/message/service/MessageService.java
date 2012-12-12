@@ -24,11 +24,13 @@ import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
+import com.source3g.hermes.enums.PhoneOperator;
 import com.source3g.hermes.message.PhoneInfo;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.utils.PhoneUtils;
 
 @Service
 public class MessageService extends BaseService {
@@ -39,7 +41,7 @@ public class MessageService extends BaseService {
 	@Autowired
 	private Destination messageDestination;
 
-	public void messageSend(ObjectId merchantId, String[] ids, String content) throws Exception {
+	public void messageGroupSend(ObjectId merchantId, String[] ids, String content) throws Exception {
 		Query query = new Query();
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
 		for (String id : ids) {
@@ -160,7 +162,7 @@ public class MessageService extends BaseService {
 		}
 
 		if (StringUtils.isNotEmpty(customerGroupName)) {
-			 Pattern pattern1 = Pattern.compile("^.*" + customerGroupName + ".*$",Pattern.CASE_INSENSITIVE);
+			Pattern pattern1 = Pattern.compile("^.*" + customerGroupName + ".*$", Pattern.CASE_INSENSITIVE);
 			// query.addCriteria(Criteria.where("customerGroupName").is(pattern1));
 			criteria.and("customerGroupName").is(pattern1);
 		}
@@ -195,7 +197,31 @@ public class MessageService extends BaseService {
 
 	public MessageStatus send(String phoneNumber, String content) {
 		// TODO 发送消息
-		System.out.println("向" + phoneNumber + "发送" + content);
+		// System.out.println("向" + phoneNumber + "发送" + content);
+		if (PhoneOperator.移动.equals(PhoneUtils.getOperatior(phoneNumber))) {
+			return sendByCm(phoneNumber, content);
+		}
+		if (PhoneOperator.联通.equals(PhoneUtils.getOperatior(phoneNumber))) {
+			return sendByCu(phoneNumber, content);
+		}
+		if (PhoneOperator.电信.equals(PhoneUtils.getOperatior(phoneNumber))) {
+			return sendByCt(phoneNumber, content);
+		}
+		return MessageStatus.电话号码有误;
+	}
+
+	private MessageStatus sendByCt(String phoneNumber, String content) {
+		System.out.println("通过电信向" + phoneNumber + "发送" + content);
+		return MessageStatus.已发送;
+	}
+
+	private MessageStatus sendByCu(String phoneNumber, String content) {
+		System.out.println("通过联通向" + phoneNumber + "发送" + content);
+		return MessageStatus.已发送;
+	}
+
+	private MessageStatus sendByCm(String phoneNumber, String content) {
+		System.out.println("通过移动向" + phoneNumber + "发送" + content);
 		return MessageStatus.已发送;
 	}
 

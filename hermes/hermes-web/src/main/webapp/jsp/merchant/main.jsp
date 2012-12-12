@@ -33,6 +33,13 @@
 	</div>
 	<div class="thumbnail span10">
 		<div class="caption">
+			<h3>来电次数</h3>
+		</div>
+		<div id="dayChartContainer"></div>
+	</div>
+	
+	<div class="thumbnail span10">
+		<div class="caption">
 			<h3>月度趋势</h3>
 		</div>
 		<div id="chartContainer"></div>

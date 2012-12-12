@@ -31,6 +31,8 @@ public class Merchant extends AbstractEntity {
 	
 	private List<Note> notes;
 	
+	private Setting setting;
+	
 	public String getName() {
 		return name;
 	}
@@ -93,6 +95,14 @@ public class Merchant extends AbstractEntity {
 
 	public void setNotes(List<Note> notes) {
 		this.notes = notes;
+	}
+
+	public Setting getSetting() {
+		return setting;
+	}
+
+	public void setSetting(Setting setting) {
+		this.setting = setting;
 	}
 	
 }

@@ -7,6 +7,25 @@
 <title>来电顾客列表</title>
 </head>
 <body>
+	<h2 class="caption">来电数量统计</h2>
+	<hr>
+	<div class="well">
+		<div class="caption">
+			<h3>查询条件</h3>
+		</div>
+		<form id="queryByDay" class="form-inline " method="get">
+			<label class="control-label" for="startTime">时间：</label> <input
+				type="text" id="startTime" name="startTime" onclick="WdatePicker();"
+				class="input-medium" placeholder="请选择起始时间...">&nbsp;- <input
+				type="text" id="endTime" name="endTime" class="input-medium"
+				onclick="WdatePicker();" placeholder="请选择结束时间..."> <input
+				type="submit" class="btn btn-primary" value="查询">
+		</form>
+	</div>
+	<div id="dayChartContainer"></div>
+	
+	<h2 class="caption">月度统计</h2>
+	<hr>
 	<div class="well">
 		<div class="caption">
 			<h3>查询条件</h3>
@@ -41,7 +60,7 @@
 				dataType : "json",
 				success : reDraw
 			});
-			
+
 			$("#queryForm").submit(function() {
 				$("#queryForm").ajaxSubmit({
 					url : "${pageContext.request.contextPath}/merchant/customer/callInStatisticsJson/",
