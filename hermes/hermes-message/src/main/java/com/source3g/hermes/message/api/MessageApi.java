@@ -55,7 +55,11 @@ public class MessageApi {
 	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String messageSend(@PathVariable String merchantId, String[] ids, String content) {
-		messageService.messageSend(new ObjectId(merchantId), ids, content);
+		try {
+			messageService.messageSend(new ObjectId(merchantId), ids, content);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -63,7 +67,12 @@ public class MessageApi {
 	@ResponseBody
 	public String fastSend(@PathVariable String merchantId, String customerPhones, String content) {
 		String customerPhoneArray[] = customerPhones.split(";");
-		messageService.fastSend(new ObjectId(merchantId), customerPhoneArray, content);
+		try {
+			messageService.fastSend(new ObjectId(merchantId), customerPhoneArray, content);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		
 		return ReturnConstants.SUCCESS;
 	}
 
