@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
@@ -41,13 +42,14 @@ public class MessageService extends BaseService {
 
 	@Autowired
 	private Destination messageDestination;
+
 	/**
 	 * 短信群发
 	 * @param merchantId
 	 * @param ids
 	 * @param content
 	 */
-	public void messageGroupSend(ObjectId merchantId, String[] ids, String content) {
+	public void messageGroupSend(ObjectId merchantId, String[] ids, String content) throws Exception {
 		Query query = new Query();
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
 		for (String id : ids) {
@@ -55,7 +57,11 @@ public class MessageService extends BaseService {
 			customerGroupIds.add(ObjId);
 		}
 		query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
+		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
+		if(customers.size()>merchant.getShortMessage().getSurplusMsgCount()){
+			throw new Exception("余额不足");
+		}
 		ShortMessageMessage message = new ShortMessageMessage();
 		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customers, content, MessageType.群发);
 		message.setContent(content);
@@ -119,7 +125,11 @@ public class MessageService extends BaseService {
 		mongoTemplate.save(messageTemplate);
 	}
 
-	public void fastSend(ObjectId merchantId, String[] customerPhoneArray, String content) {
+	public void fastSend(ObjectId merchantId, String[] customerPhoneArray, String content) throws Exception {
+		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		if(customerPhoneArray.length>merchant.getShortMessage().getSurplusMsgCount()){
+			throw new Exception("余额不足");
+		}
 		ShortMessageMessage message = new ShortMessageMessage();
 		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customerPhoneArray, content, MessageType.快捷发送);
 		message.setContent(content);

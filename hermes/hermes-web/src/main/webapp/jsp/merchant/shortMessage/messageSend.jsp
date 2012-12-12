@@ -69,10 +69,19 @@
 			<a href="#" class="btn" data-dismiss="modal">确定</a>
 		</div>
 	</div>
+	
 	<script type="text/javascript">
 	$(document).ready(function() {
-		//initDialog();
+		if(${not empty success}==true){
 		
+			alert("短信已提交后台,请在短信列表查看");
+		}
+		if(${not empty error}==true){
+			
+			alert("${error}");
+		}
+		
+	
 		var validateOptions = {
 				rules : { 
 					content:{
@@ -93,14 +102,7 @@
 		 var options = {
 				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
 				 type:"post",
-			success : function (data){
-				if(${merchant.shortMessage.surplusMsgCount}==0){
-					alert("短信可用数量不足,请充值");
-				}else{
-				alert("短信息已向后台发送,请在短信列表中查看");
-				}
-				showList(data);
-			}
+				success :showList	
 		}; 
 		
 		$(this).ajaxSubmit(options);

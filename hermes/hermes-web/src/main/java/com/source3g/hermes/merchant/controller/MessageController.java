@@ -117,6 +117,11 @@ public class MessageController {
 	@RequestMapping(value = "/toMessageSend", method = RequestMethod.GET)
 	public ModelAndView toMessageSend(HttpServletRequest req) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
+		toMessageSendModel(req,model);
+		return new ModelAndView("merchant/shortMessage/messageSend", model);
+	}
+	
+	private void toMessageSendModel(HttpServletRequest req,Map<String, Object> model) throws Exception{
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uriCustomerGroup = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
 		CustomerGroup[] customerGroups = restTemplate.getForObject(uriCustomerGroup, CustomerGroup[].class);
@@ -124,9 +129,9 @@ public class MessageController {
 		Merchant merchant1 = restTemplate.getForObject(uri, Merchant.class);
 		model.put("merchant", merchant1);
 		model.put("customerGroups", customerGroups);
-		return new ModelAndView("merchant/shortMessage/messageSend", model);
+	
 	}
-
+	
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
 	public ModelAndView messageSend(HttpServletRequest req, String[] ids, String content) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
@@ -146,23 +151,31 @@ public class MessageController {
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			model.put("success", "success");
-			return new ModelAndView("redirect:/merchant/message/toMessageSend/", model);
+		}else{
+			model.put("error", result);
 		}
-		return new ModelAndView("admin/error");
+		toMessageSendModel(req,model);
+		return new ModelAndView("merchant/shortMessage/messageSend", model);
 	}
 
 	@RequestMapping(value = "/toFastSend", method = RequestMethod.GET)
 	public ModelAndView fastSend(HttpServletRequest req) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
+		toFastSend(req,model);
+		return new ModelAndView("merchant/shortMessage/fastSend", model);
+	}
+	public void toFastSend(HttpServletRequest req,Map<String, Object> model) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/";
 		Merchant merchant1 = restTemplate.getForObject(uri, Merchant.class);
-		model.put("merchant", merchant1);
-		return new ModelAndView("merchant/shortMessage/fastSend", model);
+		model.put("merchant", merchant1);	
+	
 	}
+	
 
 	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
 	public ModelAndView fastSend(HttpServletRequest req, String type, String customerPhones, String content) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("type", type);
@@ -175,9 +188,12 @@ public class MessageController {
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/fastSend/" + merchant.getId() + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("redirect:/merchant/message/toFastSend/");
+			model.put("success", "success");
+		}else{
+			model.put("error", result);
 		}
-		return new ModelAndView("admin/error");
+		toFastSend(req,model);
+		return new ModelAndView("merchant/shortMessage/fastSend", model);
 	}
 
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)

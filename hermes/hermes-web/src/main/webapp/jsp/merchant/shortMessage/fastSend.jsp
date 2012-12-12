@@ -22,7 +22,7 @@
 				<tr>
 					<td width="20%"><label class="control-label">商户短信数据 :</label></td>
 					<td width="26%">短信预存数量：${merchant.shortMessage.totalCount}</td>
-					<td width="27%">短信可用数量：${merchant.shortMessage.surplusMsgCount}</td>
+					<td width="27%" id="surplusMsgCount">短信可用数量：${merchant.shortMessage.surplusMsgCount}</td>
 					<td width="27%">短信已发送数量：${merchant.shortMessage.sentCount}</td>
 
 				</tr>
@@ -85,7 +85,7 @@
 				};
 				$('#fastSendForm').validate(validateOptions);
 							$('#fastSendForm').submit(function() {
-									if ((!$('#fastSendForm').valid())||(!testCustomerPhones())) {
+									if ((!$('#fastSendForm').valid())||(!testCustomerPhones())||(!fastSend())) {
 										return false;
 									}
 									$("#customerPhonesInput").attr("value",$('#customerPhones').text());
@@ -183,7 +183,15 @@
 			}
 			return true;
 		}
-		
+ 		function fastSend() {
+			var phones=$('#customerPhones').text();
+			var phone=phones.split(";");
+	 		if(phone.length-1>${merchant.shortMessage.surplusMsgCount}){
+				alert("余额不足，请充值");
+				return false;
+			} 
+	 		return true;
+		} 
 	</script>
 </body>
 </html>
