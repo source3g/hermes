@@ -25,7 +25,6 @@ public class MessageLogListener implements MessageListener{
 				Object obj=objectMessage.getObject();
 				if (obj instanceof MessageSendLog[]) {
 					MessageSendLog[] logs = (MessageSendLog[]) obj;
-					
 					for (MessageSendLog log: logs) {
 						messageService.addLog(log);
 					}

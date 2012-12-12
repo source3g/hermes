@@ -10,6 +10,8 @@ import javax.jms.Destination;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -41,6 +43,12 @@ public class MessageService extends BaseService {
 	@Autowired
 	private Destination messageDestination;
 
+	/**
+	 * 短信群发
+	 * @param merchantId
+	 * @param ids
+	 * @param content
+	 */
 	public void messageGroupSend(ObjectId merchantId, String[] ids, String content) throws Exception {
 		Query query = new Query();
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
@@ -60,7 +68,6 @@ public class MessageService extends BaseService {
 		message.setPhoneInfos(phoneInfos);
 		message.setMessageType(MessageType.群发);
 		message.setMerchantId(merchantId);
-
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
 
@@ -72,24 +79,25 @@ public class MessageService extends BaseService {
 			if (customerGroup != null) {
 				customerGroupName = customerGroup.getName();
 			}
-			MessageSendLog log = genMessageSendLog(c.getName(), merchantId, c.getPhone(), 1, content, type, customerGroupName);
+			MessageSendLog log = genMessageSendLog(c.getName(), customerGroupName, merchantId, c.getPhone(), 1, content, type, MessageStatus.发送中);
 			PhoneInfo phoneInfo = new PhoneInfo(c.getPhone(), content, log.getId());
 			result.add(phoneInfo);
 		}
 		return result;
 	}
 
-	private MessageSendLog genMessageSendLog(String name, ObjectId merchantId, String phone, int sendCount, String content, MessageType type, String customerGroupName) {
+	public MessageSendLog genMessageSendLog(String name, String customerGroupName, ObjectId merchantId, String phone, int sendCount, String content, MessageType type, MessageStatus status) {
 		MessageSendLog log = new MessageSendLog();
 		log.setId(ObjectId.get());
 		log.setContent(content);
+		log.setSendTime(new Date());
 		log.setCustomerName(name);
 		log.setCustomerGroupName(customerGroupName);
 		log.setMerchantId(merchantId);
 		log.setPhone(phone);
 		log.setSendCount(sendCount);
 		log.setType(type);
-		log.setStatus(MessageStatus.发送中);
+		log.setStatus(status);
 		mongoTemplate.save(log);
 		return log;
 	}
@@ -105,12 +113,12 @@ public class MessageService extends BaseService {
 				customerGroupName = customerGroup.getName();
 			}
 		}
-		MessageSendLog log = genMessageSendLog(customerName, merchantId, phone, 1, content, type, customerGroupName);
+		MessageSendLog log = genMessageSendLog(customerName, customerGroupName, merchantId, phone, 1, content, type, MessageStatus.发送中);
 		return log;
 	}
 
 	public List<MessageTemplate> listAll(String merchantId) {
-		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), MessageTemplate.class);
+		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))).with(new Sort(Direction.DESC,"_id")), MessageTemplate.class);
 	}
 
 	public void save(MessageTemplate messageTemplate) {
@@ -175,6 +183,7 @@ public class MessageService extends BaseService {
 			criteria.and("sendTime").lte(endTime);
 		}
 		query.addCriteria(criteria);
+		query.with(new Sort(Direction.DESC,"_id"));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, MessageSendLog.class);
 		page.setTotalRecords(totalCount);
