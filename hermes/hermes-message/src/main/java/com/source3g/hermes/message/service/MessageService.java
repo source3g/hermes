@@ -10,6 +10,7 @@ import javax.jms.Destination;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -17,6 +18,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.hongxun.pub.DataCommand;
+import com.hongxun.pub.tcptrans.TcpCommTrans;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
@@ -43,8 +46,30 @@ public class MessageService extends BaseService {
 	@Autowired
 	private Destination messageDestination;
 
+	@Value(value = "message.ip}")
+	private String messageIp;
+	@Value(value = "message.name")
+	private String messageName;
+	@Value(value = "message.pass")
+	private String messagePass;
+	@Value(value = "message.msgcode")
+	private String msgCode;
+	@Value(value = "message.itemid")
+	private String itemId;
+	@Value(value = "message.msgid")
+	private String msgId;
+	@SuppressWarnings("unused")
+	@Value(value = "message.gatename.cm")
+	private String cmGateName;
+	@SuppressWarnings("unused")
+	@Value(value = "message.gatename.cm.spnumber")
+	private String spnumber;
+	@Value(value = "message.gatename.cu")
+	private String cuGateName;
+
 	/**
 	 * 短信群发
+	 * 
 	 * @param merchantId
 	 * @param ids
 	 * @param content
@@ -57,9 +82,9 @@ public class MessageService extends BaseService {
 			customerGroupIds.add(ObjId);
 		}
 		query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
-		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-		if(customers.size()>merchant.getShortMessage().getSurplusMsgCount()){
+		if (customers.size() > merchant.getShortMessage().getSurplusMsgCount()) {
 			throw new Exception("余额不足");
 		}
 		ShortMessageMessage message = new ShortMessageMessage();
@@ -118,7 +143,7 @@ public class MessageService extends BaseService {
 	}
 
 	public List<MessageTemplate> listAll(String merchantId) {
-		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))).with(new Sort(Direction.DESC,"_id")), MessageTemplate.class);
+		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))).with(new Sort(Direction.DESC, "_id")), MessageTemplate.class);
 	}
 
 	public void save(MessageTemplate messageTemplate) {
@@ -126,8 +151,8 @@ public class MessageService extends BaseService {
 	}
 
 	public void fastSend(ObjectId merchantId, String[] customerPhoneArray, String content) throws Exception {
-		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		if(customerPhoneArray.length>merchant.getShortMessage().getSurplusMsgCount()){
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		if (customerPhoneArray.length > merchant.getShortMessage().getSurplusMsgCount()) {
 			throw new Exception("余额不足");
 		}
 		ShortMessageMessage message = new ShortMessageMessage();
@@ -183,7 +208,7 @@ public class MessageService extends BaseService {
 			criteria.and("sendTime").lte(endTime);
 		}
 		query.addCriteria(criteria);
-		query.with(new Sort(Direction.DESC,"_id"));
+		query.with(new Sort(Direction.DESC, "_id"));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, MessageSendLog.class);
 		page.setTotalRecords(totalCount);
@@ -226,6 +251,26 @@ public class MessageService extends BaseService {
 
 	private MessageStatus sendByCu(String phoneNumber, String content) {
 		System.out.println("通过联通向" + phoneNumber + "发送" + content);
+
+		TcpCommTrans tcp = new TcpCommTrans(messageIp, 8011, messageName, messagePass, 0);
+		tcp.start(1000);
+		DataCommand command = new DataCommand("submit");
+		command.AddNewItem("msgcode", msgCode);
+		command.AddNewItem("itemid", itemId);
+		command.AddNewItem("msgid", msgId);
+		command.AddNewItem("gatename", cuGateName);
+		// command.AddNewItem("gatename", "mobile0025");
+		// command.AddNewItem("spnumber", "10660025");
+		command.AddNewItem("feetype", "1");
+		command.AddNewItem("usernumber", "13910758780");
+		command.AddNewItem("msg", "谢谢".getBytes(), true);
+		try {
+			tcp.SendCommand(command);
+			System.out.println("OK");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return MessageStatus.已发送;
 	}
 
