@@ -285,6 +285,9 @@ public class CustomerService extends BaseService {
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 		
+		if(merchant.getSetting().isAutoSend()==false){
+			return ;
+		}
 		CallInMessage callInMessage=new CallInMessage();
 		callInMessage.setDeviceSn(deviceSn);
 		callInMessage.setDuration(duration);

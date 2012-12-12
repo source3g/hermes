@@ -124,4 +124,8 @@ public class MerchantService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id))), update, Merchant.class);	
 	}
 
+	public void Switch(Merchant merchant) {
+		mongoTemplate.save(merchant);	
+	}
+
 }

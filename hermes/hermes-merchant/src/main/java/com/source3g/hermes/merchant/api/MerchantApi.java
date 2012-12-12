@@ -104,4 +104,11 @@ public class MerchantApi {
 		merchantService.UpdateQuota(id, countInt);
 		return ReturnConstants.SUCCESS;
 	}
+	
+	@RequestMapping(value = "/switch", method = RequestMethod.POST)
+	@ResponseBody
+	public String  Switch(@RequestBody Merchant merchant) {
+		merchantService.Switch( merchant);
+		return ReturnConstants.SUCCESS;
+	}
 }

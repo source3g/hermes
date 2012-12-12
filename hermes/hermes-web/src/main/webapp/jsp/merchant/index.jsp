@@ -242,7 +242,7 @@ body {
 		
 		//商户中心
 		$("#merchantSwitch").click(function() {
-			loadPage("${pageContext.request.contextPath}/merchant/account/switch/");
+			loadPage("${pageContext.request.contextPath}/merchant/account/toSwitch/");
 		});
 		$("#merchantRemindSetting").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/remindSetting/");

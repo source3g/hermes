@@ -27,7 +27,7 @@
 					value="${customer.name }" class="input-medium"
 					placeholder="请输入姓名..." /></td>
 				<td width="10%"><label class="control-label" for="name">性别：</label></td>
-				<td width="40%"><input type="radio" name="sex" value="MALE"
+				<td width="40%"><input type="radio" name="sex" value="MALE" 
 					<c:if test="${( empty customer) or customer.sex eq 'MALE' }">checked="checked"</c:if> />男
 					<input type="radio" name="sex" value="FEMALE"
 					<c:if test="${ customer.sex eq 'FEMALE' }">checked="checked"</c:if> />女</td>
