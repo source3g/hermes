@@ -27,11 +27,11 @@ public class Merchant extends AbstractEntity {
 
 	private List<ObjectId> deviceIds;
 	
-	private ShortMessage shortMessage;
+	private ShortMessage shortMessage=new ShortMessage();
 	
 	private List<Note> notes;
 	
-	private Setting setting;
+	private Setting setting=new Setting();
 	
 	public String getName() {
 		return name;

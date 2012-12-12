@@ -27,6 +27,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -65,8 +67,6 @@ public class CustomerService extends BaseService {
 
 	@Autowired
 	private JmsService jmsService;
-	
-
 
 	public Customer add(Customer customer) {
 		customer.setId(ObjectId.get());
@@ -79,9 +79,9 @@ public class CustomerService extends BaseService {
 		super.updateExcludeProperties(customer, properties);
 	}
 
-	public List<Customer> listAll() {
-		return mongoTemplate.findAll(Customer.class);
-	}
+	// public List<Customer> listAll() {
+	// return mongoTemplate.findAll(Customer.class);
+	// }
 
 	/**
 	 * 顾客列表
@@ -89,10 +89,13 @@ public class CustomerService extends BaseService {
 	 * @param pageNo
 	 * @param customer
 	 * @param isNew
-	 *            是否为新顾客
+	 * @param direction
+	 *            排序规则
+	 * @param properties
+	 *            排序属性
 	 * @return
 	 */
-	public Page list(int pageNo, Customer customer, boolean isNew) {
+	private Page list(int pageNo, Customer customer, boolean isNew, Direction direction, String... properties) {
 		Query query = new Query();
 		if (customer.getMerchantId() == null) {
 			return null;
@@ -110,7 +113,7 @@ public class CustomerService extends BaseService {
 			Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("phone").is(pattern));
 		}
-
+		query.with(new Sort(Direction.DESC, properties));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, Customer.class);
 		page.setTotalRecords(totalCount);
@@ -118,6 +121,19 @@ public class CustomerService extends BaseService {
 		List<Customer> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Customer.class);
 		page.setData(list);
 		return page;
+	}
+
+	/**
+	 * 顾客列表
+	 * 
+	 * @param pageNo
+	 * @param customer
+	 * @param isNew
+	 *            是否为新顾客
+	 * @return
+	 */
+	public Page list(int pageNo, Customer customer, boolean isNew) {
+		return list(pageNo, customer, isNew, Direction.DESC, "_id");
 	}
 
 	public Page listByPage(int pageNo, Customer customer) {
@@ -284,17 +300,18 @@ public class CustomerService extends BaseService {
 		}
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
-		
-		CallInMessage callInMessage=new CallInMessage();
-		callInMessage.setDeviceSn(deviceSn);
-		callInMessage.setDuration(duration);
-		callInMessage.setMerchantId(merchant.getId());
-		callInMessage.setPhone(phone);
-		callInMessage.setTime(time);
-		jmsService.sendObject(customerDestination, callInMessage, JmsConstants.TYPE, JmsConstants.CALL_IN);
+		if (merchant.getShortMessage().getSurplusMsgCount() > 0) {
+			CallInMessage callInMessage = new CallInMessage();
+			callInMessage.setDeviceSn(deviceSn);
+			callInMessage.setDuration(duration);
+			callInMessage.setMerchantId(merchant.getId());
+			callInMessage.setPhone(phone);
+			callInMessage.setTime(time);
+			jmsService.sendObject(customerDestination, callInMessage, JmsConstants.TYPE, JmsConstants.CALL_IN);
+		}
+
 	}
 
-	
 	public String getTempDir() {
 		return tempDir;
 	}
