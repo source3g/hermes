@@ -45,15 +45,30 @@
 
 	<script type="text/javascript">
 	$(document).ready(function(){
+		
+	if(${not empty error}==true){
+			
+			alert("${error}");
+		}
+	
 		$('#addDeviceForm').validate({
 			rules : {
 				sn : {
-					required : true
+					required : true,
+		 			remote:{
+						type: "get",
+						url:"${pageContext.request.contextPath}/admin/device/snValidate",
+						data:{"sn":function(){
+											return $('#sn').val();
+										}
+							}
+					} 
 				}
 			},
 			messages : {
 				sn : {
-					required : "请填写SN名称"
+					required : "请填写SN名称",
+				 	remote:"盒子名称已存在" 
 				}
 			}
 		});  

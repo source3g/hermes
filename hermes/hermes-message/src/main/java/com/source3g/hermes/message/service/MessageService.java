@@ -27,6 +27,7 @@ import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.enums.PhoneOperator;
+import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.message.PhoneInfo;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.service.BaseService;
@@ -45,6 +46,7 @@ public class MessageService extends BaseService {
 
 	/**
 	 * 短信群发
+	 * 
 	 * @param merchantId
 	 * @param ids
 	 * @param content
@@ -57,9 +59,9 @@ public class MessageService extends BaseService {
 			customerGroupIds.add(ObjId);
 		}
 		query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
-		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-		if(customers.size()>merchant.getShortMessage().getSurplusMsgCount()){
+		if (customers.size() > merchant.getShortMessage().getSurplusMsgCount()) {
 			throw new Exception("余额不足");
 		}
 		ShortMessageMessage message = new ShortMessageMessage();
@@ -118,7 +120,7 @@ public class MessageService extends BaseService {
 	}
 
 	public List<MessageTemplate> listAll(String merchantId) {
-		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))).with(new Sort(Direction.DESC,"_id")), MessageTemplate.class);
+		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))).with(new Sort(Direction.DESC, "_id")), MessageTemplate.class);
 	}
 
 	public void save(MessageTemplate messageTemplate) {
@@ -126,8 +128,8 @@ public class MessageService extends BaseService {
 	}
 
 	public void fastSend(ObjectId merchantId, String[] customerPhoneArray, String content) throws Exception {
-		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		if(customerPhoneArray.length>merchant.getShortMessage().getSurplusMsgCount()){
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		if (customerPhoneArray.length > merchant.getShortMessage().getSurplusMsgCount()) {
 			throw new Exception("余额不足");
 		}
 		ShortMessageMessage message = new ShortMessageMessage();
@@ -183,7 +185,7 @@ public class MessageService extends BaseService {
 			criteria.and("sendTime").lte(endTime);
 		}
 		query.addCriteria(criteria);
-		query.with(new Sort(Direction.DESC,"_id"));
+		query.with(new Sort(Direction.DESC, "_id"));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, MessageSendLog.class);
 		page.setTotalRecords(totalCount);
@@ -245,4 +247,43 @@ public class MessageService extends BaseService {
 		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), MessageAutoSend.class);
 	}
 
+	public String processContent(Merchant merchant, String phoneNumber, String content) {
+		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phoneNumber)), Customer.class);
+		return processContent(merchant, customer, content);
+	}
+
+	public String processContent(Merchant merchant, Customer customer, String content) {
+		String[] suffix = { "先生", "女士", "小姐" };
+		assert (merchant != null);
+		boolean isHasSuffix = false;
+		String customerName = customer.getName();
+		if (merchant.getSetting().isNameMatch() == true && customer != null) {
+			for (String s : suffix) {
+				if (customer.getName() == null) {
+					return content;
+				}
+				if (customer.getName().endsWith(s)) {
+					isHasSuffix = true;
+					break;
+				}
+			}
+			if (!isHasSuffix) {
+				if (customer.getSex() == null) {
+					customerName += "先生/女士";
+				} else if (Sex.FEMALE.equals(customer.getSex())) {
+					customerName += "女士";
+				} else if (Sex.MALE.equals(customer.getSex())) {
+					customerName += "先生";
+				}
+			}
+		}
+		return "尊敬的"+customerName+":"+content;
+	}
+	
+	
+	
+	
+	
+	
+	
 }

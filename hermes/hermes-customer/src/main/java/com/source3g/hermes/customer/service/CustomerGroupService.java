@@ -18,5 +18,20 @@ public class CustomerGroupService extends BaseService {
 		query.addCriteria(Criteria.where("merchantId").is(new ObjectId(merchantId)));
 		return mongoTemplate.find(query, CustomerGroup.class);
 	}
-
+	public void add(CustomerGroup customerGroup) throws Exception{
+		List<CustomerGroup> list=mongoTemplate.find(new Query(Criteria.where("name").is(customerGroup.getName()).and("merchantId").is(customerGroup.getMerchantId())), CustomerGroup.class);
+		if(list.size()==0){
+			mongoTemplate.insert(customerGroup);
+		}else{
+			throw new Exception("顾客组名称已存在");
+		}
+		
+	}
+	public boolean nameValidate(ObjectId id,String name) {
+		List<CustomerGroup> list=mongoTemplate.find(new Query(Criteria.where("name").is(name).and("merchantId").is(id)), CustomerGroup.class);
+		if(list.size()==0){
+		return true;
+		}
+		return false;
+	}
 }

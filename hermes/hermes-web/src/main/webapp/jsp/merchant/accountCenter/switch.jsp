@@ -25,13 +25,13 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="genderMatch">性别匹配开关：</label>
+			<label class="control-label" for="nameMatch">性别匹配开关：</label>
 			<div class="controls">
-				<input type="radio" name="genderMatch" id="genderMatch" value="true"
-					<c:if test="${ merchant.setting.genderMatch eq true }"> checked="checked" </c:if> />开
-				<input type="radio" name="genderMatch" id="genderMatch"
+				<input type="radio" name="nameMatch" id="nameMatch" value="true"
+					<c:if test="${ merchant.setting.nameMatch eq true }"> checked="checked" </c:if> />开
+				<input type="radio" name="nameMatch" id="nameMatch"
 					value="false"
-					<c:if test="${ merchant.setting.genderMatch eq false }"> checked="checked" </c:if> />关
+					<c:if test="${ merchant.setting.nameMatch eq false }"> checked="checked" </c:if> />关
 				<span class="help-inline">(注：选择关时，发送短信将不会进行自动匹配性别 )</span>
 			</div>
 		</div>
@@ -71,7 +71,7 @@
 						autoSend:{
 							required : true
 						},
-						genderMatch:{
+						nameMatch:{
 							required : true
 						},
 						salerMatch:{
@@ -86,7 +86,7 @@
 						autoSend:{
 							required : "选项不能为空"
 						},
-						genderMatch:{
+						nameMatch:{
 							required : "选项不能为空"
 						},
 						salerMatch:{

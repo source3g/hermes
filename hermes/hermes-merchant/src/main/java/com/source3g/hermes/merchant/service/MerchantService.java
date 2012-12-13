@@ -20,6 +20,23 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class MerchantService extends BaseService {
 
+	
+	public void add(Merchant merchant) throws Exception{
+		List<Merchant> list=mongoTemplate.find(new Query(Criteria.where("account").is(merchant.getAccount())), Merchant.class);
+		if(list.size()==0){
+			mongoTemplate.insert(merchant);
+		}
+		throw new Exception("账号已存在");
+	}
+	
+	public boolean accountValidate(String account) {
+			List<Merchant> list=mongoTemplate.find(new Query(Criteria.where("account").is(account)), Merchant.class);
+			if(list.size()==0){
+				return true;
+			}
+			return false;
+	}
+	
 	public List<Merchant> list() {
 		List<Merchant> list = mongoTemplate.findAll(Merchant.class);
 		return list;

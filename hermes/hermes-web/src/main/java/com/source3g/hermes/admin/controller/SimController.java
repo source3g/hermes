@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,10 +37,18 @@ public class SimController {
 		return new ModelAndView("admin/sim/add");
 	}
 
+	//验证SIM卡号是否存在
+		@RequestMapping(value = "simValidate", method = RequestMethod.GET)
+		@ResponseBody
+		public Boolean accountValidate(String no) {
+			String uri=ConfigParams.getBaseUrl() + "sim/simValidate/"+no+"/";
+			Boolean result = restTemplate.getForObject(uri, Boolean.class);
+			return result;
+		}
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid Sim sim, BindingResult errorResult) {
+		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/sim/add", model);
 		}
@@ -47,11 +56,11 @@ public class SimController {
 		HttpEntity<Sim> entity = new HttpEntity<Sim>(sim);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("admin/sim/add", model);
 		} else {
-			return new ModelAndView("admin/error");
+			model.put("error", result);
+			return new ModelAndView("admin/sim/add", model);
 		}
 
 	}

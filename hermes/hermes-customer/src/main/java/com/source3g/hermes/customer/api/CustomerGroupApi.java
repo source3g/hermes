@@ -2,6 +2,7 @@ package com.source3g.hermes.customer.api;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +52,20 @@ public class CustomerGroupApi {
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody CustomerGroup customerGroup) {
-		customerGroupService.add(customerGroup);
+		try {
+			customerGroupService.add(customerGroup);
+		} catch (Exception e) {
+		return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/nameValidate/{id}/{name}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean nameValidate(@PathVariable ObjectId id,@PathVariable String name) {	
+		return customerGroupService.nameValidate(id,name);
+	}
+	
 	@RequestMapping(value = "delete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String delete(@PathVariable String id) {

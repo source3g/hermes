@@ -34,34 +34,49 @@ public class CustomerGroupController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView toIndex(HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute("loginUser");
+		Map<String, Object> model =toIndex( merchant);
+		return new ModelAndView("/merchant/customerGroup/index", model);
+	}
+
+	public Map<String, Object> toIndex(Merchant merchant){
 		String uri = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
 		CustomerGroup[] customerGroups = restTemplate.getForObject(uri, CustomerGroup[].class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("customerGroups", customerGroups);
-		return new ModelAndView("/merchant/customerGroup/index", model);
+		return model;
 	}
-
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid CustomerGroup customerGroup, BindingResult errorResult, HttpServletRequest req) {
+		Merchant merchant = (Merchant) req.getSession().getAttribute("loginUser");
 		if (errorResult.hasErrors()) {
-			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, Object> model=new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("redirect:/merchant/customerGroup/", model);
 		}
-		Merchant merchant = (Merchant) req.getSession().getAttribute("loginUser");
 		String uri = ConfigParams.getBaseUrl() + "customerGroup/add";
 		customerGroup.setMerchantId(merchant.getId());
 		HttpEntity<CustomerGroup> entity = new HttpEntity<CustomerGroup>(customerGroup);
 		String result = restTemplate.postForObject(uri, entity, String.class);
+		Map<String, Object> model = toIndex( merchant);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
-			return new ModelAndView("redirect:/merchant/customerGroup/", model);
+			return new ModelAndView("/merchant/customerGroup/index", model);
 		} else {
-			return new ModelAndView("merchant/error");
+			model.put("error",result);
+			return new ModelAndView("/merchant/customerGroup/index", model);
 		}
 	}
-
+	
+	//验证顾客组名称是否存在
+		@RequestMapping(value = "nameValidate", method = RequestMethod.GET)
+		@ResponseBody
+		public Boolean nameValidate(String name,HttpServletRequest req) {
+			Merchant merchant = (Merchant) req.getSession().getAttribute("loginUser");
+			String uri=ConfigParams.getBaseUrl() + "customerGroup/nameValidate/"+merchant.getId()+"/"+name+"/";
+			Boolean result = restTemplate.getForObject(uri, Boolean.class);
+			return result;
+		}
+		
 	@RequestMapping(value = "/listAllJson", method = RequestMethod.GET)
 	@ResponseBody
 	public List<CustomerGroup> listAll(HttpServletRequest req) {

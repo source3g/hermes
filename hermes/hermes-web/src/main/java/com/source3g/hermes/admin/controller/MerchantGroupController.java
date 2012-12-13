@@ -38,8 +38,8 @@ public class MerchantGroupController {
 
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid MerchantGroup merchantGroup, BindingResult errorResult) {
+		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/merchantGroup/add", model);
 		}
@@ -48,14 +48,22 @@ public class MerchantGroupController {
 		HttpEntity<MerchantGroup> entity = new HttpEntity<MerchantGroup>(merchantGroup);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("admin/merchantGroup/add", model);
 		} else {
-			return new ModelAndView("admin/error");
+			model.put("error", result);
+			return new ModelAndView("admin/merchantGroup/add",model);
 		}
 	}
-
+	//验证商户组名称是否存在
+	@RequestMapping(value = "merchantGroupNameValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean merchantGroupNameValidate(String name) {
+		String uri=ConfigParams.getBaseUrl() + "merchantGroup/merchantGroupNameValidate/"+name+"/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		return result;
+	}
+	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list(MerchantGroup merchantGroup,String pageNo) {
 		if(StringUtils.isEmpty(pageNo)){

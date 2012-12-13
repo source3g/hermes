@@ -30,10 +30,18 @@ public class MerchantApi {
 	@ResponseBody
 	public String add(@RequestBody Merchant merchant) {
 		logger.debug("add merchant....");
-		merchantService.add(merchant);
+		try {
+			merchantService.add(merchant);
+		} catch (Exception e) {
+		return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
-
+	@RequestMapping(value = "/accountValidate/{account}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean add(@PathVariable String account) {	
+		return merchantService.accountValidate(account);
+	}
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Merchant getMerchant(@PathVariable String id) {
