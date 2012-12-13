@@ -128,6 +128,27 @@ body {
 							<!-- </div> -->
 						</div>
 					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseFive">权限管理 </a>
+						</div>
+						<div id="collapseFive" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="security-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
+								<li><a href="javascript:void();" id="accountAdd">帐号添加</a></li>
+								<li><a href="javascript:void();" id="accountManage">帐号管理</a></li>
+								<li><a href="javascript:void();" id="roleGrant">角色分配</a></li>
+								<li><a href="javascript:void();" id="roleAdd">角色新增</a></li>
+								<li><a href="javascript:void();" id="roleManage">角色管理</a></li>
+								<li><a href="javascript:void();" id="resourceManage">资源管理</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
+
+					</div>
 				</div>
 			</div>
 
@@ -183,7 +204,25 @@ body {
 		});
 		$("#shortMsgInfo").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/merchant/messageInfo/list/");
-		})
+		});
+
+		//角色管理
+
+		$("#accountAdd").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/security/account/add/");
+		});
+		$("#accountManage").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/security/account/list/");
+		});
+		$("#roleAdd").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/security/role/add/");
+		});
+		$("#roleManage").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/security/role/list/");
+		});
+		$("#resourceManage").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/security/resource/list/");
+		});
 
 	});
 

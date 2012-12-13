@@ -10,6 +10,7 @@ import javax.jms.Destination;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -17,6 +18,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.hongxun.pub.DataCommand;
+import com.hongxun.pub.tcptrans.TcpCommTrans;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
@@ -43,6 +46,27 @@ public class MessageService extends BaseService {
 
 	@Autowired
 	private Destination messageDestination;
+
+	@Value(value = "message.ip}")
+	private String messageIp;
+	@Value(value = "message.name")
+	private String messageName;
+	@Value(value = "message.pass")
+	private String messagePass;
+	@Value(value = "message.msgcode")
+	private String msgCode;
+	@Value(value = "message.itemid")
+	private String itemId;
+	@Value(value = "message.msgid")
+	private String msgId;
+	@SuppressWarnings("unused")
+	@Value(value = "message.gatename.cm")
+	private String cmGateName;
+	@SuppressWarnings("unused")
+	@Value(value = "message.gatename.cm.spnumber")
+	private String spnumber;
+	@Value(value = "message.gatename.cu")
+	private String cuGateName;
 
 	/**
 	 * 短信群发
@@ -228,6 +252,26 @@ public class MessageService extends BaseService {
 
 	private MessageStatus sendByCu(String phoneNumber, String content) {
 		System.out.println("通过联通向" + phoneNumber + "发送" + content);
+
+		TcpCommTrans tcp = new TcpCommTrans(messageIp, 8011, messageName, messagePass, 0);
+		tcp.start(1000);
+		DataCommand command = new DataCommand("submit");
+		command.AddNewItem("msgcode", msgCode);
+		command.AddNewItem("itemid", itemId);
+		command.AddNewItem("msgid", msgId);
+		command.AddNewItem("gatename", cuGateName);
+		// command.AddNewItem("gatename", "mobile0025");
+		// command.AddNewItem("spnumber", "10660025");
+		command.AddNewItem("feetype", "1");
+		command.AddNewItem("usernumber", "13910758780");
+		command.AddNewItem("msg", "谢谢".getBytes(), true);
+		try {
+			tcp.SendCommand(command);
+			System.out.println("OK");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return MessageStatus.已发送;
 	}
 

@@ -36,7 +36,7 @@
 					<td width="20%"><label class="control-label">标题：</label></td>
 					<td width="80%"><input type="hidden" id="id" name="id" /> <input
 						type="text" id="title" name="title" class="input-xlarge"
-						placeholder="请输入模板标题..." /></td>
+						placeholder="请输入提醒标题..." /></td>
 				</tr>
 				<tr>
 					<td width="20%"><label class="control-label">短信内容：</label></td>
