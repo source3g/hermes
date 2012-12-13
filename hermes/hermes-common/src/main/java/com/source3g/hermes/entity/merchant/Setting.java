@@ -2,7 +2,7 @@ package com.source3g.hermes.entity.merchant;
 
 public class Setting {
 	private boolean autoSend = false;
-	private boolean genderMatch = false;
+	private boolean nameMatch = false;
 	private boolean salerMatch = false;
 	private boolean birthdayRemind = false;
 
@@ -14,12 +14,12 @@ public class Setting {
 		this.autoSend = autoSend;
 	}
 
-	public boolean isGenderMatch() {
-		return genderMatch;
+	public boolean isNameMatch() {
+		return nameMatch;
 	}
 
-	public void setGenderMatch(boolean genderMatch) {
-		this.genderMatch = genderMatch;
+	public void setNameMatch(boolean nameMatch) {
+		this.nameMatch = nameMatch;
 	}
 
 	public boolean isSalerMatch() {

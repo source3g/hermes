@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -41,11 +42,19 @@ public class MerchantController {
 	public ModelAndView toAdd() {
 		return new ModelAndView("admin/merchant/add");
 	}
-
+	//验证商户账号是否存在
+	@RequestMapping(value = "accountValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean accountValidate(String account) {
+		String uri=ConfigParams.getBaseUrl() + "merchant/accountValidate/"+account+"/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		return result;
+	}
+	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid Merchant merchant, BindingResult errorResult) {
+		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/merchant/add", model);
 		}
@@ -53,11 +62,11 @@ public class MerchantController {
 		HttpEntity<Merchant> entity = new HttpEntity<Merchant>(merchant);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("success", "success");
 			return new ModelAndView("admin/merchant/add", model);
 		} else {
-			return new ModelAndView("admin/error");
+			model.put("error", result);
+			return new ModelAndView("admin/merchant/add",model);
 		}
 	}
 

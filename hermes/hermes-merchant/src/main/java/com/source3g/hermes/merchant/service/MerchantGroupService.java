@@ -16,11 +16,24 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class MerchantGroupService extends BaseService {
 
-	public void add(MerchantGroup merchantGroup) {
-		merchantGroup.setId(ObjectId.get());
-		mongoTemplate.insert(merchantGroup);
+	public void add(MerchantGroup merchantGroup) throws Exception {
+		List<MerchantGroup> list=mongoTemplate.find(new Query(Criteria.where("name").is(merchantGroup.getName())), MerchantGroup.class);
+		if(list.size()==0){
+			merchantGroup.setId(ObjectId.get());
+			mongoTemplate.insert(merchantGroup);
+		}
+		throw new Exception("账号已存在");
 	}
 
+
+	public boolean merchantGroupNameValidate(String name) {
+		List<MerchantGroup> list=mongoTemplate.find(new Query(Criteria.where("name").is(name)), MerchantGroup.class);
+		if(list.size()==0){
+			return true;
+		}
+		return false;
+	}
+	
 	public Page list(int pageNo, MerchantGroup merchantGroup) {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(merchantGroup.getName())) {

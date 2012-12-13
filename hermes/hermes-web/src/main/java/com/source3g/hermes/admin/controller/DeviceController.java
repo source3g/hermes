@@ -43,8 +43,8 @@ public class DeviceController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid Device device, BindingResult errorResult) {
+		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("admin/device/add", model);
 		}
@@ -52,12 +52,20 @@ public class DeviceController {
 		HttpEntity<Device> entity = new HttpEntity<Device>(device);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("admin/device/add", model);
 		} else {
-			return new ModelAndView("admin/error");
+			model.put("error", result);
+			return new ModelAndView("admin/device/add",model);
 		}
+	}
+	//验证盒子名称是否存在
+	@RequestMapping(value = "snValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean snValidate(String sn) {
+		String uri=ConfigParams.getBaseUrl() + "device/snValidate/"+sn+"/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		return result;
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)

@@ -49,10 +49,19 @@ public class MerchantGroupApi {
 	@RequestMapping(value="/add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody MerchantGroup merchantGroup) {
-		merchantGroupService.add(merchantGroup);
+		try {
+			merchantGroupService.add(merchantGroup);
+		} catch (Exception e) {
+		return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/merchantGroupNameValidate/{name}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean merchantGroupNameValidate(@PathVariable String name) {	
+		return merchantGroupService.merchantGroupNameValidate(name);
+	}
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String delete(@PathVariable String id) {

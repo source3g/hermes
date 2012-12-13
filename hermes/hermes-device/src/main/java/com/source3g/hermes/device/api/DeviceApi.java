@@ -34,10 +34,20 @@ public class DeviceApi
 	@ResponseBody
 	public String add( @RequestBody Device device){
 		logger.debug("add device....");
-		deviceService.add(device);
+		try {
+			deviceService.add(device);
+		} catch (Exception e) {
+		return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/snValidate/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean snValidate(@PathVariable String sn) {	
+		return deviceService.snValidate(sn);
+	}
+	
 	@RequestMapping(value="/list" , method=RequestMethod.GET)
 	@ResponseBody
 	public Page list(String pageNo,String sn){

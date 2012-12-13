@@ -30,6 +30,7 @@ import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.enums.PhoneOperator;
+import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.message.PhoneInfo;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.service.BaseService;
@@ -290,4 +291,43 @@ public class MessageService extends BaseService {
 		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), MessageAutoSend.class);
 	}
 
+	public String processContent(Merchant merchant, String phoneNumber, String content) {
+		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phoneNumber)), Customer.class);
+		return processContent(merchant, customer, content);
+	}
+
+	public String processContent(Merchant merchant, Customer customer, String content) {
+		String[] suffix = { "先生", "女士", "小姐" };
+		assert (merchant != null);
+		boolean isHasSuffix = false;
+		String customerName = customer.getName();
+		if (merchant.getSetting().isNameMatch() == true && customer != null) {
+			for (String s : suffix) {
+				if (customer.getName() == null) {
+					return content;
+				}
+				if (customer.getName().endsWith(s)) {
+					isHasSuffix = true;
+					break;
+				}
+			}
+			if (!isHasSuffix) {
+				if (customer.getSex() == null) {
+					customerName += "先生/女士";
+				} else if (Sex.FEMALE.equals(customer.getSex())) {
+					customerName += "女士";
+				} else if (Sex.MALE.equals(customer.getSex())) {
+					customerName += "先生";
+				}
+			}
+		}
+		return "尊敬的"+customerName+":"+content;
+	}
+	
+	
+	
+	
+	
+	
+	
 }

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -241,7 +242,6 @@ public class CustomerApi {
 	@RequestMapping(value = "/listCallRecord/{sn}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<CallRecordDto> listCallRecord(@PathVariable String sn, Date startTime, Date endTime) {
-
 		if (startTime == null) {
 			startTime = DateFormateUtils.getStartDateOfDay(new Date());
 		}
@@ -251,36 +251,35 @@ public class CustomerApi {
 		List<Customer> customers = customerService.findByCallRecords(sn, startTime, endTime);
 		List<CallRecordDto> result = new ArrayList<CallRecordDto>();
 		filterCallRecord(startTime, endTime, customers, result);
+		Collections.sort(result);
 		return result;
 	}
 
 	@RequestMapping(value = "/newCustomerCount/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public long newCustomerCount(@PathVariable String sn,Date startTime) {
-		if(startTime==null){
-			startTime=DateFormateUtils.getStartDateOfDay(new Date());
+	public long newCustomerCount(@PathVariable String sn, Date startTime) {
+		if (startTime == null) {
+			startTime = DateFormateUtils.getStartDateOfDay(new Date());
 		}
-		return customerService.findNewCustomerCount(sn,startTime);
+		return customerService.findNewCustomerCount(sn, startTime);
 	}
-	
+
 	@RequestMapping(value = "/newCustomerList/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<NewCustomerDto> newCustomerList(@PathVariable String sn,Date startTime) {
-		if(startTime==null){
-			startTime=DateFormateUtils.getStartDateOfDay(new Date());
+	public List<NewCustomerDto> newCustomerList(@PathVariable String sn, Date startTime) {
+		if (startTime == null) {
+			startTime = DateFormateUtils.getStartDateOfDay(new Date());
 		}
-		List<Customer> customers= customerService.findNewCustomers(sn,startTime);
-		List<NewCustomerDto> customerDtos=new ArrayList<NewCustomerDto>();
-		for (Customer c:customers){
-			NewCustomerDto newCustomerDto=new NewCustomerDto();
+		List<Customer> customers = customerService.findNewCustomers(sn, startTime);
+		List<NewCustomerDto> customerDtos = new ArrayList<NewCustomerDto>();
+		for (Customer c : customers) {
+			NewCustomerDto newCustomerDto = new NewCustomerDto();
 			newCustomerDto.setLastCallTime(c.getLastCallInTime());
 			newCustomerDto.setPhone(c.getPhone());
 			customerDtos.add(newCustomerDto);
 		}
 		return customerDtos;
 	}
-	
-	
 
 	private void filterCallRecord(Date startTime, Date endTime, List<Customer> customers, List<CallRecordDto> result) {
 		for (Customer customer : customers) {

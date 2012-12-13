@@ -44,13 +44,17 @@ public class MessageSendListener implements MessageListener {
 					for (PhoneInfo phoneInfo : phoneInfos) {
 						try {
 							Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is((ObjectId) shortMessageMessage.getMerchantId())), Merchant.class);
+							if (merchant == null) {
+								return;
+							}
 							if (merchant.getShortMessage().getSurplusMsgCount() <= 0) {
 								messageService.updateLog(phoneInfo.getMessageSendLogId(), new Date(), MessageStatus.余额不足发送失败);
 							} else {
 								Update update = new Update();
 								update.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
 								mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
-								messageService.send(phoneInfo.getPhoneNumber(), content);
+								String content1 = messageService.processContent(merchant, phoneInfo.getPhoneNumber(), content);
+								messageService.send(phoneInfo.getPhoneNumber(), content1);
 								messageService.updateLog(phoneInfo.getMessageSendLogId(), new Date(), MessageStatus.已发送);
 							}
 						} catch (Exception e) {

@@ -2,6 +2,7 @@ package com.source3g.hermes.security.entity;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -13,6 +14,7 @@ public class Account extends AbstractEntity {
 	private String password;
 	private String name;
 	private String note;
+	@DBRef
 	private List<Role> roles;
 
 	public String getAccount() {

@@ -16,6 +16,20 @@ import com.source3g.hermes.utils.Page;
 @Service
 public class DeviceService extends BaseService {
 
+	public void add(Device device) throws Exception{
+		List<Device> list=mongoTemplate.find(new Query(Criteria.where("account").is(device.getSn())), Device.class);
+		if(list.size()==0){
+			mongoTemplate.insert(device);
+		}
+		throw new Exception("账号已存在");
+	}
+	public boolean snValidate(String sn) {
+		List<Device> list=mongoTemplate.find(new Query(Criteria.where("sn").is(sn)), Device.class);
+		if(list.size()==0){
+			return true;
+		}
+		return false;
+}
 	public Page list(int pageNo, Device device) {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(device.getSn())) {

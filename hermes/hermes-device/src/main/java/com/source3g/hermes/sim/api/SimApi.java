@@ -29,10 +29,20 @@ public class SimApi {
 	@ResponseBody
 	public String add(@RequestBody Sim sim) {
 		logger.debug("add device....");
-		simService.add(sim);
+		try {
+			simService.add(sim);
+		} catch (Exception e) {
+		return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/simValidate/{no}", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean simValidate(@PathVariable String no) {	
+		return simService.simValidate(no);
+	}
+	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
 	public Page list(String pageNo, String no) {

@@ -174,11 +174,24 @@
 	<script type="text/javascript">
 	$(document).ready(function() {
 		initDialog();
+		
+	if(${not empty error}==true){
+			
+			alert("${error}");
+		}
 	 	var validateOptions = {
 				rules : { 
 					 account:{
 						required : true,
-						minlength : 2
+						minlength : 2,
+						remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/merchant/accountValidate",
+							data:{"account":function(){
+												return $('#account').val();
+											}
+								}
+						}
 					},
 					password:{
 						required : true,
@@ -201,7 +214,8 @@
 				messages : {
 					account : {
 						required : "请填写账号",
-						minlength : "至少输入两个字符"
+						minlength : "至少输入两个字符",
+						remote:"该账号已存在"
 					},
 				    password : {
 						required : "请填写密码",

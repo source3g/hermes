@@ -48,19 +48,34 @@
 
 	<script type="text/javascript">
 	$(document).ready(function(){
+		
+		if(${not empty error}==true){
+			
+			alert("${error}");
+		}
+		
  		$('#addSimForm').validate({
 			rules : {
 				no : {
 					required : true,
 					rangelength:[11,11],
- 					number:"请输入合法的数字"
+ 					number:"请输入合法的数字",
+ 						remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/sim/simValidate",
+							data:{"no":function(){
+												return $('#no').val();
+											}
+								}
+						}
 				}
 			},
 			messages : {
 				no : {
 					required : "请填写SIM卡号",
 					rangelength:"输入长度必须为11位的有效数字",
-					number:"请输入合法的数字"
+					number:"请输入合法的数字",
+					remote:"SIM卡号已存在"
 				}
 			}
 		}); 

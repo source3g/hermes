@@ -33,19 +33,7 @@
 		</div>
 	</form>
 
-	<c:if test="${not empty success }">
 
-	</c:if>
-
-	<c:if test="${not empty errors }">
-		<div class="alert alert-error">
-			<ul>
-				<c:forEach items="${errors }" var="error">
-					<li>${error.defaultMessage }</li>
-				</c:forEach>
-			</ul>
-		</div>
-	</c:if>
 
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
@@ -59,11 +47,42 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			initDialog();
+			
+			if(${not empty error}==true){
+				alert("${error}");
+			}
+			
 			var addMerchantGroupFormOptions = {
 				url:"${pageContext.request.contextPath}/admin/merchantGroup/add/",
 				success : toList, // post-submit callback
 				error : showError
 			};
+			
+			var validateOptions = {
+				rules : {
+					name : {
+						required : true,
+						minlength : 2,
+						remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/merchantGroup/merchantGroupNameValidate",
+							data:{"name":function(){
+								return $('#name').val();
+											}
+								}
+						}
+					}
+				},
+				messages : {
+					name : {
+						required : '请填写集团商户名称',
+						minlength : '至少输入两个字符',
+						remote:'商户组姓名已存在'
+					}
+				}
+			};
+
+			$("#addMerchantGroupForm").validate(validateOptions);
 			
 			$('#addMerchantGroupForm').submit(function() {
 			 	if (!$("#addMerchantGroupForm").valid()) {
@@ -75,22 +94,7 @@
 				$(this).ajaxSubmit(addMerchantGroupFormOptions);
 				return false;
 			});
-			var validateOptions = {
-				rules : {
-					name : {
-						required : true,
-						minlength : 2
-					}
-				},
-				messages : {
-					name : {
-						required : '请填写集团商户名称',
-						minlength : '至少输入两个字符'
-					}
-				}
-			};
-
-			$("#addMerchantGroupForm").validate(validateOptions);
+			
 			function showError() {
 				$("#resultMessage").html("操作失败，请重试");
 				$("#errorModal").modal();

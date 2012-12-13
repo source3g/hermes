@@ -34,21 +34,33 @@
 	</table>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			if(${not empty error}==true){
+				alert("${error}");
+			}
 			var submitOptions = {
 				url : "${pageContext.request.contextPath}/merchant/customerGroup/add",
 				type : "post",
-				success : showInfo
+				success : showList
 			}
 
 			$("#addCustomerGroupForm").validate({
 				rules : {
 					name : {
-						required : true
+						required : true,
+						remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/merchant/customerGroup/nameValidate",
+							data:{"name":function(){
+												return $('#name').val();
+											}
+								}
+						}
 					}
 				},
 				messages : {
 					name : {
-						required : "请填写顾客组名称"
+						required : "请填写顾客组名称",
+						remote:		"顾客组名称已存在"
 					}
 				}
 			});

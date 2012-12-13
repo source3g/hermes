@@ -60,7 +60,9 @@ public class AutoSendListener implements MessageListener {
 						Update update = new Update();
 						update.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
 						mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
-						MessageStatus status = messageService.send(phone, messagecontent.getNewMessageCotent());
+						
+						String content1=messageService.processContent(merchant, customer, content);
+						MessageStatus status = messageService.send(phone, content1);
 						messageService.genMessageSendLog(customerName, customerGroupName, merchant.getId(), phone, 1, content, MessageType.挂机短信, status);
 					}
 				}
