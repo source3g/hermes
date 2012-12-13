@@ -25,8 +25,9 @@ public class MerchantService extends BaseService {
 		List<Merchant> list=mongoTemplate.find(new Query(Criteria.where("account").is(merchant.getAccount())), Merchant.class);
 		if(list.size()==0){
 			mongoTemplate.insert(merchant);
+		}else{
+			throw new Exception("账号已存在");
 		}
-		throw new Exception("账号已存在");
 	}
 	
 	public boolean accountValidate(String account) {
