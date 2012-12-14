@@ -266,10 +266,7 @@
 			
 			$(this).ajaxSubmit(options);
 			return false;
-
 		});
-		
-		
 	});
 	function findDevice(){
 		var sn=$("#deviceSn").val();
