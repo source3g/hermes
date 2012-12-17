@@ -36,6 +36,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
+import com.source3g.hermes.customer.dto.CustomerDto;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.ObjectValue;
 import com.source3g.hermes.entity.customer.CallRecord;
@@ -49,7 +50,9 @@ import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.vo.CallInStatisticsToday;
 
 @Service
 public class CustomerService extends BaseService {
@@ -301,8 +304,8 @@ public class CustomerService extends BaseService {
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 
-		if(merchant.getSetting().isAutoSend()==false){
-			return ;
+		if (merchant.getSetting().isAutoSend() == false) {
+			return;
 		}
 		if (merchant.getShortMessage().getSurplusMsgCount() > 0) {
 			CallInMessage callInMessage = new CallInMessage();
@@ -345,14 +348,17 @@ public class CustomerService extends BaseService {
 		super.updateIncludeProperties(customer, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "reminds", "customerGroupId", "operateTime");
 	}
 
-	public Customer findBySnAndPhone(String sn, String phone) {
+	public CustomerDto findBySnAndPhone(String sn, String phone) {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 		if (device == null)
 			return null;
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		if (merchant == null)
 			return null;
-		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), Customer.class);
+		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), Customer.class);
+		CustomerDto customerDto = new CustomerDto();
+		EntityUtils.copyCustomerEntityToDto(customer, customerDto);
+		return customerDto;
 	}
 
 	public void deleteById(String id) {
@@ -372,13 +378,16 @@ public class CustomerService extends BaseService {
 	public List<ObjectValue> findCallInCountByDay(String merchantId, Date startTime, Date endTime, int type) {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("callRecords.callTime").gt(startTime).lt(endTime).and("merchantId").is(new ObjectId(merchantId));
+		String mapResource = "classpath:mapreduce/allCallRecordsByDayMap.js";
 		if (type == 1) {
 			criteria.and("callRecords.newCustomer").is(true);
+			mapResource = "classpath:mapreduce/newCallRecordsByDayMap.js";
 		} else if (type == 2) {
 			criteria.and("callRecords.newCustomer").is(false);
+			mapResource = "classpath:mapreduce/oldCallRecordsByDayMap.js";
 		}
 		query.addCriteria(criteria);
-		MapReduceResults<ObjectValue> results = mongoTemplate.mapReduce(query, "customer", "classpath:mapreduce/callRecordsByDayMap.js", "classpath:mapreduce/callRecordsByDayReduce.js", ObjectValue.class);
+		MapReduceResults<ObjectValue> results = mongoTemplate.mapReduce(query, "customer", mapResource, "classpath:mapreduce/callRecordsByDayReduce.js", ObjectValue.class);
 		List<ObjectValue> values = new ArrayList<ObjectValue>();
 		List<String> daysHasValue = new ArrayList<String>();
 		List<String> allDays = DateFormateUtils.getDays(startTime, endTime);
@@ -443,6 +452,33 @@ public class CustomerService extends BaseService {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		return mongoTemplate.find(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
+	}
+
+	public CallInStatisticsToday findCallInStatisticsToday(String id, Date startTime, Date endTime) {
+		Query query = new Query();
+		Date date = new Date();
+		Date startDate=DateFormateUtils.getStartDateOfDay(date);
+		query.addCriteria(Criteria.where("merchantId").is(new ObjectId(id)).and("callRecords.callTime").gt(startDate).lt(date));
+		List<Customer> customers = mongoTemplate.find(query, Customer.class);
+		
+		int newCount=0;
+		int oldCount=0;
+		for (Customer c : customers) {
+			if (c.getCallRecords() == null) {
+				continue;
+			}
+			for (CallRecord r : c.getCallRecords()) {
+				if(r.getCallTime().getTime()>startDate.getTime()&&r.getCallTime().getTime()<date.getTime()){
+					if(r.isNewCustomer()){
+						newCount++;
+					}else{
+						oldCount++;
+					}
+				}
+			}
+		}
+		CallInStatisticsToday callInStatisticsToday = new CallInStatisticsToday(newCount,oldCount);
+		return callInStatisticsToday;
 	}
 
 }

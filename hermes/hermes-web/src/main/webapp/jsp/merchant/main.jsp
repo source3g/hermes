@@ -64,6 +64,7 @@
 				dataType : "json",
 				success : reDraw
 			});
+			$.get("${pageContext.request.contextPath}/merchant/customer/callInStatistics/today/",drawPieChart,"json");
 		});
 	</script>
 </body>

@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.dto.CallRecordDto;
+import com.source3g.hermes.customer.dto.CustomerDto;
 import com.source3g.hermes.customer.dto.NewCustomerDto;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
@@ -47,6 +48,7 @@ import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
+import com.source3g.hermes.vo.CallInStatisticsToday;
 
 @Controller
 @RequestMapping("/customer")
@@ -94,7 +96,7 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/get/{sn}/{phone}", method = RequestMethod.GET)
 	@ResponseBody
-	public Customer getBySn(@PathVariable String sn, @PathVariable String phone) {
+	public CustomerDto getBySn(@PathVariable String sn, @PathVariable String phone) {
 		return customerService.findBySnAndPhone(sn, phone);
 	}
 
@@ -215,6 +217,12 @@ public class CustomerApi {
 	@ResponseBody
 	public CallInStatistics callInStatistics(@PathVariable String id, Date startTime, Date endTime) {
 		return findCallInStatistics(id, startTime, endTime);
+	}
+	
+	@RequestMapping(value = "/callInStatistics/today/{id}/", method = RequestMethod.GET)
+	@ResponseBody
+	public CallInStatisticsToday callInStatisticsToday(@PathVariable String id, Date startTime, Date endTime) {
+		return customerService.findCallInStatisticsToday(id, startTime, endTime);
 	}
 
 	@RequestMapping(value = "/callInStatistics/sn/{sn}/", method = RequestMethod.GET)

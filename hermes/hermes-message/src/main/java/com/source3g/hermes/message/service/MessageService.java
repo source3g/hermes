@@ -247,6 +247,7 @@ public class MessageService extends BaseService {
 
 	private MessageStatus sendByCt(String phoneNumber, String content) {
 		System.out.println("通过电信向" + phoneNumber + "发送" + content);
+		sendByCu(phoneNumber, content);
 		return MessageStatus.已发送;
 	}
 
@@ -263,8 +264,8 @@ public class MessageService extends BaseService {
 		// command.AddNewItem("gatename", "mobile0025");
 		// command.AddNewItem("spnumber", "10660025");
 		command.AddNewItem("feetype", "1");
-		command.AddNewItem("usernumber", "13910758780");
-		command.AddNewItem("msg", "谢谢".getBytes(), true);
+		command.AddNewItem("usernumber", phoneNumber);
+		command.AddNewItem("msg", content.getBytes(), true);
 		try {
 			tcp.SendCommand(command);
 			System.out.println("OK");
@@ -277,6 +278,7 @@ public class MessageService extends BaseService {
 
 	private MessageStatus sendByCm(String phoneNumber, String content) {
 		System.out.println("通过移动向" + phoneNumber + "发送" + content);
+		sendByCu(phoneNumber, content);
 		return MessageStatus.已发送;
 	}
 
@@ -321,13 +323,7 @@ public class MessageService extends BaseService {
 				}
 			}
 		}
-		return "尊敬的"+customerName+":"+content;
+		return "尊敬的" + customerName + ":" + content;
 	}
-	
-	
-	
-	
-	
-	
-	
+
 }

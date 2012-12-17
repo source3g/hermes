@@ -38,6 +38,7 @@ import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
+import com.source3g.hermes.vo.CallInStatisticsToday;
 
 @Controller
 @RequestMapping("/merchant/customer")
@@ -263,6 +264,21 @@ public class CustomerController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("callInStatistics", result);
 		return new ModelAndView("/merchant/customer/callInStatistics", model);
+	}
+
+	@RequestMapping(value = "/callInStatistics/today", method = RequestMethod.GET)
+	@ResponseBody
+	public CallInStatisticsToday todayCallInList(HttpServletRequest req, String startTime, String endTime) throws Exception {
+		Merchant merchant=(Merchant)LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "customer/callInStatistics/today/" + merchant.getId() + "/?a=1";
+		if (StringUtils.isNotEmpty(endTime)) {
+			uri += "&endTime=" + endTime;
+		}
+		if (StringUtils.isNotEmpty(startTime)) {
+			uri += "&startTime=" + startTime;
+		}
+		CallInStatisticsToday callInStatisticsToday = restTemplate.getForObject(uri, CallInStatisticsToday.class);
+		return callInStatisticsToday;
 	}
 
 	@RequestMapping(value = "/callInStatisticsJson", method = RequestMethod.GET)
