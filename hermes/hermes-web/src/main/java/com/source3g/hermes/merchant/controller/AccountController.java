@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -60,6 +61,13 @@ public class AccountController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("remindTemplate", remindTemplate);
 		return new ModelAndView("merchant/accountCenter/remindSetting",model);
+	}
+	@RequestMapping(value = "/remindSetting/json",method=RequestMethod.GET)
+	@ResponseBody
+	public RemindTemplate[] toRemindSettingJson() {
+		String uri=ConfigParams.getBaseUrl() + "merchant/remindSetting/";
+		RemindTemplate[] remindTemplate = restTemplate.getForObject(uri, RemindTemplate[].class);
+		return remindTemplate;
 	}
 	@RequestMapping(value = "/remindAdd",method=RequestMethod.POST)
 	public ModelAndView remindAdd(RemindTemplate remindTemplate,HttpServletRequest req) throws Exception {
