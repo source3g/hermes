@@ -106,6 +106,7 @@
 		<div class="form-actions">
 			<c:if test="${not empty update }">
 				<input class="btn btn-primary" type="submit" value="修改">
+				<input class="btn btn-primary" type="button" onclick="backToList()" value="返回">
 			</c:if>
 
 			<c:if test="${ empty update }">
@@ -202,6 +203,14 @@
 			});
 		});
 
+		function backToList(){
+			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
+		}
+		
+		function showList(data){
+			$("#pageContentFrame").html(data);
+		}
+		
 		function initCustomerGroupList() {
 			$.ajax({
 				url : "${pageContext.request.contextPath}/merchant/customerGroup/listAllJson",
@@ -231,7 +240,7 @@
 					type : "get",
 					dataType : "json",
 					success : initRemingSelection,
-					error : showError
+					error : error
 				});
 			}
 			function initRemingSelection(data){

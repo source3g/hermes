@@ -15,11 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -108,14 +110,21 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name, String phone, @PathVariable String merchantId) {
+	public Page list(String pageNo, String name, String phone,String property,String sortType,String phoneSortType, @PathVariable String merchantId) {
 		logger.debug("list customer....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Customer customer = new Customer();
-		customer.setName(name);
-		customer.setMerchantId(new ObjectId(merchantId));
-		customer.setPhone(phone);
-		return customerService.listByPage(pageNoInt, customer);
+			customer.setName(name);
+			customer.setMerchantId(new ObjectId(merchantId));
+			customer.setPhone(phone);
+			Direction direction=Direction.DESC;
+			if("asc".equalsIgnoreCase(sortType)||"asc".equalsIgnoreCase(phoneSortType)){
+				direction=Direction.ASC;
+			}
+			if(StringUtils.isEmpty(property)){
+				property="_id";
+			}
+			return customerService.listByPage(pageNoInt, customer,direction,property);
 	}
 
 	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)

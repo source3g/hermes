@@ -116,7 +116,7 @@ public class CustomerService extends BaseService {
 			Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("phone").is(pattern));
 		}
-		query.with(new Sort(Direction.DESC, properties));
+		query.with(new Sort(direction, properties));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, Customer.class);
 		page.setTotalRecords(totalCount);
@@ -139,10 +139,19 @@ public class CustomerService extends BaseService {
 		return list(pageNo, customer, isNew, Direction.DESC, "_id");
 	}
 
-	public Page listByPage(int pageNo, Customer customer) {
-		return list(pageNo, customer, false);
+	public Page listByPage(int pageNo, Customer customer,Direction direction,String property) {
+		return list(pageNo, customer, false,direction,property);
 	}
 
+
+	public Page ascendingList(int pageNo, Customer customer, boolean isNew) {
+		return list(pageNo, customer, false, Direction.ASC, "name");
+	}
+	
+	public Page descendingList(int pageNo, Customer customer, boolean isNew) {
+		return list(pageNo, customer, false, Direction.DESC, "name");
+	}
+	
 	public List<Customer> list(Customer customer) {
 		Query query = new Query();
 		if (customer.getMerchantId() == null) {
@@ -453,7 +462,6 @@ public class CustomerService extends BaseService {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		return mongoTemplate.find(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
 	}
-
 	public CallInStatisticsToday findCallInStatisticsToday(String id, Date startTime, Date endTime) {
 		Query query = new Query();
 		Date date = new Date();
@@ -480,5 +488,4 @@ public class CustomerService extends BaseService {
 		CallInStatisticsToday callInStatisticsToday = new CallInStatisticsToday(newCount,oldCount);
 		return callInStatisticsToday;
 	}
-
 }
