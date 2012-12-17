@@ -18,6 +18,8 @@
 			type="hidden"> 
 			 <input id="sortType" name="sortType" value="${sortType }"
 			type="hidden"> 
+			 <input id="phoneSortType" name="phoneSortType" value="${phoneSortType }"
+			type="hidden"> 
 			 <input id="property" name="property" value="${property }"
 			type="hidden">
 			
@@ -29,8 +31,8 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="30%">姓名 <a href="javascript:void();" onclick="sortByName('asc')" >↑</a><a href="javascript:void();" onclick="sortByName('desc')">↓</a></th>
-				<th width="30%">电话</th>
+				<th width="30%"><a href="javascript:void();" id="sortByName" onclick="sortByName()" >姓名<c:if test="${sortType eq 'asc'and empty phoneSortType   }">↑</c:if><c:if test="${sortType eq 'desc'and  empty phoneSortType  }">↓</c:if> </a></th>
+				<th width="30%"><a href="javascript:void();" id="sortByPhone" onclick="sortByPhone()" >电话<c:if test="${phoneSortType eq 'asc'and  empty sortType  }">↑</c:if><c:if test="${phoneSortType eq 'desc'and  empty sortType }">↓</c:if></a></th>
 				<th width="40%">操作</th>
 			</tr>
 		</thead>
@@ -70,9 +72,40 @@
 	</div>
 
 	<script type="text/javascript">
-	function sortByName(sortType){
-		$("#sortType").attr("value",sortType);
+	function sortByName(){
+		if(${empty sortType}){
+			$("#sortType").attr("value",'desc');
+			$("#phoneSortType").attr("value",null);
+		}
+		
+		if(${sortType eq 'desc' }){
+		$("#sortType").attr("value",'asc');
+		$("#phoneSortType").attr("value",null);
+		}
+		if(${sortType eq 'asc' }){
+			$("#sortType").attr("value",'desc');
+			$("#phoneSortType").attr("value",null);
+		}
+		
 		$("#property").attr("value","name");
+		goToPage(1);
+	}
+	function sortByPhone(){
+		if(${empty phoneSortType}){
+			$("#phoneSortType").attr("value",'desc');
+			$("#sortType").attr("value",null);
+		}
+		
+		if(${phoneSortType eq 'desc' }){
+		$("#phoneSortType").attr("value",'asc');
+		$("#sortType").attr("value",null);
+		}
+		if(${phoneSortType eq 'asc' }){
+			$("#phoneSortType").attr("value",'desc');
+			$("#sortType").attr("value",null);
+		}
+		
+		$("#property").attr("value","phone");
 		goToPage(1);
 	}
 		function deleteById(id) {

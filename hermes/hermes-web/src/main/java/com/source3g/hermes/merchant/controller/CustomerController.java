@@ -71,13 +71,13 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(Customer customer,String property,String sortType ,String pageNo, HttpServletRequest req) throws Exception {
+	public ModelAndView list(Customer customer,String property,String sortType ,String phoneSortType,String pageNo, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
 		StringBuffer uriBuffer = new StringBuffer();
-		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/list/");//
+		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/list/");
 		uriBuffer.append(merchant.getId());
 		uriBuffer.append("/?pageNo=" + pageNo);
 
@@ -93,11 +93,15 @@ public class CustomerController {
 		if(StringUtils.isNotEmpty(property)){
 			uriBuffer.append("&property="+property);
 		}
+		if(StringUtils.isNotEmpty(property)){
+			uriBuffer.append("&phoneSortType="+phoneSortType);
+		}
 		Page page = restTemplate.getForObject(uriBuffer.toString(), Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
 		model.put("sortType", sortType);
 		model.put("property", property);
+		model.put("phoneSortType", phoneSortType);
 		return new ModelAndView("/merchant/customer/list", model);
 	}
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
