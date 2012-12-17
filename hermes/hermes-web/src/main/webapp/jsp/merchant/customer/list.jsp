@@ -15,7 +15,13 @@
 			for="phone">电话：</label> <input type="text" name="phone"
 			class="input-medium" value="${customer.phone}"
 			placeholder="请输入顾客电话..."> <input id="pageNo" name="pageNo"
-			type="hidden"> <input type="submit" class="btn btn-primary"
+			type="hidden"> 
+			 <input id="sortType" name="sortType" value="${sortType }"
+			type="hidden"> 
+			 <input id="property" name="property" value="${property }"
+			type="hidden">
+			
+			<input type="submit" class="btn btn-primary"
 			value="查询">
 	</form>
 
@@ -23,7 +29,7 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="30%">姓名</th>
+				<th width="30%">姓名 <a href="javascript:void();" onclick="sortByName('asc')" >↑</a><a href="javascript:void();" onclick="sortByName('desc')">↓</a></th>
 				<th width="30%">电话</th>
 				<th width="40%">操作</th>
 			</tr>
@@ -64,7 +70,11 @@
 	</div>
 
 	<script type="text/javascript">
-	
+	function sortByName(sortType){
+		$("#sortType").attr("value",sortType);
+		$("#property").attr("value","name");
+		goToPage(1);
+	}
 		function deleteById(id) {
 		$.ajax({
 			url:"${pageContext.request.contextPath}/merchant/customer/delete/"+id+"/",

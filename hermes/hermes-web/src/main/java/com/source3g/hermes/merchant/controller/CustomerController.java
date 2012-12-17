@@ -71,7 +71,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(Customer customer, String pageNo, HttpServletRequest req) throws Exception {
+	public ModelAndView list(Customer customer,String property,String sortType ,String pageNo, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
@@ -87,13 +87,19 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(customer.getPhone())) {
 			uriBuffer.append("&phone=" + customer.getPhone());
 		}
+		if(StringUtils.isNotEmpty(sortType)){
+			uriBuffer.append("&sortType="+sortType);
+		}
+		if(StringUtils.isNotEmpty(property)){
+			uriBuffer.append("&property="+property);
+		}
 		Page page = restTemplate.getForObject(uriBuffer.toString(), Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
-
+		model.put("sortType", sortType);
+		model.put("property", property);
 		return new ModelAndView("/merchant/customer/list", model);
 	}
-
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody
 	public String export(Customer customer, HttpServletRequest req) throws Exception {
