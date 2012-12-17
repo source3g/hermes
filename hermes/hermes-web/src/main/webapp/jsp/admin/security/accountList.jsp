@@ -64,7 +64,7 @@
 		$.ajax({
 			url:"${pageContext.request.contextPath}/admin/security/account/delete/"+id+"/",
 			type:"get",
-			success:showList		
+			success:showContentInfo		
 		});	
 	}
 		function showList(data){

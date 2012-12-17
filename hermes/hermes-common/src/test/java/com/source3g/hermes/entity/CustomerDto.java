@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.source3g.hermes.entity.customer.Remind;
 
-class CustomerDto{
+public class CustomerDto{
 		private String name;
 		private String sex;
 		private String birthday;

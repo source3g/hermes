@@ -30,4 +30,24 @@ public class Role extends AbstractEntity {
 		this.name = name;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+		Role r = (Role) obj;
+		if (this.getId() != null) {
+			return this.getId().equals(r.getId());
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		if (this.getId() != null) {
+			return this.getId().hashCode();
+		}
+		return super.hashCode();
+	}
+
 }
