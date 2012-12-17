@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MessageLog;
+import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
 
@@ -25,8 +26,9 @@ public class MerchantService extends BaseService {
 		List<Merchant> list=mongoTemplate.find(new Query(Criteria.where("account").is(merchant.getAccount())), Merchant.class);
 		if(list.size()==0){
 			mongoTemplate.insert(merchant);
+		}else{
+			throw new Exception("账号已存在");
 		}
-		throw new Exception("账号已存在");
 	}
 	
 	public boolean accountValidate(String account) {
@@ -143,6 +145,19 @@ public class MerchantService extends BaseService {
 
 	public void Switch(Merchant merchant) {
 		mongoTemplate.save(merchant);	
+	}
+
+	public List<RemindTemplate> remindList() {
+		List<RemindTemplate> list = mongoTemplate.findAll(RemindTemplate.class);
+		return list;
+	}
+
+	public void remindSave(RemindTemplate remindTemplate) {
+		mongoTemplate.save(remindTemplate);	
+	}
+
+	public void remindDelete(ObjectId id) {
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(id)), RemindTemplate.class);
 	}
 
 }

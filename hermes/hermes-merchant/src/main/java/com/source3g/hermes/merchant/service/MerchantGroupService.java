@@ -21,8 +21,9 @@ public class MerchantGroupService extends BaseService {
 		if(list.size()==0){
 			merchantGroup.setId(ObjectId.get());
 			mongoTemplate.insert(merchantGroup);
+		}else{
+			throw new Exception("账号已存在");
 		}
-		throw new Exception("账号已存在");
 	}
 
 

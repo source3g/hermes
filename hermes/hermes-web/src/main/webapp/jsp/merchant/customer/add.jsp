@@ -27,7 +27,7 @@
 					value="${customer.name }" class="input-medium"
 					placeholder="请输入姓名..." /></td>
 				<td width="10%"><label class="control-label" for="name">性别：</label></td>
-				<td width="40%"><input type="radio" name="sex" value="MALE" 
+				<td width="40%"><input type="radio" name="sex" value="MALE"
 					<c:if test="${( empty customer) or customer.sex eq 'MALE' }">checked="checked"</c:if> />男
 					<input type="radio" name="sex" value="FEMALE"
 					<c:if test="${ customer.sex eq 'FEMALE' }">checked="checked"</c:if> />女</td>
@@ -45,7 +45,7 @@
 				<td><label class="control-label">顾客组：</label></td>
 				<td><select id="customerGroupSel" name="customerGroupId"
 					class="input-medium">
-						
+
 				</select></td>
 				<td><label class="control-label">黑名单：</label></td>
 				<td><input type="checkbox" name="blackList"
@@ -83,8 +83,13 @@
 				<td colspan="3"><c:forEach items="${customer.reminds}"
 						var="remind" varStatus="status">
 						<div class="remindItem">
-							事项：<input type="text" name="reminds[${status.index }].name"
-								class="input-medium" value="${remind.name }"></input> 时间：<input
+							事项：<input type="text" readonly="readonly" name="reminds[${status.index }].remindTemplate.title"
+								class="input-medium" value="${remind.remindTemplate.title }"></input>
+								<input type="hidden" name="reminds[${status.index }].remindTemplate.id"
+								class="input-medium" value="${remind.remindTemplate.id}"></input> 
+								
+								
+								 时间：<input
 								type="text" name="reminds[${status.index }].remindTime"
 								class="input-medium"
 								value='<fmt:formatDate value="${remind.remindTime }" pattern="yyyy-MM-dd" />'
@@ -121,6 +126,7 @@
 	</form>
 	<script type="text/javascript">
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
+		var remindOptions=null;
 		$(document).ready(function() {
 			var validateoptions={
 					rules: {
@@ -219,14 +225,38 @@
 			
 		} 	
 		function addRemind() {
+			function initRemindList() {
+				$.ajax({
+					url : "${pageContext.request.contextPath}/merchant/account/remindSetting/json",
+					type : "get",
+					dataType : "json",
+					success : initRemingSelection,
+					error : showError
+				});
+			}
+			function initRemingSelection(data){
+				remindOptions="<option>请选择</option>"+remindOptions;
+				for(var i=0;i<data.length;i++){
+					remindOptions+="<option value='"+data[i].id+"'>"+data[i].title+"</option>"
+				}
+				 addRemindItem();
+			}
+			if(remindOptions==null){
+				initRemindList();
+			}else{
+				addRemindItem();
+			}
+			
+		}
+		function addRemindItem(){
 			if ($(".remindItem").length == 0) {
 				$("#addRemindBtn")
 						.before(
-								"<div  class=\"remindItem\">事项：<input type=\"text\" name=\"reminds[0].name\" class=\"input-medium\"></input> 时间：<input type=\"text\" name=\"reminds[0].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\"> 提前<input type=\"text\" name=\"reminds[0].advancedTime\"  class=\"input-mini\"/>天 <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/> </div> ");
-			} else {2
+								"<div  class=\"remindItem\">事项：<select name='reminds[0].remindTemplate.id'>"+remindOptions+"</select> 时间：<input type=\"text\" name=\"reminds[0].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\"> 提前<input type=\"text\" name=\"reminds[0].advancedTime\"  class=\"input-mini\"/>天 <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/> </div> ");
+			} else {
 				$(".remindItem:last")
 						.after(
-								"<div  class=\"remindItem\">事项：<input type=\"text\" name=\"reminds["+remindIndex+"].name\" class=\"input-medium\"></input> 时间：<input type=\"text\" name=\"reminds["
+								"<div  class=\"remindItem\">事项：<select name='reminds["+remindIndex+"].remindTemplate.id'>"+remindOptions+"</select>  时间：<input type=\"text\" name=\"reminds["
 										+ remindIndex
 										+ "].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\"> 提前<input type=\"text\" name=\"reminds["+remindIndex+"].advancedTime\"  class=\"input-mini\"/>天 <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/>  </div> ");
 			}

@@ -2,22 +2,28 @@ package com.source3g.hermes.entity.customer;
 
 import java.util.Date;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
+import com.source3g.hermes.entity.merchant.RemindTemplate;
+
 public class Remind {
-	private String name;
+	@DBRef
+	private RemindTemplate remindTemplate;
 	private Date remindTime;
 	private String advancedTime;// 提前提醒的天数
 	private boolean alreadyRemind;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public Date getRemindTime() {
 		return remindTime;
+	}
+
+	public RemindTemplate getRemindTemplate() {
+		return remindTemplate;
+	}
+
+	public void setRemindTemplate(RemindTemplate remindTemplate) {
+		this.remindTemplate = remindTemplate;
 	}
 
 	public void setRemindTime(Date remindTime) {

@@ -2,6 +2,7 @@ package com.source3g.hermes.merchant.api;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.merchant.service.MerchantService;
 import com.source3g.hermes.utils.Page;
 
@@ -117,6 +119,34 @@ public class MerchantApi {
 	@ResponseBody
 	public String  Switch(@RequestBody Merchant merchant) {
 		merchantService.Switch( merchant);
+		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
+	@ResponseBody
+	public String  remindAdd(@RequestBody RemindTemplate remindTemplate) {
+		if(remindTemplate.getId()!=null){
+			ObjectId objId=null;
+			remindTemplate.setId(objId);
+		}
+		merchantService.add( remindTemplate);
+		return ReturnConstants.SUCCESS;
+}
+	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)
+	@ResponseBody
+	public List<RemindTemplate>  remindSetting() {
+		return merchantService.remindList();
+	}
+	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
+	@ResponseBody
+	public String remindSave(@RequestBody RemindTemplate remindTemplate) {
+		merchantService.remindSave( remindTemplate);
+		return ReturnConstants.SUCCESS;
+	}
+	@RequestMapping(value = "/remindDelete/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String remindDelete(@PathVariable ObjectId id) {
+		merchantService.remindDelete( id);
 		return ReturnConstants.SUCCESS;
 	}
 }

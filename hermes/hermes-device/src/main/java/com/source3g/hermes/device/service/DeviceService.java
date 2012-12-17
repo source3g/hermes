@@ -20,8 +20,10 @@ public class DeviceService extends BaseService {
 		List<Device> list=mongoTemplate.find(new Query(Criteria.where("account").is(device.getSn())), Device.class);
 		if(list.size()==0){
 			mongoTemplate.insert(device);
+		}else{
+			throw new Exception("账号已存在");
 		}
-		throw new Exception("账号已存在");
+		
 	}
 	public boolean snValidate(String sn) {
 		List<Device> list=mongoTemplate.find(new Query(Criteria.where("sn").is(sn)), Device.class);
