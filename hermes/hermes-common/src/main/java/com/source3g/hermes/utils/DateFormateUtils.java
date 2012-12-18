@@ -33,13 +33,16 @@ public class DateFormateUtils {
 	 */
 	public static List<String> getDays(Date startTime, Date endTime) {
 		List<String> result = new ArrayList<String>();
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");//yyyy-
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");// yyyy-
 		Calendar cStart = Calendar.getInstance();
 		Calendar cEnd = Calendar.getInstance();
 		cStart.setTime(startTime);
 		cEnd.setTime(endTime);
 		result.add(sdf.format(startTime));
-		while (cStart.before(cEnd)) {
+		int startDay = cStart.get(Calendar.DAY_OF_YEAR);
+		int endDay = cEnd.get(Calendar.DAY_OF_YEAR);
+		while (startDay < endDay) {
+			startDay++;
 			cStart.add(Calendar.DAY_OF_YEAR, 1);
 			result.add(sdf.format(cStart.getTime()));
 		}
@@ -48,13 +51,27 @@ public class DateFormateUtils {
 
 	/**
 	 * 获取某天的0点0分0秒的时间
+	 * 
 	 * @param time
 	 * @return
 	 */
 	public static Date getStartDateOfDay(Date time) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
+		calendar.setTime(time);
 		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+		return calendar.getTime();
+	}
+
+	/**
+	 * 获取某天的23点59分59秒的时间
+	 * 
+	 * @param time
+	 * @return
+	 */
+	public static Date getEndDateOfDay(Date time) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 58);
 		return calendar.getTime();
 	}
 

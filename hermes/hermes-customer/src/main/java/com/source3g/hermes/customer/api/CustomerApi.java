@@ -110,21 +110,21 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name, String phone,String property,String sortType,String phoneSortType, @PathVariable String merchantId) {
+	public Page list(String pageNo, String name, String phone, String property, String sortType, String phoneSortType, @PathVariable String merchantId) {
 		logger.debug("list customer....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Customer customer = new Customer();
-			customer.setName(name);
-			customer.setMerchantId(new ObjectId(merchantId));
-			customer.setPhone(phone);
-			Direction direction=Direction.DESC;
-			if("asc".equalsIgnoreCase(sortType)||"asc".equalsIgnoreCase(phoneSortType)){
-				direction=Direction.ASC;
-			}
-			if(StringUtils.isEmpty(property)){
-				property="_id";
-			}
-			return customerService.listByPage(pageNoInt, customer,direction,property);
+		customer.setName(name);
+		customer.setMerchantId(new ObjectId(merchantId));
+		customer.setPhone(phone);
+		Direction direction = Direction.DESC;
+		if ("asc".equalsIgnoreCase(sortType) || "asc".equalsIgnoreCase(phoneSortType)) {
+			direction = Direction.ASC;
+		}
+		if (StringUtils.isEmpty(property)) {
+			property = "_id";
+		}
+		return customerService.listByPage(pageNoInt, customer, direction, property);
 	}
 
 	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)
@@ -227,7 +227,7 @@ public class CustomerApi {
 	public CallInStatistics callInStatistics(@PathVariable String id, Date startTime, Date endTime) {
 		return findCallInStatistics(id, startTime, endTime);
 	}
-	
+
 	@RequestMapping(value = "/callInStatistics/today/{id}/", method = RequestMethod.GET)
 	@ResponseBody
 	public CallInStatisticsToday callInStatisticsToday(@PathVariable String id, Date startTime, Date endTime) {
@@ -249,6 +249,8 @@ public class CustomerApi {
 		if (startTime == null) {
 			startTime = DateUtils.addDays(endTime, -30);
 		}
+		startTime = DateFormateUtils.getStartDateOfDay(startTime);
+		endTime = DateFormateUtils.getEndDateOfDay(endTime);
 		CallInStatistics callInStatistics = new CallInStatistics();
 		callInStatistics.setAllList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 0));
 		callInStatistics.setNewList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 1));
