@@ -23,16 +23,20 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.source3g.hermes.customer.dto.CustomerDto;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.EntityUtils;
 
 @Document
 @CompoundIndexes({ @CompoundIndex(name = "merchant_phone", def = "{'phone': 1, 'merchantId': -1}", unique = true) })
 public class Customer extends AbstractEntity {
 	private static final long serialVersionUID = 6014996097125743375L;
+	@Indexed(name="CUSTOMER_NAME_INDEX")
 	private String name;
 	private Sex sex;
 	private String birthday;
@@ -202,7 +206,9 @@ public class Customer extends AbstractEntity {
 		objectMapper.registerModule(module);
 		SerializationConfig serializationConfig = objectMapper.getSerializationConfig();
 		serializationConfig.addMixInAnnotations(Customer.class, CustomerForSyncIntf.class);
-		String strJson = objectMapper.writer().writeValueAsString(this);
+		CustomerDto customerDto=new CustomerDto();
+		EntityUtils.copyCustomerEntityToDto(this, customerDto);
+		String strJson = objectMapper.writer().writeValueAsString(customerDto);
 
 		// {"otherPhones":null,"merchantId":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false},"callRecords":null,"lastCallInTime":1353986159566,"customerGroupId":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false},"operateTime":null,"birthday":"80-15","phone":"13644058759","blackList":false,"qq":"123456","email":"123@123.com","note":"爱吃红烧肉","sex":"MALE","reminds":[{"alreadyRemind":true,"advancedTime":"1","remindTime":1353986159568,"name":"红酒到期"},{"alreadyRemind":true,"advancedTime":"1","remindTime":1353986159568,"name":"红酒到期"}],"name":"张三","address":"北京市","id":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false}}
 		// StringBuffer stringBuffer=new StringBuffer();

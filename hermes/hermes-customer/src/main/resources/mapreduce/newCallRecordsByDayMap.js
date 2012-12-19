@@ -10,7 +10,9 @@ function(){
 		if(day.length==1){
 			day="0"+day;
 		}
-	emit(record.callTime.getFullYear()+"-"+month+"-"+day,{count:1});
+	if(record.newCustomer==true){
+		emit(month+"-"+day,{count:1});//record.callTime.getFullYear()+"-"+
+	}
 	});
 	}
 }

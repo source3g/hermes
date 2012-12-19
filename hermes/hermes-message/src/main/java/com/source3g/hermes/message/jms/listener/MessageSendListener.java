@@ -50,12 +50,14 @@ public class MessageSendListener implements MessageListener {
 							if (merchant.getShortMessage().getSurplusMsgCount() <= 0) {
 								messageService.updateLog(phoneInfo.getMessageSendLogId(), new Date(), MessageStatus.余额不足发送失败);
 							} else {
-								Update update = new Update();
-								update.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
-								mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
 								String content1 = messageService.processContent(merchant, phoneInfo.getPhoneNumber(), content);
-								messageService.send(phoneInfo.getPhoneNumber(), content1);
-								messageService.updateLog(phoneInfo.getMessageSendLogId(), new Date(), MessageStatus.已发送);
+								MessageStatus status = messageService.send(phoneInfo.getPhoneNumber(), content1);
+								messageService.updateLog(phoneInfo.getMessageSendLogId(), new Date(), status);
+								if (MessageStatus.已发送.equals(status)) {
+									Update update = new Update();
+									update.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
+									mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
+								}
 							}
 						} catch (Exception e) {
 							messageService.updateLog(phoneInfo.getMessageSendLogId(), new Date(), MessageStatus.发送失败);

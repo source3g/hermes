@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 
 import com.source3g.hermes.entity.Device;
@@ -24,8 +28,26 @@ public class FrontController {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@RequestMapping(value = "/admin/login", method = RequestMethod.POST)
+	public ModelAndView adminLogin(String username, String password, boolean rememberMe) {
+		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+		Subject currentUser = SecurityUtils.getSubject();
+		// if(!currentUser.isAuthenticated()){
+		// System.out.println("未授权");
+		// }else {
+		// //重复登录
+
+		// }
+		currentUser.login(token);
+		return new ModelAndView("redirect:/admin/index/");
+	}
+
 	@RequestMapping(value = "/admin/index", method = RequestMethod.GET)
 	public String toAdmin() {
+		Subject currentUser = SecurityUtils.getSubject();
+		if (!currentUser.isAuthenticated()) {
+			System.out.println("未授权");
+		}
 		return "admin/index";
 	}
 
@@ -62,12 +84,12 @@ public class FrontController {
 			String uriAdd = ConfigParams.getBaseUrl() + "merchant/add/";
 			HttpEntity<Merchant> httpEntity = new HttpEntity<>(merchant);
 			restTemplate.postForObject(uriAdd, httpEntity, String.class);
-			
-			CustomerGroup customerGroup=new CustomerGroup();
+
+			CustomerGroup customerGroup = new CustomerGroup();
 			customerGroup.setMerchantId(merchant.getId());
 			customerGroup.setName("普通顾客");
-			String addCustomerUri=ConfigParams.getBaseUrl()+"customerGroup/add/";
-			HttpEntity<CustomerGroup> groupEntity=new HttpEntity<CustomerGroup>(customerGroup);
+			String addCustomerUri = ConfigParams.getBaseUrl() + "customerGroup/add/";
+			HttpEntity<CustomerGroup> groupEntity = new HttpEntity<CustomerGroup>(customerGroup);
 			restTemplate.postForObject(addCustomerUri, groupEntity, String.class);
 		}
 

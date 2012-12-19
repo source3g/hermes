@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.dto.CallRecordDto;
+import com.source3g.hermes.customer.dto.CustomerDto;
 import com.source3g.hermes.customer.dto.NewCustomerDto;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
@@ -49,6 +50,7 @@ import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
+import com.source3g.hermes.vo.CallInStatisticsToday;
 
 @Controller
 @RequestMapping("/customer")
@@ -96,7 +98,7 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/get/{sn}/{phone}", method = RequestMethod.GET)
 	@ResponseBody
-	public Customer getBySn(@PathVariable String sn, @PathVariable String phone) {
+	public CustomerDto getBySn(@PathVariable String sn, @PathVariable String phone) {
 		return customerService.findBySnAndPhone(sn, phone);
 	}
 
@@ -108,21 +110,21 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name, String phone,String property,String sortType,String phoneSortType, @PathVariable String merchantId) {
+	public Page list(String pageNo, String name, String phone, String property, String sortType, String phoneSortType, @PathVariable String merchantId) {
 		logger.debug("list customer....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Customer customer = new Customer();
-			customer.setName(name);
-			customer.setMerchantId(new ObjectId(merchantId));
-			customer.setPhone(phone);
-			Direction direction=Direction.DESC;
-			if("asc".equalsIgnoreCase(sortType)||"asc".equalsIgnoreCase(phoneSortType)){
-				direction=Direction.ASC;
-			}
-			if(StringUtils.isEmpty(property)){
-				property="_id";
-			}
-			return customerService.listByPage(pageNoInt, customer,direction,property);
+		customer.setName(name);
+		customer.setMerchantId(new ObjectId(merchantId));
+		customer.setPhone(phone);
+		Direction direction = Direction.DESC;
+		if ("asc".equalsIgnoreCase(sortType) || "asc".equalsIgnoreCase(phoneSortType)) {
+			direction = Direction.ASC;
+		}
+		if (StringUtils.isEmpty(property)) {
+			property = "_id";
+		}
+		return customerService.listByPage(pageNoInt, customer, direction, property);
 	}
 
 	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)
@@ -226,6 +228,12 @@ public class CustomerApi {
 		return findCallInStatistics(id, startTime, endTime);
 	}
 
+	@RequestMapping(value = "/callInStatistics/today/{id}/", method = RequestMethod.GET)
+	@ResponseBody
+	public CallInStatisticsToday callInStatisticsToday(@PathVariable String id, Date startTime, Date endTime) {
+		return customerService.findCallInStatisticsToday(id, startTime, endTime);
+	}
+
 	@RequestMapping(value = "/callInStatistics/sn/{sn}/", method = RequestMethod.GET)
 	@ResponseBody
 	public CallInStatistics callInStatisticsBySn(@PathVariable String sn, Date startTime, Date endTime) {
@@ -241,6 +249,8 @@ public class CustomerApi {
 		if (startTime == null) {
 			startTime = DateUtils.addDays(endTime, -30);
 		}
+		startTime = DateFormateUtils.getStartDateOfDay(startTime);
+		endTime = DateFormateUtils.getEndDateOfDay(endTime);
 		CallInStatistics callInStatistics = new CallInStatistics();
 		callInStatistics.setAllList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 0));
 		callInStatistics.setNewList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 1));

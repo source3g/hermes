@@ -21,7 +21,6 @@ import com.source3g.hermes.security.entity.Account;
 import com.source3g.hermes.security.entity.Resource;
 import com.source3g.hermes.security.entity.Role;
 import com.source3g.hermes.security.service.SecurityService;
-import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -58,6 +57,12 @@ public class SecurityController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/account/delete/{accountId}", method = RequestMethod.GET)
+	public ModelAndView deleteAccount(@PathVariable String accountId) {
+		securityService.deleteAccount(accountId);
+		return new ModelAndView("redirect:/admin/security/account/list/");
+	}
+
 	@RequestMapping(value = "/account/list", method = RequestMethod.GET)
 	public ModelAndView listAccount(String pageNo, String account) {
 		int pageNoInt = 0;
@@ -148,7 +153,7 @@ public class SecurityController {
 
 	@RequestMapping(value = "/role/toUpdate/{id}", method = RequestMethod.GET)
 	public ModelAndView toUpdate(@PathVariable String id) {
-		Role role = securityService.getById(id);
+		Role role = securityService.getRoleById(id);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("role", role);
 		return new ModelAndView("/admin/security/roleAdd", model);
@@ -159,7 +164,7 @@ public class SecurityController {
 		if (StringUtils.isEmpty(id)) {
 			return new ModelAndView("error");
 		}
-		Role role = securityService.getById(id);
+		Role role = securityService.getRoleById(id);
 		role.setName(name);
 		List<Resource> result = new ArrayList<Resource>();
 		for (String resourceId : resourceIds) {
@@ -175,19 +180,46 @@ public class SecurityController {
 	@RequestMapping(value = "/role/get/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Role getRole(@PathVariable String id) {
-		Role role = securityService.getById(id);
+		Role role = securityService.getRoleById(id);
 		return role;
 	}
 
-	@RequestMapping(value = "/account/grant/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/role/notGrant/{accountId}", method = RequestMethod.GET)
 	@ResponseBody
+	public List<Role> getNotGrantRoles(@PathVariable String accountId) {
+		Account account = securityService.getAccountById(accountId);
+		List<Role> allRoles = securityService.listRole();
+		if (account.getRoles() != null) {
+			allRoles.removeAll(account.getRoles());
+		}
+		return allRoles;
+	}
+
+	@RequestMapping(value = "/account/grant/{id}", method = RequestMethod.GET)
 	public ModelAndView grant(@PathVariable String id) {
 		List<Role> roles = securityService.listRole();
-		Account account = securityService.findAccountById(id);
+		Account account = securityService.getAccountById(id);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("roles", roles);
 		model.put("account", account);
 		return new ModelAndView("/admin/security/grant", model);
+	}
+	
+	@RequestMapping(value = "/account/{accountId}/role/recover/{id}", method = RequestMethod.GET)
+	public ModelAndView recover(@PathVariable String accountId,@PathVariable String id) {
+		securityService.recoverRole(accountId,id);
+		return new ModelAndView("redirect:/admin/security/account/grant/"+accountId+"/");
+	}
+
+	@RequestMapping(value = "/account/grant/{id}", method = RequestMethod.POST)
+	public ModelAndView grantRoles(@PathVariable String id, String roleIds) {
+		if (StringUtils.isEmpty(roleIds)) {
+			return new ModelAndView("redirect:/admin/security/account/grant/"+id+"/");
+		}
+		roleIds = roleIds.trim();
+		String[] roleIdArray = roleIds.split(",");
+		securityService.grant(id,roleIdArray);
+		return new ModelAndView("redirect:/admin/security/account/grant/"+id+"/");
 	}
 
 }

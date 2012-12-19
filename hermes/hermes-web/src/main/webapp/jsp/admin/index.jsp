@@ -140,7 +140,6 @@ body {
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
 								<li><a href="javascript:void();" id="accountAdd">帐号添加</a></li>
 								<li><a href="javascript:void();" id="accountManage">帐号管理</a></li>
-								<li><a href="javascript:void();" id="roleGrant">角色分配</a></li>
 								<li><a href="javascript:void();" id="roleAdd">角色新增</a></li>
 								<li><a href="javascript:void();" id="roleManage">角色管理</a></li>
 								<li><a href="javascript:void();" id="resourceManage">资源管理</a></li>

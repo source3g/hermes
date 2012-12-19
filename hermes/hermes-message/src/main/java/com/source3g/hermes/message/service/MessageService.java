@@ -1,5 +1,6 @@
 package com.source3g.hermes.message.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,20 +44,25 @@ public class MessageService extends BaseService {
 
 	@Autowired
 	private JmsService jmsService;
-
 	@Autowired
 	private Destination messageDestination;
 
+	@SuppressWarnings("unused")
 	@Value(value = "message.ip}")
 	private String messageIp;
 	@Value(value = "message.name")
+	@SuppressWarnings("unused")
 	private String messageName;
 	@Value(value = "message.pass")
+	@SuppressWarnings("unused")
 	private String messagePass;
+	@SuppressWarnings("unused")
 	@Value(value = "message.msgcode")
 	private String msgCode;
+	@SuppressWarnings("unused")
 	@Value(value = "message.itemid")
 	private String itemId;
+	@SuppressWarnings("unused")
 	@Value(value = "message.msgid")
 	private String msgId;
 	@SuppressWarnings("unused")
@@ -65,6 +71,7 @@ public class MessageService extends BaseService {
 	@SuppressWarnings("unused")
 	@Value(value = "message.gatename.cm.spnumber")
 	private String spnumber;
+	@SuppressWarnings("unused")
 	@Value(value = "message.gatename.cu")
 	private String cuGateName;
 
@@ -253,24 +260,45 @@ public class MessageService extends BaseService {
 
 	private MessageStatus sendByCt(String phoneNumber, String content) {
 		System.out.println("通过电信向" + phoneNumber + "发送" + content);
+		sendByCu(phoneNumber, content);
 		return MessageStatus.已发送;
 	}
 
 	private MessageStatus sendByCu(String phoneNumber, String content) {
 		System.out.println("通过联通向" + phoneNumber + "发送" + content);
 
-		TcpCommTrans tcp = new TcpCommTrans(messageIp, 8011, messageName, messagePass, 0);
-		tcp.start(1000);
+		TcpCommTrans tcp = null;
+		try {
+			tcp = TcpCommandService.getTcp();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		while(!TcpCommandService.isLogin){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		DataCommand command = new DataCommand("submit");
-		command.AddNewItem("msgcode", msgCode);
-		command.AddNewItem("itemid", itemId);
-		command.AddNewItem("msgid", msgId);
-		command.AddNewItem("gatename", cuGateName);
-		// command.AddNewItem("gatename", "mobile0025");
-		// command.AddNewItem("spnumber", "10660025");
+		command.AddNewItem("msgcode", "15");
+		command.AddNewItem("itemid", "10253901");
+		command.AddNewItem("msgid", "03251325236560000009");
+		command.AddNewItem("gatename", "unicomgzDXYD");
+//		command.AddNewItem("gatename", "mobile0025");
+//		command.AddNewItem("spnumber", "10660025");
 		command.AddNewItem("feetype", "1");
-		command.AddNewItem("usernumber", "13910758780");
-		command.AddNewItem("msg", "谢谢".getBytes(), true);
+		command.AddNewItem("usernumber",phoneNumber );
+		try {
+			byte paramBytes[]=content.getBytes("GBK");
+			byte b[]=new byte[paramBytes.length];
+					System.arraycopy(content.getBytes("GBK"), 0, b, 0, paramBytes.length);
+			command.AddNewItem("msg",b, true);
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		try {
 			tcp.SendCommand(command);
 			System.out.println("OK");
@@ -278,11 +306,13 @@ public class MessageService extends BaseService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// tcp.stop();
 		return MessageStatus.已发送;
 	}
 
 	private MessageStatus sendByCm(String phoneNumber, String content) {
 		System.out.println("通过移动向" + phoneNumber + "发送" + content);
+		sendByCu(phoneNumber, content);
 		return MessageStatus.已发送;
 	}
 
@@ -303,12 +333,12 @@ public class MessageService extends BaseService {
 	}
 
 	public String processContent(Merchant merchant, Customer customer, String content) {
+		if (customer == null) {
+			return content;
+		}
 		String[] suffix = { "先生", "女士", "小姐" };
 		assert (merchant != null);
 		boolean isHasSuffix = false;
-		if(customer==null){
-			return content;
-		}
 		String customerName = customer.getName();
 		if (merchant.getSetting().isNameMatch() == true && customer != null) {
 			for (String s : suffix) {
@@ -330,13 +360,7 @@ public class MessageService extends BaseService {
 				}
 			}
 		}
-		return "尊敬的"+customerName+":"+content;
+		return "尊敬的" + customerName + ":" + content;
 	}
-	
-	
-	
-	
-	
-	
-	
+
 }

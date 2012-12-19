@@ -131,7 +131,9 @@ public class SecurityService {
 		throw new Exception("账号已存在");
 		}
 	}
-	public Role getById(String id) {
+
+
+	public Role getRoleById(String id) {
 		return mongoTemplate.findById(new ObjectId(id), Role.class);
 	}
 
@@ -143,7 +145,55 @@ public class SecurityService {
 		mongoTemplate.save(role);
 	}
 
-	public Account findAccountById(String id) {
+	public Account getAccountById(String id) {
 		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(new ObjectId(id))), Account.class);
+	}
+
+	public void grant(String id, String[] roleIdArray) {
+		Account account = getAccountById(id);
+		List<Role> roles = null;
+		if (account.getRoles() != null) {
+			roles = account.getRoles();
+		} else {
+			roles = new ArrayList<Role>();
+		}
+
+		for (String roleId : roleIdArray) {
+			Role role = new Role();
+			role.setId(roleId);
+			roles.add(role);
+		}
+		account.setRoles(roles);
+		mongoTemplate.save(account);
+	}
+
+	public void recoverRole(String accountId, String id) {
+		Account account = getAccountById(accountId);
+		if (account.getRoles() != null) {
+			Role roleToRemove = null;
+			for (Role role : account.getRoles()) {
+				if (role.getId().equals(id)) {
+					roleToRemove = role;
+				}
+			}
+			account.getRoles().remove(roleToRemove);
+			mongoTemplate.save(account);
+		}
+		// Update update = new Update();
+		// update.pull("roles", new ObjectId(id));
+		// mongoTemplate.updateFirst(new
+		// Query(Criteria.where("_id").is(accountId)), update, Account.class);
+	}
+
+	public void deleteAccount(String accountId) {
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(new ObjectId(accountId))), Account.class);
+	}
+
+	public Account login(String username, String password) {
+		return mongoTemplate.findOne(new Query(Criteria.where("account").is(username).and("password").is(password)), Account.class);
+	}
+
+	public Account findUserByLoginName(String loginName) {
+		return mongoTemplate.findOne(new Query(Criteria.where("account").is(loginName)), Account.class);
 	}
 }

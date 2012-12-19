@@ -9,7 +9,7 @@
 <body>
 	<h2 class="caption">来电数量统计</h2>
 	<hr>
-	<div class="well">
+<!-- 	<div class="well">
 		<div class="caption">
 			<h3>查询条件</h3>
 		</div>
@@ -21,7 +21,7 @@
 				onclick="WdatePicker();" placeholder="请选择结束时间..."> <input
 				type="submit" class="btn btn-primary" value="查询">
 		</form>
-	</div>
+	</div> -->
 	<div id="dayChartContainer"></div>
 	
 	<h2 class="caption">月度统计</h2>
@@ -60,6 +60,7 @@
 				dataType : "json",
 				success : reDraw
 			});
+			$.get("${pageContext.request.contextPath}/merchant/customer/callInStatistics/today/",drawPieChart,"json");
 
 			$("#queryForm").submit(function() {
 				$("#queryForm").ajaxSubmit({
