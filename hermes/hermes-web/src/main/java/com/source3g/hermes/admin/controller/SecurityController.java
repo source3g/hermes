@@ -37,8 +37,24 @@ public class SecurityController {
 
 	@RequestMapping(value = "/account/add", method = RequestMethod.POST)
 	public ModelAndView addAccount(Account account) {
-		securityService.addAccount(account);
-		return new ModelAndView("/admin/security/accountAdd");
+		Map<String, Object> model = new HashMap<String, Object>();
+		try {
+			securityService.addAccount(account);
+		} catch (Exception e) {
+			String error=e.getMessage();
+			model.put("error", error);
+		return new ModelAndView("/admin/security/accountAdd",model);
+		}
+		model.put("success", "success");
+		return new ModelAndView("/admin/security/accountList",model);
+	}
+	
+	//验证账号是否存在
+	@RequestMapping(value = "accountValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean accountValidate(String account) {
+		Boolean result=securityService.accountValidate(account);
+		return result;
 	}
 	
 	@RequestMapping(value = "/account/delete/{accountId}", method = RequestMethod.GET)
@@ -83,11 +99,19 @@ public class SecurityController {
 		if (errorResult.hasErrors()) {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("/admin/security/resourceManage", model);
-		}
-		securityService.addResource(resource);
+		}	
+			securityService.addResource(resource);
 		return new ModelAndView("redirect:/admin/security/resource/list/");
 	}
 
+	//验证资源名称,代码是否存在
+	@RequestMapping(value = "resourceValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean resourceValidate(String name,String code) {
+		Boolean result=securityService.resourceValidate(name,code);
+		return result;
+	}
+	
 	@RequestMapping(value = "/resource/delete/{id}", method = RequestMethod.GET)
 	public ModelAndView deleteResource(@PathVariable String id) {
 		securityService.deleteResource(id);
@@ -101,10 +125,17 @@ public class SecurityController {
 
 	@RequestMapping(value = "/role/add", method = RequestMethod.POST)
 	public ModelAndView addRole(String name, String[] resourceIds) {
-		securityService.addRole(name, resourceIds);
+		Map<String, Object> model = new HashMap<String, Object>();
+		try {
+			securityService.addRole(name, resourceIds);
+		} catch (Exception e) {
+		String error=e.getMessage();
+		model.put("error", error);
+		return new ModelAndView("/admin/security/roleAdd",model);
+		}
 		return new ModelAndView("/admin/security/roleAdd");
 	}
-
+	
 	@RequestMapping(value = "/resource/{code}", method = RequestMethod.GET)
 	@ResponseBody
 	public Resource getResource(@PathVariable String code) {
