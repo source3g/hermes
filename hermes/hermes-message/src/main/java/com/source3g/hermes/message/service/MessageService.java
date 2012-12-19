@@ -75,28 +75,34 @@ public class MessageService extends BaseService {
 	 * @param ids
 	 * @param content
 	 */
-	public void messageGroupSend(ObjectId merchantId, String[] ids, String content) throws Exception {
+	public void messageGroupSend(ObjectId merchantId, String[] ids,String customerPhones, String content) throws Exception {
+		if(customerPhones!=null){
+			String customerPhoneArray[] = customerPhones.split(";");
+			fastSend(merchantId, customerPhoneArray, content);
+		}
+		if(ids!=null){
 		Query query = new Query();
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
 		for (String id : ids) {
 			ObjectId ObjId = new ObjectId(id);
 			customerGroupIds.add(ObjId);
 		}
-		query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-		if (customers.size() > merchant.getShortMessage().getSurplusMsgCount()) {
-			throw new Exception("余额不足");
+			query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
+			Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+			List<Customer> customers = mongoTemplate.find(query, Customer.class);
+			if (customers.size() > merchant.getShortMessage().getSurplusMsgCount()) {
+				throw new Exception("余额不足");
+			}
+			ShortMessageMessage message = new ShortMessageMessage();
+			List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customers, content, MessageType.群发);
+			message.setContent(content);
+			message.setPhoneInfos(phoneInfos);
+			message.setMessageType(MessageType.群发);
+			message.setMerchantId(merchantId);
+			jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 		}
-		ShortMessageMessage message = new ShortMessageMessage();
-		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customers, content, MessageType.群发);
-		message.setContent(content);
-		message.setPhoneInfos(phoneInfos);
-		message.setMessageType(MessageType.群发);
-		message.setMerchantId(merchantId);
-		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
-
+	
 	private List<PhoneInfo> genPhoneInfos(ObjectId merchantId, List<Customer> customers, String content, MessageType type) {
 		List<PhoneInfo> result = new ArrayList<PhoneInfo>();
 		for (Customer c : customers) {
@@ -157,10 +163,10 @@ public class MessageService extends BaseService {
 			throw new Exception("余额不足");
 		}
 		ShortMessageMessage message = new ShortMessageMessage();
-		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customerPhoneArray, content, MessageType.快捷发送);
+		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customerPhoneArray, content, MessageType.群发);
 		message.setContent(content);
 		message.setPhoneInfos(phoneInfos);
-		message.setMessageType(MessageType.快捷发送);
+		message.setMessageType(MessageType.群发);
 		message.setMerchantId(merchantId);
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
@@ -300,6 +306,9 @@ public class MessageService extends BaseService {
 		String[] suffix = { "先生", "女士", "小姐" };
 		assert (merchant != null);
 		boolean isHasSuffix = false;
+		if(customer==null){
+			return content;
+		}
 		String customerName = customer.getName();
 		if (merchant.getSetting().isNameMatch() == true && customer != null) {
 			for (String s : suffix) {

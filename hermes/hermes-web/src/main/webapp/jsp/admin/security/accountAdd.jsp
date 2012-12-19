@@ -49,15 +49,37 @@
 		<div class="form-actions">
 			<input type="submit" class="btn btn-primary" value="增加">
 		</div>
+		
+		<div id="errorModal" class="modal hide fade">
+		<div class="modal-body">
+			<p id="resultMessage"></p>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">确定</a>
+		</div>
+		</div>
 	</form>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			initDialog();
+			if(${not empty error}==true){
+				alert("${error}");
+			}
 			var validateOptions = {
 				rules : {
 					account : {
 						required : true,
-						minlength : 5
+						minlength : 5,
+			 	 		remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/security/accountValidate/",
+							data:{"account":function(){
+												return $('#account').val();
+											}
+								}
+						}  
 					},
+					
 					password : {
 						required : true,
 						minlength : 5
@@ -75,7 +97,8 @@
 				messages : {
 					account : {
 						required : "请填写账号",
-						minlength : "至少输入五个字符"
+						minlength : "至少输入五个字符",
+					 	 remote:"该账号已存在"  
 					},
 					password : {
 						required : "请填写密码",
@@ -98,10 +121,25 @@
 				if (!$('#addAccountForm').valid()) {
 					return false;
 				}
-				$("#addAccountForm").ajaxSubmit();
+				$("#addAccountForm").ajaxSubmit({
+					success:showContentInfo
+				});
+				
 				return false;
 			});
 		});
+
+		function initDialog(){
+			if(${not empty success }==true){
+				$('#addAccountForm').clearForm();
+				$("#resultMessage").html("操作成功！");
+				$("#errorModal").modal({
+					backdrop:true,
+				    keyboard:true,
+				    show:true
+				});
+			}
+		} 
 	</script>
 </body>
 </html>

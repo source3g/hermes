@@ -98,7 +98,6 @@ body {
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<li><a href="javascript:void();" id="messageList">短信列表</a></li>
 								<li><a href="javascript:void();" id="messageAdd">短信群发</a></li>
-								<li><a href="javascript:void();" id="messageFastSend">快捷发送</a></li>
 								<!--  <li><a href="javascript:void();" id="messageSentLog">发送记录</a></li>-->
 								<li><a href="javascript:void();" id="messageLog">预存记录</a></li>
 								<li><a href="javascript:void();" id="messageAutoSend">挂机短信</a></li>
@@ -224,9 +223,6 @@ body {
 		});
 		$("#messageAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageSend/");
-		});
-		$("#messageFastSend").click(function() {
-			loadPage("${pageContext.request.contextPath}/merchant/message/toFastSend/");
 		});
 
 		$("#messageList").click(function() {

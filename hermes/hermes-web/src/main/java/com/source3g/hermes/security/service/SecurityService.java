@@ -23,10 +23,23 @@ public class SecurityService {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	public void addAccount(Account account) {
-		mongoTemplate.insert(account);
+	public void addAccount(Account account) throws Exception {
+		List<Account> list=mongoTemplate.find(new Query(Criteria.where("account").is(account.getAccount())), Account.class);
+		if(list.size()==0){
+			mongoTemplate.insert(account);
+		}else{
+		throw new Exception("账号已存在");
+		}
 	}
 
+	public Boolean accountValidate(String account) {
+		List<Account> list=mongoTemplate.find(new Query(Criteria.where("account").is(account)), Account.class);
+		if(list.size()==0){
+			return true;
+		}
+			return false;
+			
+	}
 	public Page listAccount(int pageNoInt, String account) {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(account)) {
@@ -43,7 +56,32 @@ public class SecurityService {
 	}
 
 	public void addResource(Resource resource) {
-		mongoTemplate.insert(resource);
+		List<Resource> nameList=mongoTemplate.find(new Query(Criteria.where("name").is(resource.getName())), Resource.class);
+		List<Resource> codeList=mongoTemplate.find(new Query(Criteria.where("code").is(resource.getCode())), Resource.class);
+		if(nameList.size()==0&codeList.size()==0){
+			mongoTemplate.insert(resource);
+		}else{
+		return;
+		}
+	}
+	
+	public Boolean resourceValidate(String name, String code) {
+		List<Resource> nameList=mongoTemplate.find(new Query(Criteria.where("name").is(name)), Resource.class);
+		List<Resource> codeList=mongoTemplate.find(new Query(Criteria.where("code").is(code)), Resource.class);
+		if(nameList.size()==0&codeList.size()==0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public Boolean nameValidate(String name) {
+		List<Role> list=mongoTemplate.find(new Query(Criteria.where("name").is(name)), Role.class);
+		if(list.size()==0){
+			return true;
+		}
+			return false;
+		
 	}
 
 	public Page listResource(int pageNoInt, String name, String code) {
@@ -73,20 +111,26 @@ public class SecurityService {
 		return mongoTemplate.findOne(new Query(Criteria.where("code").is(code)), Resource.class);
 	}
 
-	public void addRole(String name, String[] resourceIds) {
-		Role role = new Role();
-		role.setId(ObjectId.get());
-		role.setName(name);
-		List<Resource> resources = new ArrayList<Resource>();
-		for (String id : resourceIds) {
-			Resource resource = new Resource();
-			resource.setId(id);
-			resources.add(resource);
+	public void addRole(String name, String[] resourceIds) throws Exception {
+		List<Role> list=mongoTemplate.find(new Query(Criteria.where("name").is(name)), Role.class);
+		if(list.size()==0){
+			Role role = new Role();
+			role.setId(ObjectId.get());
+			role.setName(name);
+			if(resourceIds!=null){
+			List<Resource> resources = new ArrayList<Resource>();
+			for (String id : resourceIds) {
+				Resource resource = new Resource();
+				resource.setId(id);
+				resources.add(resource);
+			}
+			role.setResources(resources);
+			}
+			mongoTemplate.save(role);
+		}else{
+		throw new Exception("账号已存在");
 		}
-		role.setResources(resources);
-		mongoTemplate.save(role);
 	}
-
 	public Role getById(String id) {
 		return mongoTemplate.findById(new ObjectId(id), Role.class);
 	}
@@ -102,5 +146,4 @@ public class SecurityService {
 	public Account findAccountById(String id) {
 		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(new ObjectId(id))), Account.class);
 	}
-
 }

@@ -133,19 +133,26 @@ public class MessageController {
 	}
 	
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
-	public ModelAndView messageSend(HttpServletRequest req, String[] ids, String content) throws Exception {
+	public ModelAndView messageSend(HttpServletRequest req, String[] ids, String customerPhones, String content) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		Map<String, Object> model = new HashMap<String, Object>();
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
-		for (String id : ids) {
-			formData.add("ids", id);
+		if(customerPhones==null){
+			for (String id : ids) {
+				formData.add("ids", id);
+			}
+		}else if(ids==null){
+			formData.add("customerPhones", customerPhones);
+		}else{
+			for (String id : ids) {
+				formData.add("ids", id);
+			}
+			formData.add("customerPhones", customerPhones);
 		}
 		formData.add("content", content);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-		// httpHeaders.set("charset", "UTF-8");
-
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/messageSend/" + merchant.getId() + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);

@@ -75,18 +75,36 @@
 			$("#addResourceForm").validate({
 				rules : {
 					name : {
-						required : true
+						required : true,
+						remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/security/resourceValidate/",
+							data:{"name":function(){
+												return $('#name').val();
+											}
+								}
+						} 
 					},
 					code : {
-						required : true
+						required : true,
+						remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/security/resourceValidate/",
+							data:{"code":function(){
+												return $('#code').val();
+											}
+								}
+						} 
 					}
 				},
 				messages : {
 					name : {
-						required : "请填写名称"
+						required : "请填写名称",
+							remote:"名称已存在"
 					},
 					code : {
-						required : "请填写代码"
+						required : "请填写代码",
+						remote:"代码已存在"
 					}
 				}
 			});

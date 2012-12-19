@@ -38,6 +38,18 @@
 			
 			  </td>	
 			  </tr>
+			  
+			  	<tr>
+					<td><label class="control-label">输入客户电话号码(电话号码以分号分隔)：</label></td>
+					<td colspan="4">
+						<!-- <textarea class="span8" rows="5"
+							name="customerPhones" id="customerPhones"></textarea> -->
+							<input id="customerPhonesInput" name="customerPhones" type="hidden" >
+						<div style="background-color: white; height: 150px; width: 500px;"
+							id="customerPhones" contentEditable="true" ></div>
+					</td>
+				</tr>
+				
 			  <tr>
 			  <td>
 			  		<label class="control-label">选择短信模板：</label> </td>
@@ -96,6 +108,15 @@
 		};
 		$('#messageSendForm').validate(validateOptions); 
 	 $('#messageSendForm').submit(function() {
+		 if($('#customerPhones').text()!=""){
+			 if ((!testCustomerPhones())||(!fastSend())) {
+					return false;
+				} 
+		 }
+		 if($("input:checked[name='ids']").length==0&&$('#customerPhones').text()==""){
+			 alert("请填写有效电话号码");
+			 return false;
+		 }
 		 if (!$('#messageSendForm').valid()) {
 				return false;
 			}
@@ -104,7 +125,7 @@
 				 type:"post",
 				success :showList	
 		}; 
-		
+		$("#customerPhonesInput").attr("value",$('#customerPhones').text());
 		$(this).ajaxSubmit(options);
 		return false;
 
@@ -142,6 +163,54 @@
 		function showList(data){
 			$("#pageContentFrame").html(data);
 		}
+		
+		function testCustomerPhones() {
+			var j = 1;
+			var customerPhones = $('#customerPhones').text();
+			customerPhones.replace("<span id=\"wrongPhone\" >","");
+			customerPhones.replace("</span>","");
+			var re = /^[0-9]*$/;
+ 			if(customerPhones.length==0){
+				alert("请输入有效手机号码");
+				return false;
+			} 
+			if(customerPhones[customerPhones.length-1]!= ';'){
+				customerPhones=customerPhones+";";
+				$('#customerPhones').text(customerPhones);
+			}
+			
+			for ( var i = 0; i < customerPhones.length; i++) {
+				if (customerPhones[i] == ';') {
+					if (i == j * 12 - 1
+							&& re.test(customerPhones.substring(i - 11, i - 1))) {
+						j++;
+					} else {
+						var str1 = customerPhones.substring(0, (j - 1) * 12);
+						var str2 = customerPhones.substring((j - 1) * 12, i);
+						var str3 = customerPhones.substring(i,
+								customerPhones.length);
+						var str = str1 + "<span id=\"wrongPhone\" >" + str2
+								+ "</span>" + str3;
+
+						$('#customerPhones').html(str);
+						$('#wrongPhone').css('color', 'red');
+						alert("电话号码不合法");
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		
+ 		function fastSend() {
+			var phones=$('#customerPhones').text();
+			var phone=phones.split(";");
+	 		if(phone.length-1>${merchant.shortMessage.surplusMsgCount}){
+				alert("余额不足，请充值");
+				return false;
+			} 
+	 		return true;
+		} 
 		</script>
 </body>
 </html>

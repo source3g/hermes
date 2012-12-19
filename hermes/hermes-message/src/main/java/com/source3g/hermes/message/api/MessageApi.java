@@ -54,9 +54,9 @@ public class MessageApi {
 
 	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String messageSend(@PathVariable String merchantId, String[] ids, String content) {
+	public String messageSend(@PathVariable String merchantId, String[] ids, String customerPhones,String content) {
 		try {
-			messageService.messageGroupSend(new ObjectId(merchantId), ids, content);
+			messageService.messageGroupSend(new ObjectId(merchantId), ids, customerPhones,content);
 		} catch (Exception e) {
 			return e.getMessage();
 		}

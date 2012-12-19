@@ -66,7 +66,35 @@
 	</form>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			if(${not empty error}==true){
+				alert("${error}");
+			}
+ 			var validateOptions = {
+					rules :{
+						name:{
+							required : true,
+			 		 		remote:{
+								type: "get",
+								url:"${pageContext.request.contextPath}/admin/security/nameValidate/",
+								data:{"name":function(){
+													return $('#name').val();
+												}
+									}
+							}  
+						}
+					},
+					messages:{
+						name:{
+							required : "角色名称不能为空",
+						 	remote: "该账号已存在" 
+						}
+				}			
+			}; 
+			$('#addRoleForm').validate(validateOptions);
 			$("#addRoleForm").submit(function() {
+				if (!$('#addRoleForm').valid()) {
+					return false;
+				}
 				$(this).ajaxSubmit({
 					success : showContentInfo,
 					error : showError
