@@ -1,5 +1,8 @@
 package com.source3g.hermes.message.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.hongxun.pub.tcptrans.CommReceiveEvent;
 import com.hongxun.pub.tcptrans.CommReceiveListener;
 import com.hongxun.pub.tcptrans.TcpCommTrans;
@@ -8,6 +11,7 @@ public class TcpCommandService {
 
 	private static TcpCommTrans tcp = null;
 	public static boolean isLogin=false;
+	public static List<byte[]> list=new ArrayList<byte[]>();
 
 	public TcpCommandService() {
 		super();

@@ -17,6 +17,7 @@
     <module>hermes-api-common</module>
     <module>hermes-sync</module>
     <module>hermes-message</module>
+    <module>hermes-dictionary</module>
   </modules>
 	<build>
 		<finalName>${project.name}</finalName>

@@ -1,6 +1,5 @@
 package com.source3g.hermes.message.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -267,7 +266,7 @@ public class MessageService extends BaseService {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		while(!TcpCommandService.isLogin){
+		while (!TcpCommandService.isLogin) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -279,19 +278,11 @@ public class MessageService extends BaseService {
 		command.AddNewItem("itemid", "10253901");
 		command.AddNewItem("msgid", "03251325236560000009");
 		command.AddNewItem("gatename", "unicomgzDXYD");
-//		command.AddNewItem("gatename", "mobile0025");
-//		command.AddNewItem("spnumber", "10660025");
+		// command.AddNewItem("gatename", "mobile0025");
+		// command.AddNewItem("spnumber", "10660025");
 		command.AddNewItem("feetype", "1");
-		command.AddNewItem("usernumber",phoneNumber );
-		try {
-			byte paramBytes[]=content.getBytes("GBK");
-			byte b[]=new byte[paramBytes.length];
-					System.arraycopy(content.getBytes("GBK"), 0, b, 0, paramBytes.length);
-			command.AddNewItem("msg",b, true);
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		command.AddNewItem("usernumber", phoneNumber);
+		command.AddNewItem("msg",content.getBytes(), true,"UTF-8");
 
 		try {
 			tcp.SendCommand(command);
