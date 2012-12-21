@@ -173,6 +173,7 @@
 
 	<script type="text/javascript">
 	$(document).ready(function() {
+
 		initDialog();
 		
 	if(${not empty error}==true){
@@ -184,7 +185,7 @@
 					 account:{
 						required : true,
 						minlength : 2,
-						remote:{
+						remote:{	
 							type: "get",
 							url:"${pageContext.request.contextPath}/admin/merchant/accountValidate",
 							data:{"account":function(){

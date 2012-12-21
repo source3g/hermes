@@ -117,8 +117,9 @@ public class MerchantService extends BaseService {
 		super.add(messageLog);
 	}
 
-	public Page msgLogList(int pageNoInt) {
-		Query query = new Query();
+	public Page msgLogList(ObjectId merchantId,int pageNoInt) {
+		Query query=new Query();
+		query.addCriteria(Criteria.where("_id").is(merchantId));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, MessageLog.class);
 		page.setTotalRecords(totalCount);

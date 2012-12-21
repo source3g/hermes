@@ -101,11 +101,11 @@ public class MerchantApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/msgLogList", method = RequestMethod.GET)
+	@RequestMapping(value = "/msgLogList/(merchantId)", method = RequestMethod.GET)
 	@ResponseBody
-	public Page msgLogList(String pageNo) {
+	public Page msgLogList(@PathVariable ObjectId merchantId,String pageNo) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return merchantService.msgLogList(pageNoInt);
+		return merchantService.msgLogList(merchantId,pageNoInt);
 	}
 
 	@RequestMapping(value = "/UpdateQuota/{id}", method = RequestMethod.POST)
