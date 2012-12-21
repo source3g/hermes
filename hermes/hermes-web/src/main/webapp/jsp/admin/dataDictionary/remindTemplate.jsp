@@ -12,15 +12,14 @@
 		<div>
 			选择提醒： <select id="sel">
 				<option>请选择</option>
-				 <c:forEach items="${merchantRemindTemplates}" var="merchantRemindTemplate">
+				 <c:forEach items="${remindTemplate}" var="template">
 				 
-					<option value="${merchantRemindTemplate.id}">${merchantRemindTemplate.remindTemplate.title }</option>
+					<option value="${template.id}">${template.title }</option>
 				</c:forEach> 
 			</select>
-			<c:forEach items="${merchantRemindTemplates}" var="merchantRemindTemplate">
-				<span id="${merchantRemindTemplate.id}" style="display: none;">${merchantRemindTemplate.messageContent}</span>
-				<span id="content${merchantRemindTemplate.id}" style="display: none;">${merchantRemindTemplate.remindTemplate.messageContent}</span>
-			</c:forEach>  
+			<c:forEach items="${remindTemplate}" var="template">
+				<span id="${template.id}" style="display: none;">${template.messageContent}</span>
+			</c:forEach> 
 
 		</div>
 	</div>
@@ -36,8 +35,8 @@
 				</thead>
 				<tr>
 					<td width="20%"><label class="control-label">标题：</label></td>
-					<td width="80%"><input type="hidden" id="id" name="id" /> 
-					<input type="text" id="title" name="remindTemplate.title" class="input-xlarge"
+					<td width="80%"><input type="hidden" id="id" name="id" /> <input
+						type="text" id="title" name="title" class="input-xlarge"
 						placeholder="请输入提醒标题..." /></td>
 				</tr>
 				<tr>
@@ -53,7 +52,9 @@
 					<td width="20%"><label class="control-label">操作：</label></td>
 					<td width="80%"><a class="btn btn-success"
 						href="javascript:void();" onclick="save();">保存</a>&nbsp; <a
-						class="btn btn-success" href="javascript:void();" onclick="recover();">恢复</a>&nbsp;
+						class="btn btn-success" href="javascript:void();" onclick="add();">新增</a>&nbsp;
+						<a class="btn btn-danger" href="javascript:void();"
+						onclick="deleteById();">删除</a>
 				</tr>
 			</table>
 		</form>
@@ -72,29 +73,56 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			if(${not empty error}==true){
+				alert("${error}");	
+				}
+			
 			$("#sel").change(function() {
-				var messageContent =$("#"+$('#sel').val()).text();
+				var messageContent = $("#" + $("#sel").val()).text();
 				var title = $("#sel").find("option:selected").text();
 				if (title == '请选择') {
 					$("#id").html("");
 					$("#title").attr("value", "");
-					$("#messageContent").val(messageContent);
+					$("#messageContent").html("");
 					return;
 				}
 				$("#id").attr("value", $(this).val());
 				$("#title").attr("value", title);
-				$("#messageContent").val(messageContent);
+				$("#messageContent").html(messageContent);
 			});
-		});		
-		function recover(){
-			 var messageContent =$("#content"+$('#sel').val()).text();
-				$("#messageContent").val(messageContent);
-		}
-		function save() {
+		});
+		function add() {
 			$("#remindSettingForm").ajaxSubmit({
-				url : "${pageContext.request.contextPath}/merchant/account/remindSave",
+				url : "${pageContext.request.contextPath}/admin/Dictionary/remindAdd",
 				success : showContentInfo,
 				error : showError
+			});
+		}
+
+		function save() {
+			$("#remindSettingForm").ajaxSubmit({
+				url : "${pageContext.request.contextPath}/admin/Dictionary/remindSave",
+				success : showContentInfo,
+				error : showError
+			});
+		}
+
+
+		function deleteById() {
+			var title = $("#sel").find("option:selected").text();
+			if (title == '请选择') {
+				$("#id").html("");
+				$("#title").attr("value", "");
+				$("#content").html("");
+				return;
+			}
+			var id = $("#id").val();
+			$.ajax({
+				url : "${pageContext.request.contextPath}/admin/Dictionary/remindDelete/" + id + "/",
+				type : "get",
+				success : function(data) {
+					showContentInfo(data);
+				}
 			});
 		}
 	</script>

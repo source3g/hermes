@@ -27,6 +27,8 @@ import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
+import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
+import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 
@@ -92,7 +94,45 @@ public class MerchantController {
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/merchant/list/");
 	}
-
+	@RequestMapping(value = "/toSetDictionary/{merchantId}", method = RequestMethod.GET)
+	public ModelAndView setDictionary(@PathVariable String merchantId) {
+		String uri = ConfigParams.getBaseUrl() + "merchant/merchantRemindList/"+merchantId+"/";
+		MerchantRemindTemplate[] merchantRemindTemplates = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("merchantRemindTemplates", merchantRemindTemplates);
+		model.put("id", merchantId);
+		return new ModelAndView("/admin/merchant/set",model);
+	}
+	@RequestMapping(value = "/dataDictionaryList", method = RequestMethod.GET)
+	@ResponseBody
+	public RemindTemplate[] dataDictionaryList() {
+		String uri = ConfigParams.getBaseUrl() + "merchant/remindSetting/";
+		RemindTemplate[] remindTemplate = restTemplate.getForObject(uri, RemindTemplate[].class);
+		return remindTemplate;
+	}
+	
+	@RequestMapping(value = "/remindAdd/{merchantId}/{templateId}", method = RequestMethod.GET)
+	public ModelAndView remindAdd(@PathVariable String merchantId,@PathVariable String templateId ) {
+		String uri = ConfigParams.getBaseUrl() + "merchant/remindAdd/"+merchantId+"/"+templateId+"/";
+		MerchantRemindTemplate[] merchantRemindTemplate = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		if(merchantRemindTemplate!=null){
+			model.put("merchantId", merchantId);
+			model.put("merchantRemindTemplates", merchantRemindTemplate);
+		return new ModelAndView("/admin/merchant/set",model);
+		}
+		return  new ModelAndView("admin/error");
+	}
+	
+	@RequestMapping(value = "/remindDelete/{merchantId}/{templateId}", method = RequestMethod.GET)
+	public ModelAndView remindDelete(@PathVariable String merchantId,@PathVariable String templateId ) {
+		String uri = ConfigParams.getBaseUrl() + "merchant/remindDelete/"+merchantId+"/"+templateId+"/";
+		MerchantRemindTemplate[] merchantRemindTemplate = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("merchantRemindTemplates", merchantRemindTemplate);
+		return new ModelAndView("/admin/merchant/set",model);
+	}
+	
 	@RequestMapping(value = "/toModify/{id}", method = RequestMethod.GET)
 	public ModelAndView toModify(@PathVariable String id) {
 		Map<String, Object> model = new HashMap<String, Object>();
