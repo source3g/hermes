@@ -26,6 +26,11 @@ public class DeviceStatus extends AbstractEntity {
 	private Date requestTime;// 本次请求时间
 
 	private int failedCount; // 当前请求的taskId失败次数
+	/**
+	 * 设备状态，TaskConstants.INIT表示设备初始化 TaskConstants.increment表示拿一个增量包
+	 * 当设备发送初始化请求时，将此状态置为INIT
+	 */
+	private String status;
 
 	public String getDeviceSn() {
 		return deviceSn;
@@ -73,6 +78,14 @@ public class DeviceStatus extends AbstractEntity {
 
 	public void setRequestTaskId(Long requestTaskId) {
 		this.requestTaskId = requestTaskId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

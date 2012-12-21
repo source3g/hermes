@@ -15,6 +15,7 @@
 		<constructor-arg ref="jmsFactory" />
 		<!-- <property name="exceptionListener" ref="jmsExceptionListener" /> -->
 		<property name="sessionCacheSize" value="100" />
+		<property name="clientId" value="clientId_common" />
 	</bean>
 
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
