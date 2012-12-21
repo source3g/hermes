@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.source3g.hermes.security.entity.Account;
-import com.source3g.hermes.security.entity.Resource;
-import com.source3g.hermes.security.entity.Role;
-import com.source3g.hermes.security.service.SecurityService;
+import com.source3g.hermes.admin.security.entity.Account;
+import com.source3g.hermes.admin.security.entity.Resource;
+import com.source3g.hermes.admin.security.entity.Role;
+import com.source3g.hermes.admin.security.service.SecurityService;
 import com.source3g.hermes.utils.Page;
 
 @Controller

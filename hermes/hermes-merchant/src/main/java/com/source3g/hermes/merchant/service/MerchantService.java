@@ -21,6 +21,11 @@ import com.source3g.hermes.utils.Page;
 
 @Service
 public class MerchantService extends BaseService {
+	
+	
+	public Merchant login(String username,String password){
+		return mongoTemplate.findOne(new Query(Criteria.where("account").is(username).and("password").is(password)), Merchant.class);
+	}
 
 	
 	public void add(Merchant merchant) throws Exception{
@@ -51,7 +56,7 @@ public class MerchantService extends BaseService {
 			Pattern pattern = Pattern.compile("^.*" + merchant.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}
-
+		
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, Merchant.class);
 		page.setTotalRecords(totalCount);
@@ -197,6 +202,12 @@ public class MerchantService extends BaseService {
 	public List<MerchantRemindTemplate> merchantRemindList(ObjectId merchantId) {
 		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		return merchant.getMerchantRemindTemplates();
+	}
+	
+	public void cancel(ObjectId merchantId){
+		Update update=new Update();
+		update.set("canceled", true);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchantId)), update, Merchant.class);
 	}
 
 }

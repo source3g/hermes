@@ -31,6 +31,8 @@ public class Merchant extends AbstractEntity {
 	
 	private List<Note> notes;
 	
+	//是否被删除
+	private boolean canceled;
 	private List<MerchantRemindTemplate> merchantRemindTemplates;
 	
 	private Setting setting=new Setting();
@@ -112,6 +114,14 @@ public class Merchant extends AbstractEntity {
 
 	public void setSetting(Setting setting) {
 		this.setting = setting;
+	}
+
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
 	}
 	
 }

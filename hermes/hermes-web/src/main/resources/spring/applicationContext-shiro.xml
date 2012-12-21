@@ -17,10 +17,15 @@
 		<property name="successUrl" value="/account/user/" />
 		<property name="filterChainDefinitions">
 			<value>
-				/login = authc
+				/login = anon
+				/login/** = anon
 				/logout = logout
 				/static/** = anon
-		    	/** = anon
+				/js/** = anon
+				/img/** = anon
+				/css/** = anon
+				/admin/** = anon
+		    	/** = authc
 		 	</value>
 		</property>
 	</bean>

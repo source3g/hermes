@@ -65,14 +65,11 @@
 	}
 		function deleteById(id) {
 		$.ajax({
-			url:"${pageContext.request.contextPath}/admin/merchant/delete/"+id+"/",
+			url:"${pageContext.request.contextPath}/admin/merchant/cancel/"+id+"/",
 			type:"get",
-			success:showList		
+			success:showContentInfo		
 		});	
 	}
-		function showList(data){
-			$("#pageContentFrame").html(data);
-		}
 		function toModify(id){
 		loadPage("${pageContext.request.contextPath}/admin/merchant/toModify/"+id+"/");
 	}
@@ -81,7 +78,7 @@
 			$("#pageNo").attr("value",pageNo);
 			var options={
 					url:"${pageContext.request.contextPath}/admin/merchant/list/",
-					success:showList,
+					success:showContentInfo,
 					error:showError
 			};
 			$('#queryForm').ajaxSubmit(options);
@@ -150,10 +147,6 @@
 					});
 			}
 	    }
-	    	
-	    
-
-		
 	</script>
 </body>
 </html>

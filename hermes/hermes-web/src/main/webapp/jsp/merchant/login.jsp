@@ -41,12 +41,12 @@
 				</div>
 				<div class="well span3 center login-box">
 					<div class="alert alert-info">请输入帐号密码</div>
-					<form class="form-horizontal" action="index.html" method="post">
+					<form class="form-horizontal" action="${pageContext.request.contextPath}/login" method="post">
 						<fieldset>
 							<div class="input-prepend" title="用户名" data-rel="tooltip">
 								<span class="add-on"><i class="icon-user"></i></span><input
 									autofocus class="input-large span10" name="username"
-									id="username" type="text" value="admin" />
+									id="username" type="text" />
 							</div>
 							<div class="clearfix"></div>
 
@@ -58,8 +58,8 @@
 							<div class="clearfix"></div>
 
 							<div class="input-prepend">
-								<label class="remember" for="remember"><input
-									type="checkbox" id="remember" />记住密码</label>
+								<label class="remember" for="rememberMe"><input
+									type="checkbox" name="rememberMe" id="rememberMe" />记住密码</label>
 							</div>
 							<div class="clearfix"></div>
 

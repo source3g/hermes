@@ -29,6 +29,12 @@ public class MerchantApi {
 	@Autowired
 	private MerchantService merchantService;
 
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@ResponseBody
+	public Merchant login(String username, String password) {
+		return merchantService.login(username, password);
+	}
+
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody Merchant merchant) {
@@ -63,11 +69,11 @@ public class MerchantApi {
 		return merchantService.list(pageNoInt, merchant);
 	}
 
-	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/cancel/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public String delete(@PathVariable String id) {
-		logger.debug("delete merchant....");
-		merchantService.deleteById(id);
+	public String cancel(@PathVariable String id) {
+		logger.debug("cancel merchant....");
+		merchantService.cancel(new ObjectId(id));
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -129,7 +135,7 @@ public class MerchantApi {
 	@RequestMapping(value = "/remindAdd/{merchantId}/{templateId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<MerchantRemindTemplate> remindAdd(@PathVariable String merchantId, @PathVariable String templateId) {
-			merchantService.remindAdd(new ObjectId(merchantId), new ObjectId(templateId));
+		merchantService.remindAdd(new ObjectId(merchantId), new ObjectId(templateId));
 		return merchantService.merchantRemindList(new ObjectId(merchantId));
 	}
 
@@ -147,8 +153,8 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/remindSave/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String remindSave(@PathVariable String merchantId,@RequestBody MerchantRemindTemplate merchantRemindTemplate) {
-		merchantService.remindSave(new ObjectId(merchantId),merchantRemindTemplate);
+	public String remindSave(@PathVariable String merchantId, @RequestBody MerchantRemindTemplate merchantRemindTemplate) {
+		merchantService.remindSave(new ObjectId(merchantId), merchantRemindTemplate);
 		return ReturnConstants.SUCCESS;
 	}
 

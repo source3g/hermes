@@ -1,5 +1,6 @@
 package com.source3g.hermes.message.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -81,18 +82,18 @@ public class MessageService extends BaseService {
 	 * @param ids
 	 * @param content
 	 */
-	public void messageGroupSend(ObjectId merchantId, String[] ids,String customerPhones, String content) throws Exception {
-		if(customerPhones!=null){
+	public void messageGroupSend(ObjectId merchantId, String[] ids, String customerPhones, String content) throws Exception {
+		if (customerPhones != null) {
 			String customerPhoneArray[] = customerPhones.split(";");
 			fastSend(merchantId, customerPhoneArray, content);
 		}
-		if(ids!=null){
-		Query query = new Query();
-		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
-		for (String id : ids) {
-			ObjectId ObjId = new ObjectId(id);
-			customerGroupIds.add(ObjId);
-		}
+		if (ids != null) {
+			Query query = new Query();
+			List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
+			for (String id : ids) {
+				ObjectId ObjId = new ObjectId(id);
+				customerGroupIds.add(ObjId);
+			}
 			query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
 			Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);
@@ -108,7 +109,7 @@ public class MessageService extends BaseService {
 			jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 		}
 	}
-	
+
 	private List<PhoneInfo> genPhoneInfos(ObjectId merchantId, List<Customer> customers, String content, MessageType type) {
 		List<PhoneInfo> result = new ArrayList<PhoneInfo>();
 		for (Customer c : customers) {
@@ -243,8 +244,6 @@ public class MessageService extends BaseService {
 	}
 
 	public MessageStatus send(String phoneNumber, String content) {
-		// TODO 发送消息
-		// System.out.println("向" + phoneNumber + "发送" + content);
 		if (PhoneOperator.移动.equals(PhoneUtils.getOperatior(phoneNumber))) {
 			return sendByCm(phoneNumber, content);
 		}
@@ -288,16 +287,20 @@ public class MessageService extends BaseService {
 		// command.AddNewItem("spnumber", "10660025");
 		command.AddNewItem("feetype", "1");
 		command.AddNewItem("usernumber", phoneNumber);
-		command.AddNewItem("msg",content.getBytes(), true,"UTF-8");
+		try {
+
+			byte bytes[] = content.getBytes("GBK");//
+			command.AddNewItem("msg", bytes, true, "GBK");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 
 		try {
 			tcp.SendCommand(command);
 			System.out.println("OK");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// tcp.stop();
 		return MessageStatus.已发送;
 	}
 

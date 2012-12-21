@@ -88,9 +88,9 @@ public class MerchantController {
 		return new ModelAndView("admin/merchant/list", model);
 	}
 
-	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/cancel/{id}", method = RequestMethod.GET)
 	public ModelAndView delete(@PathVariable String id) {
-		String uri = ConfigParams.getBaseUrl() + "merchant/delete/" + id + "/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/cancel/" + id + "/";
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/merchant/list/");
 	}
