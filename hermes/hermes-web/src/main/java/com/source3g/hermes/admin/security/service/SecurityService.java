@@ -1,4 +1,4 @@
-package com.source3g.hermes.security.service;
+package com.source3g.hermes.admin.security.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.security.entity.Account;
-import com.source3g.hermes.security.entity.Resource;
-import com.source3g.hermes.security.entity.Role;
+import com.source3g.hermes.admin.security.entity.Account;
+import com.source3g.hermes.admin.security.entity.Resource;
+import com.source3g.hermes.admin.security.entity.Role;
 import com.source3g.hermes.utils.Page;
 
 @Service
@@ -179,10 +179,6 @@ public class SecurityService {
 			account.getRoles().remove(roleToRemove);
 			mongoTemplate.save(account);
 		}
-		// Update update = new Update();
-		// update.pull("roles", new ObjectId(id));
-		// mongoTemplate.updateFirst(new
-		// Query(Criteria.where("_id").is(accountId)), update, Account.class);
 	}
 
 	public void deleteAccount(String accountId) {

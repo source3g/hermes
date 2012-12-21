@@ -1,7 +1,8 @@
-package com.source3g.hermes.security;
+package com.source3g.hermes.admin.security;
 
 import java.io.Serializable;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -14,10 +15,12 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.source3g.hermes.security.entity.Account;
-import com.source3g.hermes.security.entity.Resource;
-import com.source3g.hermes.security.entity.Role;
-import com.source3g.hermes.security.service.SecurityService;
+import com.source3g.hermes.admin.security.entity.Account;
+import com.source3g.hermes.admin.security.entity.Resource;
+import com.source3g.hermes.admin.security.entity.Role;
+import com.source3g.hermes.admin.security.service.SecurityService;
+import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.merchant.security.service.MerchantSecurityService;
 
 @Component
 // TODO 权限
@@ -25,16 +28,18 @@ public class ShiroDbRealm extends AuthorizingRealm {
 
 	@Autowired
 	private SecurityService securityService;
-
+	@Autowired
+	private MerchantSecurityService merchantSecurityService;
+	
 	/**
 	 * 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.
 	 */
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		ShiroUser shiroUser = (ShiroUser) principals.fromRealm(getName()).iterator().next();
-		Account account = securityService.findUserByLoginName(shiroUser.getLoginName());
+		Account account = shiroUser.getAccount();
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		if (account != null) {
-			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 			for (Role role : account.getRoles()) {
 				// 基于Permission的权限信息
 				for (Resource resource : role.getResources())
@@ -42,8 +47,13 @@ public class ShiroDbRealm extends AuthorizingRealm {
 			}
 			return info;
 		} else {
-			return null;
+			Merchant merchant = shiroUser.getMerchant();
+			if (merchant != null) {
+				info.addRole("merchant");
+				return info;
+			}
 		}
+		return null;
 	}
 
 	/**
@@ -55,8 +65,19 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		String userName = token.getUsername();
 		if (userName != null && !"".equals(userName)) {
 			Account account = securityService.login(token.getUsername(), String.valueOf(token.getPassword()));
-			if (account != null) {
-				return new SimpleAuthenticationInfo(account.getAccount(), account.getPassword(), getName());
+			if (account == null) {
+				Merchant merchant = merchantSecurityService.login(token.getUsername(), String.valueOf(token.getPassword()));
+				if (merchant != null) {
+					SecurityUtils.getSubject().getSession().setAttribute("loginUser", merchant);
+					ShiroUser shiroUser = new ShiroUser();
+					shiroUser.setMerchant(merchant);
+					return new SimpleAuthenticationInfo(shiroUser, merchant.getPassword(), getName());
+				}
+			} else {
+				SecurityUtils.getSubject().getSession().setAttribute("loginAdmin", account);
+				ShiroUser shiroUser = new ShiroUser();
+				shiroUser.setAccount(account);
+				return new SimpleAuthenticationInfo(shiroUser, account.getPassword(), getName());
 			}
 		}
 		return null;
@@ -70,9 +91,39 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		private static final long serialVersionUID = -1748602382963711884L;
 		private String loginName;
 		private String name;
+		private boolean isMerchant = false;
+		private Merchant merchant;
+		private Account account;
+
+		public ShiroUser() {
+		}
 
 		public ShiroUser(String loginName, String name) {
 			this.loginName = loginName;
+			this.name = name;
+		}
+
+		public boolean isMerchant() {
+			return isMerchant;
+		}
+
+		public void setMerchant(boolean isMerchant) {
+			this.isMerchant = isMerchant;
+		}
+
+		public Merchant getMerchant() {
+			return merchant;
+		}
+
+		public void setMerchant(Merchant merchant) {
+			this.merchant = merchant;
+		}
+
+		public void setLoginName(String loginName) {
+			this.loginName = loginName;
+		}
+
+		public void setName(String name) {
 			this.name = name;
 		}
 
@@ -90,6 +141,14 @@ public class ShiroDbRealm extends AuthorizingRealm {
 
 		public String getName() {
 			return name;
+		}
+
+		public Account getAccount() {
+			return account;
+		}
+
+		public void setAccount(Account account) {
+			this.account = account;
 		}
 	}
 

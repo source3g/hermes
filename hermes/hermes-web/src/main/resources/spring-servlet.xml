@@ -58,14 +58,8 @@
 		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
 
 
-	<bean id="jsonConverter"
-		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
-		<property name="supportedMediaTypes" value="application/json" />
-		<property name="objectMapper" ref="objectMapper" />
-	</bean>
-
-
-
+	<bean id="generalExceptionController"
+		class="com.source3g.hermes.exception.GeneralExceptionController" />
 
 	<bean id="conversion-service"
 		class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
@@ -159,31 +153,6 @@
 	</bean>
 
 
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-		<property name="messageConverters">
-			<list>
-				<ref bean="jsonConverter" />
-				<bean class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter"></bean>
-				<!-- <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean> -->
-				<!-- <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean> -->
-				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
-				<!-- <bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" 
-					/> -->
-				<bean
-					class="org.springframework.http.converter.StringHttpMessageConverter">
-					<property name="supportedMediaTypes">
-						<list>
-							<bean class="org.springframework.http.MediaType">
-								<constructor-arg index="0" value="text" />
-								<constructor-arg index="1" value="plain" />
-								<constructor-arg index="2" value="UTF-8" />
-							</bean>
-						</list>
-					</property>
-				</bean>
-			</list>
-		</property>
-	</bean>
 
 	<bean id="customEditorConfigurer"
 		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
@@ -203,5 +172,16 @@
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
+	<!-- 支持 Shiro对Controller的AOP安全控制 begin -->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
 
 </beans>

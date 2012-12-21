@@ -237,7 +237,7 @@ public class MessageController {
 	@RequestMapping(value = "/toAutoSend", method = RequestMethod.GET)
 	public ModelAndView toAutoSend(HttpServletRequest req) throws Exception {
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/messageInfo/"+merchant.getId()+"/";
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/autoSend/messageInfo/"+merchant.getId()+"/";
 		MessageAutoSend  messageAutoSend = restTemplate.getForObject(uri, MessageAutoSend.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("messageAutoSend", messageAutoSend);

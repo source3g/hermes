@@ -62,4 +62,37 @@
 		<property name="queueCapacity" value="20000" />
 		<property name="rejectedExecutionHandler" ref="rejectedExecutionHandler" />
 	</bean>
+	
+	<bean id="jsonConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes" value="application/json" />
+		<property name="objectMapper" ref="objectMapper" />
+	</bean>
+	
+		<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jsonConverter" />
+				<bean class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter"></bean>
+				<!-- <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean> -->
+				<!-- <bean class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean> -->
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+				<!-- <bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" 
+					/> -->
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<bean class="org.springframework.http.MediaType">
+								<constructor-arg index="0" value="text" />
+								<constructor-arg index="1" value="plain" />
+								<constructor-arg index="2" value="UTF-8" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
 </beans>

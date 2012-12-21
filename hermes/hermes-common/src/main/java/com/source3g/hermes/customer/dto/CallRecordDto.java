@@ -47,9 +47,9 @@ public class CallRecordDto implements Comparable<CallRecordDto> {
 			return 0;
 		}
 		if (this.getCallTime().getTime() > o.getCallTime().getTime()) {
-			return 1;
-		} else {
 			return -1;
+		} else {
+			return 1;
 		}
 	}
 }

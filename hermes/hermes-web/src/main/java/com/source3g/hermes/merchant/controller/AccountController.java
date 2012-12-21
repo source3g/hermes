@@ -38,6 +38,7 @@ public class AccountController {
 		model.put("merchant", merchant);
 		return new ModelAndView("merchant/accountCenter/switch",model);
 	}
+	
 	@RequestMapping(value = "/switch",method=RequestMethod.POST)
 	public ModelAndView Switch( Setting setting,HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
@@ -101,6 +102,8 @@ public class AccountController {
 		return new ModelAndView("admin/error");
 		
 	}
+	
+	
 }
 	
 

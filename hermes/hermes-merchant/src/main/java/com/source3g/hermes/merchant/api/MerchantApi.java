@@ -28,6 +28,12 @@ public class MerchantApi {
 	@Autowired
 	private MerchantService merchantService;
 
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@ResponseBody
+	public Merchant login(String username, String password) {
+		return merchantService.login(username, password);
+	}
+
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody Merchant merchant) {
@@ -35,15 +41,17 @@ public class MerchantApi {
 		try {
 			merchantService.add(merchant);
 		} catch (Exception e) {
-		return e.getMessage();
+			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
+
 	@RequestMapping(value = "/accountValidate/{account}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean add(@PathVariable String account) {	
+	public boolean add(@PathVariable String account) {
 		return merchantService.accountValidate(account);
 	}
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Merchant getMerchant(@PathVariable String id) {
@@ -60,11 +68,11 @@ public class MerchantApi {
 		return merchantService.list(pageNoInt, merchant);
 	}
 
-	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/cancel/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public String delete(@PathVariable String id) {
-		logger.debug("delete merchant....");
-		merchantService.deleteById(id);
+	public String cancel(@PathVariable String id) {
+		logger.debug("cancel merchant....");
+		merchantService.cancel(new ObjectId(id));
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -97,56 +105,60 @@ public class MerchantApi {
 		merchantService.chargeMsg(id, countInt);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/msgLogList", method = RequestMethod.GET)
 	@ResponseBody
 	public Page msgLogList(String pageNo) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return merchantService.msgLogList(pageNoInt);
 	}
+
 	@RequestMapping(value = "/UpdateQuota/{id}", method = RequestMethod.POST)
 	@ResponseBody
-	public String  UpdateQuota(@PathVariable String id,String count,String type) {
+	public String UpdateQuota(@PathVariable String id, String count, String type) {
 		int countInt = Integer.parseInt(count);
-		if(type.equals("cut")){
-			countInt=0-countInt;
+		if (type.equals("cut")) {
+			countInt = 0 - countInt;
 		}
 		merchantService.UpdateQuota(id, countInt);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/switch", method = RequestMethod.POST)
 	@ResponseBody
-	public String  Switch(@RequestBody Merchant merchant) {
-		merchantService.Switch( merchant);
+	public String Switch(@RequestBody Merchant merchant) {
+		merchantService.Switch(merchant);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
 	@ResponseBody
-	public String  remindAdd(@RequestBody RemindTemplate remindTemplate) {
-		if(remindTemplate.getId()!=null){
-			ObjectId objId=null;
+	public String remindAdd(@RequestBody RemindTemplate remindTemplate) {
+		if (remindTemplate.getId() != null) {
+			ObjectId objId = null;
 			remindTemplate.setId(objId);
 		}
-		merchantService.add( remindTemplate);
+		merchantService.add(remindTemplate);
 		return ReturnConstants.SUCCESS;
-}
+	}
+
 	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)
 	@ResponseBody
-	public List<RemindTemplate>  remindSetting() {
+	public List<RemindTemplate> remindSetting() {
 		return merchantService.remindList();
 	}
+
 	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
 	@ResponseBody
 	public String remindSave(@RequestBody RemindTemplate remindTemplate) {
-		merchantService.remindSave( remindTemplate);
+		merchantService.remindSave(remindTemplate);
 		return ReturnConstants.SUCCESS;
 	}
+
 	@RequestMapping(value = "/remindDelete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String remindDelete(@PathVariable ObjectId id) {
-		merchantService.remindDelete( id);
+		merchantService.remindDelete(id);
 		return ReturnConstants.SUCCESS;
 	}
 }

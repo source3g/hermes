@@ -32,6 +32,8 @@ public class Merchant extends AbstractEntity {
 	private List<Note> notes;
 	
 	private Setting setting=new Setting();
+	//是否被删除
+	private boolean canceled;
 	
 	public String getName() {
 		return name;
@@ -103,6 +105,14 @@ public class Merchant extends AbstractEntity {
 
 	public void setSetting(Setting setting) {
 		this.setting = setting;
+	}
+
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
 	}
 	
 }
