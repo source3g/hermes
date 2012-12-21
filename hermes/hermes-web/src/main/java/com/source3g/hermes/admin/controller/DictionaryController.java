@@ -21,7 +21,7 @@ import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 
 @Controller
-@RequestMapping("/admin/Dictionary")
+@RequestMapping("/admin/dictionary")
 public class DictionaryController {
 	//sprivate static final Logger logger = LoggerFactory.getLogger(DictionaryController.class);
 	@Autowired
@@ -29,7 +29,7 @@ public class DictionaryController {
 	
 	@RequestMapping(value = "toRemindTemplate", method = RequestMethod.GET)
 	public ModelAndView toRemindTemplate() {
-		String uri=ConfigParams.getBaseUrl() + "Dictionary/remindSetting/";
+		String uri=ConfigParams.getBaseUrl() + "dictionary/remindSetting/";
 		RemindTemplate[] remindTemplate = restTemplate.getForObject(uri, RemindTemplate[].class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("remindTemplate", remindTemplate);
@@ -38,29 +38,29 @@ public class DictionaryController {
 	
 	@RequestMapping(value = "/remindAdd",method=RequestMethod.POST)
 	public ModelAndView remindAdd(RemindTemplate remindTemplate,HttpServletRequest req) throws Exception {
-		String uri=ConfigParams.getBaseUrl() + "Dictionary/remindAdd/";
+		String uri=ConfigParams.getBaseUrl() + "dictionary/remindAdd/";
 		HttpEntity<RemindTemplate> entity = new HttpEntity<RemindTemplate>(remindTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {	
-		return new ModelAndView("redirect:/admin/Dictionary/toRemindTemplate");
+		return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
 		}
 		return new ModelAndView("admin/error");
 		
 	}
 	@RequestMapping(value = "/remindSave",method=RequestMethod.POST)
 	public ModelAndView remindSave(RemindTemplate remindTemplate) throws Exception {
-		String uri=ConfigParams.getBaseUrl() + "Dictionary/remindSave/";
+		String uri=ConfigParams.getBaseUrl() + "dictionary/remindSave/";
 		HttpEntity<RemindTemplate> entity = new HttpEntity<RemindTemplate>(remindTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {	
-		return new ModelAndView("redirect:/admin/Dictionary/toRemindTemplate");
+		return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
 		}
 		return new ModelAndView("admin/error");
 		
 	}
 	@RequestMapping(value = "/remindDelete/{id}",method=RequestMethod.GET)
 	public String remindDelete(@PathVariable ObjectId id,RedirectAttributes redirectAttributes) throws Exception {
-		String uri=ConfigParams.getBaseUrl() + "Dictionary/remindDelete/"+id+"";
+		String uri=ConfigParams.getBaseUrl() + "dictionary/remindDelete/"+id+"";
 		String result = restTemplate.getForObject(uri, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {	
 		return ("redirect:/admin/Dictionary/toRemindTemplate");

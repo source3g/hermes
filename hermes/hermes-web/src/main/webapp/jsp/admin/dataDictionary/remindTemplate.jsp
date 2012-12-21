@@ -93,7 +93,7 @@
 		});
 		function add() {
 			$("#remindSettingForm").ajaxSubmit({
-				url : "${pageContext.request.contextPath}/admin/Dictionary/remindAdd",
+				url : "${pageContext.request.contextPath}/admin/dictionary/remindAdd",
 				success : showContentInfo,
 				error : showError
 			});
@@ -101,7 +101,7 @@
 
 		function save() {
 			$("#remindSettingForm").ajaxSubmit({
-				url : "${pageContext.request.contextPath}/admin/Dictionary/remindSave",
+				url : "${pageContext.request.contextPath}/admin/dictionary/remindSave",
 				success : showContentInfo,
 				error : showError
 			});
@@ -118,7 +118,7 @@
 			}
 			var id = $("#id").val();
 			$.ajax({
-				url : "${pageContext.request.contextPath}/admin/Dictionary/remindDelete/" + id + "/",
+				url : "${pageContext.request.contextPath}/admin/dictionary/remindDelete/" + id + "/",
 				type : "get",
 				success : function(data) {
 					showContentInfo(data);

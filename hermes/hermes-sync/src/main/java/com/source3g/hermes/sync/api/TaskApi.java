@@ -15,7 +15,7 @@ import com.source3g.hermes.sync.entity.TaskPackage;
 
 @Controller
 @RequestMapping(value = "/task")
-public class TaskController {
+public class TaskApi {
 	@Autowired
 	private TaskService taskService;
 
@@ -23,6 +23,12 @@ public class TaskController {
 	@ResponseBody
 	public List<TaskPackage> taskList(@PathVariable String sn) {
 		return taskService.genTasks(sn);
+	}
+
+	@RequestMapping(value = "/{sn}/init", method = RequestMethod.GET)
+	@ResponseBody
+	public String taskInit(@PathVariable String sn) {
+		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/report/{sn}/{result}", method = RequestMethod.GET)

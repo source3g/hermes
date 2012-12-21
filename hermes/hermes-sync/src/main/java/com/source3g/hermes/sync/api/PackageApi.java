@@ -19,7 +19,7 @@ import com.source3g.hermes.service.TaskService;
 
 @Controller
 @RequestMapping(value = "/package")
-public class PackageController {
+public class PackageApi {
 
 	@Autowired
 	private TaskService taskService;

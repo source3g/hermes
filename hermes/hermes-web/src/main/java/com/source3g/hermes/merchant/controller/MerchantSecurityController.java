@@ -55,6 +55,13 @@ public class MerchantSecurityController {
 		}
 	}
 
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public ModelAndView logout() {
+		Subject currentUser = SecurityUtils.getSubject();
+		currentUser.logout();
+		return new ModelAndView("redirect:/login");
+	}
+
 	private boolean login(Subject currentUser, String username, String password, boolean rememberMe) {
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 		token.setRememberMe(rememberMe);
