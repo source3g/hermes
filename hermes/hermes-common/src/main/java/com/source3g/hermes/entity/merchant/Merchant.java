@@ -31,10 +31,19 @@ public class Merchant extends AbstractEntity {
 	
 	private List<Note> notes;
 	
-	private Setting setting=new Setting();
 	//是否被删除
 	private boolean canceled;
+	private List<MerchantRemindTemplate> merchantRemindTemplates;
 	
+	private Setting setting=new Setting();
+	public List<MerchantRemindTemplate> getMerchantRemindTemplates() {
+		return merchantRemindTemplates;
+	}
+
+	public void setMerchantRemindTemplates(List<MerchantRemindTemplate> merchantRemindTemplates) {
+		this.merchantRemindTemplates = merchantRemindTemplates;
+	}
+
 	public String getName() {
 		return name;
 	}

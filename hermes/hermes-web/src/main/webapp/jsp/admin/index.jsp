@@ -146,7 +146,21 @@ body {
 							</ul>
 							<!-- </div> -->
 						</div>
-
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseSix">数据字典 </a>
+						</div>
+						<div id="collapseSix" class="accordion-body collapse">
+							<!-- <div class="accordion-inner"> -->
+							<ul id="security-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
+								<li><a href="javascript:void();" id="dataDictionary">提醒设置</a></li>
+							</ul>
+							<!-- </div> -->
+						</div>
 					</div>
 				</div>
 			</div>
@@ -216,13 +230,17 @@ body {
 		$("#roleAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/security/role/add/");
 		});
-		$("#roleManage").click(function() {
+		$("#roleManage").click(function() { 
 			loadPage("${pageContext.request.contextPath}/admin/security/role/list/");
 		});
 		$("#resourceManage").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/security/resource/list/");
 		});
-
+		
+		//提醒设置 
+		$("#dataDictionary").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/Dictionary/toRemindTemplate/");
+		});
 	});
 
 	function loadPage(url) {

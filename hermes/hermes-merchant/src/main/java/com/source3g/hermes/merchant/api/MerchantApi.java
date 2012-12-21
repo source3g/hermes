@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.merchant.service.MerchantService;
 import com.source3g.hermes.utils.Page;
@@ -131,15 +132,17 @@ public class MerchantApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
+	@RequestMapping(value = "/remindAdd/{merchantId}/{templateId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindAdd(@RequestBody RemindTemplate remindTemplate) {
-		if (remindTemplate.getId() != null) {
-			ObjectId objId = null;
-			remindTemplate.setId(objId);
-		}
-		merchantService.add(remindTemplate);
-		return ReturnConstants.SUCCESS;
+	public List<MerchantRemindTemplate> remindAdd(@PathVariable String merchantId, @PathVariable String templateId) {
+		merchantService.remindAdd(new ObjectId(merchantId), new ObjectId(templateId));
+		return merchantService.merchantRemindList(new ObjectId(merchantId));
+	}
+
+	@RequestMapping(value = "/merchantRemindList/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<MerchantRemindTemplate> merchantRemindList(@PathVariable String merchantId) {
+		return merchantService.merchantRemindList(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)
@@ -148,17 +151,17 @@ public class MerchantApi {
 		return merchantService.remindList();
 	}
 
-	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
+	@RequestMapping(value = "/remindSave/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String remindSave(@RequestBody RemindTemplate remindTemplate) {
-		merchantService.remindSave(remindTemplate);
+	public String remindSave(@PathVariable String merchantId, @RequestBody MerchantRemindTemplate merchantRemindTemplate) {
+		merchantService.remindSave(new ObjectId(merchantId), merchantRemindTemplate);
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/remindDelete/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/remindDelete/{merchantId}/{templateId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindDelete(@PathVariable ObjectId id) {
-		merchantService.remindDelete(id);
-		return ReturnConstants.SUCCESS;
+	public List<MerchantRemindTemplate> remindDelete(@PathVariable String merchantId, @PathVariable String templateId) {
+		merchantService.remindDelete(new ObjectId(merchantId), new ObjectId(templateId));
+		return merchantService.merchantRemindList(new ObjectId(merchantId));
 	}
 }

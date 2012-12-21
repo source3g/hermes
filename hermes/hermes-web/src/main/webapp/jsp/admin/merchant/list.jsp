@@ -30,7 +30,7 @@
 				<td>
 				<a class="btn btn-success" href="javascript:void();" onclick="toModify('${merchant.id}');">修改</a>
 				<a class="btn btn-danger" href="javascript:void();" onclick="deleteById('${merchant.id}');">删除</a>
-		
+				<a class="btn btn-success" href="javascript:void();" onclick="toSetDictionary('${merchant.id}');">设置</a>
 				</td>
 			</tr>
 		</c:forEach>
@@ -56,7 +56,13 @@
 	</div>
 	
 	<script type="text/javascript">
-	
+	function toSetDictionary(id){
+		$.ajax({
+			url:"${pageContext.request.contextPath}/admin/merchant/toSetDictionary/"+id+"/",
+			type:"get",
+			success:showList		
+		});		
+	}
 		function deleteById(id) {
 		$.ajax({
 			url:"${pageContext.request.contextPath}/admin/merchant/cancel/"+id+"/",
