@@ -40,7 +40,10 @@
 				</td>
 			</tr>
 			<tr>
-				<td><input type="submit" class="btn btn-primary" value="确定">
+				<td>
+				 <button id="updateMessageBtn" data-loading-text="额度调整 中..." class="btn btn-primary">
+                    		确定
+                 </button>
 				</td>
 			</tr>
 		</table>
@@ -108,7 +111,7 @@
 													success : toList
 
 												};
-
+												$('#updateMessageBtn').button('loading')
 												$(this).ajaxSubmit(options);
 
 												return false;

@@ -27,8 +27,12 @@
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入资源名称..."
 					id="resourceCode" name="resourceCode" >
-				<input type="button" class="btn btn-primary"
-					onclick="addResource();" value="添加"> <span
+			<!-- 	<input type="button" class="btn btn-primary"
+					onclick="addResource();" value="添加"> -->
+				<button id="addResourceBtn" data-loading-text="角色增加中..." class="btn btn-primary" onclick="addResource();">
+                    		增加
+                 </button>	
+					 <span
 					class="help-inline"></span>
 			</div>
 		</div>
@@ -95,6 +99,7 @@
 				if (!$('#addRoleForm').valid()) {
 					return false;
 				}
+				$('#addResourceBtn').button('loading');
 				$(this).ajaxSubmit({
 					success : showContentInfo,
 					error : showError

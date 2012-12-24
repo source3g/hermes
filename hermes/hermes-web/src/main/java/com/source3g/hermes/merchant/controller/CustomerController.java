@@ -339,7 +339,7 @@ public class CustomerController {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {
 			for (int i = reminds.size() - 1; i >= 0; i--) {
-				if (reminds.get(i).getRemindTime() == null && StringUtils.isEmpty(reminds.get(i).getRemindTemplate().getTitle())) {
+				if (reminds.get(i).getRemindTime() == null && StringUtils.isEmpty(reminds.get(i).getMerchantRemindTemplate().getRemindTemplate().getTitle())) {
 					reminds.remove(i);
 				}
 			}

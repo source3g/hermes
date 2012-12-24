@@ -32,7 +32,9 @@
 		</tr>
 		<tr>
 			<td>
-			<input type="submit" class="btn btn-primary" value="确定">
+			 <button id="addMessageBtn" data-loading-text="短信预存中..." class="btn btn-primary">
+                    		确定
+                 </button>
 			</td>
 		</tr>
 		</table>
@@ -56,7 +58,6 @@
 		$('#reservedMsgForm').validate(validateoptions);
 		
 		$('#reservedMsgForm').submit(function(){
-		
 			if(!$('#reservedMsgForm').valid()){
 				return false;
 			}
@@ -66,7 +67,7 @@
 							type:"post",
 							success : toList
 					};
-			 
+			 $('#addMessageBtn').button('loading')
 					$(this).ajaxSubmit(options);
 					
 					return false;

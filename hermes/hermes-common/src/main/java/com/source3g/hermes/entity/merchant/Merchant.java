@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -33,6 +34,7 @@ public class Merchant extends AbstractEntity {
 	
 	//是否被删除
 	private boolean canceled;
+	@DBRef
 	private List<MerchantRemindTemplate> merchantRemindTemplates;
 	
 	private Setting setting=new Setting();

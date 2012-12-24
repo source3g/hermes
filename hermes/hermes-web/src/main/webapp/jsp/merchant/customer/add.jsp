@@ -80,10 +80,10 @@
 			</tr>
 			<tr>
 				<td><label class="control-label">定时提醒：</label></td>
-				<td colspan="3"><c:forEach items="${customer.reminds}"
+				<td colspan="3"><c:forEach items="${customer.merchantRemindTemplates}"
 						var="remind" varStatus="status">
 						<div class="remindItem">
-							事项：<input type="text" readonly="readonly" name="reminds[${status.index }].remindTemplate.title"
+							事项：<input type="text" readonly="readonly" name="reminds[${status.index }].merchantRemindTemplates.remindTemplate.title"
 								class="input-medium" value="${remind.remindTemplate.title }"></input>
 								<input type="hidden" name="reminds[${status.index }].remindTemplate.id"
 								class="input-medium" value="${remind.remindTemplate.id}"></input> 
@@ -110,7 +110,9 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-				<input type="submit" class="btn btn-primary" value="增加">
+				<button id="addCustomer" data-loading-text="顾客增加中..." class="btn btn-primary">
+                    		增加
+                 </button>
 			</c:if>
 
 			<div id="errorModal" class="modal hide fade">
@@ -190,6 +192,7 @@
 				if(!$('#addCustomerForm').valid()){
 					return false;
 				}
+				$('#addCustomer').button('loading')
 				var options={
 						url : "${pageContext.request.contextPath}/merchant/customer/add/",
 						type : "post",
@@ -236,17 +239,17 @@
 		function addRemind() {
 			function initRemindList() {
 				$.ajax({
-					url : "${pageContext.request.contextPath}/merchant/account/remindSetting/json",
+					url : "${pageContext.request.contextPath}/merchant/account/remindSetting",
 					type : "get",
-					dataType : "json",
+					//dataType : "json",
 					success : initRemingSelection,
-					error : error
+					error : showError
 				});
 			}
 			function initRemingSelection(data){
 				remindOptions="<option>请选择</option>"+remindOptions;
 				for(var i=0;i<data.length;i++){
-					remindOptions+="<option value='"+data[i].id+"'>"+data[i].title+"</option>"
+					remindOptions+="<option value='"+data[i].id+"'>"+data[i].remindTemplate.title+"</option>"
 				}
 				 addRemindItem();
 			}
@@ -256,6 +259,9 @@
 				addRemindItem();
 			}
 			
+		}
+		function showError(){
+			alert("商户提醒为空");
 		}
 		function addRemindItem(){
 			if ($(".remindItem").length == 0) {

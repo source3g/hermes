@@ -60,7 +60,7 @@
 		$.ajax({
 			url:"${pageContext.request.contextPath}/admin/merchant/toSetDictionary/"+id+"/",
 			type:"get",
-			success:showList		
+			success:showContentInfo		
 		});		
 	}
 		function deleteById(id) {
