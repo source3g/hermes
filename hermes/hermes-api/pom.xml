@@ -52,5 +52,10 @@
 			<artifactId>hermes-dictionary</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.source3g.hermes</groupId>
+			<artifactId>hermes-security</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

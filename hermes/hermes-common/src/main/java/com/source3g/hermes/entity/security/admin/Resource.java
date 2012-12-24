@@ -1,4 +1,4 @@
-package com.source3g.hermes.admin.security.entity;
+package com.source3g.hermes.entity.security.admin;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.mongodb.core.mapping.Document;

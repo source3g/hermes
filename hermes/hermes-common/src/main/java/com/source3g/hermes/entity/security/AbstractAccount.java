@@ -1,4 +1,4 @@
-package com.source3g.hermes.security.entity;
+package com.source3g.hermes.entity.security;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
