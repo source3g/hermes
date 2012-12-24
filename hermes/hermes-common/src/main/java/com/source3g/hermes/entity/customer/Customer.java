@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonGenerationException;
@@ -36,7 +37,7 @@ import com.source3g.hermes.utils.EntityUtils;
 @CompoundIndexes({ @CompoundIndex(name = "merchant_phone", def = "{'phone': 1, 'merchantId': -1}", unique = true) })
 public class Customer extends AbstractEntity {
 	private static final long serialVersionUID = 6014996097125743375L;
-	@Indexed(name="CUSTOMER_NAME_INDEX")
+	@Indexed(name = "CUSTOMER_NAME_INDEX")
 	private String name;
 	private Sex sex;
 	private String birthday;
@@ -55,6 +56,22 @@ public class Customer extends AbstractEntity {
 	private Date lastCallInTime; // 最后通电话时间
 	private ObjectId customerGroupId;
 	private Date operateTime;
+
+	//@JsonIgnore
+	public int getCallInCountToday() {
+		int count = 0;
+		Date date = new Date();
+		Date startDate = DateFormateUtils.getStartDateOfDay(date);
+		if (CollectionUtils.isEmpty(callRecords)) {
+			return count;
+		}
+		for (CallRecord callRecord : callRecords) {
+			if (startDate.getTime() < callRecord.getCallTime().getTime()) {
+				count++;
+			}
+		}
+		return count;
+	}
 
 	public String getBirthday() {
 		return birthday;
@@ -201,12 +218,12 @@ public class Customer extends AbstractEntity {
 		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
 		module.addSerializer(Date.class, new CustomDateSerializer());
 		module.addDeserializer(Date.class, new CustomDateDeserializer());
-		
+
 		objectMapper.getSerializationConfig().setSerializationInclusion(org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
 		objectMapper.registerModule(module);
 		SerializationConfig serializationConfig = objectMapper.getSerializationConfig();
 		serializationConfig.addMixInAnnotations(Customer.class, CustomerForSyncIntf.class);
-		CustomerDto customerDto=new CustomerDto();
+		CustomerDto customerDto = new CustomerDto();
 		EntityUtils.copyCustomerEntityToDto(this, customerDto);
 		String strJson = objectMapper.writer().writeValueAsString(customerDto);
 

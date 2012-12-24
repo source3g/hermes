@@ -79,6 +79,7 @@ body {
 								<li><a href="javascript:void();" id="customerAdd">顾客新增</a></li>
 								<li><a href="javascript:void();" id="customerGroup">顾客组管理</a></li>
 								<li><a href="javascript:void();" id="newCustomerList">新顾客列表</a></li>
+								<li><a href="javascript:void();" id="callInList">来电记录</a></li>
 								<li><a href="javascript:void();" id="callInStatistics">来电顾客统计</a></li>
 								<li><a href="javascript:void();" id="importCustomer">导入顾客信息</a></li>
 								<li><a href="javascript:void();" id="importLog">导入日志</a></li>
@@ -206,6 +207,10 @@ body {
 		$("#newCustomerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/newCustomerList/");
 		});
+		$("#callInList").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/customer/callInList/");
+		});
+		
 		$("#callInStatistics").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/callInStatistics/");
 		});

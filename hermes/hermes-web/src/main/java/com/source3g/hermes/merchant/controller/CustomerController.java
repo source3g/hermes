@@ -72,7 +72,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(Customer customer,String property,String sortType ,String phoneSortType,String pageNo, HttpServletRequest req) throws Exception {
+	public ModelAndView list(Customer customer, String property, String sortType, String phoneSortType, String pageNo, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
@@ -88,14 +88,14 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(customer.getPhone())) {
 			uriBuffer.append("&phone=" + customer.getPhone());
 		}
-		if(StringUtils.isNotEmpty(sortType)){
-			uriBuffer.append("&sortType="+sortType);
+		if (StringUtils.isNotEmpty(sortType)) {
+			uriBuffer.append("&sortType=" + sortType);
 		}
-		if(StringUtils.isNotEmpty(property)){
-			uriBuffer.append("&property="+property);
+		if (StringUtils.isNotEmpty(property)) {
+			uriBuffer.append("&property=" + property);
 		}
-		if(StringUtils.isNotEmpty(property)){
-			uriBuffer.append("&phoneSortType="+phoneSortType);
+		if (StringUtils.isNotEmpty(property)) {
+			uriBuffer.append("&phoneSortType=" + phoneSortType);
 		}
 		Page page = restTemplate.getForObject(uriBuffer.toString(), Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -105,6 +105,7 @@ public class CustomerController {
 		model.put("phoneSortType", phoneSortType);
 		return new ModelAndView("/merchant/customer/list", model);
 	}
+
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody
 	public String export(Customer customer, HttpServletRequest req) throws Exception {
@@ -268,8 +269,31 @@ public class CustomerController {
 		return new ModelAndView("/merchant/customer/importItems", model);
 	}
 
+	@RequestMapping(value = "/callInList", method = RequestMethod.GET)
+	public ModelAndView callInList(Customer customer,  String pageNo,  String customerType, HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		StringBuffer uriBuffer = new StringBuffer();
+		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/callInList/all/");//
+		uriBuffer.append(merchant.getId());
+		uriBuffer.append("/?pageNo=" + pageNo);
+		if (StringUtils.isNotEmpty(customer.getPhone())) {
+			uriBuffer.append("&phone=" + customer.getPhone());
+		}
+		if (StringUtils.isEmpty(customerType)) {
+			customerType = "allCustomer";
+		}
+		uriBuffer.append("&customerType=" + customerType);
+		Page page = restTemplate.getForObject(uriBuffer.toString(), Page.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("page", page);
+		return new ModelAndView("/merchant/customer/callInList", model);
+	}
+
 	@RequestMapping(value = "/callInStatistics", method = RequestMethod.GET)
-	public ModelAndView callInList(HttpServletRequest req, String startTime, String endTime) throws Exception {
+	public ModelAndView callInStatistics(HttpServletRequest req, String startTime, String endTime) throws Exception {
 		CallInStatistics result = findCallInStatistics(req, startTime, endTime);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("callInStatistics", result);
@@ -279,7 +303,7 @@ public class CustomerController {
 	@RequestMapping(value = "/callInStatistics/today", method = RequestMethod.GET)
 	@ResponseBody
 	public CallInStatisticsToday todayCallInList(HttpServletRequest req, String startTime, String endTime) throws Exception {
-		Merchant merchant=(Merchant)LoginUtils.getLoginMerchant(req);
+		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "customer/callInStatistics/today/" + merchant.getId() + "/?a=1";
 		if (StringUtils.isNotEmpty(endTime)) {
 			uri += "&endTime=" + endTime;
