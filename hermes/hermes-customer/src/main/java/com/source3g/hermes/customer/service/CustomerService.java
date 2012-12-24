@@ -46,6 +46,7 @@ import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
+import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
@@ -101,31 +102,49 @@ public class CustomerService extends BaseService {
 	 * 
 	 * @param pageNo
 	 * @param customer
-	 * @param isNew
+	 * @param customerType
+	 *            顾客类型，分为新顾客，老顾客，全部顾客
 	 * @param direction
 	 *            排序规则
 	 * @param properties
 	 *            排序属性
 	 * @return
 	 */
-	private Page list(int pageNo, Customer customer, boolean isNew, Direction direction, String... properties) {
+	private Page list(int pageNo, Customer customer, CustomerType customerType, Direction direction, String... properties) {
 		Query query = new Query();
+		Criteria criteria = null;
 		if (customer.getMerchantId() == null) {
 			return null;
 		} else {
-			query.addCriteria(Criteria.where("merchantId").is(customer.getMerchantId()));
+			criteria = Criteria.where("merchantId").is(customer.getMerchantId());
 		}
 
-		if (isNew == true) {
-			query.addCriteria(Criteria.where("name").is(null));
-		} else if (StringUtils.isNotEmpty(customer.getName())) {
-			Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
-			query.addCriteria(Criteria.where("name").is(pattern));
+		switch (customerType) {
+		case newCustomer:
+			criteria.and("name").is(null);
+			break;
+		case oldCustomer:
+			if (StringUtils.isNotEmpty(customer.getName())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("name").is(pattern);
+			} else {
+				criteria.and("name").ne(null);
+			}
+			if (StringUtils.isNotEmpty(customer.getPhone())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("phone").is(pattern);
+			}
+		case allCustomer:
+			if (StringUtils.isNotEmpty(customer.getName())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("name").is(pattern);
+			}
+			if (StringUtils.isNotEmpty(customer.getPhone())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("phone").is(pattern);
+			}
 		}
-		if (StringUtils.isNotEmpty(customer.getPhone())) {
-			Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
-			query.addCriteria(Criteria.where("phone").is(pattern));
-		}
+		query.addCriteria(criteria);
 		query.with(new Sort(direction, properties));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, Customer.class);
@@ -145,23 +164,22 @@ public class CustomerService extends BaseService {
 	 *            是否为新顾客
 	 * @return
 	 */
-	public Page list(int pageNo, Customer customer, boolean isNew) {
-		return list(pageNo, customer, isNew, Direction.DESC, "_id");
+	public Page list(int pageNo, Customer customer, CustomerType customerType) {
+		return list(pageNo, customer, customerType, Direction.DESC, "_id");
 	}
 
-	public Page listByPage(int pageNo, Customer customer,Direction direction,String property) {
-		return list(pageNo, customer, false,direction,property);
+	public Page listByPage(int pageNo, Customer customer, Direction direction, String property) {
+		return list(pageNo, customer, CustomerType.allCustomer, direction, property);
 	}
-
 
 	public Page ascendingList(int pageNo, Customer customer, boolean isNew) {
-		return list(pageNo, customer, false, Direction.ASC, "name");
+		return list(pageNo, customer, CustomerType.allCustomer, Direction.ASC, "name");
 	}
-	
+
 	public Page descendingList(int pageNo, Customer customer, boolean isNew) {
-		return list(pageNo, customer, false, Direction.DESC, "name");
+		return list(pageNo, customer, CustomerType.allCustomer, Direction.DESC, "name");
 	}
-	
+
 	public List<Customer> list(Customer customer) {
 		Query query = new Query();
 		if (customer.getMerchantId() == null) {
@@ -472,30 +490,31 @@ public class CustomerService extends BaseService {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		return mongoTemplate.find(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
 	}
+
 	public CallInStatisticsToday findCallInStatisticsToday(String id, Date startTime, Date endTime) {
 		Query query = new Query();
 		Date date = new Date();
-		Date startDate=DateFormateUtils.getStartDateOfDay(date);
+		Date startDate = DateFormateUtils.getStartDateOfDay(date);
 		query.addCriteria(Criteria.where("merchantId").is(new ObjectId(id)).and("callRecords.callTime").gt(startDate).lt(date));
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-		
-		int newCount=0;
-		int oldCount=0;
+
+		int newCount = 0;
+		int oldCount = 0;
 		for (Customer c : customers) {
 			if (c.getCallRecords() == null) {
 				continue;
 			}
 			for (CallRecord r : c.getCallRecords()) {
-				if(r.getCallTime().getTime()>startDate.getTime()&&r.getCallTime().getTime()<date.getTime()){
-					if(r.isNewCustomer()){
+				if (r.getCallTime().getTime() > startDate.getTime() && r.getCallTime().getTime() < date.getTime()) {
+					if (r.isNewCustomer()) {
 						newCount++;
-					}else{
+					} else {
 						oldCount++;
 					}
 				}
 			}
 		}
-		CallInStatisticsToday callInStatisticsToday = new CallInStatisticsToday(newCount,oldCount);
+		CallInStatisticsToday callInStatisticsToday = new CallInStatisticsToday(newCount, oldCount);
 		return callInStatisticsToday;
 	}
 }

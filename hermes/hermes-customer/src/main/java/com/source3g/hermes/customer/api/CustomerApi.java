@@ -47,6 +47,7 @@ import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
+import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
@@ -183,7 +184,18 @@ public class CustomerApi {
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
-		return customerService.list(pageNoInt, customer, true);
+		return customerService.list(pageNoInt, customer, CustomerType.newCustomer);
+	}
+
+	@RequestMapping(value = "/callInList/all/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Page callInList(String pageNo, String name, String phone, CustomerType customerType, @PathVariable String merchantId) {
+		int pageNoInt = Integer.valueOf(pageNo);
+		Customer customer = new Customer();
+		customer.setName(name);
+		customer.setMerchantId(new ObjectId(merchantId));
+		customer.setPhone(phone);
+		return customerService.list(pageNoInt, customer, customerType);
 	}
 
 	@RequestMapping(value = "/importLog/merchant/{merchantId}", method = RequestMethod.GET)
