@@ -32,7 +32,8 @@
 			 <td colspan="3"> 
 			<c:if test="${not empty customerGroups }">
 				<c:forEach items="${customerGroups}" var="customerGroup">
-					 <input type=checkbox name="ids" value="${customerGroup.id}">${customerGroup.name}
+					 <input type=checkbox name="ids" value="${customerGroup.id}">
+					 <a href="javascript:void();" onclick="customerListBycustomerGroupId('${customerGroup.id}')" > ${customerGroup.name}</a>
 				</c:forEach>
 			</c:if>
 			
@@ -77,6 +78,35 @@
 			</tbody>
 		</table>
 	</form>
+	
+		<div id="myModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>顾客组信息明细</h3>
+		</div>
+		<div class="modal-body">
+			<form class="well form-inline" id="customersForm">
+			<table id="customersTab"
+				class="table table-bordered table-striped">
+				<tbody>
+					<tr>
+						<td id="customers">
+						<input type=checkbox name="ids" value="${customerGroup.id}">张三
+						<input type=checkbox name="ids" value="${customerGroup.id}">里斯
+						<input type=checkbox name="ids" value="${customerGroup.id}">王五
+						</td>
+					</tr>
+				</tbody>
+			</table>
+				<div>
+					<input type=checkbox name="ids" value="${customerGroup.id}">全选
+					<input type="submit" class="btn btn-primary" id="customersFormBtn" value="确定"></input>
+				</div>
+			</form>
+		</div>
+		<div class="modal-footer"></div>
+	</div>
+	
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
 			<p id="resultMessage"></p>
@@ -206,6 +236,29 @@
 			}
 			return true;
 		}
+		function customerListBycustomerGroupId(id){
+			alert(id)
+		/*  	$("#customersTab tr:gt(0)").each(function() {
+				$(this).remove();
+			});*/
+			
+			$.ajax({
+				url: "${pageContext.request.contextPath}/merchant/customer/customerListBycustomerGroupId/"+id+"/",
+				//dataType : "json",
+				type:"get",
+				success:drawTable
+			});
+			
+			$("#myModal").modal();
+		}
+		function drawTable(data){
+			alert(data);
+			for(var i=0;i<data.length;i++){
+				var str=$("<input type=checkbox name="+data[i].id+" value="+data[i].phone+">"+data[i].name);
+			$("#customers").append(str);//添加
+			}
+			
+		}
 		
  		function fastSend() {
 			var phones=$('#customerPhones').text();
@@ -216,6 +269,6 @@
 			} 
 	 		return true;
 		} 
-		</script>
+	</script>
 </body>
 </html>

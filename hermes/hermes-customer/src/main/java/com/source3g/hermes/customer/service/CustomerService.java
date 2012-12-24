@@ -92,7 +92,11 @@ public class CustomerService extends BaseService {
 	public void updateExcludeProperties(Customer customer, String... properties) {
 		super.updateExcludeProperties(customer, properties);
 	}
-
+	//短信群发页面显示顾客信息
+	public  List<Customer> customerListBycustomerGroupId(ObjectId customerGroupId) {
+		return mongoTemplate.find(new Query(Criteria.where("customerGroupId").is(customerGroupId)), Customer.class);
+	}
+	
 	// public List<Customer> listAll() {
 	// return mongoTemplate.findAll(Customer.class);
 	// }

@@ -57,7 +57,11 @@ public class Customer extends AbstractEntity {
 	private ObjectId customerGroupId;
 	private Date operateTime;
 
-	//@JsonIgnore
+	public void setCallInCountToday(int count) {
+		
+	}
+
+	// @JsonIgnore
 	public int getCallInCountToday() {
 		int count = 0;
 		Date date = new Date();
