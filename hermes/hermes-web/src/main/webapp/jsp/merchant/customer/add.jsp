@@ -82,7 +82,7 @@
 			</tr>
 			<tr>
 				<td><label class="control-label">定时提醒：</label></td>
-				<td colspan="3"><c:forEach items="${customer.merchantRemindTemplates}"
+				<td colspan="3"><c:forEach items="${customer.reminds}"
 						var="remind" varStatus="status">
 						<div class="remindItem">
 							事项：<input type="text" readonly="readonly" name="reminds[${status.index }].merchantRemindTemplate.remindTemplate.title"
@@ -262,8 +262,6 @@
 			function initRemingSelection(data){
 				remindOptions="<option>请选择</option>"+remindOptions;
 				for(var i=0;i<data.length;i++){
-					alert(data);
-					alert(data[i].remindTemplate.title);
 					remindOptions+="<option value='"+data[i].id+"'>"+data[i].remindTemplate.title+"</option>"
 				}
 				 addRemindItem();

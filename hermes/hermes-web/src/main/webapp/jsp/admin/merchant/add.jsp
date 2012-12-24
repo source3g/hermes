@@ -21,7 +21,7 @@
 			<label class="control-label" for="account">账号：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
-					id="account" name="account" value="${merchant.account}"> <span
+					id="account" name="account" value="${merchant.account}" <c:if test="${not empty update}"> readonly="readonly"</c:if>  > <span
 					class="help-inline"></span>
 			</div>
 		</div>
@@ -241,6 +241,10 @@
 					}
 				}
 			}; 
+	 		if(${not empty update }){
+	 			validateOptions.rules.account=null;
+	 		}
+	 	
 			$('#addMerchantForm').validate(validateOptions); 
 			$('#queryMerchantGroupForm').validate({
 				rules : {
