@@ -70,6 +70,14 @@ public class CustomerController {
 			return new ModelAndView("merchant/error");
 		}
 	}
+	//添加顾客验证电话号码去重
+	@RequestMapping(value = "/phoneValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean phoneValidate(String phone) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "customer/phoneValidate/"+phone+"/";
+		Boolean result = restTemplate.getForObject(uri,Boolean.class);
+			return result;
+	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public ModelAndView list(Customer customer, String property, String sortType, String phoneSortType, String pageNo, HttpServletRequest req) throws Exception {

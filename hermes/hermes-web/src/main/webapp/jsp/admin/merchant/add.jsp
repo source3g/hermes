@@ -187,6 +187,7 @@
 					 account:{
 						required : true,
 						minlength : 2,
+						validateAccount:true,
 						remote:{	
 							type: "get",
 							url:"${pageContext.request.contextPath}/admin/merchant/accountValidate",
@@ -218,6 +219,7 @@
 					account : {
 						required : "请填写账号",
 						minlength : "至少输入两个字符",
+						validateAccount:"请输入数字或字母",
 						remote:"该账号已存在"
 					},
 				    password : {
@@ -252,6 +254,15 @@
 					}
 				}
 			});  
+			$.validator.addMethod(
+					"validateAccount",
+					function(value, element, params) {
+						var account=new RegExp("^\w+$");
+						if(!account.test($('#account').val())){
+							return false;
+						}
+						return true;
+					},"请输入数字或字母");
 		$("#queryMerchantGroupForm").submit(function() {
 			if (!$('#queryMerchantGroupForm').valid()) {
 				return false;

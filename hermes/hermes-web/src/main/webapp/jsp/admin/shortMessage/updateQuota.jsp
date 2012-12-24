@@ -59,7 +59,7 @@
 										number : true,
 										digits : true,
 										validateCount : true
-									//	validateCount1 : true
+								
 									}
 								},
 								messages : {
@@ -68,7 +68,7 @@
 										number : "请输入有效数字",
 										digits : "请输入整数",
 										validateCount : "输入数量有误"
-									//	validateCount1 : "输入数量不符合规范"
+							
 									}
 								}
 							};
