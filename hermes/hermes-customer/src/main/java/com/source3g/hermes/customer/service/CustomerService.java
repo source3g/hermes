@@ -146,6 +146,65 @@ public class CustomerService extends BaseService {
 	}
 
 	/**
+	 * 来电顾客列表
+	 * 
+	 * @param pageNo
+	 * @param customer
+	 * @param customerType
+	 *            顾客类型，分为新顾客，老顾客，全部顾客
+	 * @param direction
+	 *            排序规则
+	 * @param properties
+	 *            排序属性
+	 * @return
+	 */
+	public Page callInList(int pageNo, Customer customer, CustomerType customerType) {
+		Query query = new Query();
+		Criteria criteria = null;
+		if (customer.getMerchantId() == null) {
+			return null;
+		} else {
+			criteria = Criteria.where("merchantId").is(customer.getMerchantId());
+		}
+
+		switch (customerType) {
+		case newCustomer:
+			criteria.and("name").is(null);
+			break;
+		case oldCustomer:
+			if (StringUtils.isNotEmpty(customer.getName())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("name").is(pattern);
+			} else {
+				criteria.and("name").ne(null);
+			}
+			if (StringUtils.isNotEmpty(customer.getPhone())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("phone").is(pattern);
+			}
+		case allCustomer:
+			if (StringUtils.isNotEmpty(customer.getName())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("name").is(pattern);
+			}
+			if (StringUtils.isNotEmpty(customer.getPhone())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
+				criteria.and("phone").is(pattern);
+			}
+		}
+		criteria.and("lastCallInTime").gt(DateFormateUtils.getStartDateOfDay(new Date()));
+		query.addCriteria(criteria);
+		query.with(new Sort(Direction.DESC, "lastCallInTime"));
+		Page page = new Page();
+		Long totalCount = mongoTemplate.count(query, Customer.class);
+		page.setTotalRecords(totalCount);
+		page.gotoPage(pageNo);
+		List<Customer> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Customer.class);
+		page.setData(list);
+		return page;
+	}
+
+	/**
 	 * 顾客列表
 	 * 
 	 * @param pageNo

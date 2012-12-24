@@ -25,5 +25,17 @@
 			<artifactId>hermes-api-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+
+		<dependency>
+			<groupId>com.hongxun</groupId>
+			<artifactId>pub</artifactId>
+			<version>1.0</version>
+			<!-- <systemPath>${basedir}/lib/HXPUBAPI.jar</systemPath> -->
+		</dependency>
+		
 	</dependencies>
+
+	<build>
+	</build>
 </project>

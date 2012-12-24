@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.source3g.hermes</groupId>
 	<artifactId>hermes-parent</artifactId>
@@ -12,13 +13,13 @@
 		<module>hermes-monitor</module>
 		<module>hermes-api</module>
 		<module>hermes-common</module>
-   		 <module>hermes-merchant</module>
-    <module>hermes-device</module>
-    <module>hermes-api-common</module>
-    <module>hermes-sync</module>
-    <module>hermes-message</module>
-    <module>hermes-dictionary</module>
-  </modules>
+		<module>hermes-merchant</module>
+		<module>hermes-device</module>
+		<module>hermes-api-common</module>
+		<module>hermes-sync</module>
+		<module>hermes-message</module>
+		<module>hermes-dictionary</module>
+	</modules>
 	<build>
 		<finalName>${project.name}</finalName>
 		<testResources>
@@ -58,21 +59,18 @@
 					<argLine>-Xmx256M -XX:MaxPermSize=128m</argLine>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.7</version>
+				<version>2.7</version>
 				<configuration>
 					<ajdtVersion>none</ajdtVersion>
 
-             <!--   <wtpmanifest>true</wtpmanifest>
-
-                <wtpapplicationxml>true</wtpapplicationxml>
-
-                <wtpversion>2.0</wtpversion>-->
-				        <downloadSources>true</downloadSources>  
-        <downloadJavadocs>true</downloadJavadocs>  
+					<!-- <wtpmanifest>true</wtpmanifest> <wtpapplicationxml>true</wtpapplicationxml> 
+						<wtpversion>2.0</wtpversion> -->
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
 				</configuration>
 
 
@@ -194,8 +192,8 @@
 			<artifactId>spring-aspects</artifactId>
 			<version>${org.springframework.version}</version>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
@@ -400,18 +398,18 @@
 	</dependencies>
 
 	<profiles>
-<profile>  
-    <id>jdk-1.7</id>  
-    <activation>  
-        <activeByDefault>true</activeByDefault>  
-        <jdk>1.7</jdk>  
-    </activation>  
-    <properties>  
-        <maven.compiler.source>1.7</maven.compiler.source>  
-        <maven.compiler.target>1.7</maven.compiler.target>  
-        <maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>  
-    </properties>  
-</profile> 
+		<profile>
+			<id>jdk-1.7</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<jdk>1.7</jdk>
+			</activation>
+			<properties>
+				<maven.compiler.source>1.7</maven.compiler.source>
+				<maven.compiler.target>1.7</maven.compiler.target>
+				<maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
+			</properties>
+		</profile>
 
 
 	</profiles>

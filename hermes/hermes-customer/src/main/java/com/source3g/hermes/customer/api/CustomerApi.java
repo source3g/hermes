@@ -189,7 +189,7 @@ public class CustomerApi {
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
-		return customerService.list(pageNoInt, customer, customerType);
+		return customerService.callInList(pageNoInt, customer, customerType);
 	}
 
 	@RequestMapping(value = "/importLog/merchant/{merchantId}", method = RequestMethod.GET)

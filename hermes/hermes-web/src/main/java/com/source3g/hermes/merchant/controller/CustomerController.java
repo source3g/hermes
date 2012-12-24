@@ -289,6 +289,7 @@ public class CustomerController {
 		Page page = restTemplate.getForObject(uriBuffer.toString(), Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
+		model.put("customerType", customerType);
 		return new ModelAndView("/merchant/customer/callInList", model);
 	}
 
