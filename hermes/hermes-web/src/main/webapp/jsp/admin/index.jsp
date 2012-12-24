@@ -239,7 +239,7 @@ body {
 		
 		//提醒设置 
 		$("#dataDictionary").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/Dictionary/toRemindTemplate/");
+			loadPage("${pageContext.request.contextPath}/admin/dictionary/toRemindTemplate/");
 		});
 	});
 

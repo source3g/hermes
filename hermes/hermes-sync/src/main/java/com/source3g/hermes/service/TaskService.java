@@ -33,7 +33,7 @@ import com.source3g.hermes.sync.utils.TarGZipUtils;
 import com.source3g.hermes.utils.MD5;
 
 @Service
-public class TaskService extends BaseService {
+public class TaskService extends CommonBaseService {
 
 	@Value(value = "${local.url}")
 	private String localUrl;
@@ -68,18 +68,22 @@ public class TaskService extends BaseService {
 		return tasks;
 	}
 
-	public List<TaskPackage> genTasks(String sn) {
+	public List<TaskPackage> genTasks(String sn) throws Exception {
 		List<TaskPackage> result = new ArrayList<TaskPackage>();
 		TaskPackage taskPackage;
-		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+		Merchant merchant = findMerchantByDeviceSn(sn);
 		DeviceStatus deviceStatus = findStatus(sn);
 		if (deviceStatus == null) {
 			deviceStatus = new DeviceStatus();
 			deviceStatus.setId(ObjectId.get());
 			deviceStatus.setDeviceSn(sn);
 		}
-		if (deviceStatus.getLastTaskId() == null) {
+		if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
+			taskPackage = findAllPackage(merchant.getId());
+			if (taskPackage != null) {
+				deviceStatus.setStatus(TaskConstants.INCREMENT);
+			}
+		} else if (deviceStatus.getLastTaskId() == null) {
 			taskPackage = findFirstPackage(merchant.getId());
 		} else {
 			taskPackage = findIncrementPackage(merchant.getId(), deviceStatus.getLastTaskId());
@@ -91,6 +95,10 @@ public class TaskService extends BaseService {
 			result.add(taskPackage);
 		}
 		return result;
+	}
+
+	public void saveDeviceStatus(DeviceStatus deviceStatus) {
+		mongoTemplate.save(deviceStatus);
 	}
 
 	private TaskPackage findIncrementPackage(ObjectId merchantId, Long lastTaskId) {
@@ -148,6 +156,23 @@ public class TaskService extends BaseService {
 	}
 
 	/**
+	 * 拿全包
+	 * 
+	 * @param merchantId
+	 * @return
+	 */
+	public TaskPackage findAllPackage(ObjectId merchantId) {
+		// 找到最新的全包
+		Query findLastAllPackage = new Query();
+		findLastAllPackage.addCriteria(Criteria.where("merchantId").is(merchantId).and("type").is(TaskConstants.ALL_PACKAGE));
+		// 按任务序号降序排序，取第一个即为最新的全包
+		Sort sort = new Sort(new Order(Direction.DESC, "taskId"));
+		// 拿一个全包
+		TaskPackage result = mongoTemplate.findOne(findLastAllPackage.with(sort), TaskPackage.class);
+		return result;
+	}
+
+	/**
 	 * 拿第一个合适的包
 	 * 
 	 * @param merchantId
@@ -165,7 +190,7 @@ public class TaskService extends BaseService {
 		if (result == null) {
 			// 按ID升级排序，取第一个增量包
 			Sort sortByIdAsc = new Sort(new Order(Direction.ASC, "taskId"));
-			Query findFirstIncrementPackage = new Query();
+			Query findFirstIncrementPackage = new Query(Criteria.where("merchantId").is(merchantId));
 			findFirstIncrementPackage.addCriteria(Criteria.where("type").is(TaskConstants.INCREMENT_PACKAGE));
 			result = mongoTemplate.findOne(findFirstIncrementPackage.with(sortByIdAsc), TaskPackage.class);
 		}
@@ -218,7 +243,7 @@ public class TaskService extends BaseService {
 	}
 
 	public Date findLastPackageTime(Merchant merchant) {
-		TaskPackage taskPackage = mongoTemplate.findOne(new Query().with(new Sort(new Order(Direction.DESC, "createTime"))), TaskPackage.class);
+		TaskPackage taskPackage = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())).with(new Sort(new Order(Direction.DESC, "createTime"))), TaskPackage.class);
 		if (taskPackage != null) {
 			return taskPackage.getCreateTime();
 		} else {
@@ -228,34 +253,73 @@ public class TaskService extends BaseService {
 
 	public void packageIncrement(Merchant merchant) throws IOException {
 		Date date = findLastPackageTime(merchant);
-		List<Customer> addOrUpdateList = findAddOrUpdateList(date);
+		List<Customer> addOrUpdateList = findAddOrUpdateList(merchant.getId(), date);
 
-		List<Customer> deleteList = findDeleteList(date);
+		List<Customer> deleteList = findDeleteList(merchant.getId(), date);
 		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {
 			return;
 		}
+		packageTask(merchant.getId(), addOrUpdateList, deleteList, TaskConstants.INCREMENT_PACKAGE);
+	}
 
+	public void packageAll(ObjectId merchantId) throws IOException {
+		List<Customer> addOrUpdateList = findAddOrUpdateList(merchantId);
+		List<Customer> deleteList = findDeleteList(merchantId);
+		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {
+			return;
+		}
+		packageTask(merchantId, addOrUpdateList, deleteList, TaskConstants.ALL_PACKAGE);
+	}
+
+	private List<Customer> findDeleteList(ObjectId id) {
+		return new ArrayList<Customer>();
+	}
+
+	private TaskPackage packageTask(ObjectId merchantId, List<Customer> addOrUpdateList, List<Customer> deleteList, String type) throws IOException {
 		Date createTime = new Date();
 		TaskPackage taskPackage = new TaskPackage();
 		taskPackage.setCreateTime(createTime);
 		taskPackage.setTaskId(createTime.getTime());
 		taskPackage.setId(ObjectId.get());
-		taskPackage.setMerchantId(merchant.getId());
-		taskPackage.setType(TaskConstants.INCREMENT_PACKAGE);
+		taskPackage.setMerchantId(merchantId);
+		taskPackage.setType(type);
 		// 文件名
 		String fileName = String.valueOf(createTime.getTime());
 		// 产生文件路径
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		// 所在商户的相对路径
-		String merchantPath = dateFormat.format(createTime) + "/" + merchant.getId().toString() + "/";
+		String merchantPath = dateFormat.format(createTime) + "/" + merchantId.toString() + "/";
+		File gzipFile = genGzipFile(addOrUpdateList, deleteList, merchantPath, fileName);
+		String relativeGzipPath = merchantPath + gzipFile.getName();
+		taskPackage.setRemoteUrl(relativeGzipPath);
+		taskPackage.setMd5(MD5.md5sum(gzipFile.getAbsolutePath()));
+		mongoTemplate.save(taskPackage);
+		return taskPackage;
+	}
+
+	/**
+	 * 生成gzip文件
+	 * 
+	 * @param addOrUpdateList
+	 *            增加或更新顾客列表
+	 * @param deleteList
+	 *            删除的顾客列表
+	 * @param merchantPath
+	 *            该商户相对路径
+	 * @param fileName
+	 *            文件名
+	 * @return
+	 * @throws IOException
+	 */
+	public File genGzipFile(List<Customer> addOrUpdateList, List<Customer> deleteList, String merchantPath, String fileName) throws IOException {
 		// 所在商户绝对路径
 		String folderPath = taskPackagePath + merchantPath;
 		// 文件的相对路径
 		String relativeFilePath = merchantPath + fileName;
 		// 文件的绝对路径
 		String absoluteFilePath = taskPackagePath + relativeFilePath;
-
 		String txtFilePath = absoluteFilePath + ".sql";
+
 		File taskFolder = new File(folderPath);
 		if (!taskFolder.exists()) {
 			taskFolder.mkdirs();
@@ -273,51 +337,39 @@ public class TaskService extends BaseService {
 			bw.flush();
 		}
 		bw.close();
-		// File gzipFile = new File(gzipFilePath);
-		DefaultResourceLoader defaultResourceLoader=new DefaultResourceLoader();
-		
-		Resource resource = defaultResourceLoader.getResource("taskfiles/customer/task.sh");//new ClassPathResource("classpath*:taskfiles/customer/task.sh");
-
-		// gzipFile.createNewFile();
-		// // 建立压缩文件输出流
-		// FileOutputStream fout = new FileOutputStream(gzipFile);
-		// // 建立gzip压缩输出流
-		// GZIPOutputStream gzout = new GZIPOutputStream(fout);
-		// byte[] buf = new byte[1024];// 设定读入缓冲区尺寸
-		// int num;
-		// FileInputStream fin = new FileInputStream(file);
-		// while ((num = fin.read(buf)) != -1) {
-		// gzout.write(buf, 0, num);
-		// }
-		// gzout.finish();
-		// gzout.close();// !!!关闭流,必须关闭所有输入输出流.保证输入输出完整和释放系统资源.
-		// fout.close();
-		// fin.close();
+		DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
+		Resource resource = defaultResourceLoader.getResource("taskfiles/customer/task.sh");// new
 		try {
 			File[] files = { new File(txtFilePath), resource.getFile() };
 			File gzipFile = TarGZipUtils.tarGzip(fileName + "/", files, absoluteFilePath);
-
-			String relativeGzipPath = merchantPath + gzipFile.getName();
-			taskPackage.setRemoteUrl(relativeGzipPath);
-			taskPackage.setMd5(MD5.md5sum(gzipFile.getAbsolutePath()));
-			mongoTemplate.save(taskPackage);
+			return gzipFile;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
-	private List<Customer> findDeleteList(Date date) {
+	private List<Customer> findDeleteList(ObjectId merchantId, Date date) {
 		List<Customer> list = new ArrayList<Customer>();
 		return list;
 	}
 
-	private List<Customer> findAddOrUpdateList(Date date) {
+	private List<Customer> findAddOrUpdateList(ObjectId merchantId) {
+		return findAddOrUpdateList(merchantId, null);
+	}
+
+	private List<Customer> findAddOrUpdateList(ObjectId merchantId, Date date) {
 		List<Customer> list = new ArrayList<Customer>();
 		if (date == null) {
-			list = mongoTemplate.findAll(Customer.class);
+			list = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId).and("name").ne(null)), Customer.class);
 		} else {
-			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date)), Customer.class);
+			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date).and("merchantId").is(merchantId).and("name").ne(null)), Customer.class);
 		}
 		return list;
+	}
+
+	public void init(String sn) throws Exception {
+		Merchant merchant = findMerchantByDeviceSn(sn);
+		packageAll(merchant.getId());
 	}
 }

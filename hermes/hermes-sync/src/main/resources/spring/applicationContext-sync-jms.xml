@@ -4,5 +4,17 @@
 	xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
-
+	<bean id="packageAllListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="syncDestination" />
+		<property name="pubSubDomain" value="true" />
+		<property name="sessionTransacted" value="true" />
+		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
+		<property name="messageListener" ref="packageAllListener" />
+		<property name="subscriptionDurable" value="true" />
+		<property name="durableSubscriptionName" value="sync_package_all" />
+		<property name="messageSelector" value="type='packageAll'"></property>
+		<!-- <property name="clientId" value="clientId_sync_packageAll" /> -->
+	</bean>
 </beans>

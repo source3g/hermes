@@ -16,7 +16,7 @@ import com.source3g.hermes.dictionary.service.DictionaryService;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 
 @Controller
-@RequestMapping("/Dictionary")
+@RequestMapping("/dictionary")
 public class DictionaryApi {
 	//private Logger logger = LoggerFactory.getLogger(DictionaryApi.class);
 

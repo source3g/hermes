@@ -13,4 +13,8 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 		<constructor-arg value="com.source3g.hermes.message" />
 	</bean>
 	
+	<bean id="syncDestination" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg value="com.source3g.hermes.sync" />
+	</bean>
+	
 </beans>

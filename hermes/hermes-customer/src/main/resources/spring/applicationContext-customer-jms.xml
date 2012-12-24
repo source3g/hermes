@@ -37,7 +37,7 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 
 	<bean id="customerDelListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="customerDelTopicListenerConnectionFactory" />
+		<property name="connectionFactory" ref="connectionFactory" />
 		<property name="destination" ref="customerDestination" />
 		<property name="pubSubDomain" value="true" />
 		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
