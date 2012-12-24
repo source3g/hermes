@@ -17,8 +17,9 @@
 		<input type="text" class="input-xlarge" placeholder="请输入资源代码..."
 			id="code" value="${code }" name="code"> <span
 			class="help-inline"><font color="red">*</font></span><input
-			id="pageNo" name="pageNo" type="hidden"> <input
-			class="btn btn-primary" type="submit" value="增加"> <input
+			id="pageNo" name="pageNo" type="hidden"> 		 
+			<button id="addBtn" data-loading-text="资源增加中..." class="btn btn-primary">
+                   	确定 </button><input
 			class="btn btn-primary" type="button" onclick="query();" value="查询">
 	</form>
 
@@ -113,6 +114,7 @@
 				if (!$("#addResourceForm").valid()) {
 					return;
 				}
+				$('#addBtn').button('loading')
 				$(this).ajaxSubmit(submitOptions);
 				return false;
 			});

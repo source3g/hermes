@@ -4,11 +4,11 @@ import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
-import com.source3g.hermes.entity.merchant.RemindTemplate;
+import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 
 public class Remind {
 	@DBRef
-	private RemindTemplate remindTemplate;
+	private MerchantRemindTemplate merchantRemindTemplate;
 	private Date remindTime;
 	private String advancedTime;// 提前提醒的天数
 	private boolean alreadyRemind;
@@ -17,15 +17,12 @@ public class Remind {
 	public Date getRemindTime() {
 		return remindTime;
 	}
-
-	public RemindTemplate getRemindTemplate() {
-		return remindTemplate;
+	public MerchantRemindTemplate getMerchantRemindTemplate() {
+		return merchantRemindTemplate;
 	}
-
-	public void setRemindTemplate(RemindTemplate remindTemplate) {
-		this.remindTemplate = remindTemplate;
+	public void setMerchantRemindTemplate(MerchantRemindTemplate merchantRemindTemplate) {
+		this.merchantRemindTemplate = merchantRemindTemplate;
 	}
-
 	public void setRemindTime(Date remindTime) {
 		this.remindTime = remindTime;
 	}

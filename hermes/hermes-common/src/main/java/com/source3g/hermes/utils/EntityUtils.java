@@ -35,8 +35,8 @@ public class EntityUtils {
 				remindDto.setAdvancedTime(r.getAdvancedTime());
 				remindDto.setAlreadyRemind(r.isAlreadyRemind());
 				remindDto.setRemindTime(r.getRemindTime());
-				if (r.getRemindTemplate() != null && StringUtils.isNotEmpty(r.getRemindTemplate().getTitle())) {
-					remindDto.setName(r.getRemindTemplate().getTitle());
+				if (r.getMerchantRemindTemplate() != null && r.getMerchantRemindTemplate().getRemindTemplate()!=null&&StringUtils.isNotEmpty(r.getMerchantRemindTemplate().getRemindTemplate().getTitle())) {
+					remindDto.setName(r.getMerchantRemindTemplate().getRemindTemplate().getTitle());
 				}
 				reminds.add(remindDto);
 			}

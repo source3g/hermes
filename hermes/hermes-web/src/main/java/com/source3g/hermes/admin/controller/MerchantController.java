@@ -44,15 +44,16 @@ public class MerchantController {
 	public ModelAndView toAdd() {
 		return new ModelAndView("admin/merchant/add");
 	}
-	//验证商户账号是否存在
+
+	// 验证商户账号是否存在
 	@RequestMapping(value = "accountValidate", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean accountValidate(String account) {
-		String uri=ConfigParams.getBaseUrl() + "merchant/accountValidate/"+account+"/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/accountValidate/" + account + "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid Merchant merchant, BindingResult errorResult) {
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -68,7 +69,7 @@ public class MerchantController {
 			return new ModelAndView("admin/merchant/add", model);
 		} else {
 			model.put("error", result);
-			return new ModelAndView("admin/merchant/add",model);
+			return new ModelAndView("admin/merchant/add", model);
 		}
 	}
 
@@ -94,15 +95,17 @@ public class MerchantController {
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/merchant/list/");
 	}
+
 	@RequestMapping(value = "/toSetDictionary/{merchantId}", method = RequestMethod.GET)
 	public ModelAndView setDictionary(@PathVariable String merchantId) {
-		String uri = ConfigParams.getBaseUrl() + "merchant/merchantRemindList/"+merchantId+"/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/merchantRemindList/" + merchantId + "/";
 		MerchantRemindTemplate[] merchantRemindTemplates = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("merchantRemindTemplates", merchantRemindTemplates);
 		model.put("id", merchantId);
-		return new ModelAndView("/admin/merchant/set",model);
+		return new ModelAndView("/admin/merchant/set", model);
 	}
+
 	@RequestMapping(value = "/dataDictionaryList", method = RequestMethod.GET)
 	@ResponseBody
 	public RemindTemplate[] dataDictionaryList() {
@@ -110,29 +113,29 @@ public class MerchantController {
 		RemindTemplate[] remindTemplate = restTemplate.getForObject(uri, RemindTemplate[].class);
 		return remindTemplate;
 	}
-	
+
 	@RequestMapping(value = "/remindAdd/{merchantId}/{templateId}", method = RequestMethod.GET)
-	public ModelAndView remindAdd(@PathVariable String merchantId,@PathVariable String templateId ) {
-		String uri = ConfigParams.getBaseUrl() + "merchant/remindAdd/"+merchantId+"/"+templateId+"/";
+	public ModelAndView remindAdd(@PathVariable String merchantId, @PathVariable String templateId) {
+		String uri = ConfigParams.getBaseUrl() + "merchant/remindAdd/" + merchantId + "/" + templateId + "/";
 		MerchantRemindTemplate[] merchantRemindTemplate = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
 		Map<String, Object> model = new HashMap<String, Object>();
-		if(merchantRemindTemplate!=null){
+		if (merchantRemindTemplate != null) {
 			model.put("merchantId", merchantId);
 			model.put("merchantRemindTemplates", merchantRemindTemplate);
-		return new ModelAndView("/admin/merchant/set",model);
+			return new ModelAndView("/admin/merchant/set", model);
 		}
-		return  new ModelAndView("admin/error");
+		return new ModelAndView("admin/error");
 	}
-	
+
 	@RequestMapping(value = "/remindDelete/{merchantId}/{templateId}", method = RequestMethod.GET)
-	public ModelAndView remindDelete(@PathVariable String merchantId,@PathVariable String templateId ) {
-		String uri = ConfigParams.getBaseUrl() + "merchant/remindDelete/"+merchantId+"/"+templateId+"/";
+	public ModelAndView remindDelete(@PathVariable String merchantId, @PathVariable String templateId) {
+		String uri = ConfigParams.getBaseUrl() + "merchant/remindDelete/" + merchantId + "/" + templateId + "/";
 		MerchantRemindTemplate[] merchantRemindTemplate = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("merchantRemindTemplates", merchantRemindTemplate);
-		return new ModelAndView("/admin/merchant/set",model);
+		return new ModelAndView("/admin/merchant/set", model);
 	}
-	
+
 	@RequestMapping(value = "/toModify/{id}", method = RequestMethod.GET)
 	public ModelAndView toModify(@PathVariable String id) {
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -208,7 +211,7 @@ public class MerchantController {
 	}
 
 	@RequestMapping(value = "/reservedMsg/{id}", method = RequestMethod.POST)
-	public ModelAndView chargeMsg(@PathVariable String id, String type, String count) {	
+	public ModelAndView chargeMsg(@PathVariable String id, String type, String count) {
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("type", type);
 		formData.add("count", count);
@@ -217,17 +220,17 @@ public class MerchantController {
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		String uri = ConfigParams.getBaseUrl() + "merchant/chargeMsg/" + id + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
-		if (ReturnConstants.SUCCESS.equals(result)) {	
-				return new ModelAndView("redirect:/admin/merchant/messageInfo/list/");
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("redirect:/admin/merchant/messageInfo/list/");
 		}
 		return new ModelAndView("admin/error");
-	}	
-	
+	}
+
 	@RequestMapping(value = "/reservedMsgLog/{id}", method = RequestMethod.GET)
-	public ModelAndView reservedMsgLog(@PathVariable String id,String pageNo){
+	public ModelAndView reservedMsgLog(@PathVariable String id, String pageNo) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
-		Merchant merchant=restTemplate.getForObject(uri, Merchant.class);
+		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
@@ -235,18 +238,20 @@ public class MerchantController {
 		Page page = restTemplate.getForObject(uriMsgLog, Page.class);
 		model.put("page", page);
 		model.put("merchant", merchant);
-		return new ModelAndView("admin/shortMessage/reservedMessageLog",model);
+		return new ModelAndView("admin/shortMessage/reservedMessageLog", model);
 	}
-	@RequestMapping(value="/toUpdateQuota/{id}", method=RequestMethod.GET)
-	public ModelAndView reservedMsgLog(@PathVariable String id){
+
+	@RequestMapping(value = "/toUpdateQuota/{id}", method = RequestMethod.GET)
+	public ModelAndView reservedMsgLog(@PathVariable String id) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String uri = ConfigParams.getBaseUrl() + "merchant/" + id + "/";
-		Merchant merchant=restTemplate.getForObject(uri, Merchant.class);
+		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
 		model.put("merchant", merchant);
-		return new ModelAndView("admin/shortMessage/updateQuota",model);
+		return new ModelAndView("admin/shortMessage/updateQuota", model);
 	}
-	@RequestMapping(value="/UpdateQuota/{id}", method=RequestMethod.POST)
-	public ModelAndView UpdateQuota(@PathVariable String id,String type,String count){
+
+	@RequestMapping(value = "/UpdateQuota/{id}", method = RequestMethod.POST)
+	public ModelAndView UpdateQuota(@PathVariable String id, String type, String count) {
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("type", type);
 		formData.add("count", count);
@@ -255,8 +260,8 @@ public class MerchantController {
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		String uri = ConfigParams.getBaseUrl() + "merchant/UpdateQuota/" + id + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
-		if (ReturnConstants.SUCCESS.equals(result)) {	
-				return new ModelAndView("redirect:/admin/merchant/messageInfo/list/");
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("redirect:/admin/merchant/messageInfo/list/");
 		}
 		return new ModelAndView("admin/error");
 	}

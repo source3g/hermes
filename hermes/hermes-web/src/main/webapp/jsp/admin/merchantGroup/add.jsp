@@ -28,7 +28,9 @@
 				<input type="submit" class="btn btn-primary" value="修改">
 			</c:if>
 			<c:if test="${ empty update}">
-				<input type="submit" class="btn btn-primary" value="增加">
+					<button id="addMerchantGroupBtn" data-loading-text="增加集团商户中..." class="btn btn-primary">
+                    		增加
+                  </button>
 			</c:if>
 		</div>
 	</form>
@@ -88,6 +90,7 @@
 			 	if (!$("#addMerchantGroupForm").valid()) {
 			 		return false;
 				 }
+				$('#addMerchantGroupBtn').button('loading')
 				if(${not empty update}){
 					addMerchantGroupFormOptions.url="${pageContext.request.contextPath}/admin/merchantGroup/update/";
 				}

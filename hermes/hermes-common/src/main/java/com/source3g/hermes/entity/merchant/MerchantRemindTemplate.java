@@ -1,9 +1,12 @@
 package com.source3g.hermes.entity.merchant;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
+@Document
 public class MerchantRemindTemplate extends AbstractEntity {
 	/**
 	 * 
@@ -12,6 +15,16 @@ public class MerchantRemindTemplate extends AbstractEntity {
 	@DBRef
 	private RemindTemplate remindTemplate;
 	private String messageContent;
+	private ObjectId merchantId;
+	
+	
+	public ObjectId getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(ObjectId merchantId) {
+		this.merchantId = merchantId;
+	}
 
 	public RemindTemplate getRemindTemplate() {
 		return remindTemplate;

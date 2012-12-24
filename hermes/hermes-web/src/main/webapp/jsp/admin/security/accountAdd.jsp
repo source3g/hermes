@@ -47,7 +47,9 @@
 		</div>
 
 		<div class="form-actions">
-			<input type="submit" class="btn btn-primary" value="增加">
+			<button id="addAccountBtn" data-loading-text="账号增加中..." class="btn btn-primary">
+                    		增加
+                 </button>
 		</div>
 		
 		<div id="errorModal" class="modal hide fade">
@@ -121,6 +123,7 @@
 				if (!$('#addAccountForm').valid()) {
 					return false;
 				}
+				$('#addAccountBtn').button('loading')
 				$("#addAccountForm").ajaxSubmit({
 					success:showContentInfo
 				});

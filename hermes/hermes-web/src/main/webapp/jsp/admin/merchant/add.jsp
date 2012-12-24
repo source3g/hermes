@@ -84,7 +84,9 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-				<input type="submit" class="btn btn-primary" value="增加">
+					<button id="addMerchantBtn" data-loading-text="增加商户中..." class="btn btn-primary">
+                    		增加
+                  </button>
 			</c:if>
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">
@@ -261,6 +263,7 @@
 		 	if (!$("#addMerchantForm").valid()) {
 		 		return false;
 			 }
+		 	$('#addMerchantBtn').button('loading')	
 			 var options = {
 				success : toList
 			}; 

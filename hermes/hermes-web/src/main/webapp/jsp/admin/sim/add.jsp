@@ -23,8 +23,9 @@
 			</div>
 		</div>
 		<div class="form-actions">
-		<input type="submit" class="btn btn-primary" input="增加">
-			
+				 <button id="addSIMBtn" data-loading-text="SIM卡增加中..." class="btn btn-primary">
+                    		增加
+                 </button>
 		</div>
 		<c:if test="${not empty errors }">
 				<div class="alert alert-error">
@@ -89,6 +90,7 @@
 			if (!$("#addSimForm").valid()) {
 				return false;
 			} 
+			$('#addSIMBtn').button('loading')
 			$(this).ajaxSubmit(options);
 			return false;
 		});
