@@ -25,7 +25,8 @@
 					</c:if> <label class="control-label">姓名：</label></td>
 				<td width="40%"><input type="text" name="name"
 					value="${customer.name }" class="input-medium"
-					placeholder="请输入姓名..." /></td>
+					placeholder="请输入姓名..." /><span
+					class="help-inline"><font color="red">*</font></span></td>
 				<td width="10%"><label class="control-label" for="name">性别：</label></td>
 				<td width="40%"><input type="radio" name="sex" value="MALE"
 					<c:if test="${( empty customer) or customer.sex eq 'MALE' }">checked="checked"</c:if> />男
@@ -38,8 +39,9 @@
 					value="${customer.birthday }" placeholder="请选择生日..."
 					onclick="WdatePicker({dateFmt:'MM-dd'});" /></td>
 				<td><label class="control-label">移动电话：</label></td>
-				<td><input type="text" class="input-medium" name="phone"
-					placeholder="请输入移动电话..." value="${customer.phone }" /></td>
+				<td><input type="text" class="input-medium" name="phone" id="phone"
+					placeholder="请输入移动电话..." value="${customer.phone }" /><span
+					class="help-inline"><font color="red">*</font></span></td>
 			</tr>
 			<tr>
 				<td><label class="control-label">顾客组：</label></td>
@@ -134,12 +136,21 @@
 			var validateoptions={
 					rules: {
 						name:{
+							required : true,
 							rangelength:[0,50]
 						},
 			 			phone:{
 			 				rangelength:[11,11],
 							number:true,
-							digits:true 
+							digits:true ,
+							remote:{
+								type: "get",
+								url:"${pageContext.request.contextPath}/merchant/customer/phoneValidate",
+								data:{"phone":function(){
+													return $('#phone').val();
+												}
+									}
+							}
 						},
 						customerGroupId:{
 							required : true
@@ -160,12 +171,14 @@
 					},
 					messages: {
 						name:{
+							required : "姓名不能为空",
 							rangelength:"姓名不得超过50字"
 						},
 				 		phone:{
 				 			rangelength:"输入长度必须为11位的有效数字",
 							number:"请输入合法的数字",
-							digits:"请输入整数"
+							digits:"请输入整数",
+							remote:"该电话号码已存在"
 						},
 						customerGroupId:{
 							required : "客户组不能为空"
