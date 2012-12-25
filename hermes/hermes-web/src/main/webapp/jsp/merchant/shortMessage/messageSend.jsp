@@ -92,7 +92,6 @@
 				<tr><td id="customer">
 				</td></tr>
 				<tr><td id="allList">
-				
 				</td></tr>
 				</tbody>
 			</table>

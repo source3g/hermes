@@ -24,6 +24,7 @@ import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
+import com.source3g.hermes.utils.LoginUtils;
 
 @Controller
 @RequestMapping("/merchant/customerGroup")
@@ -32,8 +33,8 @@ public class CustomerGroupController {
 	private RestTemplate restTemplate;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView toIndex(HttpServletRequest request) {
-		Merchant merchant = (Merchant) request.getSession().getAttribute("loginUser");
+	public ModelAndView toIndex(HttpServletRequest request) throws Exception {
+		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(request);
 		Map<String, Object> model =toIndex( merchant);
 		return new ModelAndView("/merchant/customerGroup/index", model);
 	}
@@ -89,6 +90,14 @@ public class CustomerGroupController {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public ModelAndView delete(@PathVariable String id) {
 		String uri = ConfigParams.getBaseUrl() + "customerGroup/delete/" + id + "/";
+		restTemplate.getForObject(uri, String.class);
+		return new ModelAndView("redirect:/merchant/customerGroup/");
+	}
+	
+	@RequestMapping(value = "/update/{customerGroupId}/{selectorId}", method = RequestMethod.GET)
+	public ModelAndView updateCustomerGroup(@PathVariable String customerGroupId,@PathVariable String selectorId,HttpServletRequest req) throws Exception {
+		Merchant merchant=LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "customerGroup/updateCustomerGroup/" + customerGroupId + "/"+selectorId+"/"+merchant.getId()+"/";
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/merchant/customerGroup/");
 	}

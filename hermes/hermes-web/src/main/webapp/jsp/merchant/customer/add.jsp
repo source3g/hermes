@@ -198,6 +198,9 @@
 						}
 					}
 			};
+			if(${customer.phone }==$('#phone').val()){
+				validateoptions.rules.phone=null;
+			}
 			$('#addCustomerForm').validate(validateoptions);
 			initCustomerGroupList();
 			initDialog();

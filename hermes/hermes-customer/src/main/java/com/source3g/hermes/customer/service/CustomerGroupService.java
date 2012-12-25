@@ -5,8 +5,10 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.service.BaseService;
 
@@ -33,5 +35,14 @@ public class CustomerGroupService extends BaseService {
 		return true;
 		}
 		return false;
+	}
+	public void updateCustomerGroup(String customerGroupId, String selectorId,String merchantId) {
+		if(customerGroupId.equals(selectorId)){
+			return ;
+		}
+		Update update=new Update();
+		update.set("customerGroupId", new ObjectId(selectorId));
+		mongoTemplate.updateMulti(new Query(Criteria.where("customerGroupId").is(new ObjectId(customerGroupId)).and("merchantId").is(new ObjectId(merchantId))), update, Customer.class);
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(new ObjectId(customerGroupId))), CustomerGroup.class);
 	}
 }
