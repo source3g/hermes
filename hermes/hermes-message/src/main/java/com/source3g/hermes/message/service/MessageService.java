@@ -271,13 +271,8 @@ public class MessageService extends BaseService {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		while (!TcpCommandService.isLogin) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		
+		
 		DataCommand command = new DataCommand("submit");
 		command.AddNewItem("msgcode", "15");
 		command.AddNewItem("itemid", "10253901");
