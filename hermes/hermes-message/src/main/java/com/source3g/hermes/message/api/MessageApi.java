@@ -68,7 +68,7 @@ public class MessageApi {
 	public String fastSend(@PathVariable String merchantId, String customerPhones, String content) {
 		String customerPhoneArray[] = customerPhones.split(";");
 		try {
-			messageService.fastSend(new ObjectId(merchantId), customerPhoneArray, content);
+			messageService.sendMessages(new ObjectId(merchantId), customerPhoneArray, content);
 		} catch (Exception e) {
 			return e.getMessage();
 		}

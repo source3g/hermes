@@ -8,22 +8,6 @@
 <title>提醒设置</title>
 </head>
 <body>
-	<div class="well">
-		<div>
-			选择提醒： <select id="sel">
-				<option>请选择</option>
-				 <c:forEach items="${merchantRemindTemplates}" var="merchantRemindTemplate">
-				 
-					<option value="${merchantRemindTemplate.id}">${merchantRemindTemplate.remindTemplate.title }</option>
-				</c:forEach> 
-			</select>
-			<c:forEach items="${merchantRemindTemplates}" var="merchantRemindTemplate">
-				<span id="${merchantRemindTemplate.id}" style="display: none;">${merchantRemindTemplate.messageContent}</span>
-				<span id="content${merchantRemindTemplate.id}" style="display: none;">${merchantRemindTemplate.remindTemplate.messageContent}</span>
-			</c:forEach>  
-
-		</div>
-	</div>
 	<div>
 		<form id="remindSettingForm" method="post" class="form-horizontal">
 			<table class="table table-bordered">
@@ -36,11 +20,25 @@
 				</thead>
 				<tr>
 					<td width="20%"><label class="control-label">标题：</label></td>
-					<td width="80%"><input type="hidden" id="id" name="id" /> 
+					<td width="80%"><!-- <input type="hidden" id="id" name="id" /> 
 					<input type="text" id="title" name="remindTemplate.title" class="input-xlarge"
-						placeholder="请输入提醒标题..." /></td>
-				</tr>
-				<tr>
+						placeholder="请输入提醒标题..." /> -->
+							<div>
+								选择提醒： <select id="sel">
+									<option>请选择</option>
+								 <c:forEach items="${merchantRemindTemplates}" var="merchantRemindTemplate">
+				 
+									<option value="${merchantRemindTemplate.id}">${merchantRemindTemplate.remindTemplate.title }</option>
+								</c:forEach> 
+										</select>
+									<c:forEach items="${merchantRemindTemplates}" var="merchantRemindTemplate">
+									<span id="${merchantRemindTemplate.id}" style="display: none;">${merchantRemindTemplate.messageContent}</span>
+									<span id="content${merchantRemindTemplate.id}" style="display: none;">${merchantRemindTemplate.remindTemplate.messageContent}</span>
+									</c:forEach>  
+							</div>
+						</td>
+					</tr>
+					<tr>
 					<td width="20%"><label class="control-label">提醒内容：</label></td>
 					<td width="80%"><textarea id="messageContent" rows="16" class="span8"
 							name="messageContent"></textarea></td>

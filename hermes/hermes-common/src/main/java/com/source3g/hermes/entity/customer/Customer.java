@@ -57,10 +57,6 @@ public class Customer extends AbstractEntity {
 	private ObjectId customerGroupId;
 	private Date operateTime;
 
-	public void setCallInCountToday(int count) {
-		
-	}
-
 	// @JsonIgnore
 	public int getCallInCountToday() {
 		int count = 0;
@@ -75,6 +71,10 @@ public class Customer extends AbstractEntity {
 			}
 		}
 		return count;
+	}
+
+	public void setCallInCountToday(int count) {
+		// 空，为了对应反序列化
 	}
 
 	public String getBirthday() {

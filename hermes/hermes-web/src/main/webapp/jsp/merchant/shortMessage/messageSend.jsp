@@ -28,7 +28,7 @@
 			</tr>
 			
 			 <tr>
-			 <td><label class="control-label">选择客户组:：</label></td>
+			 <td><label class="control-label">选择客户组:</label></td>
 			 <td colspan="3"> 
 			<c:if test="${not empty customerGroups }">
 				<c:forEach items="${customerGroups}" var="customerGroup">
@@ -89,18 +89,15 @@
 			<table id="customersTab"
 				class="table table-bordered table-striped">
 				<tbody>
-					<tr>
-						<td id="customers">
-						<input type=checkbox name="ids" value="${customerGroup.id}">张三
-						<input type=checkbox name="ids" value="${customerGroup.id}">里斯
-						<input type=checkbox name="ids" value="${customerGroup.id}">王五
-						</td>
-					</tr>
+				<tr><td id="customer">
+				</td></tr>
+				<tr><td id="allList">
+				
+				</td></tr>
 				</tbody>
 			</table>
 				<div>
-					<input type=checkbox name="ids" value="${customerGroup.id}">全选
-					<input type="submit" class="btn btn-primary" id="customersFormBtn" value="确定"></input>
+					<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="chosePhones()"></input>
 				</div>
 			</form>
 		</div>
@@ -237,29 +234,46 @@
 			return true;
 		}
 		function customerListBycustomerGroupId(id){
-			alert(id)
-		/*  	$("#customersTab tr:gt(0)").each(function() {
+		/*  	$("input[name='customerName']").each(function() {
 				$(this).remove();
-			});*/
-			
+			}); */
+			$("#customer").html("");
+			$("#allList").html("");
 			$.ajax({
 				url: "${pageContext.request.contextPath}/merchant/customer/customerListBycustomerGroupId/"+id+"/",
-				//dataType : "json",
 				type:"get",
 				success:drawTable
 			});
 			
 			$("#myModal").modal();
 		}
-		function drawTable(data){
-			alert(data);
+		function drawTable(data){	
 			for(var i=0;i<data.length;i++){
-				var str=$("<input type=checkbox name="+data[i].id+" value="+data[i].phone+">"+data[i].name);
-			$("#customers").append(str);//添加
+				var str="<input type=checkbox name=\"customerName\" value="+data[i].phone+">"+data[i].name;
+			$("#customer").append(str);//添加
 			}
+			var allList="<input type=checkbox id=\"allCustomersList\" name=\"allList\" value=\"allCustomers\">全选"
+			$("#allList").append(allList);//添加
+		}
+		function chosePhones(){
+			var phones= new Array();
+	 		if($('#allCustomersList').attr('checked')=='checked'){
+				$("input:checkbox[name='customerName']").attr("checked",'checked');
+				$("input:checkbox[name='customerName']").each(function(){
+					phones.push($(this).val());
+				})
+			} 
+	  		if($('#allCustomersList').attr('checked')==undefined){
+	 		 	$("input:checked[name='customerName']").each(function(){
+					phones.push($(this).val());
+				})
+	 		} 
+			for(var i=0;i<phones.length;i++){
+				$('#customerPhones').append(phones[i]+";");
+			}  
+			$("#myModal").modal("hide");
 			
 		}
-		
  		function fastSend() {
 			var phones=$('#customerPhones').text();
 			var phone=phones.split(";");

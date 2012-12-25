@@ -21,7 +21,7 @@
 			<label class="control-label" for="account">账号：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
-					id="account" name="account" value="${merchant.account}"> <span
+					id="account" name="account" value="${merchant.account}" <c:if test="${not empty update}"> readonly="readonly"</c:if>  > <span
 					class="help-inline"></span>
 			</div>
 		</div>
@@ -241,6 +241,10 @@
 					}
 				}
 			}; 
+	 		if(${not empty update }){
+	 			validateOptions.rules.account=null;
+	 		}
+	 	
 			$('#addMerchantForm').validate(validateOptions); 
 			$('#queryMerchantGroupForm').validate({
 				rules : {
@@ -257,8 +261,9 @@
 			$.validator.addMethod(
 					"validateAccount",
 					function(value, element, params) {
-						var account=new RegExp("^\w+$");
-						if(!account.test($('#account').val())){
+						var account=new RegExp("^[a-zA-Z0-9]+$");
+						var account1=$('#account').val();
+						if(!account.test(account1)){
 							return false;
 						}
 						return true;
