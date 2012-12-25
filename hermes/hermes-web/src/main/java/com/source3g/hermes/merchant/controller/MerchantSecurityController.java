@@ -23,6 +23,7 @@ import com.source3g.hermes.admin.security.ShiroDbRealm.ShiroUser;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.enums.TypeEnum.LoginType;
 import com.source3g.hermes.utils.ConfigParams;
 
 @Controller
@@ -66,6 +67,7 @@ public class MerchantSecurityController {
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 		token.setRememberMe(rememberMe);
 		try {
+			currentUser.getSession().setAttribute("type", LoginType.merchant);
 			currentUser.login(token);
 		} catch (Exception e) {
 			return false;

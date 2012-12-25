@@ -1,4 +1,4 @@
-package com.source3g.hermes.admin.security.service;
+package com.source3g.hermes.security.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.admin.security.entity.Account;
-import com.source3g.hermes.admin.security.entity.Resource;
-import com.source3g.hermes.admin.security.entity.Role;
+import com.source3g.hermes.entity.security.admin.Account;
+import com.source3g.hermes.entity.security.admin.Resource;
+import com.source3g.hermes.entity.security.admin.Role;
 import com.source3g.hermes.utils.Page;
 
 @Service

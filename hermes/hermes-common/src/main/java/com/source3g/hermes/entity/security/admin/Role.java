@@ -1,4 +1,4 @@
-package com.source3g.hermes.admin.security.entity;
+package com.source3g.hermes.entity.security.admin;
 
 import java.util.List;
 

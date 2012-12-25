@@ -2,6 +2,7 @@ package com.source3g.hermes.admin.security;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -12,25 +13,32 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.source3g.hermes.admin.security.entity.Account;
-import com.source3g.hermes.admin.security.entity.Resource;
-import com.source3g.hermes.admin.security.entity.Role;
-import com.source3g.hermes.admin.security.service.SecurityService;
+import com.source3g.hermes.admin.security.service.AdminSecurityService;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.security.admin.Account;
+import com.source3g.hermes.entity.security.admin.Resource;
+import com.source3g.hermes.entity.security.admin.Role;
+import com.source3g.hermes.enums.TypeEnum.LoginType;
 import com.source3g.hermes.merchant.security.service.MerchantSecurityService;
 
 @Component
 // TODO 权限
 public class ShiroDbRealm extends AuthorizingRealm {
 
+//	@Autowired
+//	private SecurityService securityService;
+	
 	@Autowired
-	private SecurityService securityService;
+	private AdminSecurityService adminSecurityService;
+	
+	
 	@Autowired
 	private MerchantSecurityService merchantSecurityService;
-	
+
 	/**
 	 * 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.
 	 */
@@ -62,10 +70,12 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
+		Subject currentUser = SecurityUtils.getSubject();
+		LoginType type = (LoginType) currentUser.getSession().getAttribute("type");
 		String userName = token.getUsername();
-		if (userName != null && !"".equals(userName)) {
-			Account account = securityService.login(token.getUsername(), String.valueOf(token.getPassword()));
-			if (account == null) {
+
+		if (StringUtils.isNotEmpty(userName)) {
+			if (LoginType.merchant.equals(type)) {
 				Merchant merchant = merchantSecurityService.login(token.getUsername(), String.valueOf(token.getPassword()));
 				if (merchant != null) {
 					SecurityUtils.getSubject().getSession().setAttribute("loginUser", merchant);
@@ -74,6 +84,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 					return new SimpleAuthenticationInfo(shiroUser, merchant.getPassword(), getName());
 				}
 			} else {
+				Account account = adminSecurityService.login(token.getUsername(), String.valueOf(token.getPassword()));
 				SecurityUtils.getSubject().getSession().setAttribute("loginAdmin", account);
 				ShiroUser shiroUser = new ShiroUser();
 				shiroUser.setAccount(account);

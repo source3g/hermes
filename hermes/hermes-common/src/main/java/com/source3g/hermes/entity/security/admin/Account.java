@@ -1,11 +1,11 @@
-package com.source3g.hermes.admin.security.entity;
+package com.source3g.hermes.entity.security.admin;
 
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.source3g.hermes.security.entity.AbstractAccount;
+import com.source3g.hermes.entity.security.AbstractAccount;
 
 @Document
 public class Account extends AbstractAccount {

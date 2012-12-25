@@ -6,4 +6,8 @@ public class TypeEnum {
 		newCustomer, oldCustomer, allCustomer
 	}
 
+	public enum LoginType {
+		merchant, admin
+	}
+
 }
