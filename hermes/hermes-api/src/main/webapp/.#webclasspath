@@ -99,6 +99,10 @@ D:\workspaceMine\hermes\hermes\hermes-sync\target\classes
 F:\apache-maven-3.0.4\repository\org\apache\commons\commons-compress\1.4.1\commons-compress-1.4.1.jar
 F:\apache-maven-3.0.4\repository\org\tukaani\xz\1.0\xz-1.0.jar
 D:\workspaceMine\hermes\hermes\hermes-message\target\classes
+<<<<<<< HEAD
 D:\workspaceMine\hermes\hermes\hermes-message\lib\HXPUBAPI.jar
+=======
+D:\lib\maven-3.0.3\repositories\com\hongxun\pub\1.0\pub-1.0.jar
+>>>>>>> branch 'master' of https://github.com/source3g/hermes.git
 D:\workspaceMine\hermes\hermes\hermes-dictionary\target\classes
 D:\workspaceMine\hermes\hermes\hermes-security\target\classes
