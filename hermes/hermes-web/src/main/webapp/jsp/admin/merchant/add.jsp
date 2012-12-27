@@ -18,32 +18,6 @@
 		method="post" class="form-horizontal">
 
 		<div class="control-group">
-			<label class="control-label" for="account">账号：</label>
-			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
-					id="account" name="account" value="${merchant.account}" <c:if test="${not empty update}"> readonly="readonly"</c:if>  > <span
-					class="help-inline"></span>
-			</div>
-		</div>
-
-		<div class="control-group">
-			<label class="control-label" for="password">密码：</label>
-			<div class="controls">
-				<input type="password" class="input-xlarge" placeholder="请输入商户密码..."
-					id="password" name="password" value="${merchant.password}">
-				<span class="help-inline"></span>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="password">重复确认密码：</label>
-			<div class="controls">
-				<input type="password" class="input-xlarge"
-					placeholder="请重新输入商户密码..." id="password1" name="password1"
-					value="${merchant.password}"> <span class="help-inline"></span>
-			</div>
-		</div>
-		<hr>
-		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入商户名称..."
@@ -75,6 +49,32 @@
 					data-toggle="modal" href="#myModal"
 					class="btn btn-primary btn-small">选择集团商户</a>
 				</span>
+			</div>
+		</div>
+		<hr>
+				<div class="control-group">
+			<label class="control-label" for="account">账号：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
+					id="account" name="account" value="${merchant.account}" <c:if test="${not empty update}"> readonly="readonly"</c:if>  > <span
+					class="help-inline"></span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="password">密码：</label>
+			<div class="controls">
+				<input type="password" class="input-xlarge" placeholder="请输入商户密码..."
+					id="password" name="password" value="${merchant.password}">
+				<span class="help-inline"></span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="password">重复确认密码：</label>
+			<div class="controls">
+				<input type="password" class="input-xlarge"
+					placeholder="请重新输入商户密码..." id="password1" name="password1"
+					value="${merchant.password}"> <span class="help-inline"></span>
 			</div>
 		</div>
 		<div class="form-actions">
@@ -261,8 +261,9 @@
 			$.validator.addMethod(
 					"validateAccount",
 					function(value, element, params) {
-						var account=new RegExp("^\w+$");
-						if(!account.test($('#account').val())){
+						var account=new RegExp("^[a-zA-Z0-9]+$");
+						var account1=$('#account').val();
+						if(!account.test(account1)){
 							return false;
 						}
 						return true;
@@ -305,7 +306,7 @@
 		
 		$.ajax({
 				type: "get",
-				url:"${pageContext.request.contextPath}/admin/device/sn/"+sn,
+				url:"${pageContext.request.contextPath}/admin/device/sn/"+sn+"/",
 				success: showDevices,
 				dataType: "json",
 				error: showError

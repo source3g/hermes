@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -93,5 +94,23 @@ public class AccountController {
 		return new ModelAndView("admin/error");
 
 	}
+	@RequestMapping(value = "/toPasswordChange", method = RequestMethod.GET)
+	public ModelAndView toPasswordChange() throws Exception {
+		return new ModelAndView("merchant/accountCenter/passwordChange");
 
+	}
+	@RequestMapping(value = "/passwordChange/{password}/{newPassword}", method = RequestMethod.GET)
+	public ModelAndView passwordChange(@PathVariable String password, @PathVariable String newPassword,HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri=ConfigParams.getBaseUrl() + "merchant/passwordChange/" +password+"/"+newPassword+"/"+merchant.getId() + "/";
+		String result=restTemplate.getForObject(uri, String.class);
+		if(ReturnConstants.SUCCESS.equals(result)){
+			return new ModelAndView("merchant/accountCenter/passwordChange");
+		}
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("error", result);
+		return new ModelAndView("merchant/accountCenter/passwordChange",model);
+
+	}
+	
 }

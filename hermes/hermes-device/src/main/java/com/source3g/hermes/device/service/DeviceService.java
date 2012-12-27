@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
 
@@ -47,7 +48,11 @@ public class DeviceService extends BaseService {
 		return page;
 	}
 
-	public void deleteById(String id) {
+	public void deleteById(String id) throws Exception {
+		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(new ObjectId(id))), Merchant.class);
+		if(merchant!=null){
+			throw new Exception("该盒子已被绑定");
+		}
 		super.deleteById(id, Device.class);
 	}
 

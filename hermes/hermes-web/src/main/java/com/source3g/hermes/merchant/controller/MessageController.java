@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.utils.ConfigParams;
@@ -164,45 +165,15 @@ public class MessageController {
 		toMessageSendModel(req,model);
 		return new ModelAndView("merchant/shortMessage/messageSend", model);
 	}
-
-	@RequestMapping(value = "/toFastSend", method = RequestMethod.GET)
-	public ModelAndView fastSend(HttpServletRequest req) throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();
-		toFastSend(req,model);
-		return new ModelAndView("merchant/shortMessage/fastSend", model);
-	}
-	public void toFastSend(HttpServletRequest req,Map<String, Object> model) throws Exception {
-		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/";
-		Merchant merchant1 = restTemplate.getForObject(uri, Merchant.class);
-		model.put("merchant", merchant1);	
-	
+	@RequestMapping(value = "/groupSendLogList", method = RequestMethod.GET)
+	@ResponseBody
+	public GroupSendLog[] groupSendLogList(HttpServletRequest req) throws Exception {
+		Merchant merchant=LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/groupSendLogList/" + merchant.getId() + "/";
+		GroupSendLog[] groupSendLogs = restTemplate.getForObject(uri, GroupSendLog[] .class);
+		return groupSendLogs; 
 	}
 	
-
-	@RequestMapping(value = "/fastSend", method = RequestMethod.POST)
-	public ModelAndView fastSend(HttpServletRequest req, String type, String customerPhones, String content) throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();
-		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
-		formData.add("type", type);
-		formData.add("customerPhones", customerPhones);
-		formData.add("content", content);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/fastSend/" + merchant.getId() + "/";
-		String result = restTemplate.postForObject(uri, requestEntity, String.class);
-		if (ReturnConstants.SUCCESS.equals(result)) {
-			model.put("success", "success");
-		}else{
-			model.put("error", result);
-		}
-		toFastSend(req,model);
-		return new ModelAndView("merchant/shortMessage/fastSend", model);
-	}
-
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
 	public ModelAndView toMessageList(HttpServletRequest req, String pageNo, String startTime, String endTime, String phone, String customerGroupName) throws Exception {
 		if (StringUtils.isEmpty(pageNo)) {

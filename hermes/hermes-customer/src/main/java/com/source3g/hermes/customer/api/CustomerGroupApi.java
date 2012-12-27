@@ -72,5 +72,12 @@ public class CustomerGroupApi {
 		customerGroupService.deleteById(id, CustomerGroup.class);
 		return ReturnConstants.SUCCESS;
 	}
+	
+	@RequestMapping(value = "updateCustomerGroup/{customerGroupId}/{selectorId}/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String updateCustomerGroup(@PathVariable String customerGroupId,@PathVariable String selectorId,@PathVariable String merchantId) {
+		customerGroupService.updateCustomerGroup(customerGroupId,selectorId,merchantId);
+		return ReturnConstants.SUCCESS;
+	}
 
 }

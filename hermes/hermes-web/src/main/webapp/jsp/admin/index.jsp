@@ -26,17 +26,6 @@ body {
 				</a> <a class="brand" href="index/"> <img alt="旺财宝"
 					src="${pageContext.request.contextPath}/img/logo.png" /> <span>旺财宝</span></a>
 
-				<!-- theme selector starts -->
-				<div class="btn-group pull-right theme-container">
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						<i class="icon-tint"></i><span class="hidden-phone"> Change</span>
-						<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu" id="themes">
-						<li><a data-value="classic" href="#"><i
-								class="icon-blank"></i> Classic</a></li>
-					</ul>
-				</div>
 				<!-- theme selector ends -->
 
 				<!-- user dropdown starts -->

@@ -28,11 +28,12 @@
 			</tr>
 			
 			 <tr>
-			 <td><label class="control-label">选择客户组:：</label></td>
+			 <td><label class="control-label">选择客户组:</label></td>
 			 <td colspan="3"> 
 			<c:if test="${not empty customerGroups }">
 				<c:forEach items="${customerGroups}" var="customerGroup">
-					 <input type=checkbox name="ids" value="${customerGroup.id}">${customerGroup.name}
+					 <input type=checkbox name="ids" value="${customerGroup.id}">
+					 <a href="javascript:void();" onclick="customerListBycustomerGroupId('${customerGroup.id}')" > ${customerGroup.name}</a>
 				</c:forEach>
 			</c:if>
 			
@@ -77,6 +78,46 @@
 			</tbody>
 		</table>
 	</form>
+	<table class="table table-bordered" id="groupSendLog">
+	<thead>
+			<tr>
+				<th colspan="4">
+							<h4>最近短信群发记录  </h4>
+						</th>
+				</tr>
+	</thead>
+		<tbody>
+			<tr>
+				<td width="30%">发送数量</td>
+				<td width="30%">发送时间</td>
+				<td width="40%">发送内容</td>	
+			</tr>
+		</tbody>
+	</table>
+		<div id="myModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>顾客组信息明细</h3>
+		</div>
+		<div class="modal-body">
+			<form class="well form-inline" id="customersForm">
+			<table id="customersTab"
+				class="table table-bordered table-striped">
+				<tbody>
+				<tr><td id="customer">
+				</td></tr>
+				<tr><td id="allList">
+				</td></tr>
+				</tbody>
+			</table>
+				<div>
+					<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="chosePhones()"></input>
+				</div>
+			</form>
+		</div>
+		<div class="modal-footer"></div>
+	</div>
+	
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
 			<p id="resultMessage"></p>
@@ -88,6 +129,8 @@
 	
 	<script type="text/javascript">
 	$(document).ready(function() {
+		$.get("${pageContext.request.contextPath}/merchant/message/groupSendLogList/",drawGroupSendLogList);
+		
 		if(${not empty success}==true){
 		
 			alert("短信已提交后台,请在短信列表查看");
@@ -157,7 +200,12 @@
 			$("#content").html(content);
 		});
 	});
-	
+		function drawGroupSendLogList(data){
+			for(var i=0;i<data.length;i++){
+				var str="<tr><td width=\"30%\">"+data[i].sendCount+"</td><td width=\"30%\">"+data[i].sendTime+"</td><td width=\"40%\">"+data[i].content+"</td></tr>";
+				$('#groupSendLog').append(str);
+			}
+	}
 		function initSel(data) {
 			for ( var i = 0; i < data.length; i++) {
 				$("#sel").append("<option value='"+data[i].id+"'>" + data[i].title + "</option>");
@@ -206,7 +254,47 @@
 			}
 			return true;
 		}
-		
+		function customerListBycustomerGroupId(id){
+		/*  	$("input[name='customerName']").each(function() {
+				$(this).remove();
+			}); */
+			$("#customer").html("");
+			$("#allList").html("");
+			$.ajax({
+				url: "${pageContext.request.contextPath}/merchant/customer/customerListBycustomerGroupId/"+id+"/",
+				type:"get",
+				success:drawTable
+			});
+			
+			$("#myModal").modal();
+		}
+		function drawTable(data){	
+			for(var i=0;i<data.length;i++){
+				var str="<input type=checkbox name=\"customerName\" value="+data[i].phone+">"+data[i].name;
+			$("#customer").append(str);//添加
+			}
+			var allList="<input type=checkbox id=\"allCustomersList\" name=\"allList\" value=\"allCustomers\">全选"
+			$("#allList").append(allList);//添加
+		}
+		function chosePhones(){
+			var phones= new Array();
+	 		if($('#allCustomersList').attr('checked')=='checked'){
+				$("input:checkbox[name='customerName']").attr("checked",'checked');
+				$("input:checkbox[name='customerName']").each(function(){
+					phones.push($(this).val());
+				})
+			} 
+	  		if($('#allCustomersList').attr('checked')==undefined){
+	 		 	$("input:checked[name='customerName']").each(function(){
+					phones.push($(this).val());
+				})
+	 		} 
+			for(var i=0;i<phones.length;i++){
+				$('#customerPhones').append(phones[i]+";");
+			}  
+			$("#myModal").modal("hide");
+			
+		}
  		function fastSend() {
 			var phones=$('#customerPhones').text();
 			var phone=phones.split(";");
@@ -216,6 +304,6 @@
 			} 
 	 		return true;
 		} 
-		</script>
+	</script>
 </body>
 </html>

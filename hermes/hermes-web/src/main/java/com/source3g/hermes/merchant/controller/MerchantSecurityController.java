@@ -77,7 +77,7 @@ public class MerchantSecurityController {
 
 	@RequiresRoles("merchant")
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
-	public String toMerchant(HttpServletRequest request) {
+	public String toMerchant(HttpServletRequest request) throws Exception {
 		// initSession(request);
 		return "merchant/index";
 	}

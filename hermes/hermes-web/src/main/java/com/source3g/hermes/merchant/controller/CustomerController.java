@@ -120,7 +120,15 @@ public class CustomerController {
 		model.put("type", type);
 		return new ModelAndView("/merchant/customer/list", model);
 	}
-
+	
+	@RequestMapping(value = "/customerListBycustomerGroupId/{customerGroupId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Customer[] customerListBycustomerGroupId(@PathVariable String customerGroupId) {
+		String uri = ConfigParams.getBaseUrl() + "customer/customerListBycustomerGroupId/" + customerGroupId + "/";
+		Customer[] customers = restTemplate.getForObject(uri, Customer[].class);
+		return customers;
+	}
+	
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody
 	public String export(Customer customer, HttpServletRequest req) throws Exception {

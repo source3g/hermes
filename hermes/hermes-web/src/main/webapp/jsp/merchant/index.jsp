@@ -28,20 +28,6 @@ body {
 					href="${pageContext.request.contextPath}/index/"> <img
 					alt="旺财宝" src="${pageContext.request.contextPath}/img/logo.png" />
 					<span>旺财宝</span></a>
-
-				<!-- theme selector starts -->
-				<div class="btn-group pull-right theme-container">
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						<i class="icon-tint"></i><span class="hidden-phone"> Change</span>
-						<span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu" id="themes">
-						<li><a data-value="classic" href="#"><i
-								class="icon-blank"></i> Classic</a></li>
-					</ul>
-				</div>
-				<!-- theme selector ends -->
-
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -155,7 +141,6 @@ body {
 							<ul id="message-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<li><a href="javascript:void();" id="passwordChange">密码修改</a></li>
-								<li><a href="javascript:void();" id="infoChange">信息修改</a></li>
 								<li><a href="javascript:void();" id="merchantSwitch">商户开关</a></li>
 								<li><a href="javascript:void();" id="merchantRemind">提醒</a></li>
 								<li><a href="javascript:void();" id="merchantRemindSetting">提醒设置</a></li>
@@ -250,6 +235,9 @@ body {
 		});
 		$("#merchantRemindSetting").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/remindSetting/");
+		});
+		$("#passwordChange").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
 		});
 	});
 

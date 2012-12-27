@@ -109,12 +109,19 @@ public class CustomerApi {
 		return customerService.findBySnAndPhone(sn, phone);
 	}
 
+	@RequestMapping(value = "customerListBycustomerGroupId/{customerGroupId}", method = RequestMethod.GET)
+	@ResponseBody
+	public  List<Customer> customerListBycustomerGroupId(@PathVariable ObjectId customerGroupId) {
+		return customerService.customerListBycustomerGroupId(customerGroupId);
+	}
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Customer get(@PathVariable String id) {
 		return customerService.get(id);
 	}
 
+	
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Page list(String pageNo, String name, String phone, String property, String sortType, String phoneSortType, CustomerType type, @PathVariable String merchantId) {

@@ -62,7 +62,11 @@ public class DeviceApi
 	@ResponseBody
 	public String delete(@PathVariable String id){
 		logger.debug("delete merchant....");
-		 deviceService.deleteById(id);
+		 try {
+			deviceService.deleteById(id);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 		 return ReturnConstants.SUCCESS;
 	}
 	@RequestMapping(value = "/{ids}", method = RequestMethod.GET)

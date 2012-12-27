@@ -62,6 +62,9 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			if(${not empty error}==true){
+				alert('${error}');
+			} 
 			initPage();
 			$("#queryForm").submit(function(){
 				goToPage(1);

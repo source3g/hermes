@@ -17,7 +17,7 @@
 	</form>
 
 	<h3>顾客组列表</h3>
-	<table class="table table-bordered">
+	<table class="table table-bordered" id="groupTab">
 		<thead>
 			<tr>
 				<th>名称</th>
@@ -28,10 +28,28 @@
 			<tr>
 				<td>${customerGroup.name }</td>
 				<td><a class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${customerGroup.id}');">删除</a></td>
+					onclick="deleteById('${customerGroup.id}');">删除</a>
+			
+				</td>
 			</tr>
 		</c:forEach>
 	</table>
+			<div id="myModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>顾客组信息明细</h3>
+		</div>
+		<div class="modal-body">
+			<input type="hidden" id="groupIdToDel">
+			<div>
+			<select id="sel">
+			<option value="chose">请选择</option>
+			</select>
+			<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="choseGroup()"></input>
+			</div>
+		</div>
+		<div class="modal-footer"></div>
+	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			if(${not empty error}==true){
@@ -76,16 +94,34 @@
 		});
 
 		function deleteById(id) {
-			$.ajax({
-				url : "${pageContext.request.contextPath}/merchant/customerGroup/delete/" + id + "/",
-				type : "get",
-				success : showList
-			});
+			if($("#groupTab tr:gt(0)").length<=1){
+				alert("只剩一个了，不能删了");
+				return ;
+			}
+			if(!confirm("确定该删除吗")){
+				return;
+			}
+			$("#groupIdToDel").attr("value",id);
+			$.get("${pageContext.request.contextPath}/merchant/customerGroup/listAllJson/",drawGroupToSel);
+			$("#myModal").modal();
 		}
-		
+		function drawGroupToSel(data){
+			$('#sel').empty();
+			for(var i=0;i<data.length;i++){
+				$('#sel').append("<option value="+data[i].id+">"+data[i].name+"</option>");
+			}
+		}
+		function choseGroup(){
+			var customerGroupId=$('#groupIdToDel').val();
+			var selector=$('#sel').val();
+			$.get("${pageContext.request.contextPath}/merchant/customerGroup/update/"+customerGroupId+"/"+selector+"/",showContentInfo);
+			 
+			$("#myModal").modal('hide');
+		}
 		function showList(data) {
 			$("#pageContentFrame").html(data);
-		}
+			
+		} 
 	</script>
 </body>
 </html>
