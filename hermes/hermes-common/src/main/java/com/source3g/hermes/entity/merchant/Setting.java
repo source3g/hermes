@@ -1,10 +1,16 @@
 package com.source3g.hermes.entity.merchant;
 
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
 public class Setting {
 	private boolean autoSend = false;
 	private boolean nameMatch = false;
 	private boolean salerMatch = false;
 	private boolean birthdayRemind = false;
+	private int birthdayRemindAdvancedTime=0;
+	//生日提醒模板
+	@DBRef
+	private MerchantRemindTemplate birthdayRemindTemplate;
 
 	public boolean isAutoSend() {
 		return autoSend;
@@ -37,4 +43,22 @@ public class Setting {
 	public void setBirthdayRemind(boolean birthdayRemind) {
 		this.birthdayRemind = birthdayRemind;
 	}
+
+	public int getBirthdayRemindAdvancedTime() {
+		return birthdayRemindAdvancedTime;
+	}
+
+	public void setBirthdayRemindAdvancedTime(int birthdayRemindAdvancedTime) {
+		this.birthdayRemindAdvancedTime = birthdayRemindAdvancedTime;
+	}
+
+	public MerchantRemindTemplate getBirthdayRemindTemplate() {
+		return birthdayRemindTemplate;
+	}
+
+	public void setBirthdayRemindTemplate(MerchantRemindTemplate birthdayRemindTemplate) {
+		this.birthdayRemindTemplate = birthdayRemindTemplate;
+	}
+
+
 }

@@ -8,6 +8,7 @@ import com.source3g.hermes.entity.AbstractEntity;
 public class RemindTemplate extends AbstractEntity {
 	private static final long serialVersionUID = -3835632016914035198L;
 	
+	private int advancedTime;
 	private String title;
 	private String messageContent;
 	
@@ -22,6 +23,12 @@ public class RemindTemplate extends AbstractEntity {
 	}
 	public void setMessageContent(String messageContent) {
 		this.messageContent = messageContent;
+	}
+	public int getAdvancedTime() {
+		return advancedTime;
+	}
+	public void setAdvancedTime(int advancedTime) {
+		this.advancedTime = advancedTime;
 	}
 
 }

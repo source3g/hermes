@@ -43,19 +43,19 @@
 					<div class="alert alert-info">请输入帐号密码</div>
 					<form class="form-horizontal" action="${pageContext.request.contextPath}/login" method="post">
 						<fieldset>
-							<div class="input-prepend" title="用户名" data-rel="tooltip">
-								<span class="add-on"><i class="icon-user"></i></span><input
+							<div title="用户名" data-rel="tooltip">
+								<span class="add-on"><i class="icon-user"></i><input
 									autofocus class="input-large span10" name="username"
-									id="username" type="text" />
+									id="username" type="text" /></span>
 							</div>
-							<div class="clearfix"></div>
-
-							<div class="input-prepend" title="密码" data-rel="tooltip">
+							<!-- <div class="clearfix"></div> -->
+	
+							<div  title="密码" data-rel="tooltip"><!-- class="input-prepend" -->
 								<span class="add-on"><i class="icon-lock"></i></span><input
 									class="input-large span10" name="password" id="password"
-									type="password" value="admin123456" />
+									type="password"  />
 							</div>
-							<div class="clearfix"></div>
+							 <div class="clearfix"></div> 
 
 							<div class="input-prepend">
 								<label class="remember" for="rememberMe"><input

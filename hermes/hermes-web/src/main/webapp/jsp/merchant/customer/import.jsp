@@ -35,6 +35,7 @@
 
 		<div class="form-actions">
 			<input type="submit" class="btn btn-primary" value="上传">
+			<input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" />
 		</div>
 	</form>
 

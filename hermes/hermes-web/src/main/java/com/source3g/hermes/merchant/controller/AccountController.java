@@ -39,17 +39,26 @@ public class AccountController {
 	@RequestMapping(value = "/switch", method = RequestMethod.POST)
 	public ModelAndView Switch(Setting setting, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		merchant.setSetting(setting);
-		String uri = ConfigParams.getBaseUrl() + "merchant/switch/";
-		HttpEntity<Merchant> entity = new HttpEntity<Merchant>(merchant);
+		String uri = ConfigParams.getBaseUrl() + "merchant/switch/"+merchant.getId()+"/";
+		HttpEntity<Setting> entity = new HttpEntity<Setting>(setting);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		Map<String, Object> model = new HashMap<String, Object>();
+		merchant.setSetting(setting);
 		model.put("merchant", merchant);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("merchant/accountCenter/switch", model);
 		}
 		return new ModelAndView("admin/error");
 
+	}
+	
+	@RequestMapping(value = "/remindTemplate/get", method = RequestMethod.GET)
+	@ResponseBody
+	public MerchantRemindTemplate[] getMerchantRemindTemplates() throws Exception{
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "merchant/merchantRemindList/" + merchant.getId() + "/";
+		MerchantRemindTemplate[] merchantRemindTemplates = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
+		return merchantRemindTemplates;
 	}
 
 	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)

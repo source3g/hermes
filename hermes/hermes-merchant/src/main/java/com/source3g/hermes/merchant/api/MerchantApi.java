@@ -17,6 +17,7 @@ import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
+import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.merchant.service.MerchantService;
 import com.source3g.hermes.utils.Page;
 
@@ -125,12 +126,14 @@ public class MerchantApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/switch", method = RequestMethod.POST)
+	@RequestMapping(value = "/switch/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String Switch(@RequestBody Merchant merchant) {
-		merchantService.Switch(merchant);
+	public String saveSwitch(@PathVariable String  merchantId, @RequestBody Setting setting) {
+		merchantService.saveSwitch(new ObjectId(merchantId),setting);
 		return ReturnConstants.SUCCESS;
 	}
+	
+	
 
 	@RequestMapping(value = "/remindAdd/{merchantId}/{templateId}", method = RequestMethod.GET)
 	@ResponseBody

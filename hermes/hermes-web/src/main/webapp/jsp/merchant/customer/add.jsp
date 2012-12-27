@@ -89,15 +89,11 @@
 								class="input-medium" value="${remind.merchantRemindTemplate.remindTemplate.title }"></input>
 								<input type="hidden" name="reminds[${status.index }].merchantRemindTemplate.id"
 								class="input-medium" value="${remind.merchantRemindTemplate.id}"></input> 
-								
-								
 								 时间：<input
 								type="text" name="reminds[${status.index }].remindTime"
 								class="input-medium"
 								value='<fmt:formatDate value="${remind.remindTime }" pattern="yyyy-MM-dd" />'
-								onclick="WdatePicker();"> 提前<input type="text"
-								name="reminds[${status.index }].advancedTime"
-								value="${remind.advancedTime }" class="input-mini" />天 <input
+								onclick="WdatePicker();"> <input
 								type='button' class='btn' value='删除'
 								onclick='deleteRemind(this);' />
 						</div>
@@ -108,7 +104,6 @@
 		<div class="form-actions">
 			<c:if test="${not empty update }">
 				<input class="btn btn-primary" type="submit" value="修改">
-				<input class="btn btn-primary" type="button" onclick="backToList()" value="返回">
 			</c:if>
 
 			<c:if test="${ empty update }">
@@ -116,6 +111,7 @@
                     		增加
                  </button>
 			</c:if>
+				<input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" />
 
 			<div id="errorModal" class="modal hide fade">
 				<div class="modal-body">
@@ -219,9 +215,6 @@
 			});
 		});
 
-		function backToList(){
-			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
-		}
 		
 		function showList(data){
 			$("#pageContentFrame").html(data);
@@ -247,7 +240,6 @@
 					$("#customerGroupSel").append("<option value='"+data[i].id+"'>" + data[i].name + "</option>");
 				}
 			}
-			
 		} 	
 		function addRemind() {
 			function initRemindList() {
@@ -280,13 +272,13 @@
 			if ($(".remindItem").length == 0) {
 				$("#addRemindBtn")
 						.before(
-								"<div  class=\"remindItem\">事项：<select name='reminds[0].merchantRemindTemplate.id'>"+remindOptions+"</select> 时间：<input type=\"text\" name=\"reminds[0].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\"> 提前<input type=\"text\" name=\"reminds[0].advancedTime\"  class=\"input-mini\"/>天 <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/> </div> ");
+								"<div  class=\"remindItem\">事项：<select name='reminds[0].merchantRemindTemplate.id'>"+remindOptions+"</select> 时间：<input type=\"text\" name=\"reminds[0].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\"> <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/> </div> ");
 			} else {
 				$(".remindItem:last")
 						.after(
 								"<div  class=\"remindItem\">事项：<select name='reminds["+remindIndex+"].merchantRemindTemplate.id'>"+remindOptions+"</select>  时间：<input type=\"text\" name=\"reminds["
 										+ remindIndex
-										+ "].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\"> 提前<input type=\"text\" name=\"reminds["+remindIndex+"].advancedTime\"  class=\"input-mini\"/>天 <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/>  </div> ");
+										+ "].remindTime\"  class=\"input-medium\" onclick=\"WdatePicker();\">  <input  type='button' class='btn' value='删除' onclick='deleteRemind(this);'/>  </div> ");
 			}
 			remindIndex++;
 		}

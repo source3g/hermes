@@ -67,7 +67,7 @@ public class MerchantSecurityController {
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
 		token.setRememberMe(rememberMe);
 		try {
-			currentUser.getSession().setAttribute("type", LoginType.merchant);
+			currentUser.getSession().setAttribute("loginType", LoginType.merchant);
 			currentUser.login(token);
 		} catch (Exception e) {
 			return false;

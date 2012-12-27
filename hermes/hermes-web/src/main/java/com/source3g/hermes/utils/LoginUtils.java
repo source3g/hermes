@@ -12,6 +12,10 @@ import com.source3g.hermes.exception.NotLoginException;
 public class LoginUtils {
 
 	public static Merchant getLoginMerchant(HttpServletRequest req) throws Exception {
+		return getLoginMerchant();
+	}
+	
+	public static Merchant getLoginMerchant() throws Exception {
 		Subject currentUser = SecurityUtils.getSubject();
 		ShiroUser shiroUser = (ShiroUser) currentUser.getPrincipal();
 		Merchant merchant = (Merchant) shiroUser.getMerchant();
@@ -21,5 +25,7 @@ public class LoginUtils {
 			return merchant;
 		}
 	}
+	
+	
 
 }

@@ -14,9 +14,9 @@ public class MerchantRemindTemplate extends AbstractEntity {
 	private static final long serialVersionUID = 5210818040577743106L;
 	@DBRef
 	private RemindTemplate remindTemplate;
+	private int advancedTime=0;
 	private String messageContent;
 	private ObjectId merchantId;
-	
 	
 	public ObjectId getMerchantId() {
 		return merchantId;
@@ -63,6 +63,14 @@ public class MerchantRemindTemplate extends AbstractEntity {
 			return this.getId().hashCode();
 		}
 		return super.hashCode();
+	}
+
+	public int getAdvancedTime() {
+		return advancedTime;
+	}
+
+	public void setAdvancedTime(int advancedTime) {
+		this.advancedTime = advancedTime;
 	}
 
 }
