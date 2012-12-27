@@ -28,6 +28,7 @@ import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
@@ -123,8 +124,19 @@ public class MessageService extends BaseService {
 		log.setSendCount(sendCount);
 		log.setType(type);
 		log.setStatus(status);
-		mongoTemplate.save(log);
+		mongoTemplate.insert(log);
 		return log;
+	}
+	
+	private void genGroupSendLog(String[]customerPhoneArray,String content,ObjectId merchantId){
+		GroupSendLog groupSendLog=new GroupSendLog();
+		groupSendLog.setMerchantId(merchantId);
+		groupSendLog.setContent(content);
+		groupSendLog.setSendCount(customerPhoneArray.length);
+		groupSendLog.setSendTime(new Date());
+		groupSendLog.setId(ObjectId.get());
+		mongoTemplate.insert(groupSendLog);
+		
 	}
 
 	private MessageSendLog genMessageSendLog(String phone, ObjectId merchantId, String content, MessageType type) {
@@ -184,9 +196,19 @@ public class MessageService extends BaseService {
 			PhoneInfo phoneInfo = new PhoneInfo(phone, content, log.getId());
 			result.add(phoneInfo);
 		}
+			// 生成短信群发记录
+			genGroupSendLog(customerPhoneArray,content,merchantId);
 		return result;
 	}
-
+	//查找群发记录
+	public List<GroupSendLog> groupSendLogList(ObjectId merchantId) {
+		Query query = new Query();
+		Sort sort=new Sort(Direction.DESC, "_id");
+		query.with(sort);
+		return mongoTemplate.find(query.skip(0).limit(5), GroupSendLog.class);
+		
+	}
+	
 	public Page list(int pageNoInt, ObjectId merchantId, Date startTime, Date endTime, String phone, String customerGroupName) {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("merchantId").is(merchantId);

@@ -31,9 +31,7 @@
 				<td><a class="btn btn-success" href="javascript:void();" 
 					onclick="showMerchants('${merchantGroup.id}');">详细信息</a>
 					<a class="btn btn-success" href="javascript:void();"
-					onclick="toUpdate('${merchantGroup.id}');">修改</a> <a
-					class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${merchantGroup.id}');">删除</a></td>
+					onclick="toUpdate('${merchantGroup.id}');">修改</a></td>
 			</tr>
 		</c:forEach>
 

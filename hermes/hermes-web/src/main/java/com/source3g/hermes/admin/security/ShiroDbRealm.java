@@ -26,7 +26,6 @@ import com.source3g.hermes.enums.TypeEnum.LoginType;
 import com.source3g.hermes.merchant.security.service.MerchantSecurityService;
 
 @Component
-// TODO 权限
 public class ShiroDbRealm extends AuthorizingRealm {
 
 //	@Autowired
@@ -73,7 +72,6 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		Subject currentUser = SecurityUtils.getSubject();
 		LoginType type = (LoginType) currentUser.getSession().getAttribute("type");
 		String userName = token.getUsername();
-
 		if (StringUtils.isNotEmpty(userName)) {
 			if (LoginType.merchant.equals(type)) {
 				Merchant merchant = merchantSecurityService.login(token.getUsername(), String.valueOf(token.getPassword()));

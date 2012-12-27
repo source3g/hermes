@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.message.service.MessageService;
@@ -62,18 +63,11 @@ public class MessageApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
-
-	@RequestMapping(value = "/fastSend/{merchantId}", method = RequestMethod.POST)
+	
+	@RequestMapping(value = "/groupSendLogList/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String fastSend(@PathVariable String merchantId, String customerPhones, String content) {
-		String customerPhoneArray[] = customerPhones.split(";");
-		try {
-			messageService.sendMessages(new ObjectId(merchantId), customerPhoneArray, content);
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-		
-		return ReturnConstants.SUCCESS;
+	public  List<GroupSendLog> groupSendLogList(@PathVariable String merchantId) {
+		return 	messageService.groupSendLogList(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/messageSendLog/{merchantId}/list", method = RequestMethod.GET)

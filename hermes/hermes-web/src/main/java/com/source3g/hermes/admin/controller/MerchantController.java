@@ -53,7 +53,7 @@ public class MerchantController {
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-
+	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid Merchant merchant, BindingResult errorResult) {
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -96,6 +96,13 @@ public class MerchantController {
 		return new ModelAndView("redirect:/admin/merchant/list/");
 	}
 
+	@RequestMapping(value = "/recover/{id}", method = RequestMethod.GET)
+	public ModelAndView recover(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "merchant/recover/" + id + "/";
+		restTemplate.getForObject(uri, String.class);
+		return new ModelAndView("redirect:/admin/merchant/list/");
+	}
+	
 	@RequestMapping(value = "/toSetDictionary/{merchantId}", method = RequestMethod.GET)
 	public ModelAndView setDictionary(@PathVariable String merchantId) {
 		String uri = ConfigParams.getBaseUrl() + "merchant/merchantRemindList/" + merchantId + "/";

@@ -78,7 +78,22 @@
 			</tbody>
 		</table>
 	</form>
-	
+	<table class="table table-bordered" id="groupSendLog">
+	<thead>
+			<tr>
+				<th colspan="4">
+							<h4>最近短信群发记录  </h4>
+						</th>
+				</tr>
+	</thead>
+		<tbody>
+			<tr>
+				<td width="30%">发送数量</td>
+				<td width="30%">发送时间</td>
+				<td width="40%">发送内容</td>	
+			</tr>
+		</tbody>
+	</table>
 		<div id="myModal" class="modal hide fade">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">&times;</a>
@@ -114,6 +129,8 @@
 	
 	<script type="text/javascript">
 	$(document).ready(function() {
+		$.get("${pageContext.request.contextPath}/merchant/message/groupSendLogList/",drawGroupSendLogList);
+		
 		if(${not empty success}==true){
 		
 			alert("短信已提交后台,请在短信列表查看");
@@ -183,7 +200,12 @@
 			$("#content").html(content);
 		});
 	});
-	
+		function drawGroupSendLogList(data){
+			for(var i=0;i<data.length;i++){
+				var str="<tr><td width=\"30%\">"+data[i].sendCount+"</td><td width=\"30%\">"+data[i].sendTime+"</td><td width=\"40%\">"+data[i].content+"</td></tr>";
+				$('#groupSendLog').append(str);
+			}
+	}
 		function initSel(data) {
 			for ( var i = 0; i < data.length; i++) {
 				$("#sel").append("<option value='"+data[i].id+"'>" + data[i].title + "</option>");

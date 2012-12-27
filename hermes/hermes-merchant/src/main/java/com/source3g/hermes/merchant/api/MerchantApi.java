@@ -76,6 +76,14 @@ public class MerchantApi {
 		merchantService.cancel(new ObjectId(id));
 		return ReturnConstants.SUCCESS;
 	}
+	
+	@RequestMapping(value = "/recover/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String recover(@PathVariable String id) {
+		logger.debug("cancel merchant....");
+		merchantService.recover(new ObjectId(id));
+		return ReturnConstants.SUCCESS;
+	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
@@ -163,5 +171,16 @@ public class MerchantApi {
 	public List<MerchantRemindTemplate> remindDelete(@PathVariable String merchantId, @PathVariable String templateId) {
 		merchantService.remindDelete(new ObjectId(merchantId), new ObjectId(templateId));
 		return merchantService.merchantRemindList(new ObjectId(merchantId));
+	}
+	
+	@RequestMapping(value = "/passwordChange/{password}/{newPassword}/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String passwordChange(@PathVariable String password, @PathVariable String newPassword,@PathVariable String merchantId) {
+		try {
+			merchantService.passwordChange(password, newPassword,new ObjectId(merchantId));
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
 	}
 }

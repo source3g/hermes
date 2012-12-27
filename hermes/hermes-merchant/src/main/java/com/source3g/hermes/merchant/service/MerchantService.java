@@ -24,7 +24,7 @@ public class MerchantService extends BaseService {
 	
 	
 	public Merchant login(String username,String password){
-		return mongoTemplate.findOne(new Query(Criteria.where("account").is(username).and("password").is(password)), Merchant.class);
+		return mongoTemplate.findOne(new Query(Criteria.where("account").is(username).and("password").is(password).and("canceled").is(false)), Merchant.class);
 	}
 
 	
@@ -36,7 +36,7 @@ public class MerchantService extends BaseService {
 			throw new Exception("账号已存在");
 		}
 	}
-	
+	//是验证商户账号是否存在
 	public boolean accountValidate(String account) {
 			List<Merchant> list=mongoTemplate.find(new Query(Criteria.where("account").is(account)), Merchant.class);
 			if(list.size()==0){
@@ -44,7 +44,6 @@ public class MerchantService extends BaseService {
 			}
 			return false;
 	}
-	
 	public List<Merchant> list() {
 		List<Merchant> list = mongoTemplate.findAll(Merchant.class);
 		return list;
@@ -64,10 +63,6 @@ public class MerchantService extends BaseService {
 		List<Merchant> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Merchant.class);
 		page.setData(list);
 		return page;
-	}
-
-	public void deleteById(String id) {
-		super.deleteById(id, Merchant.class);
 	}
 
 	public Merchant getMerchant(String id) {
@@ -219,9 +214,28 @@ public class MerchantService extends BaseService {
 	}
 	
 	public void cancel(ObjectId merchantId){
-		Update update=new Update();
-		update.set("canceled", true);
+		Update update = new Update();
+			update.set("canceled", true);
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchantId)), update, Merchant.class);
+	}
+
+
+	public void recover(ObjectId merchantId) {
+		Update update = new Update();
+		update.set("canceled", false);
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchantId)), update, Merchant.class);
 	}
 
+
+	public void passwordChange(String password, String newPassword, ObjectId merchantId) throws Exception {
+		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("password").is(password).and("_id").is(merchantId)), Merchant.class);
+		if(merchant==null){
+			throw new Exception("原密码输入有误");
+		}else{
+			Update update=new Update();
+			update.set("password", newPassword);
+			mongoTemplate.updateFirst(new Query(Criteria.where("password").is(password).and("_id").is(merchantId)), update, Merchant.class);
+		}
+		
+	}
 }

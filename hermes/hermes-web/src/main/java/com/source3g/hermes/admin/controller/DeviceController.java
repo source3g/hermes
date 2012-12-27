@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.Device;
@@ -85,9 +86,13 @@ public class DeviceController {
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-	public ModelAndView deleteById(@PathVariable String id) {
+	public ModelAndView deleteById(@PathVariable String id,RedirectAttributes redirectAttributes ) {
 		String uri = ConfigParams.getBaseUrl() + "device/delete/" + id + "/";
-		restTemplate.getForObject(uri, String.class);
+		String result=restTemplate.getForObject(uri, String.class);
+		if(ReturnConstants.SUCCESS.equals(result)){
+			return new ModelAndView("redirect:/admin/device/list/");
+		}
+		redirectAttributes.addFlashAttribute("error", result);
 		return new ModelAndView("redirect:/admin/device/list/");
 	}
 
