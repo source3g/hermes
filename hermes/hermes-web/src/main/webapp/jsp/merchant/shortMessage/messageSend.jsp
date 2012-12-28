@@ -255,9 +255,6 @@
 			return true;
 		}
 		function customerListBycustomerGroupId(id){
-		/*  	$("input[name='customerName']").each(function() {
-				$(this).remove();
-			}); */
 			$("#customer").html("");
 			$("#allList").html("");
 			$.ajax({

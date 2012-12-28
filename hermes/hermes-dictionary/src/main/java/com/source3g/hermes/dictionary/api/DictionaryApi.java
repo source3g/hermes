@@ -18,40 +18,50 @@ import com.source3g.hermes.entity.merchant.RemindTemplate;
 @Controller
 @RequestMapping("/dictionary")
 public class DictionaryApi {
-	//private Logger logger = LoggerFactory.getLogger(DictionaryApi.class);
+	// private Logger logger = LoggerFactory.getLogger(DictionaryApi.class);
 
 	@Autowired
 	private DictionaryService dictionaryService;
 	
 	
+	@RequestMapping(value = "/remind/get/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public RemindTemplate getRemind(@PathVariable String id) {
+		return dictionaryService.getRemindTemplate(new ObjectId(id));
+	}
+	
+	
 	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
 	@ResponseBody
-	public String  remindAdd(@RequestBody RemindTemplate remindTemplate) {
-		if(remindTemplate.getId()!=null){
-			ObjectId objId=null;
+	public String remindAdd(@RequestBody RemindTemplate remindTemplate) {
+		if (remindTemplate.getId() != null) {
+			ObjectId objId = null;
 			remindTemplate.setId(objId);
 		}
-		dictionaryService.add( remindTemplate);
+		dictionaryService.add(remindTemplate);
 		return ReturnConstants.SUCCESS;
-}
+	}
+
 	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)
 	@ResponseBody
-	public List<RemindTemplate>  remindSetting() {
+	public List<RemindTemplate> remindSetting() {
 		return dictionaryService.remindList();
 	}
+
 	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
 	@ResponseBody
 	public String remindSave(@RequestBody RemindTemplate remindTemplate) {
-		dictionaryService.remindSave( remindTemplate);
+		dictionaryService.remindSave(remindTemplate);
 		return ReturnConstants.SUCCESS;
 	}
+
 	@RequestMapping(value = "/remindDelete/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String remindDelete(@PathVariable ObjectId id) {
 		try {
-			dictionaryService.remindDelete( id);
+			dictionaryService.remindDelete(id);
 		} catch (Exception e) {
-			return	e.getMessage();
+			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}

@@ -46,7 +46,6 @@
 
 		</c:forEach>
 	</table>
-
 	<div>
 		<ul class="pagination">
 			<li id="firstPage"><a href="javascript:void();">首页</a></li>
@@ -55,7 +54,8 @@
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
 			<li >当前第${page.currentPage}/${page.totalPageCount}页共${page.totalRecords }条 转到第<input
 			type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input
-			type="button" id="pageOk" class="btn" value="确定"></input></li>
+			type="button" id="pageOk" class="btn" value="确定"></input><input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" /></li>
+			
 		</ul>
 	</div>
 

@@ -8,19 +8,18 @@
 <title>提醒设置</title>
 </head>
 <body>
+
 	<div class="well">
 		<div>
 			选择提醒： <select id="sel">
 				<option>请选择</option>
-				 <c:forEach items="${remindTemplate}" var="template">
-				 
+				<c:forEach items="${remindTemplate}" var="template">
 					<option value="${template.id}">${template.title }</option>
-				</c:forEach> 
+				</c:forEach>
 			</select>
-			<c:forEach items="${remindTemplate}" var="template">
+		<%-- 	<c:forEach items="${remindTemplate}" var="template">
 				<span id="${template.id}" style="display: none;">${template.messageContent}</span>
-			</c:forEach> 
-
+			</c:forEach> --%>
 		</div>
 	</div>
 	<div>
@@ -40,9 +39,15 @@
 						placeholder="请输入提醒标题..." /></td>
 				</tr>
 				<tr>
+					<td width="20%"><label class="control-label">提前天数：</label></td>
+					<td width="80%"><input type="text" id="advancedTime"
+						name="advancedTime" class="input-xlarge"
+						placeholder="请输入提醒提前的天数..." /></td>
+				</tr>
+				<tr>
 					<td width="20%"><label class="control-label">提醒内容：</label></td>
-					<td width="80%"><textarea id="messageContent" rows="16" class="span8"
-							name="messageContent"></textarea></td>
+					<td width="80%"><textarea id="messageContent" rows="16"
+							class="span8" name="messageContent"></textarea></td>
 				</tr>
 				<tr>
 					<td width="20%"><label class="control-label">字数统计：</label></td>
@@ -77,19 +82,7 @@
 				alert("${error}");	
 				}
 			
-			$("#sel").change(function() {
-				var messageContent = $("#" + $("#sel").val()).text();
-				var title = $("#sel").find("option:selected").text();
-				if (title == '请选择') {
-					$("#id").html("");
-					$("#title").attr("value", "");
-					$("#messageContent").html("");
-					return;
-				}
-				$("#id").attr("value", $(this).val());
-				$("#title").attr("value", title);
-				$("#messageContent").html(messageContent);
-			});
+			$("#sel").change(selectRemind);
 		});
 		function add() {
 			$("#remindSettingForm").ajaxSubmit({
@@ -124,6 +117,24 @@
 					showContentInfo(data);
 				}
 			});
+		}
+		
+		function selectRemind(){
+			var title = $("#sel").find("option:selected").text();
+			if (title == '请选择') {
+				$("#id").html("");
+				$("#title").attr("value", "");
+				$("#messageContent").html("");
+				return;
+			}
+			var remindId=$("#sel").val();
+			$.get("${pageContext.request.contextPath}/admin/dictionary/remind/"+remindId+"/",showRemind);
+		}
+		
+		function showRemind(data){
+			$("#title").attr("value", data.title);
+			$("#messageContent").html(data.messageContent);
+			$("#advancedTime").attr("value",data.advancedTime);
 		}
 	</script>
 </body>

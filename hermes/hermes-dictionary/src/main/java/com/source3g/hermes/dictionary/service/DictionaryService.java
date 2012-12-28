@@ -30,4 +30,8 @@ public class DictionaryService extends BaseService {
 		}
 		throw new Exception("该提醒已被占用");
 	}
+	
+	public RemindTemplate getRemindTemplate(ObjectId id){
+		return mongoTemplate.findById(id, RemindTemplate.class);
+	}
 }

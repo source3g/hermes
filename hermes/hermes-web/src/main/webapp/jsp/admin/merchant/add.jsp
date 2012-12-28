@@ -273,7 +273,7 @@
 					}
 				}
 			}; 
-	 		if(${not empty update }){
+	 		if("${merchant.account}"==$("#account").val()){
 	 			validateOptions.rules.account=null;
 	 		}
 	 	

@@ -34,6 +34,7 @@ import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
 import com.source3g.hermes.utils.Page;
@@ -70,17 +71,18 @@ public class CustomerController {
 			return new ModelAndView("merchant/error");
 		}
 	}
-	//添加顾客验证电话号码去重
+
+	// 添加顾客验证电话号码去重
 	@RequestMapping(value = "/phoneValidate", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean phoneValidate(String phone) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "customer/phoneValidate/"+phone+"/";
-		Boolean result = restTemplate.getForObject(uri,Boolean.class);
-			return result;
+		String uri = ConfigParams.getBaseUrl() + "customer/phoneValidate/" + phone + "/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		return result;
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(Customer customer, String property, String sortType, String phoneSortType, String pageNo, HttpServletRequest req) throws Exception {
+	public ModelAndView list(Customer customer, String property, String sortType, String phoneSortType, String pageNo, String type, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
@@ -105,12 +107,17 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(property)) {
 			uriBuffer.append("&phoneSortType=" + phoneSortType);
 		}
+		if (StringUtils.isEmpty(type)) {
+			type = CustomerType.allCustomer.toString();
+		}
+		uriBuffer.append("&type=" + type);
 		Page page = restTemplate.getForObject(uriBuffer.toString(), Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
 		model.put("sortType", sortType);
 		model.put("property", property);
 		model.put("phoneSortType", phoneSortType);
+		model.put("type", type);
 		return new ModelAndView("/merchant/customer/list", model);
 	}
 	
@@ -286,7 +293,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/callInList", method = RequestMethod.GET)
-	public ModelAndView callInList(Customer customer,  String pageNo,  String customerType, HttpServletRequest req) throws Exception {
+	public ModelAndView callInList(Customer customer, String pageNo, String customerType, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";

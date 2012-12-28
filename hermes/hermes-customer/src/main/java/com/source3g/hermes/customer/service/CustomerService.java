@@ -62,7 +62,6 @@ public class CustomerService extends BaseService {
 	private String tempDir;
 	@Value(value = "${customer.export.temp.dir}")
 	private String exportDir;
-
 	@Value(value = "${local.url}")
 	private String localUrl;
 
@@ -79,16 +78,15 @@ public class CustomerService extends BaseService {
 		return customer;
 	}
 
-
 	public Boolean phoneValidate(String phone) {
-		List<Customer> customer=mongoTemplate.find(new Query(Criteria.where("phone").is(phone)), Customer.class);
-		if(customer.size()==0){
+		List<Customer> customer = mongoTemplate.find(new Query(Criteria.where("phone").is(phone)), Customer.class);
+		if (customer.size() == 0) {
 			return true;
-		}else{
-		return false;
+		} else {
+			return false;
 		}
 	}
-	
+
 	public void updateExcludeProperties(Customer customer, String... properties) {
 		super.updateExcludeProperties(customer, properties);
 	}
@@ -114,7 +112,7 @@ public class CustomerService extends BaseService {
 	 *            排序属性
 	 * @return
 	 */
-	private Page list(int pageNo, Customer customer, CustomerType customerType, Direction direction, String... properties) {
+	public Page list(int pageNo, Customer customer, CustomerType customerType, Direction direction, String... properties) {
 		Query query = new Query();
 		Criteria criteria = null;
 		if (customer.getMerchantId() == null) {
@@ -580,4 +578,11 @@ public class CustomerService extends BaseService {
 		CallInStatisticsToday callInStatisticsToday = new CallInStatisticsToday(newCount, oldCount);
 		return callInStatisticsToday;
 	}
+
+	public List<Customer> findCustomersByBirthday(ObjectId merchantId,String birthday) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("birthday").is(birthday).and("merchantId").is(merchantId));
+		return mongoTemplate.find(query, Customer.class);
+	}
+
 }

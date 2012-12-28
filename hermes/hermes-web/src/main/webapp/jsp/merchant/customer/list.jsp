@@ -23,8 +23,15 @@
 			 <input id="property" name="property" value="${property }"
 			type="hidden">
 			
+			<select name="type" class="input-small">
+				<option value="newCustomer" <c:if test="${type eq 'newCustomer' }"> selected="selected"</c:if>>未编辑</option>
+				<option value="oldCustomer" <c:if test="${type eq 'oldCustomer' }"> selected="selected"</c:if>>已编辑</option>
+				<option value="allCustomer" <c:if test="${type eq 'allCustomer' }"> selected="selected"</c:if>>全部</option>
+			</select>
 			<input type="submit" class="btn btn-primary"
 			value="查询">
+			<input  type="button" class="btn btn-primary"
+			value="新增"  onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/add/');">
 	</form>
 
 	<table
@@ -59,7 +66,10 @@
 				name="pageNo" class="input-mini">页<input type="button"
 				id="pageOk" class="btn" value="确定"></input>
 			</li>
-			<li><button onclick="exportCustomer();">导出</button></li>
+			<li><button onclick="exportCustomer();" class="btn">导出</button>
+			<button class="btn" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');">导入</button>
+			<button class="btn" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');">查看导入日志</button>
+			</li>
 		</ul>
 	</div>
 	<div id="errorModal" class="modal hide fade">

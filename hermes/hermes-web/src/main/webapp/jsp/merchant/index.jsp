@@ -61,14 +61,14 @@ body {
 							<!-- <div class="accordion-inner"> -->
 							<ul id="merchant-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
-								<li><a href="javascript:void();" id="customerList">顾客列表</a></li>
-								<li><a href="javascript:void();" id="customerAdd">顾客新增</a></li>
+								<li><a href="javascript:void();" id="customerList">顾客管理</a></li>
+								<!-- <li><a href="javascript:void();" id="customerAdd">顾客新增</a></li> -->
 								<li><a href="javascript:void();" id="customerGroup">顾客组管理</a></li>
-								<li><a href="javascript:void();" id="newCustomerList">新顾客列表</a></li>
+								<!--<li><a href="javascript:void();" id="newCustomerList">新顾客列表</a></li> -->
 								<li><a href="javascript:void();" id="callInList">来电记录</a></li>
 								<li><a href="javascript:void();" id="callInStatistics">来电顾客统计</a></li>
-								<li><a href="javascript:void();" id="importCustomer">导入顾客信息</a></li>
-								<li><a href="javascript:void();" id="importLog">导入日志</a></li>
+								<!-- <li><a href="javascript:void();" id="importCustomer">导入顾客信息</a></li> -->
+								<!-- <li><a href="javascript:void();" id="importLog">导入日志</a></li> -->
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -104,8 +104,8 @@ body {
 								<!-- <div class="accordion-inner"> -->
 								<ul id="message-menu"
 									class="nav nav-list nav-tabs  nav-stacked  main-menu">
-									<li><a href="javascript:void();" id="customerList">销售列表</a></li>
-									<li><a href="javascript:void();" id="customerAdd">销售新增</a></li>
+									<li><a href="javascript:void();" id="salerList">销售列表</a></li>
+									<li><a href="javascript:void();" id="salerAdd">销售新增</a></li>
 								</ul>
 								<!-- </div> -->
 							</div>

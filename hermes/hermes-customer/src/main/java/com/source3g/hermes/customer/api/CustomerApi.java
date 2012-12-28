@@ -93,9 +93,9 @@ public class CustomerApi {
 	@RequestMapping(value = "/phoneValidate/{phone}", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean phoneValidate(@PathVariable String phone) {
-		return  customerService.phoneValidate(phone);
+		return customerService.phoneValidate(phone);
 	}
-	
+
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody Customer customer) {
@@ -124,7 +124,7 @@ public class CustomerApi {
 	
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name, String phone, String property, String sortType, String phoneSortType, @PathVariable String merchantId) {
+	public Page list(String pageNo, String name, String phone, String property, String sortType, String phoneSortType, CustomerType type, @PathVariable String merchantId) {
 		logger.debug("list customer....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Customer customer = new Customer();
@@ -138,7 +138,7 @@ public class CustomerApi {
 		if (StringUtils.isEmpty(property)) {
 			property = "_id";
 		}
-		return customerService.listByPage(pageNoInt, customer, direction, property);
+		return customerService.list(pageNoInt, customer, type, direction, property);
 	}
 
 	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)
@@ -339,5 +339,10 @@ public class CustomerApi {
 			}
 		}
 	}
-
+	
+	//public List<Map<String,Object>> findTodayReminds(){
+		
+	//}
+	
+	
 }

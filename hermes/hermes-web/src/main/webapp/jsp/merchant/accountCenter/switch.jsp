@@ -29,8 +29,7 @@
 			<div class="controls">
 				<input type="radio" name="nameMatch" id="nameMatch" value="true"
 					<c:if test="${ merchant.setting.nameMatch eq true }"> checked="checked" </c:if> />开
-				<input type="radio" name="nameMatch" id="nameMatch"
-					value="false"
+				<input type="radio" name="nameMatch" id="nameMatch" value="false"
 					<c:if test="${ merchant.setting.nameMatch eq false }"> checked="checked" </c:if> />关
 				<span class="help-inline">(注：选择关时，发送短信将不会进行自动匹配性别 )</span>
 			</div>
@@ -48,7 +47,7 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="birthdayRemind">生日短信开关：</label>
+			<label class="control-label" for="birthdayRemind">生日提醒开关：</label>
 			<div class="controls">
 				<input type="radio" name="birthdayRemind" id="birthdayRemind"
 					value="true"
@@ -56,7 +55,10 @@
 				<input type="radio" name="birthdayRemind" id="birthdayRemind"
 					value="false"
 					<c:if test="${ merchant.setting.birthdayRemind eq false }"> checked="checked" </c:if> />关
-				<span class="help-inline">(注：打开开关，群发短信自动加上对应的销售信息)</span>
+
+				选择模板 <select id="sel" name="birthdayRemindTemplate.id">
+					<option >请选择</option>
+				</select> <span class="help-inline">(注：打开开关，生日提醒将出现在提醒列表中)</span>
 			</div>
 		</div>
 
@@ -65,58 +67,71 @@
 		</div>
 	</form>
 	<script type="text/javascript">
-	$(document).ready(function(){
-			var validateoptions={
-					rules: {
-						autoSend:{
-							required : true
-						},
-						nameMatch:{
-							required : true
-						},
-						salerMatch:{
-							required : true
-						},
-						birthdayRemind:{
-							required : true
-						}
-
+		$(document).ready(function() {
+			$.get("${pageContext.request.contextPath}/merchant/account/remindTemplate/get/", showTemplates);
+			var validateoptions = {
+				rules : {
+					autoSend : {
+						required : true
 					},
-					messages: {
-						autoSend:{
-							required : "选项不能为空"
-						},
-						nameMatch:{
-							required : "选项不能为空"
-						},
-						salerMatch:{
-							required : "选项不能为空"
-						},
-						birthdayRemind:{
-							required : "选项不能为空"
-						}
-		
+					nameMatch : {
+						required : true
+					},
+					salerMatch : {
+						required : true
+					},
+					birthdayRemind : {
+						required : true
 					}
+
+				},
+				messages : {
+					autoSend : {
+						required : "选项不能为空"
+					},
+					nameMatch : {
+						required : "选项不能为空"
+					},
+					salerMatch : {
+						required : "选项不能为空"
+					},
+					birthdayRemind : {
+						required : "选项不能为空"
+					}
+
+				}
 			};
-	 	$('#switchForm').validate(validateoptions);  
-	
-		$('#switchForm').submit(function(){
-			if(!$('#switchForm').valid()){
+			$('#switchForm').validate(validateoptions);
+
+			$('#switchForm').submit(function() {
+				if (!$('#switchForm').valid()) {
+					return false;
+				}
+				var options = {
+					success : toSwitch
+
+				};
+				$(this).ajaxSubmit(options);
 				return false;
+			});
+
+			function showTemplates(data) {
+				for ( var i = 0; i < data.length; i++) {
+					var option ="<option value='"+data[i].id+"'";
+					if(data[i].id=="${merchant.setting.birthdayRemindTemplate.id}"){
+						option+="  selected='selected'";
+					}
+					option +=" >";
+					option+=data[i].remindTemplate.title+"</option>";
+					$("#sel").append(option);
+				}
 			}
-			var options = {
-					success:toSwitch
-					
-			};
-			$(this).ajaxSubmit(options);
-			return false;
+
 		});
-	});
-	
-	function toSwitch(data){
-		$("#pageContentFrame").html(data);
-	}
-	
+
+		function toSwitch(data) {
+			$("#pageContentFrame").html(data);
+		}
 	</script>
 </body>
 </html>

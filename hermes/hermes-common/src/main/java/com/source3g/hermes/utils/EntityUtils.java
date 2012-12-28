@@ -32,7 +32,7 @@ public class EntityUtils {
 		if (customer.getReminds() != null) {
 			for (Remind r : customer.getReminds()) {
 				RemindDto remindDto = new RemindDto();
-				remindDto.setAdvancedTime(r.getAdvancedTime());
+				remindDto.setAdvancedTime(String.valueOf(r.getMerchantRemindTemplate().getAdvancedTime()));
 				remindDto.setAlreadyRemind(r.isAlreadyRemind());
 				remindDto.setRemindTime(r.getRemindTime());
 				if (r.getMerchantRemindTemplate() != null && r.getMerchantRemindTemplate().getRemindTemplate()!=null&&StringUtils.isNotEmpty(r.getMerchantRemindTemplate().getRemindTemplate().getTitle())) {

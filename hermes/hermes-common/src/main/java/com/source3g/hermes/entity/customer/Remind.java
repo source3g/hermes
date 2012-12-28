@@ -10,7 +10,6 @@ public class Remind {
 	@DBRef
 	private MerchantRemindTemplate merchantRemindTemplate;
 	private Date remindTime;
-	private String advancedTime;// 提前提醒的天数
 	private boolean alreadyRemind;
 
 
@@ -25,14 +24,6 @@ public class Remind {
 	}
 	public void setRemindTime(Date remindTime) {
 		this.remindTime = remindTime;
-	}
-
-	public String getAdvancedTime() {
-		return advancedTime;
-	}
-
-	public void setAdvancedTime(String advancedTime) {
-		this.advancedTime = advancedTime;
 	}
 
 	public boolean isAlreadyRemind() {
