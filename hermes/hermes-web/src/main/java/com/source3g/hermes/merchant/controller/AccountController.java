@@ -1,6 +1,7 @@
 package com.source3g.hermes.merchant.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.customer.dto.CustomerRemindDto;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.Setting;
@@ -110,7 +112,16 @@ public class AccountController {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("error", result);
 		return new ModelAndView("merchant/accountCenter/passwordChange",model);
-
+	}
+	
+	@RequestMapping(value="remind/list",method=RequestMethod.GET)
+	@ResponseBody
+	public Map<String, List<CustomerRemindDto>> remindList() throws Exception{
+		Merchant merchant =LoginUtils.getLoginMerchant();
+		String uri=ConfigParams.getBaseUrl()+"customer/todayReminds/"+merchant.getId()+"/";
+		@SuppressWarnings("unchecked")
+		Map<String, List<CustomerRemindDto>> result=restTemplate.getForObject(uri, Map.class);
+		return result;
 	}
 	
 }
