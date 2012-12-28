@@ -64,7 +64,7 @@
 					varStatus="status">
 					<td><label class="control-label">电话${status.count }：</label></td>
 					<td><input type="text" class="span8" name="otherPhones"
-						value="${otherPhone }" /></td>
+						value="${otherPhone }"  /></td>
 				</c:forEach>
 			</tr>
 
@@ -132,6 +132,19 @@
 	<script type="text/javascript">
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
 		var remindOptions=null;
+		var phoneRule={
+ 				rangelength:[11,11],
+				number:true,
+				digits:true ,
+				remote:{
+					type: "get",
+					url:"${pageContext.request.contextPath}/merchant/customer/phoneValidate",
+					data:{"phone":function(){
+										return $('#phone').val();
+									}
+						}
+				}
+			};
 		$(document).ready(function() {
 			var validateoptions={
 					rules: {
@@ -139,19 +152,7 @@
 							required : true,
 							rangelength:[0,50]
 						},
-			 			phone:{
-			 				rangelength:[11,11],
-							number:true,
-							digits:true ,
-							remote:{
-								type: "get",
-								url:"${pageContext.request.contextPath}/merchant/customer/phoneValidate",
-								data:{"phone":function(){
-													return $('#phone').val();
-												}
-									}
-							}
-						},
+			 			phone:phoneRule,
 						customerGroupId:{
 							required : true
 						},
@@ -198,9 +199,14 @@
 						}
 					}
 			};
-			if(${customer.phone }==$('#phone').val()){
-				validateoptions.rules.phone=null;
-			}
+			
+				var phone=$("#phone").val();
+				if("${customer.phone}"!=""&&"${customer.phone}"== phone){
+					validateoptions.rules.phone=null;
+				}else{
+					validateoptions.rules.phone=phoneRule;
+				}
+			 
 			$('#addCustomerForm').validate(validateoptions);
 			initCustomerGroupList();
 			initDialog();
@@ -221,7 +227,10 @@
 				return false;
 			});
 		});
-
+		
+		
+	
+		
 		function backToList(){
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 		}
