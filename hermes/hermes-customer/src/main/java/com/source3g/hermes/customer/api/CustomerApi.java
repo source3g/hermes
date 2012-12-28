@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.dto.CallRecordDto;
 import com.source3g.hermes.customer.dto.CustomerDto;
+import com.source3g.hermes.customer.dto.CustomerRemindDto;
 import com.source3g.hermes.customer.dto.NewCustomerDto;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
@@ -111,7 +113,7 @@ public class CustomerApi {
 
 	@RequestMapping(value = "customerListBycustomerGroupId/{customerGroupId}", method = RequestMethod.GET)
 	@ResponseBody
-	public  List<Customer> customerListBycustomerGroupId(@PathVariable ObjectId customerGroupId) {
+	public List<Customer> customerListBycustomerGroupId(@PathVariable ObjectId customerGroupId) {
 		return customerService.customerListBycustomerGroupId(customerGroupId);
 	}
 
@@ -121,7 +123,6 @@ public class CustomerApi {
 		return customerService.get(id);
 	}
 
-	
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Page list(String pageNo, String name, String phone, String property, String sortType, String phoneSortType, CustomerType type, @PathVariable String merchantId) {
@@ -339,10 +340,11 @@ public class CustomerApi {
 			}
 		}
 	}
-	
-	//public List<Map<String,Object>> findTodayReminds(){
-		
-	//}
-	
-	
+
+	@RequestMapping(value = "/todayReminds/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, List<CustomerRemindDto>> findTodayReminds(@PathVariable String merchantId) {
+		return customerService.findTodayReminds(new ObjectId(merchantId));
+	}
+
 }

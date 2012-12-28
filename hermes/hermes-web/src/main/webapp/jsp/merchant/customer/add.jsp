@@ -25,8 +25,8 @@
 					</c:if> <label class="control-label">姓名：</label></td>
 				<td width="40%"><input type="text" name="name"
 					value="${customer.name }" class="input-medium"
-					placeholder="请输入姓名..." /><span
-					class="help-inline"><font color="red">*</font></span></td>
+					placeholder="请输入姓名..." /><span class="help-inline"><font
+						color="red">*</font></span></td>
 				<td width="10%"><label class="control-label" for="name">性别：</label></td>
 				<td width="40%"><input type="radio" name="sex" value="MALE"
 					<c:if test="${( empty customer) or customer.sex eq 'MALE' }">checked="checked"</c:if> />男
@@ -39,9 +39,10 @@
 					value="${customer.birthday }" placeholder="请选择生日..."
 					onclick="WdatePicker({dateFmt:'MM-dd'});" /></td>
 				<td><label class="control-label">移动电话：</label></td>
-				<td><input type="text" class="input-medium" name="phone" id="phone"
-					placeholder="请输入移动电话..." value="${customer.phone }" /><span
-					class="help-inline"><font color="red">*</font></span></td>
+				<td><input type="text" class="input-medium" name="phone"
+					id="phone" placeholder="请输入移动电话..." onblur="phoneChange();"
+					value="${customer.phone }" /><span class="help-inline"><font
+						color="red">*</font></span></td>
 			</tr>
 			<tr>
 				<td><label class="control-label">顾客组：</label></td>
@@ -85,17 +86,18 @@
 				<td colspan="3"><c:forEach items="${customer.reminds}"
 						var="remind" varStatus="status">
 						<div class="remindItem">
-							事项：<input type="text" readonly="readonly" name="reminds[${status.index }].merchantRemindTemplate.remindTemplate.title"
-								class="input-medium" value="${remind.merchantRemindTemplate.remindTemplate.title }"></input>
-								<input type="hidden" name="reminds[${status.index }].merchantRemindTemplate.id"
-								class="input-medium" value="${remind.merchantRemindTemplate.id}"></input> 
-								 时间：<input
-								type="text" name="reminds[${status.index }].remindTime"
+							事项：<input type="text" readonly="readonly"
+								name="reminds[${status.index }].merchantRemindTemplate.remindTemplate.title"
+								class="input-medium"
+								value="${remind.merchantRemindTemplate.remindTemplate.title }"></input>
+							<input type="hidden"
+								name="reminds[${status.index }].merchantRemindTemplate.id"
+								class="input-medium" value="${remind.merchantRemindTemplate.id}"></input>
+							时间：<input type="text" name="reminds[${status.index }].remindTime"
 								class="input-medium"
 								value='<fmt:formatDate value="${remind.remindTime }" pattern="yyyy-MM-dd" />'
-								onclick="WdatePicker();"> <input
-								type='button' class='btn' value='删除'
-								onclick='deleteRemind(this);' />
+								onclick="WdatePicker();"> <input type='button'
+								class='btn' value='删除' onclick='deleteRemind(this);' />
 						</div>
 					</c:forEach> <input type="button" id="addRemindBtn" class="btn"
 					onclick="addRemind();" value="增加一个" /></td>
@@ -107,11 +109,12 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-				<button id="addCustomer" data-loading-text="顾客增加中..." class="btn btn-primary">
-                    		增加
-                 </button>
+				<button id="addCustomer" data-loading-text="顾客增加中..."
+					class="btn btn-primary">增加</button>
 			</c:if>
-				<input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" />
+			<input id="backToList" type="button"
+				onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"
+				class="btn btn-primary" value="返回" />
 
 			<div id="errorModal" class="modal hide fade">
 				<div class="modal-body">
@@ -128,26 +131,28 @@
 	<script type="text/javascript">
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
 		var remindOptions=null;
+		var phoneRule={
+ 				rangelength:[11,11],
+				number:true,
+				digits:true ,
+				remote:{
+					type: "get",
+					url:"${pageContext.request.contextPath}/merchant/customer/phoneValidate",
+					data:{"phone":function(){
+										return $('#phone').val();
+									}
+						}
+				}
+			};
+		var validateoptions=null;
 		$(document).ready(function() {
-			var validateoptions={
+			validateoptions={
 					rules: {
 						name:{
 							required : true,
 							rangelength:[0,50]
 						},
-			 			phone:{
-			 				rangelength:[11,11],
-							number:true,
-							digits:true ,
-							remote:{
-								type: "get",
-								url:"${pageContext.request.contextPath}/merchant/customer/phoneValidate",
-								data:{"phone":function(){
-													return $('#phone').val();
-												}
-									}
-							}
-						},
+			 			phone:phoneRule,
 						customerGroupId:{
 							required : true
 						},
@@ -194,9 +199,7 @@
 						}
 					}
 			};
-			if(${customer.phone }==$('#phone').val()){
-				validateoptions.rules.phone=null;
-			}
+			
 			$('#addCustomerForm').validate(validateoptions);
 			initCustomerGroupList();
 			initDialog();
@@ -299,6 +302,17 @@
 				$("#resultMessage").html("操作成功！");
 				$("#errorModal").modal();
 			}
+		}
+		
+		function phoneChange(){
+			var phone=$("#phone").val();
+			if("${customer.phone}"!=""&&"${customer.phone}"==phone){
+				 $("#phone").rules("remove");
+				 $("#phone").rules("add",{required:true});
+			 }else{
+				 $("#phone").rules("add",phoneRule);
+			 }
+			$('#addCustomerForm').valid();
 		}
 	</script>
 </body>

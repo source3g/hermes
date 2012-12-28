@@ -56,7 +56,7 @@
 			<label class="control-label" for="account">账号：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
-					id="account" name="account" value="${merchant.account}" <c:if test="${not empty update}"> readonly="readonly"</c:if>  > <span
+					id="account" name="account" onblur="changeAccount();" value="${merchant.account}" <c:if test="${not empty update}"> readonly="readonly"</c:if>  > <span
 					class="help-inline"></span>
 			</div>
 		</div>
@@ -174,6 +174,20 @@
 	</div>
 
 	<script type="text/javascript">
+	
+	var accountRule={
+			required : true,
+			minlength : 2,
+			validateAccount:true,
+			remote:{	
+				type: "get",
+				url:"${pageContext.request.contextPath}/admin/merchant/accountValidate",
+				data:{"account":function(){
+									return $('#account').val();
+								}
+					}
+			}
+		};
 	$(document).ready(function() {
 
 		initDialog();
@@ -184,19 +198,7 @@
 		}
 	 	var validateOptions = {
 				rules : { 
-					 account:{
-						required : true,
-						minlength : 2,
-						validateAccount:true,
-						remote:{	
-							type: "get",
-							url:"${pageContext.request.contextPath}/admin/merchant/accountValidate",
-							data:{"account":function(){
-												return $('#account').val();
-											}
-								}
-						}
-					},
+					 account:accountRule,
 					password:{
 						required : true,
 						minlength : 2	
@@ -241,9 +243,6 @@
 					}
 				}
 			}; 
-	 		if("${merchant.account}"==$("#account").val()){
-	 			validateOptions.rules.account=null;
-	 		}
 	 	
 			$('#addMerchantForm').validate(validateOptions); 
 			$('#queryMerchantGroupForm').validate({
@@ -392,6 +391,15 @@
 			}
 		} 
 		
+		function changeAccount(){
+			if("${merchant.account}"!=""&&"${merchant.account}"==$("#account").val()){
+				 $("#account").rules("remove");
+				 $("#account").rules("add",{required:true});
+	 		}else{
+	 			 $("#account").rules("add",accountRule);
+	 		}
+			$('#addMerchantForm').valid();
+		}
 	</script>
 </body>
 <%-- <%@include file="../../include/footer.jsp"%> --%>

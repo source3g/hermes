@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 
 import javax.jms.Destination;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -37,13 +39,16 @@ import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.customer.dto.CustomerDto;
+import com.source3g.hermes.customer.dto.CustomerRemindDto;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.ObjectValue;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
+import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
@@ -90,11 +95,12 @@ public class CustomerService extends BaseService {
 	public void updateExcludeProperties(Customer customer, String... properties) {
 		super.updateExcludeProperties(customer, properties);
 	}
-	//短信群发页面显示顾客信息
-	public  List<Customer> customerListBycustomerGroupId(ObjectId customerGroupId) {
+
+	// 短信群发页面显示顾客信息
+	public List<Customer> customerListBycustomerGroupId(ObjectId customerGroupId) {
 		return mongoTemplate.find(new Query(Criteria.where("customerGroupId").is(customerGroupId)), Customer.class);
 	}
-	
+
 	// public List<Customer> listAll() {
 	// return mongoTemplate.findAll(Customer.class);
 	// }
@@ -579,10 +585,46 @@ public class CustomerService extends BaseService {
 		return callInStatisticsToday;
 	}
 
-	public List<Customer> findCustomersByBirthday(ObjectId merchantId,String birthday) {
+	public List<Customer> findCustomersByBirthday(ObjectId merchantId, String birthday) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("birthday").is(birthday).and("merchantId").is(merchantId));
 		return mongoTemplate.find(query, Customer.class);
 	}
 
+	public Map<String, List<CustomerRemindDto>> findTodayReminds(ObjectId merchantId) {
+		Map<String, List<CustomerRemindDto>> result = new HashMap<String, List<CustomerRemindDto>>();
+		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
+			Query query = new Query();
+			Criteria criteria = Criteria.where("merchantId").is(merchantId);
+			Calendar calendar = Calendar.getInstance();
+			Date startTime =new Date();
+			calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
+			Date endTime =  DateFormateUtils.getStartDateOfDay(calendar.getTime());
+		 	criteria.and("reminds.remindTime").gte(startTime).lte(endTime).and("reminds.merchantRemindTemplate").is(merchantRemindTemplate);
+			query.addCriteria(criteria);
+			List<Customer> customers = mongoTemplate.find(query, Customer.class);
+			List<CustomerRemindDto> customerRemindDtos = new ArrayList<CustomerRemindDto>();
+			for (Customer customer : customers) {
+				for (Remind remind : customer.getReminds()) {
+					if (remind.getRemindTime().getTime() > startTime.getTime() && remind.getRemindTime().getTime() < endTime.getTime()) {
+						CustomerRemindDto customerRemindDto = new CustomerRemindDto();
+						customerRemindDto.setCustomerName(customer.getName());
+					//	customerRemindDto.setMerchantRemindTemplate(merchantRemindTemplate);
+						customerRemindDto.setPhone(customer.getPhone());
+						customerRemindDto.setRemindTime(new Date());
+						customerRemindDto.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
+						customerRemindDto.setContent(merchantRemindTemplate.getMessageContent());
+						customerRemindDto.setTitle(merchantRemindTemplate.getRemindTemplate().getTitle());
+						customerRemindDtos.add(customerRemindDto);
+					}
+				}
+
+			}
+			if (CollectionUtils.isNotEmpty(customerRemindDtos)) {
+				result.put(merchantRemindTemplate.getRemindTemplate().getTitle(), customerRemindDtos);
+			}
+		}
+		return result;
+	}
 }

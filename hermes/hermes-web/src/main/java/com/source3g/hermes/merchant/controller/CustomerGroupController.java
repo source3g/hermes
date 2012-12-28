@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.WebUtils;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
@@ -80,8 +79,8 @@ public class CustomerGroupController {
 		
 	@RequestMapping(value = "/listAllJson", method = RequestMethod.GET)
 	@ResponseBody
-	public List<CustomerGroup> listAll(HttpServletRequest req) {
-		Merchant merchant = (Merchant) WebUtils.getSessionAttribute(req, "loginUser");
+	public List<CustomerGroup> listAll(HttpServletRequest req) throws Exception {
+		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant();
 		String uri = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
 		CustomerGroup[] customerGroups = restTemplate.getForObject(uri, CustomerGroup[].class);
 		return Arrays.asList(customerGroups);
