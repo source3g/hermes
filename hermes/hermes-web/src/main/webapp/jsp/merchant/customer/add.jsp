@@ -65,7 +65,7 @@
 					varStatus="status">
 					<td><label class="control-label">电话${status.count }：</label></td>
 					<td><input type="text" class="span8" name="otherPhones"
-						value="${otherPhone }" /></td>
+						value="${otherPhone }"  /></td>
 				</c:forEach>
 			</tr>
 
@@ -219,9 +219,7 @@
 				$(this).ajaxSubmit(options);
 				return false;
 			});
-		});
-
-		
+		});	
 		function showList(data){
 			$("#pageContentFrame").html(data);
 		}
