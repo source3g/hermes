@@ -66,7 +66,7 @@ public class CustomerApi {
 	@Autowired
 	private CustomerImportService customerImportService;
 	@Autowired
-	private CommonBaseService commonBaseService; 
+	private CommonBaseService commonBaseService;
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -348,11 +348,11 @@ public class CustomerApi {
 	public List<CustomerRemindDto> findTodayReminds(@PathVariable String merchantId) {
 		return customerService.findTodayReminds(new ObjectId(merchantId));
 	}
-	
+
 	@RequestMapping(value = "/todayReminds/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, List<CustomerRemindDto>> findTodayRemindsBySn(@PathVariable String sn) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+	public List<CustomerRemindDto> findTodayRemindsBySn(@PathVariable String sn) throws Exception {
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return customerService.findTodayReminds(merchant.getId());
 	}
 
