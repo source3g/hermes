@@ -1,7 +1,5 @@
 package com.source3g.hermes.sync.api;
 
-import java.util.List;
-
 import javax.jms.Destination;
 
 import org.bson.types.ObjectId;
@@ -18,7 +16,6 @@ import com.source3g.hermes.constants.TaskConstants;
 import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.service.TaskService;
 import com.source3g.hermes.sync.entity.DeviceStatus;
-import com.source3g.hermes.sync.entity.TaskPackage;
 
 @Controller
 @RequestMapping(value = "/task")
@@ -33,12 +30,12 @@ public class TaskApi {
 
 	@RequestMapping(value = "/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<TaskPackage> taskList(@PathVariable String sn) {
+	public Object taskList(@PathVariable String sn) {
 		try {
 			return taskService.genTasks(sn);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return e.getMessage();
 		}
 	}
 
