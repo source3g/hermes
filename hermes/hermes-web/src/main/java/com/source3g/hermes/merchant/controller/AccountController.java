@@ -1,7 +1,6 @@
 package com.source3g.hermes.merchant.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,13 +113,17 @@ public class AccountController {
 		return new ModelAndView("merchant/accountCenter/passwordChange",model);
 	}
 	
+	@RequestMapping(value="remind/toList",method=RequestMethod.GET)
+	public ModelAndView toRemindList() throws Exception{
+		return new ModelAndView("merchant/accountCenter/remindList");
+	}
+	
 	@RequestMapping(value="remind/list",method=RequestMethod.GET)
 	@ResponseBody
-	public Map<String, List<CustomerRemindDto>> remindList() throws Exception{
+	public CustomerRemindDto[] remindList() throws Exception{
 		Merchant merchant =LoginUtils.getLoginMerchant();
 		String uri=ConfigParams.getBaseUrl()+"customer/todayReminds/"+merchant.getId()+"/";
-		@SuppressWarnings("unchecked")
-		Map<String, List<CustomerRemindDto>> result=restTemplate.getForObject(uri, Map.class);
+		CustomerRemindDto[] result=restTemplate.getForObject(uri, CustomerRemindDto[].class);
 		return result;
 	}
 	

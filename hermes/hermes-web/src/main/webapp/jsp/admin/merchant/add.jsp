@@ -221,11 +221,9 @@
 				}
 				return strChineseFirstPY.charAt(parseFloat(Text)-19968);
 		    }  
-				
 		initDialog();
 		
 	if(${not empty error}==true){
-			
 			alert("${error}");
 		}
 	 	var validateOptions = {

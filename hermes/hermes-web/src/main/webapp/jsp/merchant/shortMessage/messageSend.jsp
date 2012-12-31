@@ -139,8 +139,6 @@
 			
 			alert("${error}");
 		}
-		
-	
 		var validateOptions = {
 				rules : { 
 					content:{
@@ -265,15 +263,17 @@
 			
 			$("#myModal").modal();
 		}
+		
 		function drawTable(data){	
 			for(var i=0;i<data.length;i++){
 				var str="<input type=checkbox name=\"customerName\" value="+data[i].phone+">"+data[i].name;
 			$("#customer").append(str);//添加
 			}
-			var allList="<input type=checkbox id=\"allCustomersList\" name=\"allList\" value=\"allCustomers\">全选"
+			var allList="<input type=checkbox id=\"allCustomersList\" name=\"allList\" value=\"allCustomers\" onchange=\"change()\">全选"
 			$("#allList").append(allList);//添加
 		}
-		function chosePhones(){
+		function change(){
+			alert("aaa");
 			var phones= new Array();
 	 		if($('#allCustomersList').attr('checked')=='checked'){
 				$("input:checkbox[name='customerName']").attr("checked",'checked');
@@ -289,6 +289,9 @@
 			for(var i=0;i<phones.length;i++){
 				$('#customerPhones').append(phones[i]+";");
 			}  
+		}
+	
+		function chosePhones(){
 			$("#myModal").modal("hide");
 			
 		}

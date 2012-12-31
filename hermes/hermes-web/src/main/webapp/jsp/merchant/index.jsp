@@ -237,7 +237,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/account/remindSetting/");
 		});
 		$("#merchantRemind").click(function() {
-			loadPage("${pageContext.request.contextPath}/merchant/account/remind/list");
+			loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
 		});
 		$("#passwordChange").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");

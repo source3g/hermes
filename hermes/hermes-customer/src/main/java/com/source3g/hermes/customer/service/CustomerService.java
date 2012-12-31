@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.customer.dto.CustomerDto;
 import com.source3g.hermes.customer.dto.CustomerRemindDto;
+import com.source3g.hermes.customer.dto.CustomerRemindDto.CustomerInfo;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.ObjectValue;
 import com.source3g.hermes.entity.customer.CallRecord;
@@ -591,8 +592,8 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.find(query, Customer.class);
 	}
 
-	public Map<String, List<CustomerRemindDto>> findTodayReminds(ObjectId merchantId) {
-		Map<String, List<CustomerRemindDto>> result = new HashMap<String, List<CustomerRemindDto>>();
+	public List<CustomerRemindDto> findTodayReminds(ObjectId merchantId) {
+		 List<CustomerRemindDto>  result = new ArrayList<CustomerRemindDto>();
 		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			Query query = new Query();
@@ -604,26 +605,22 @@ public class CustomerService extends BaseService {
 		 	criteria.and("reminds.remindTime").gte(startTime).lte(endTime).and("reminds.merchantRemindTemplate").is(merchantRemindTemplate);
 			query.addCriteria(criteria);
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);
-			List<CustomerRemindDto> customerRemindDtos = new ArrayList<CustomerRemindDto>();
+			if(CollectionUtils.isEmpty(customers)){
+				return null;
+			}
+			CustomerRemindDto customerRemindDto = new CustomerRemindDto();
+			customerRemindDto.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
+			customerRemindDto.setContent(merchantRemindTemplate.getMessageContent());
+			customerRemindDto.setTitle(merchantRemindTemplate.getRemindTemplate().getTitle());
 			for (Customer customer : customers) {
 				for (Remind remind : customer.getReminds()) {
 					if (remind.getRemindTime().getTime() > startTime.getTime() && remind.getRemindTime().getTime() < endTime.getTime()) {
-						CustomerRemindDto customerRemindDto = new CustomerRemindDto();
-						customerRemindDto.setCustomerName(customer.getName());
-					//	customerRemindDto.setMerchantRemindTemplate(merchantRemindTemplate);
-						customerRemindDto.setPhone(customer.getPhone());
-						customerRemindDto.setRemindTime(new Date());
-						customerRemindDto.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
-						customerRemindDto.setContent(merchantRemindTemplate.getMessageContent());
-						customerRemindDto.setTitle(merchantRemindTemplate.getRemindTemplate().getTitle());
-						customerRemindDtos.add(customerRemindDto);
+						CustomerInfo customerInfo=new CustomerInfo(customer.getName(), customer.getPhone(), remind.getRemindTime());
+						customerRemindDto.addRemind(customerInfo);
 					}
 				}
-
 			}
-			if (CollectionUtils.isNotEmpty(customerRemindDtos)) {
-				result.put(merchantRemindTemplate.getRemindTemplate().getTitle(), customerRemindDtos);
-			}
+			result.add(customerRemindDto);
 		}
 		return result;
 	}

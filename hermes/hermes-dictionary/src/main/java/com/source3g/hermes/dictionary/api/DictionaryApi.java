@@ -41,6 +41,12 @@ public class DictionaryApi {
 		dictionaryService.add(remindTemplate);
 		return ReturnConstants.SUCCESS;
 	}
+	
+	@RequestMapping(value = "/titleValidate/{title}", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean titleValidate(@PathVariable String title) {
+		return dictionaryService.titleValidate(title);
+	}
 
 	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)
 	@ResponseBody

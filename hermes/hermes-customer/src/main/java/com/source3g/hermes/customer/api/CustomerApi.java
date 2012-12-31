@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -346,7 +345,7 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/todayReminds/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String, List<CustomerRemindDto>> findTodayReminds(@PathVariable String merchantId) {
+	public List<CustomerRemindDto> findTodayReminds(@PathVariable String merchantId) {
 		return customerService.findTodayReminds(new ObjectId(merchantId));
 	}
 	
