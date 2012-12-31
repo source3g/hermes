@@ -19,7 +19,7 @@
 			class="help-inline"><font color="red">*</font></span><input
 			id="pageNo" name="pageNo" type="hidden"> 		 
 			<button id="addBtn" data-loading-text="资源增加中..." class="btn btn-primary">
-                   	确定 </button><input
+                   	增加 </button>&nbsp;<input
 			class="btn btn-primary" type="button" onclick="query();" value="查询">
 	</form>
 

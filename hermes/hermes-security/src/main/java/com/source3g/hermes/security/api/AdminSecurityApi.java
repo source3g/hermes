@@ -3,14 +3,11 @@ package com.source3g.hermes.security.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,7 +33,7 @@ public class AdminSecurityApi {
 
 	@RequestMapping(value = "/account/add", method = RequestMethod.POST)
 	@ResponseBody
-	public String addAccount(Account account) {
+	public String addAccount(@RequestBody Account account) {
 		try {
 			securityService.addAccount(account);
 		} catch (Exception e) {
@@ -54,7 +51,7 @@ public class AdminSecurityApi {
 	}
 
 	// 验证账号是否存在
-	@RequestMapping(value = "accountValidate", method = RequestMethod.GET)
+	@RequestMapping(value = "/account/accountValidate", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean accountValidate(String account) {
 		Boolean result = securityService.accountValidate(account);
@@ -82,6 +79,7 @@ public class AdminSecurityApi {
 	@RequestMapping(value = "/resource/list", method = RequestMethod.GET)
 	@ResponseBody
 	public Page listResouce(String pageNo, String name, String code) {
+		
 		int pageNoInt = 0;
 		if (StringUtils.isNotEmpty(pageNo)) {
 			pageNoInt = Integer.parseInt(pageNo);
@@ -92,14 +90,14 @@ public class AdminSecurityApi {
 
 	@RequestMapping(value = "/resource/add", method = RequestMethod.POST)
 	@ResponseBody
-	public String addResource(@Valid Resource resource, BindingResult errorResult) {
-		if (errorResult.hasErrors()) {
-			String error = "";
-			for (ObjectError err : errorResult.getAllErrors()) {
-				error += "|" + err.getDefaultMessage();
-			}
-			return error;
-		}
+	public String addResource( @RequestBody   Resource resource) {//, BindingResult errorResult
+		//if (errorResult.hasErrors()) {
+		//	String error = "";
+		//	for (ObjectError err : errorResult.getAllErrors()) {
+		//		error += "|" + err.getDefaultMessage();
+		//	}
+		//	return error;
+	//	}
 		securityService.addResource(resource);
 		return ReturnConstants.SUCCESS;
 	}

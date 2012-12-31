@@ -49,7 +49,7 @@ public class SecurityController {
 		String result = restTemplate.postForObject(uri, httpEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			model.put("success", "success");
-			return new ModelAndView("/admin/security/accountList", model);
+			return new ModelAndView("redirect:/admin/security/account/list/", model);
 		} else {
 			model.put("error", result);
 			return new ModelAndView("/admin/security/accountAdd", model);
@@ -102,8 +102,12 @@ public class SecurityController {
 		}
 		String uri = ConfigParams.getBaseUrl() + "admin/security/resource/list/";
 		uri += "?pageNo=" + pageNo;
-		uri += "&name=" + name;
-		uri += "&code=" + code;
+		if (StringUtils.isNotEmpty(name)) {
+			uri += "&name=" + name;
+		}
+		if (StringUtils.isNotEmpty(code)) {
+			uri += "&code=" + code;
+		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
@@ -152,13 +156,14 @@ public class SecurityController {
 	}
 
 	@RequestMapping(value = "/role/add", method = RequestMethod.POST)
-	public ModelAndView addRole(String name, String[] resourceIds) {
+	public ModelAndView addRole(String name, String resourceIds) {
 		Map<String, Object> model = new HashMap<String, Object>();
-
 		String uri = ConfigParams.getBaseUrl() + "admin/security/role/add/";
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("name", name);
-		formData.add("resourceIds", resourceIds);
+		if(StringUtils.isNotEmpty(resourceIds)){
+			formData.add("resourceIds", resourceIds);
+		}
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
@@ -168,7 +173,7 @@ public class SecurityController {
 			model.put("error", result);
 			return new ModelAndView("/admin/security/roleAdd", model);
 		}
-		return new ModelAndView("/admin/security/roleAdd");
+		return new ModelAndView("redirect:/admin/security/role/list/");
 	}
 
 	@RequestMapping(value = "/resource/{code}", method = RequestMethod.GET)

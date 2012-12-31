@@ -29,9 +29,8 @@
 					id="resourceCode" name="resourceCode" >
 			<!-- 	<input type="button" class="btn btn-primary"
 					onclick="addResource();" value="添加"> -->
-				<button id="addResourceBtn" data-loading-text="角色增加中..." class="btn btn-primary" onclick="addResource();">
-                    		增加
-                 </button>	
+				<input type="button"  class="btn btn-primary" value="增加" onclick="addResource();"/>
+                    		
 					 <span
 					class="help-inline"></span>
 			</div>
@@ -61,7 +60,7 @@
 		</table>
 		<div class="form-actions">
 			<c:if test="${ empty role }">
-				<input type="submit" class="btn btn-primary" value="增加">
+				<button id="addRoleBtn"  class="btn btn-primary" data-loading-text="角色增加中..."> 提交</button>
 			</c:if>
 			<c:if test="${not empty role }">
 				<input type="button" onclick="update();" class="btn btn-primary" value="修改">
@@ -99,7 +98,7 @@
 				if (!$('#addRoleForm').valid()) {
 					return false;
 				}
-				$('#addResourceBtn').button('loading');
+				$('#addRoleBtn').button('loading');
 				$(this).ajaxSubmit({
 					success : showContentInfo,
 					error : showError

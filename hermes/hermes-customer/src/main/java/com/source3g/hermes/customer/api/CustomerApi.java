@@ -50,6 +50,7 @@ import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
+import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
@@ -65,6 +66,8 @@ public class CustomerApi {
 
 	@Autowired
 	private CustomerImportService customerImportService;
+	@Autowired
+	private CommonBaseService commonBaseService; 
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -345,6 +348,13 @@ public class CustomerApi {
 	@ResponseBody
 	public Map<String, List<CustomerRemindDto>> findTodayReminds(@PathVariable String merchantId) {
 		return customerService.findTodayReminds(new ObjectId(merchantId));
+	}
+	
+	@RequestMapping(value = "/todayReminds/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, List<CustomerRemindDto>> findTodayRemindsBySn(@PathVariable String sn) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		return customerService.findTodayReminds(merchant.getId());
 	}
 
 }

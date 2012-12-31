@@ -65,7 +65,7 @@
 		$(document).ready(function() {
 			initDialog();
 			if(${not empty error}==true){
-				alert("${error}");
+				alert("${error}"+"1111");
 			}
 			var validateOptions = {
 				rules : {
