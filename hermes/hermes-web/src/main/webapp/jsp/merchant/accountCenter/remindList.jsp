@@ -5,10 +5,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>提醒设置</title>
+<title>提醒列表</title>
 </head>
 <body>
-		<form id="remindSettingForm" method="post" class="form-horizontal">
+		<form id="remindListForm" method="post" class="form-horizontal">
 			<table class="table table-bordered">
 				<thead>
 					<tr>
@@ -42,7 +42,7 @@
 			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",drawTable);
 			function drawTable(data){
 				for(var i=0;i<data.length;i++){
-					var str="<td>"+data[i].title+"</td><td>"+data[i].content+"</td><td>"+data[i].advancedTime+"</td><td><span>  [共有"+data[i].customers.length+"位客户]</span><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"></td>";
+					var str="<td>"+data[i].title+"</td><td>"+data[i].content+"</td><td>"+data[i].advancedTime+"</td><td><span>  [共有"+data[i].customers.length+"位客户]</span><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"></td>";
 					$("#customerRemindDtos").append(str);
 					var index=i;
 					$("#customer"+index).click(function (){
@@ -57,6 +57,10 @@
 				}
 			}
 		});
+		function sendMessages(title){
+			alert(title);
+			$.get("${pageContext.request.contextPath}/merchant/account/sendMessages/"+title+"/",showContentInfo);
+		}
 	</script>
 </body>
 </html>

@@ -266,32 +266,29 @@
 		
 		function drawTable(data){	
 			for(var i=0;i<data.length;i++){
-				var str="<input type=checkbox name=\"customerName\" value="+data[i].phone+">"+data[i].name;
+				var str="<input type=checkbox name=\"customerName\" onchange='selectOne(this);' value="+data[i].phone+">"+data[i].name;
 			$("#customer").append(str);//添加
 			}
 			var allList="<input type=checkbox id=\"allCustomersList\" name=\"allList\" value=\"allCustomers\" onchange=\"change()\">全选"
 			$("#allList").append(allList);//添加
 		}
+		function selectOne(checkBox){
+			if($(checkBox).attr('checked')!='checked'){
+				$("#allCustomersList").attr("checked",false);
+			}
+		}
 		function change(){
-			alert("aaa");
-			var phones= new Array();
 	 		if($('#allCustomersList').attr('checked')=='checked'){
 				$("input:checkbox[name='customerName']").attr("checked",'checked');
-				$("input:checkbox[name='customerName']").each(function(){
-					phones.push($(this).val());
-				})
-			} 
-	  		if($('#allCustomersList').attr('checked')==undefined){
-	 		 	$("input:checked[name='customerName']").each(function(){
-					phones.push($(this).val());
-				})
+			} else {
+				$("input:checkbox[name='customerName']").attr("checked",false);
 	 		} 
-			for(var i=0;i<phones.length;i++){
-				$('#customerPhones').append(phones[i]+";");
-			}  
 		}
 	
 		function chosePhones(){
+			$("input[name='customerName']:checked").each(function(){
+				$('#customerPhones').append($(this).val()+";");
+			});
 			$("#myModal").modal("hide");
 			
 		}

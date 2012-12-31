@@ -3,6 +3,7 @@ package com.source3g.hermes.message.service;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageSendLog;
@@ -40,6 +42,7 @@ import com.source3g.hermes.message.PhoneInfo;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
+import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.utils.PhoneUtils;
 
@@ -361,4 +364,18 @@ public class MessageService extends BaseService {
 		return "尊敬的" + customerName + ":" + content;
 	}
 
+	public void remindSend(String title, ObjectId merchantId) {
+		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
+			Query query = new Query();
+			Criteria criteria = Criteria.where("merchantId").is(merchantId);
+			Calendar calendar = Calendar.getInstance();
+			Date startTime =new Date();
+			calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
+			Date endTime =  DateFormateUtils.getStartDateOfDay(calendar.getTime());
+		 	criteria.and("reminds.remindTime").gte(startTime).lte(endTime).and("reminds.merchantRemindTemplate.title").is(title);
+			query.addCriteria(criteria);
+			List<Customer> customers = mongoTemplate.find(query, Customer.class);
+	}
+	}
 }

@@ -89,4 +89,12 @@ public class MessageApi {
 		messageService.saveMessageAutoSend(messageAutoSend);
 		return ReturnConstants.SUCCESS;
 	}
+	
+	@RequestMapping(value = "/remindSend/{title}/{merchantId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String remindSend( String title,ObjectId merchantId ) {
+		messageService.remindSend(title,merchantId);
+		return ReturnConstants.SUCCESS;
+	}
+	
 }
