@@ -59,9 +59,17 @@ public class DictionaryController {
 			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
 		}
 		return new ModelAndView("admin/error");
-
 	}
-
+	
+	//验证标题是否重复
+	@RequestMapping(value = "/titleValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean titleValidate(String  title) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "dictionary/titleValidate/"+title+"/";
+		Boolean result = restTemplate.getForObject(uri,Boolean.class);
+			return result;
+	}
+	
 	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
 	public ModelAndView remindSave(RemindTemplate remindTemplate) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindSave/";
@@ -73,7 +81,7 @@ public class DictionaryController {
 		return new ModelAndView("admin/error");
 
 	}
-
+	
 	@RequestMapping(value = "/remindDelete/{id}", method = RequestMethod.GET)
 	public String remindDelete(@PathVariable ObjectId id, RedirectAttributes redirectAttributes) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindDelete/" + id + "";

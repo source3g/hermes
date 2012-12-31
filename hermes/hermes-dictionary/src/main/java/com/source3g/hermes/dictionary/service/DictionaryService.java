@@ -34,4 +34,12 @@ public class DictionaryService extends BaseService {
 	public RemindTemplate getRemindTemplate(ObjectId id){
 		return mongoTemplate.findById(id, RemindTemplate.class);
 	}
+
+	public Boolean titleValidate(String title) {
+		List<RemindTemplate> remindTemplates=mongoTemplate.find(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
+		if(remindTemplates.size()>0){
+			return false;
+		}
+		return true;
+	}
 }

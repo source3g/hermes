@@ -78,11 +78,33 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
+ 			$('#remindSettingForm').validate({
+				rules : {
+					title : {
+			 			remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/dictionary/titleValidate",
+							data:{"title":function(){
+												return $('#title').val();
+											}
+								}
+						} 
+					}
+				},
+				messages : {
+					title : {
+					 	remote:"标题名称已存在" 
+					}
+				}
+			});   
 			if(${not empty error}==true){
 				alert("${error}");	
 				}
 			
 			$("#sel").change(selectRemind);
+		 if (!$("#remindSettingForm").valid()) {
+					return false;
+				} 
 		});
 		function add() {
 			$("#remindSettingForm").ajaxSubmit({
