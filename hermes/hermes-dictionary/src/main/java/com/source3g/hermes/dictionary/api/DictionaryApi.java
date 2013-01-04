@@ -31,14 +31,18 @@ public class DictionaryApi {
 	}
 	
 	
-	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
+	@RequestMapping(value = "/remindAdd/", method = RequestMethod.POST)
 	@ResponseBody
 	public String remindAdd(@RequestBody RemindTemplate remindTemplate) {
-		if (remindTemplate.getId() != null) {
-			ObjectId objId = null;
-			remindTemplate.setId(objId);
+		if (remindTemplate.getId() == null) {
+			remindTemplate.setId(ObjectId.get());
 		}
-		dictionaryService.add(remindTemplate);
+		try {
+			dictionaryService.add(remindTemplate);
+			
+		} catch (Exception e) {
+		return	e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 	

@@ -94,10 +94,10 @@ public class CustomerApi {
 		bos.close();
 	}
 
-	@RequestMapping(value = "/phoneValidate/{phone}", method = RequestMethod.GET)
+	@RequestMapping(value = "/phoneValidate/{phone}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean phoneValidate(@PathVariable String phone) {
-		return customerService.phoneValidate(phone);
+	public Boolean phoneValidate(@PathVariable String phone,@PathVariable ObjectId merchantId) {
+		return customerService.phoneValidate(phone,merchantId);
 	}
 
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)

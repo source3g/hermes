@@ -9,7 +9,7 @@
 </head>
 <body>
 		<form id="remindListForm" method="post" class="form-horizontal">
-			<table class="table table-bordered">
+			<table class="table table-bordered" id="customerRemindDtos">
 				<thead>
 					<tr>
 						<th width="18%">提醒标题</th>
@@ -19,8 +19,9 @@
 						<th width="18%" >操作</th>
 					</tr>
 				</thead>
-				<tr id="customerRemindDtos">
-				</tr>
+				
+				<!-- <tr id="customerRemindDtos">
+				</tr> -->
 			</table>
 		</form>
 	<div id="myModal" class="modal hide fade">
@@ -45,7 +46,7 @@
 			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",drawTable);
 			function drawTable(data){
 				for(var i=0;i<data.length;i++){
-					var str="<td>"+data[i].title+"</td><td>"+data[i].content+"</td><td>"+data[i].advancedTime+"</td><td><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><span>  [共有"+data[i].customers.length+"位客户]</span></td><td><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"></td>";
+					var str="<tr><td width=\"18%\">"+data[i].title+"</td><td width=\"18%\">"+data[i].content+"</td><td width=\"18%\">"+data[i].advancedTime+"</td><td width=\"28%\"><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><span>  [共有"+data[i].customers.length+"位客户]</span></td><td width=\"18%\"><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"></td></tr>";
 					$("#customerRemindDtos").append(str);
 					var index=i;
 					$("#customer"+index).click(function (){

@@ -81,6 +81,7 @@
  			$('#remindSettingForm').validate({
 				rules : {
 					title : {
+						required : true,
 			 			remote:{
 							type: "get",
 							url:"${pageContext.request.contextPath}/admin/dictionary/titleValidate",
@@ -89,11 +90,20 @@
 											}
 								}
 						} 
+					},
+					advancedTime:{
+						number:true,
+						digits:true
 					}
 				},
 				messages : {
 					title : {
+						required : "标题不能为空",
 					 	remote:"标题名称已存在" 
+					},
+					advancedTime:{
+						number:"请输入数字",
+						digits:"请输入整数" 
 					}
 				}
 			});   
@@ -118,8 +128,8 @@
 		}
 
 		function save() {
-			 if (!$("#remindSettingForm").valid()) {
-					return ;
+			if (!$("#remindSettingForm").valid()) {
+				return ;
 			} 
 			$("#remindSettingForm").ajaxSubmit({
 				url : "${pageContext.request.contextPath}/admin/dictionary/remindSave",
@@ -129,9 +139,6 @@
 		}
 
 		function deleteById() {
-			 if (!$("#remindSettingForm").valid()) {
-					return ;
-				} 
 			var title = $("#sel").find("option:selected").text();
 			if (title == '请选择') {
 				return;

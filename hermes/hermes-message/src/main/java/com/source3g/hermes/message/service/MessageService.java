@@ -378,7 +378,6 @@ public class MessageService extends BaseService {
 					 	criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
 					 	query.addCriteria(criteria);
 						List<Customer> customers = mongoTemplate.find(query, Customer.class);
-						return;
 				}
 			}
 		
