@@ -87,11 +87,11 @@ public class DictionaryController {
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindDelete/" + id + "";
 		String result = restTemplate.getForObject(uri, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			return ("redirect:/admin/Dictionary/toRemindTemplate");
+			return ("redirect:/admin/dictionary/toRemindTemplate");
 		}
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("error", result);
 		redirectAttributes.addFlashAttribute("error", result);
-		return ("redirect:/admin/Dictionary/toRemindTemplate");
+		return ("redirect:/admin/dictionary/toRemindTemplate");
 	}
 }

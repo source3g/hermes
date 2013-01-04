@@ -19,6 +19,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.bson.types.ObjectId;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,8 @@ public class CustomerImportService extends BaseService {
 		Merchant merchant = new Merchant();
 		merchant.setId(merchantId);
 		query.addCriteria(Criteria.where("merchant").is(merchant));
+		Sort sort=new Sort(Direction.DESC, "_id");
+		query.with(sort);
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, CustomerImportLog.class);
 		page.setTotalRecords(totalCount);

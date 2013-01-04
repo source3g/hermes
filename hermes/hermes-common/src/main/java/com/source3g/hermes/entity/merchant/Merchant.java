@@ -38,6 +38,7 @@ public class Merchant extends AbstractEntity {
 	private List<MerchantRemindTemplate> merchantRemindTemplates;
 	
 	private Setting setting=new Setting();
+	
 	public List<MerchantRemindTemplate> getMerchantRemindTemplates() {
 		return merchantRemindTemplates;
 	}

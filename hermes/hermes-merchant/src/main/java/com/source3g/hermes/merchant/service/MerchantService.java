@@ -154,22 +154,10 @@ public class MerchantService extends BaseService {
 	}
 
 	public void remindSave(ObjectId merchantId, MerchantRemindTemplate merchantRemindTemplate) {
-		MerchantRemindTemplate merchantRemind = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+		MerchantRemindTemplate merchantRemind = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("_id").is(merchantRemindTemplate.getId())), MerchantRemindTemplate.class);
 		if (merchantRemind == null) {
 			return;
 		}
-//		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-//		List<MerchantRemindTemplate> merchantRemindTemplates = merchant.getMerchantRemindTemplates();
-//		if (merchantRemindTemplates == null) {
-//			return;
-//		}
-//		for (MerchantRemindTemplate m : merchantRemindTemplates) {
-//			if (m.getId().equals(merchantRemindTemplate.getId())) {
-//				m.setMessageContent(merchantRemindTemplate.getMessageContent());
-//				m.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
-//			}
-//		}
-//		mongoTemplate.save(merchant);
 		merchantRemind.setMessageContent(merchantRemindTemplate.getMessageContent());
 		merchantRemind.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
 		mongoTemplate.save(merchantRemind);
@@ -210,8 +198,9 @@ public class MerchantService extends BaseService {
 	}
 
 	public List<MerchantRemindTemplate> merchantRemindList(ObjectId merchantId) {
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		return merchant.getMerchantRemindTemplates();
+		//Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		List<MerchantRemindTemplate> list=mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+		return list;
 	}
 
 	public void cancel(ObjectId merchantId){

@@ -46,8 +46,8 @@ public class CustomerGroupController {
 		return model;
 	}
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public ModelAndView add(@Valid CustomerGroup customerGroup, BindingResult errorResult, HttpServletRequest req) {
-		Merchant merchant = (Merchant) req.getSession().getAttribute("loginUser");
+	public ModelAndView add(@Valid CustomerGroup customerGroup, BindingResult errorResult, HttpServletRequest req) throws Exception {
+		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant();
 		if (errorResult.hasErrors()) {
 			Map<String, Object> model=new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
@@ -70,8 +70,8 @@ public class CustomerGroupController {
 	//验证顾客组名称是否存在
 		@RequestMapping(value = "nameValidate", method = RequestMethod.GET)
 		@ResponseBody
-		public Boolean nameValidate(String name,HttpServletRequest req) {
-			Merchant merchant = (Merchant) req.getSession().getAttribute("loginUser");
+		public Boolean nameValidate(String name,HttpServletRequest req) throws Exception {
+			Merchant merchant = (Merchant)LoginUtils.getLoginMerchant();
 			String uri=ConfigParams.getBaseUrl() + "customerGroup/nameValidate/"+merchant.getId()+"/"+name+"/";
 			Boolean result = restTemplate.getForObject(uri, Boolean.class);
 			return result;

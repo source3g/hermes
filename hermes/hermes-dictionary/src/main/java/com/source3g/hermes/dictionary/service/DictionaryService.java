@@ -27,8 +27,9 @@ public class DictionaryService extends BaseService {
 		List<Merchant> merchants=mongoTemplate.find(new Query(Criteria.where("merchantRemindTemplates.remindTemplate.$id").is(id)), Merchant.class);
 		if(merchants.size()==0){
 			mongoTemplate.remove(new Query(Criteria.where("_id").is(id)), RemindTemplate.class);
+		}else{
+			throw new Exception("该提醒已被占用");
 		}
-		throw new Exception("该提醒已被占用");
 	}
 	
 	public RemindTemplate getRemindTemplate(ObjectId id){

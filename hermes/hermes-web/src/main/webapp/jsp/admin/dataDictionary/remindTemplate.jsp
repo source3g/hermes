@@ -107,6 +107,9 @@
 				} 
 		});
 		function add() {
+			 if (!$("#remindSettingForm").valid()) {
+					return ;
+				} 
 			$("#remindSettingForm").ajaxSubmit({
 				url : "${pageContext.request.contextPath}/admin/dictionary/remindAdd",
 				success : showContentInfo,
@@ -115,6 +118,9 @@
 		}
 
 		function save() {
+			 if (!$("#remindSettingForm").valid()) {
+					return ;
+			} 
 			$("#remindSettingForm").ajaxSubmit({
 				url : "${pageContext.request.contextPath}/admin/dictionary/remindSave",
 				success : showContentInfo,
@@ -122,13 +128,12 @@
 			});
 		}
 
-
 		function deleteById() {
+			 if (!$("#remindSettingForm").valid()) {
+					return ;
+				} 
 			var title = $("#sel").find("option:selected").text();
 			if (title == '请选择') {
-				$("#id").html("");
-				$("#title").attr("value", "");
-				$("#content").html("");
 				return;
 			}
 			var id = $("#id").val();
@@ -144,12 +149,14 @@
 		function selectRemind(){
 			var title = $("#sel").find("option:selected").text();
 			if (title == '请选择') {
-				$("#id").html("");
+				$("#id").attr("value","");
 				$("#title").attr("value", "");
+				$("#advancedTime").attr("value","");
 				$("#messageContent").html("");
 				return;
 			}
 			var remindId=$("#sel").val();
+			$("#id").attr("value",remindId);
 			$.get("${pageContext.request.contextPath}/admin/dictionary/remind/"+remindId+"/",showRemind);
 		}
 		

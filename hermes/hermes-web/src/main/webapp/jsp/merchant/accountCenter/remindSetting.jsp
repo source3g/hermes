@@ -87,6 +87,7 @@
 				if (title == '请选择') {
 					$("#id").html("");
 					$("#title").attr("value", "");
+					$("#advancedTime").attr("value","");
 					$("#messageContent").val(messageContent);
 					return;
 				}
@@ -98,6 +99,7 @@
 		});
 		function recover() {
 			var messageContent = $("#content" + $('#sel').val()).text();
+			var advanceTime = $("#advancedTime" + $('#sel').val()).text();
 			$("#messageContent").val(messageContent);
 		}
 		function save() {

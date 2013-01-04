@@ -57,7 +57,6 @@
 					<c:if test="${ merchant.setting.birthdayRemind eq false }"> checked="checked" </c:if> />关
 
 				选择模板 <select id="sel" name="birthdayRemindTemplate.id">
-					<option >请选择</option>
 				</select> <span class="help-inline">(注：打开开关，生日提醒将出现在提醒列表中)</span>
 			</div>
 		</div>

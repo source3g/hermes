@@ -1,8 +1,11 @@
 package com.source3g.hermes.entity.merchant;
 
+import java.io.Serializable;
+
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
-public class Setting {
+public class Setting implements Serializable {
+	private static final long serialVersionUID = -1777068155348389553L;
 	private boolean autoSend = false;
 	private boolean nameMatch = false;
 	private boolean salerMatch = false;

@@ -79,6 +79,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 					SecurityUtils.getSubject().getSession().setAttribute("loginUser", merchant);
 					ShiroUser shiroUser = new ShiroUser();
 					shiroUser.setMerchant(merchant);
+					shiroUser.setLoginName(token.getUsername());
 					return new SimpleAuthenticationInfo(shiroUser, merchant.getPassword(), getName());
 				}
 			} else {
