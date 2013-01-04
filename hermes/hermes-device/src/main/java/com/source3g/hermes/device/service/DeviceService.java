@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class DeviceService extends BaseService {
 }
 	public Page list(int pageNo, Device device) {
 		Query query = new Query();
+		query.with(new Sort(Direction.DESC, "_id"));
 		if (StringUtils.isNotEmpty(device.getSn())) {
 			Pattern pattern = Pattern.compile("^.*" + device.getSn() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("sn").is(pattern));

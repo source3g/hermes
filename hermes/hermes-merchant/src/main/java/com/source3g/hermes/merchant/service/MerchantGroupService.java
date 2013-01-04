@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ public class MerchantGroupService extends BaseService {
 	
 	public Page list(int pageNo, MerchantGroup merchantGroup) {
 		Query query = new Query();
+		query.with(new Sort(Direction.DESC, "_id"));
 		if (StringUtils.isNotEmpty(merchantGroup.getName())) {
 
 			Pattern pattern = Pattern.compile("^.*" + merchantGroup.getName() + ".*$", Pattern.CASE_INSENSITIVE);

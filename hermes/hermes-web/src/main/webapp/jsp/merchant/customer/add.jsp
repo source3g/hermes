@@ -132,6 +132,7 @@
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
 		var remindOptions=null;
 		var phoneRule={
+				required : true,
  				rangelength:[11,11],
 				number:true,
 				digits:true ,
@@ -176,6 +177,7 @@
 							rangelength:"姓名不得超过50字"
 						},
 				 		phone:{
+				 			required : "电话号码不能为空",
 				 			rangelength:"输入长度必须为11位的有效数字",
 							number:"请输入合法的数字",
 							digits:"请输入整数",
