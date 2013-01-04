@@ -12,10 +12,11 @@
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<th >提醒标题</th>
-						<th >提醒内容</th>
-						<th >提醒时间</th>
-						<th >操作</th>
+						<th width="18%">提醒标题</th>
+						<th width="18%">提醒内容</th>
+						<th width="18%">提醒时间</th>
+						<th width="28%">顾客信息</th>
+						<th width="18%" >操作</th>
 					</tr>
 				</thead>
 				<tr id="customerRemindDtos">
@@ -24,12 +25,14 @@
 		</form>
 	<div id="myModal" class="modal hide fade">
 		<div class="modal-body">
-			<table id="customerInfo"
-				class="table table-bordered table-striped">
-			
-				<tbody>
-				<tr id="allList"></tr>
-				</tbody>
+			<table id="customerInfo" class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th >顾客姓名</th>
+						<th >顾客电话</th>
+						<th >提醒日期</th>
+					</tr>
+				</thead>
 			</table>
 				<div>
 					<input type="button" class=" btn btn-primary " data-dismiss="modal" id="customersFormBtn" value="关闭 " ></input>
@@ -42,7 +45,7 @@
 			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",drawTable);
 			function drawTable(data){
 				for(var i=0;i<data.length;i++){
-					var str="<td>"+data[i].title+"</td><td>"+data[i].content+"</td><td>"+data[i].advancedTime+"</td><td><span>  [共有"+data[i].customers.length+"位客户]</span><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"></td>";
+					var str="<td>"+data[i].title+"</td><td>"+data[i].content+"</td><td>"+data[i].advancedTime+"</td><td><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><span>  [共有"+data[i].customers.length+"位客户]</span></td><td><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"></td>";
 					$("#customerRemindDtos").append(str);
 					var index=i;
 					$("#customer"+index).click(function (){
@@ -58,7 +61,6 @@
 			}
 		});
 		function sendMessages(title){
-			alert(title);
 			$.get("${pageContext.request.contextPath}/merchant/account/sendMessages/"+title+"/",showContentInfo);
 		}
 	</script>

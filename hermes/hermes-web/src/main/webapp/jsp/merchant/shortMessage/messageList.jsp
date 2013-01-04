@@ -66,9 +66,6 @@
 	</div>
 	<script type="text/javascript">
 	 $(document).ready(function(){
-	/* 	 $('#customerName option').each(function(index){
-			 alert($(this).val());
-		 }); */
 		 
 			initPage();
 			$('#queryForm').submit(function(){

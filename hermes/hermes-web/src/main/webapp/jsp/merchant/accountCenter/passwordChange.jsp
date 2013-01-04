@@ -47,7 +47,6 @@
 	</form>
 	<script type="text/javascript">
 	$(document).ready(function() {
-	//	alert($('#passsword').val());
 		var validateOptions = {
 				rules : { 
 					password:{
@@ -82,8 +81,6 @@
 		$('#passworChangeForm').submit(function() {
 			var password=$('#password').val();
 			var newPassword=$('#newPassword').val();
-			alert($('#passsword').val());
-			alert($('#newPasssword').val());
 		 	if (!$("#passworChangeForm").valid()) {
 		 		return false;
 			 }
