@@ -90,9 +90,9 @@ public class MessageApi {
 		return ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value = "/remindSend/{title}/{merchantId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/remindSend/{title}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindSend( String title,ObjectId merchantId ) {
+	public String remindSend(@PathVariable String title,@PathVariable ObjectId merchantId ) {
 		messageService.remindSend(title,merchantId);
 		return ReturnConstants.SUCCESS;
 	}

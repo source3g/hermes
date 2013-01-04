@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.dto.CustomerRemindDto;
-import com.source3g.hermes.customer.dto.CustomerRemindDto.CustomerInfo;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.Setting;
@@ -130,7 +129,7 @@ public class AccountController {
 	@RequestMapping(value="sendMessages/{title}",method=RequestMethod.GET)
 	public ModelAndView sendMessages(@PathVariable String  title ,HttpServletRequest req) throws Exception{
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri=ConfigParams.getBaseUrl()+"shortMessage/remindSend/"+title+merchant.getId()+"/";
+		String uri=ConfigParams.getBaseUrl()+"shortMessage/remindSend/"+title+"/"+merchant.getId()+"/";
 		String result=restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("merchant/accountCenter/remindList");
 	}
