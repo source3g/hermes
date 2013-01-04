@@ -50,7 +50,7 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/accountValidate/{account}", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean add(@PathVariable String account) {
+	public boolean accountValidate(@PathVariable String account) {
 		return merchantService.accountValidate(account);
 	}
 

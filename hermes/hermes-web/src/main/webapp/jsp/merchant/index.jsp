@@ -251,7 +251,7 @@ body {
 	function initRemind(){
 		$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
 			var remindCount=data.length;
-			if(remindCount==0){
+			if(remindCount==0||typeof(data)=="string"){
 				$("#merchantRemind").html("提醒");
 				$("#merchantRemind").css("color","");
 				return;

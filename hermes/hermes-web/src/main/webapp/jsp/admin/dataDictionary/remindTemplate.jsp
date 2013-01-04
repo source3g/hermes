@@ -92,6 +92,7 @@
 						} 
 					},
 					advancedTime:{
+						required:true,
 						number:true,
 						digits:true
 					}
@@ -102,6 +103,7 @@
 					 	remote:"标题名称已存在" 
 					},
 					advancedTime:{
+						required:"提前提醒天数不能为空",
 						number:"请输入数字",
 						digits:"请输入整数" 
 					}
@@ -112,9 +114,6 @@
 				}
 			
 			$("#sel").change(selectRemind);
-		 if (!$("#remindSettingForm").valid()) {
-					return false;
-				} 
 		});
 		function add() {
 			 if (!$("#remindSettingForm").valid()) {
