@@ -22,9 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +38,6 @@ import com.source3g.hermes.customer.dto.CustomerRemindDto;
 import com.source3g.hermes.customer.dto.NewCustomerDto;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
-import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
@@ -67,9 +63,6 @@ public class CustomerApi {
 	private CustomerImportService customerImportService;
 	@Autowired
 	private CommonBaseService commonBaseService;
-
-	@Autowired
-	private MongoTemplate mongoTemplate;
 
 	@RequestMapping(value = "/export/download/{year}/{month}/{day}/{merchantId}/{fileName}", method = RequestMethod.GET)
 	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -264,9 +257,8 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/callInStatistics/sn/{sn}/", method = RequestMethod.GET)
 	@ResponseBody
-	public CallInStatistics callInStatisticsBySn(@PathVariable String sn, Date startTime, Date endTime) {
-		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+	public CallInStatistics callInStatisticsBySn(@PathVariable String sn, Date startTime, Date endTime) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
 		return findCallInStatistics(merchant.getId().toString(), startTime, endTime);
 	}
 

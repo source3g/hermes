@@ -167,9 +167,9 @@ body {
 
 			<div class="span10" id="pageContentFrame"></div>
 		</div>
-		<div class="alert alert-error"
-			style="width: 200px; height: 20px; position: fixed; bottom: 5px; right: 5px;">
-			<a class="close" data-dismiss="alert">×</a> <strong>提醒！</strong>
+		<div id="remindTipAlert" class="alert alert-error"
+			style="width: 200px; height: 20px; position: fixed; bottom: 5px; right: 5px; display:none;">
+			<a class="close" data-dismiss="alert">×</a><strong id="remindTipContent" style="cursor:pointer;"> 提醒！</strong>
 		</div>
 		<%@include file="../include/copyright.jsp"%>
 		<!-- row  -->
@@ -181,7 +181,7 @@ body {
 <script type="text/javascript">
 	$(document).ready(function() {
 		loadPage("${pageContext.request.contextPath}/merchant/main/");
-
+		initRemind();
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 		});
@@ -246,6 +246,25 @@ body {
 
 	function loadPage(url) {
 		$("#pageContentFrame").load(url);
+	}
+	
+	function initRemind(){
+		$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
+			var remindCount=data.length;
+			if(remindCount==0){
+				$("#merchantRemind").html("提醒");
+				$("#merchantRemind").css("color","");
+				return;
+			}else{
+				$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");
+				$("#remindTipContent").click(function(){
+					loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
+				});
+				$("#remindTipAlert").css("display","");
+				$("#merchantRemind").append("("+remindCount+")");
+				$("#merchantRemind").css("color","red");
+			}
+		});
 	}
 </script>
 </html>

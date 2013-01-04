@@ -39,10 +39,7 @@ public class DateFormateUtils {
 		cStart.setTime(startTime);
 		cEnd.setTime(endTime);
 		result.add(sdf.format(startTime));
-		int startDay = cStart.get(Calendar.DAY_OF_YEAR);
-		int endDay = cEnd.get(Calendar.DAY_OF_YEAR);
-		while (startDay < endDay) {
-			startDay++;
+		while (cStart.get(Calendar.DAY_OF_YEAR)!= cEnd.get(Calendar.DAY_OF_YEAR)||cStart.get(Calendar.MONTH)!= cEnd.get(Calendar.MONTH)) {
 			cStart.add(Calendar.DAY_OF_YEAR, 1);
 			result.add(sdf.format(cStart.getTime()));
 		}

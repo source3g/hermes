@@ -99,7 +99,6 @@
 		});
 		function recover() {
 			var messageContent = $("#content" + $('#sel').val()).text();
-			var advanceTime = $("#advancedTime" + $('#sel').val()).text();
 			$("#messageContent").val(messageContent);
 		}
 		function save() {

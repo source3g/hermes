@@ -55,7 +55,9 @@ public class CustomerController {
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(Customer customer, BindingResult errorResult, HttpServletRequest req) throws Exception {
 		if (errorResult.hasErrors()) {
-			return new ModelAndView("merchant/customer/add");
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("errors", errorResult.getAllErrors());
+			return new ModelAndView("merchant/customer/add",model);
 		}
 		handleCustomer(customer);
 		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);

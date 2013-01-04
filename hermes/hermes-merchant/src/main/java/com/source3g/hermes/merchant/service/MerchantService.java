@@ -187,6 +187,7 @@ public class MerchantService extends BaseService {
 		merchantRemindTemplate.setMessageContent(template.getMessageContent());
 		merchantRemindTemplate.setRemindTemplate(template);
 		merchantRemindTemplate.setMerchantId(merchantId);
+		merchantRemindTemplate.setAdvancedTime(template.getAdvancedTime());
 		MerchantRemindTemplate merchantRemindTemplateOld = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindtemplateId)), MerchantRemindTemplate.class);
 		if (merchantRemindTemplateOld != null) {
 			return;
