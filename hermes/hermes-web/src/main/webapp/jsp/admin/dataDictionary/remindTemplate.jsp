@@ -81,29 +81,31 @@
  			$('#remindSettingForm').validate({
 				rules : {
 					title : {
-						required : true,
-			 			remote:{
+						required : true
+			 	/* 		remote:{
 							type: "get",
 							url:"${pageContext.request.contextPath}/admin/dictionary/titleValidate",
 							data:{"title":function(){
 												return $('#title').val();
 											}
 								}
-						} 
+						}  */
 					},
 					advancedTime:{
+						required : true,
 						number:true,
 						digits:true
 					}
 				},
 				messages : {
 					title : {
-						required : "标题不能为空",
-					 	remote:"标题名称已存在" 
+						required : "[标题不能为空]"
+					 	/* remote:"标题名称已存在"  */
 					},
 					advancedTime:{
-						number:"请输入数字",
-						digits:"请输入整数" 
+						required : "[提前天数不能为空]",
+						number:"[请输入数字]",
+						digits:"[请输入整数]" 
 					}
 				}
 			});   

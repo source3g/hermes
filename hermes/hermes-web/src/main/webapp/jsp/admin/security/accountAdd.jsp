@@ -32,7 +32,7 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label" for="name">性名：</label>
+			<label class="control-label" for="name">姓名：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请再次输入密码..."
 					id="name" name="name"> <span class="help-inline"></span>

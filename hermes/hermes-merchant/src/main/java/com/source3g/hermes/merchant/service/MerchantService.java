@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -49,6 +51,7 @@ public class MerchantService extends BaseService {
 
 	public Page list(int pageNo, Merchant merchant) {
 		Query query = new Query();
+		query.with(new Sort(Direction.DESC, "_id"));
 		if (StringUtils.isNotEmpty(merchant.getName())) {
 			Pattern pattern = Pattern.compile("^.*" + merchant.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
