@@ -77,27 +77,6 @@
 					value="${merchant.password}"> <span class="help-inline"></span>
 			</div>
 		</div>
-		<div class="form-actions">
-			<c:if test="${not empty update }">
-				<input class="btn btn-primary" type="button" onclick="modify();"
-					value="修改">
-			</c:if>
-
-			<c:if test="${ empty update }">
-					<button id="addMerchantBtn" data-loading-text="增加商户中..." class="btn btn-primary">
-                    		增加
-                  </button>
-			</c:if>
-			<c:if test="${not empty errors }">
-				<div class="alert alert-error">
-					<ul>
-						<c:forEach items="${errors }" var="error">
-							<li>${error.defaultMessage }</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</c:if>
-		</div>
 		<div class="control-group">
 			<label class="control-label" for="addr">盒子SN：</label>
 			<div class="controls">
@@ -127,6 +106,28 @@
 				</c:forEach>
 			</c:if>
 		</table>
+		
+		<div class="form-actions">
+			<c:if test="${not empty update }">
+				<input class="btn btn-primary" type="button" onclick="modify();"
+					value="修改">
+			</c:if>
+
+			<c:if test="${ empty update }">
+					<button id="addMerchantBtn" data-loading-text="增加商户中..." class="btn btn-primary">
+                    		增加
+                  </button>
+			</c:if>
+			<c:if test="${not empty errors }">
+				<div class="alert alert-error">
+					<ul>
+						<c:forEach items="${errors }" var="error">
+							<li>${error.defaultMessage }</li>
+						</c:forEach>
+					</ul>
+				</div>
+			</c:if>
+		</div>
 	</form>
 
 	<div id="myModal" class="modal hide fade">

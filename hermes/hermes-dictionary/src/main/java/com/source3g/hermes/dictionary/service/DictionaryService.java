@@ -22,15 +22,14 @@ public class DictionaryService extends BaseService {
 	public void remindSave(RemindTemplate remindTemplate) throws Exception {
 		if(remindTemplate.getId()==null){
 			remindTemplate.setId(ObjectId.get());
-		}
-		List<RemindTemplate> remindTemplates=mongoTemplate.findAll(RemindTemplate.class);
-		for(RemindTemplate template:remindTemplates){
-			if(template.getId()==remindTemplate.getId()){
-				mongoTemplate.save(remindTemplate);
+			add(remindTemplate);
+		}else{
+			RemindTemplate remindTemplateInDb=mongoTemplate.findOne(new Query(Criteria.where("title").is(remindTemplate.getTitle()).and("_id").ne(remindTemplate.getTitle())), RemindTemplate.class);
+			if(remindTemplateInDb!=null){
+				throw new Exception("该标题已使用");
 			}
-		}  
-		
-		throw new Exception("该标题已使用");
+			mongoTemplate.save(remindTemplate);
+		}
 	}
 
 	public void remindDelete(ObjectId id) throws Exception {
@@ -55,11 +54,9 @@ public class DictionaryService extends BaseService {
 	}
 
 	public void add( RemindTemplate remindTemplate) throws Exception {
-		List<RemindTemplate> remindTemplates=mongoTemplate.findAll(RemindTemplate.class);
-		for(RemindTemplate template:remindTemplates){
-			if(remindTemplate.getTitle().equals(template.getTitle())){
-				throw new Exception("该标题已使用");
-			}
+		RemindTemplate remindTemplateInDb=mongoTemplate.findOne(new Query(Criteria.where("title").is(remindTemplate.getTitle())), RemindTemplate.class);
+		if(remindTemplateInDb!=null){
+			throw new Exception("该标题已使用");
 		}
 		mongoTemplate.insert(remindTemplate);
 		

@@ -93,7 +93,6 @@ public class AccountController {
 			return new ModelAndView("redirect:/merchant/account/remindSetting");
 		}
 		return new ModelAndView("admin/error");
-
 	}
 
 	@RequestMapping(value = "/toPasswordChange", method = RequestMethod.GET)

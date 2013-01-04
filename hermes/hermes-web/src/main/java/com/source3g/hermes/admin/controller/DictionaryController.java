@@ -3,11 +3,14 @@ package com.source3g.hermes.admin.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -49,40 +52,44 @@ public class DictionaryController {
 	}
 
 	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
-	public ModelAndView remindAdd(RemindTemplate remindTemplate,RedirectAttributes redirectAttributes) throws Exception {
+	public ModelAndView remindAdd(@Valid RemindTemplate remindTemplate, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
+		if (bindingResult.hasErrors()) {
+			// TODO 要改
+			return new ModelAndView("error");
+		}
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindAdd/";
 		HttpEntity<RemindTemplate> entity = new HttpEntity<RemindTemplate>(remindTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
-		}else{
+		} else {
 			redirectAttributes.addFlashAttribute("error", result);
 			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
 		}
 	}
-	
-	//验证标题是否重复
+
+	// 验证标题是否重复
 	@RequestMapping(value = "/titleValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean titleValidate(String  title) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "dictionary/titleValidate/"+title+"/";
-		Boolean result = restTemplate.getForObject(uri,Boolean.class);
-			return result;
+	public Boolean titleValidate(String title) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "dictionary/titleValidate/" + title + "/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		return result;
 	}
-	
+
 	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
-	public ModelAndView remindSave(RemindTemplate remindTemplate,RedirectAttributes redirectAttributes) throws Exception {
+	public ModelAndView remindSave(RemindTemplate remindTemplate, RedirectAttributes redirectAttributes) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindSave/";
 		HttpEntity<RemindTemplate> entity = new HttpEntity<RemindTemplate>(remindTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
-		}else{
+		} else {
 			redirectAttributes.addFlashAttribute("error", result);
 			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
 		}
 	}
-	
+
 	@RequestMapping(value = "/remindDelete/{id}", method = RequestMethod.GET)
 	public String remindDelete(@PathVariable ObjectId id, RedirectAttributes redirectAttributes) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindDelete/" + id + "";

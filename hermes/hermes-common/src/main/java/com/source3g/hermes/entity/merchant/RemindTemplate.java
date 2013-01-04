@@ -1,5 +1,6 @@
 package com.source3g.hermes.entity.merchant;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -9,7 +10,9 @@ public class RemindTemplate extends AbstractEntity {
 	private static final long serialVersionUID = -3835632016914035198L;
 	
 	private int advancedTime;
+	@NotEmpty(message="{remind.template.title.not.null}")
 	private String title;
+	@NotEmpty(message="{remind.template.content.not.null}")
 	private String messageContent;
 	
 	public String getTitle() {
