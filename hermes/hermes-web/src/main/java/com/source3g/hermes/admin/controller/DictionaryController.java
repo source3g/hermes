@@ -3,8 +3,6 @@ package com.source3g.hermes.admin.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,14 +49,16 @@ public class DictionaryController {
 	}
 
 	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
-	public ModelAndView remindAdd(RemindTemplate remindTemplate, HttpServletRequest req) throws Exception {
+	public ModelAndView remindAdd(RemindTemplate remindTemplate,RedirectAttributes redirectAttributes) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindAdd/";
 		HttpEntity<RemindTemplate> entity = new HttpEntity<RemindTemplate>(remindTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
+		}else{
+			redirectAttributes.addFlashAttribute("error", result);
+			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
 		}
-		return new ModelAndView("admin/error");
 	}
 	
 	//验证标题是否重复

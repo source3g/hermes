@@ -43,4 +43,15 @@ public class DictionaryService extends BaseService {
 		}
 		return true;
 	}
+
+	public void add( RemindTemplate remindTemplate) throws Exception {
+		List<RemindTemplate> remindTemplates=mongoTemplate.findAll(RemindTemplate.class);
+		for(RemindTemplate template:remindTemplates){
+			if(remindTemplate.getTitle().equals(template.getTitle())){
+				throw new Exception("该标题已使用");
+			}
+		}
+		mongoTemplate.insert(remindTemplate);
+		
+	}
 }

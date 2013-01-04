@@ -80,6 +80,21 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
+ 			$('#remindSettingForm').validate({
+				rules : {
+					advancedTime:{
+						number:true,
+						digits:true
+					}
+				},
+				messages : {
+					advancedTime:{
+						number:"请输入数字",
+						digits:"请输入整数" 
+					}
+				}
+			});   
+			
 			$("#sel").change(function() {
 				var messageContent = $("#" + $('#sel').val()).text();
 				var advancedTime=$("#advancedTime"+$("#sel").val()).text();
@@ -98,10 +113,16 @@
 			});
 		});
 		function recover() {
+			if (!$("#remindSettingForm").valid()) {
+				return ;
+			} 
 			var messageContent = $("#content" + $('#sel').val()).text();
 			$("#messageContent").val(messageContent);
 		}
 		function save() {
+			if (!$("#remindSettingForm").valid()) {
+				return ;
+			} 
 			$("#remindSettingForm").ajaxSubmit({
 				url : "${pageContext.request.contextPath}/merchant/account/remindSave",
 				success : showContentInfo,

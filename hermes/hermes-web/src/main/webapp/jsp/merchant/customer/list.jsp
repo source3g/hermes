@@ -212,7 +212,6 @@
 					url:"${pageContext.request.contextPath}/merchant/customer/export/",
 					dataType:'json',
 					success:function (data){
-						//alert(data);
 						window.open(data);
 					},
 					error:showError

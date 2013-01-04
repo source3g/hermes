@@ -365,17 +365,22 @@ public class MessageService extends BaseService {
 	}
 
 	public void remindSend(String title, ObjectId merchantId) {
-		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
-		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
-			Query query = new Query();
-			Criteria criteria = Criteria.where("merchantId").is(merchantId);
-			Calendar calendar = Calendar.getInstance();
-			Date startTime =new Date();
-			calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
-			Date endTime =  DateFormateUtils.getStartDateOfDay(calendar.getTime());
-		 	criteria.and("reminds.remindTime").gte(startTime).lte(endTime).and("reminds.merchantRemindTemplate.title").is(title);
-			query.addCriteria(criteria);
-			List<Customer> customers = mongoTemplate.find(query, Customer.class);
+		 List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+			for(MerchantRemindTemplate merchantRemindTemplate:merchantRemindTemplates){
+				if(title.equals(merchantRemindTemplate.getRemindTemplate().getTitle())){
+						Query query = new Query();
+						Criteria criteria = Criteria.where("merchantId").is(merchantId);
+						Calendar calendar = Calendar.getInstance();
+						Date startTime =new Date();
+						calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
+						Date endTime =  DateFormateUtils.getStartDateOfDay(calendar.getTime());
+					 	criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
+					 	criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
+					 	query.addCriteria(criteria);
+						//List<Customer> customers = mongoTemplate.find(query, Customer.class);
+				}
+			}
+		
 	}
 	}
-}
+

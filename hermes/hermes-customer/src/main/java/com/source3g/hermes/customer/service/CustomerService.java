@@ -84,8 +84,8 @@ public class CustomerService extends BaseService {
 		return customer;
 	}
 
-	public Boolean phoneValidate(String phone) {
-		List<Customer> customer = mongoTemplate.find(new Query(Criteria.where("phone").is(phone)), Customer.class);
+	public Boolean phoneValidate(String phone, ObjectId merchantId) {
+		List<Customer> customer = mongoTemplate.find(new Query(Criteria.where("phone").is(phone).and("merchantId").is(merchantId)), Customer.class);
 		if (customer.size() == 0) {
 			return true;
 		} else {

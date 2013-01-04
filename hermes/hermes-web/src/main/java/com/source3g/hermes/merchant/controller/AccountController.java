@@ -131,14 +131,10 @@ public class AccountController {
 
 	@RequestMapping(value = "sendMessages/{title}", method = RequestMethod.GET)
 	public ModelAndView sendMessages(@PathVariable String title, HttpServletRequest req) throws Exception {
-		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/remindSend/" + title + merchant.getId() + "/";
-		String result = restTemplate.getForObject(uri, String.class);
-		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("merchant/accountCenter/remindList");
-		} else {
-			return new ModelAndView("error");
-		}
+	/*	Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri=ConfigParams.getBaseUrl()+"shortMessage/remindSend/"+title+"/"+merchant.getId()+"/";
+		String result=restTemplate.getForObject(uri, String.class);*/
+		return new ModelAndView("merchant/accountCenter/remindList");	
 	}
 
 }
