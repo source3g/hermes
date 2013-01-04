@@ -61,7 +61,11 @@ public class DictionaryApi {
 	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
 	@ResponseBody
 	public String remindSave(@RequestBody RemindTemplate remindTemplate) {
-		dictionaryService.remindSave(remindTemplate);
+		try {
+			dictionaryService.remindSave(remindTemplate);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 

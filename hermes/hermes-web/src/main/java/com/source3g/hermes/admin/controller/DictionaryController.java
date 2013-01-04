@@ -71,15 +71,16 @@ public class DictionaryController {
 	}
 	
 	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
-	public ModelAndView remindSave(RemindTemplate remindTemplate) throws Exception {
+	public ModelAndView remindSave(RemindTemplate remindTemplate,RedirectAttributes redirectAttributes) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "dictionary/remindSave/";
 		HttpEntity<RemindTemplate> entity = new HttpEntity<RemindTemplate>(remindTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
+		}else{
+			redirectAttributes.addFlashAttribute("error", result);
+			return new ModelAndView("redirect:/admin/dictionary/toRemindTemplate");
 		}
-		return new ModelAndView("admin/error");
-
 	}
 	
 	@RequestMapping(value = "/remindDelete/{id}", method = RequestMethod.GET)

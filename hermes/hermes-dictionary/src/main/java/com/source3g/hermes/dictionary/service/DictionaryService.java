@@ -19,8 +19,18 @@ public class DictionaryService extends BaseService {
 		return list;
 	}
 
-	public void remindSave(RemindTemplate remindTemplate) {
-		mongoTemplate.save(remindTemplate);
+	public void remindSave(RemindTemplate remindTemplate) throws Exception {
+		if(remindTemplate.getId()==null){
+			remindTemplate.setId(ObjectId.get());
+		}
+		List<RemindTemplate> remindTemplates=mongoTemplate.findAll(RemindTemplate.class);
+		for(RemindTemplate template:remindTemplates){
+			if(template.getId()==remindTemplate.getId()){
+				mongoTemplate.save(remindTemplate);
+			}
+		}  
+		
+		throw new Exception("该标题已使用");
 	}
 
 	public void remindDelete(ObjectId id) throws Exception {

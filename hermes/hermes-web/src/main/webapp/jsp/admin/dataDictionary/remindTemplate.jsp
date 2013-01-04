@@ -82,14 +82,6 @@
 				rules : {
 					title : {
 						required : true
-			 	/* 		remote:{
-							type: "get",
-							url:"${pageContext.request.contextPath}/admin/dictionary/titleValidate",
-							data:{"title":function(){
-												return $('#title').val();
-											}
-								}
-						}  */
 					},
 					advancedTime:{
 						required : true,
@@ -100,7 +92,6 @@
 				messages : {
 					title : {
 						required : "[标题不能为空]"
-					 	/* remote:"标题名称已存在"  */
 					},
 					advancedTime:{
 						required : "[提前天数不能为空]",
@@ -120,7 +111,7 @@
 		});
 		function add() {
 			 if (!$("#remindSettingForm").valid()) {
-					return ;
+					return false;
 				} 
 			$("#remindSettingForm").ajaxSubmit({
 				url : "${pageContext.request.contextPath}/admin/dictionary/remindAdd",
@@ -131,7 +122,7 @@
 
 		function save() {
 			if (!$("#remindSettingForm").valid()) {
-				return ;
+				return false;
 			} 
 			$("#remindSettingForm").ajaxSubmit({
 				url : "${pageContext.request.contextPath}/admin/dictionary/remindSave",
