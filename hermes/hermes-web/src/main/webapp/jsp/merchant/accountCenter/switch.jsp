@@ -108,7 +108,6 @@
 				}
 				var options = {
 					success : toSwitch
-
 				};
 				$(this).ajaxSubmit(options);
 				return false;

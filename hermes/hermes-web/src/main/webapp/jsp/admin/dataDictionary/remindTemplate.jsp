@@ -105,9 +105,6 @@
 				}
 			
 			$("#sel").change(selectRemind);
-		 if (!$("#remindSettingForm").valid()) {
-					return false;
-				} 
 		});
 		function add() {
 			 if (!$("#remindSettingForm").valid()) {
