@@ -83,7 +83,7 @@
 				<input type="text" class="input-xlarge" placeholder="请输入盒子SN编码..."
 					id="deviceSn" name="sn"> <input type="button"
 					class="btn btn-primary " id="deviceId" onclick="findDevice()"
-					value="增加"><span id="deviceMessage"></span>
+					value="加入列表"><span id="deviceMessage"></span>
 			</div>
 		</div>
 		<table
