@@ -39,7 +39,7 @@ import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
-import com.source3g.hermes.vo.CallInStatisticsToday;
+import com.source3g.hermes.vo.CallInStatisticsCount;
 
 @Controller
 @RequestMapping("/merchant/customer")
@@ -72,6 +72,14 @@ public class CustomerController {
 		} else {
 			return new ModelAndView("merchant/error");
 		}
+	}
+	
+	@RequestMapping(value="/get/{id}",method=RequestMethod.GET)
+	@ResponseBody
+	public Customer get(@PathVariable String id){
+		String uri=ConfigParams.getBaseUrl()+"customer/"+id+"/";
+		Customer customer=restTemplate.getForObject(uri, Customer.class);
+		return customer;
 	}
 
 	// 添加顾客验证电话号码去重
@@ -329,7 +337,7 @@ public class CustomerController {
 
 	@RequestMapping(value = "/callInStatistics/today", method = RequestMethod.GET)
 	@ResponseBody
-	public CallInStatisticsToday todayCallInList(HttpServletRequest req, String startTime, String endTime) throws Exception {
+	public CallInStatisticsCount todayCallInList(HttpServletRequest req, String startTime, String endTime) throws Exception {
 		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "customer/callInStatistics/today/" + merchant.getId() + "/?a=1";
 		if (StringUtils.isNotEmpty(endTime)) {
@@ -338,7 +346,7 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(startTime)) {
 			uri += "&startTime=" + startTime;
 		}
-		CallInStatisticsToday callInStatisticsToday = restTemplate.getForObject(uri, CallInStatisticsToday.class);
+		CallInStatisticsCount callInStatisticsToday = restTemplate.getForObject(uri, CallInStatisticsCount.class);
 		return callInStatisticsToday;
 	}
 
@@ -366,7 +374,7 @@ public class CustomerController {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {
 			for (int i = reminds.size() - 1; i >= 0; i--) {
-				if (reminds.get(i).getRemindTime() == null && StringUtils.isEmpty(reminds.get(i).getMerchantRemindTemplate().getRemindTemplate().getTitle())) {
+				if (reminds.get(i).getRemindTime() == null && reminds.get(i).getMerchantRemindTemplate().getId()!=null) {
 					reminds.remove(i);
 				}
 			}

@@ -32,12 +32,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.source3g.hermes.constants.ReturnConstants;
-import com.source3g.hermes.customer.dto.CallRecordDto;
-import com.source3g.hermes.customer.dto.CustomerDto;
-import com.source3g.hermes.customer.dto.CustomerRemindDto;
-import com.source3g.hermes.customer.dto.NewCustomerDto;
 import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
+import com.source3g.hermes.dto.customer.CallRecordDto;
+import com.source3g.hermes.dto.customer.CustomerDto;
+import com.source3g.hermes.dto.customer.CustomerRemindDto;
+import com.source3g.hermes.dto.customer.CustomerStatisticsDto;
+import com.source3g.hermes.dto.customer.NewCustomerDto;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
@@ -49,7 +50,7 @@ import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
-import com.source3g.hermes.vo.CallInStatisticsToday;
+import com.source3g.hermes.vo.CallInStatisticsCount;
 
 @Controller
 @RequestMapping("/customer")
@@ -89,8 +90,8 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/phoneValidate/{phone}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean phoneValidate(@PathVariable String phone,@PathVariable ObjectId merchantId) {
-		return customerService.phoneValidate(phone,merchantId);
+	public Boolean phoneValidate(@PathVariable String phone, @PathVariable ObjectId merchantId) {
+		return customerService.phoneValidate(phone, merchantId);
 	}
 
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)
@@ -215,23 +216,20 @@ public class CustomerApi {
 		File fileToCopy = new File(dir);
 		try {
 			FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
-		} catch (IOException e) {
-			return "拷贝失败";
-		}
-		CustomerImportLog importLog = new CustomerImportLog();
-		importLog.setId(ObjectId.get());
-		Merchant merchant = new Merchant();
-		merchant.setId(new ObjectId(merchantId));
-		Date importTime = new Date();
-		importLog.setImportTime(importTime);
-		importLog.setMerchant(merchant);
-		importLog.setName(oldName);
-		importLog.setNewName(file.getOriginalFilename());
-		importLog.setStatus(ImportStatus.已接收准备导入.toString());
-		importLog.setFilePath(fileToCopy.getAbsolutePath());
-		try {
+			CustomerImportLog importLog = new CustomerImportLog();
+			importLog.setId(ObjectId.get());
+			Merchant merchant = new Merchant();
+			merchant.setId(new ObjectId(merchantId));
+			Date importTime = new Date();
+			importLog.setImportTime(importTime);
+			importLog.setMerchant(merchant);
+			importLog.setName(oldName);
+			importLog.setNewName(file.getOriginalFilename());
+			importLog.setStatus(ImportStatus.已接收准备导入.toString());
+			importLog.setFilePath(fileToCopy.getAbsolutePath());
 			customerService.addImportLog(importLog);
 		} catch (Exception e) {
+			fileToCopy.delete();
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
@@ -242,6 +240,12 @@ public class CustomerApi {
 	public List<CustomerImportItem> findImportItems(@PathVariable String logId) {
 		return customerImportService.findImportItems(logId);
 	}
+	
+	@RequestMapping(value="/statistics/{merchantId}",method=RequestMethod.GET)
+	@ResponseBody
+	public CustomerStatisticsDto findCustomerStatistics(@PathVariable String merchantId){
+		return customerService.findCustomerStatistics(new ObjectId(merchantId));
+	}
 
 	@RequestMapping(value = "/callInStatistics/{id}/", method = RequestMethod.GET)
 	@ResponseBody
@@ -251,14 +255,14 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/callInStatistics/today/{id}/", method = RequestMethod.GET)
 	@ResponseBody
-	public CallInStatisticsToday callInStatisticsToday(@PathVariable String id, Date startTime, Date endTime) {
-		return customerService.findCallInStatisticsToday(id, startTime, endTime);
+	public CallInStatisticsCount callInStatisticsToday(@PathVariable String id, Date startTime, Date endTime) {
+		return customerService.findCallInStatisticsByCount(new ObjectId(id), startTime, endTime);
 	}
 
 	@RequestMapping(value = "/callInStatistics/sn/{sn}/", method = RequestMethod.GET)
 	@ResponseBody
 	public CallInStatistics callInStatisticsBySn(@PathVariable String sn, Date startTime, Date endTime) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return findCallInStatistics(merchant.getId().toString(), startTime, endTime);
 	}
 

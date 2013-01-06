@@ -100,7 +100,7 @@
 			<h3>顾客组信息明细</h3>
 		</div>
 		<div class="modal-body">
-			<form class="well form-inline" id="customersForm">
+			<div class="well" id="customersForm">
 			<table id="customersTab"
 				class="table table-bordered table-striped">
 				<tbody>
@@ -113,7 +113,7 @@
 				<div>
 					<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="chosePhones()"></input>
 				</div>
-			</form>
+			</div>
 		</div>
 		<div class="modal-footer"></div>
 	</div>

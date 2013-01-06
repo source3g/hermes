@@ -6,9 +6,6 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.customer.service.CustomerGroupService;
-import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.service.CommonBaseService;
 
 @Controller
 @RequestMapping("/customerGroup")
@@ -31,7 +28,7 @@ public class CustomerGroupApi {
 	@Autowired
 	private CustomerGroupService customerGroupService;
 	@Autowired
-	private MongoTemplate mongoTemplate;
+	private CommonBaseService commonBaseService;
 
 	@RequestMapping(value = "/listAll/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
@@ -42,10 +39,8 @@ public class CustomerGroupApi {
 
 	@RequestMapping(value = "/listAll/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<CustomerGroup> listAllBySn(@PathVariable String sn) {
-		logger.info("list all customerGroup");
-		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+	public List<CustomerGroup> listAllBySn(@PathVariable String sn) throws Exception {
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return customerGroupService.listAll(merchant.getId().toString());
 	}
 

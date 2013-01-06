@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import javax.jms.Destination;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.hongxun.pub.DataCommand;
 import com.hongxun.pub.tcptrans.TcpCommTrans;
 import com.source3g.hermes.constants.JmsConstants;
+import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
@@ -90,8 +92,8 @@ public class MessageService extends BaseService {
 	 * @param content
 	 */
 	public void messageGroupSend(ObjectId merchantId, String[] ids, String customerPhones, String content) throws Exception {
-		Set<String> phones=new HashSet<String>();
-		if(ids != null){
+		Set<String> phones = new HashSet<String>();
+		if (ids != null) {
 			Query query = new Query();
 			List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
 			for (String id : ids) {
@@ -100,17 +102,17 @@ public class MessageService extends BaseService {
 			}
 			query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);
-			for(Customer customer:customers){
+			for (Customer customer : customers) {
 				phones.add(customer.getPhone());
 			}
 		}
 		if (customerPhones != null) {
 			String customerPhoneArray[] = customerPhones.split(";");
-			for(String phone:customerPhoneArray){
+			for (String phone : customerPhoneArray) {
 				phones.add(phone);
 			}
 		}
-		String[] phoneArray=new String[phones.size()];
+		String[] phoneArray = new String[phones.size()];
 		phones.toArray(phoneArray);
 		sendMessages(merchantId, phoneArray, content);
 	}
@@ -130,16 +132,16 @@ public class MessageService extends BaseService {
 		mongoTemplate.insert(log);
 		return log;
 	}
-	
-	private void genGroupSendLog(String[]customerPhoneArray,String content,ObjectId merchantId){
-		GroupSendLog groupSendLog=new GroupSendLog();
+
+	private void genGroupSendLog(String[] customerPhoneArray, String content, ObjectId merchantId) {
+		GroupSendLog groupSendLog = new GroupSendLog();
 		groupSendLog.setMerchantId(merchantId);
 		groupSendLog.setContent(content);
 		groupSendLog.setSendCount(customerPhoneArray.length);
 		groupSendLog.setSendTime(new Date());
 		groupSendLog.setId(ObjectId.get());
 		mongoTemplate.insert(groupSendLog);
-		
+
 	}
 
 	private MessageSendLog genMessageSendLog(String phone, ObjectId merchantId, String content, MessageType type) {
@@ -191,27 +193,28 @@ public class MessageService extends BaseService {
 	 */
 	private List<PhoneInfo> genPhoneInfos(ObjectId merchantId, String[] customerPhoneArray, String content, MessageType type) {
 		List<PhoneInfo> result = new ArrayList<PhoneInfo>();
-		HashSet<String> hashSet=new HashSet<String>(Arrays.asList(customerPhoneArray));
-		for(String phone : hashSet){
+		HashSet<String> hashSet = new HashSet<String>(Arrays.asList(customerPhoneArray));
+		for (String phone : hashSet) {
 			// 生成发送记录
 			MessageSendLog log = genMessageSendLog(phone, merchantId, content, type);
 			// 发送记录生成完成
 			PhoneInfo phoneInfo = new PhoneInfo(phone, content, log.getId());
 			result.add(phoneInfo);
 		}
-			// 生成短信群发记录
-			genGroupSendLog(customerPhoneArray,content,merchantId);
+		// 生成短信群发记录
+		genGroupSendLog(customerPhoneArray, content, merchantId);
 		return result;
 	}
-	//查找群发记录
+
+	// 查找群发记录
 	public List<GroupSendLog> groupSendLogList(ObjectId merchantId) {
 		Query query = new Query();
-		Sort sort=new Sort(Direction.DESC, "_id");
+		Sort sort = new Sort(Direction.DESC, "_id");
 		query.with(sort);
 		return mongoTemplate.find(query.skip(0).limit(5), GroupSendLog.class);
-		
+
 	}
-	
+
 	public Page list(int pageNoInt, ObjectId merchantId, Date startTime, Date endTime, String phone, String customerGroupName) {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("merchantId").is(merchantId);
@@ -283,8 +286,7 @@ public class MessageService extends BaseService {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		
-		
+
 		DataCommand command = new DataCommand("submit");
 		command.AddNewItem("msgcode", "15");
 		command.AddNewItem("itemid", "10253901");
@@ -332,7 +334,42 @@ public class MessageService extends BaseService {
 		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phoneNumber)), Customer.class);
 		return processContent(merchant, customer, content);
 	}
-
+	
+	public MessageStatisticsDto findMessageStastics(ObjectId merchantId){
+		MessageStatisticsDto messageStatisticsDto=new MessageStatisticsDto();
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(findMessageSentCountFromToday(merchantId,7,MessageType.挂机短信));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(findMessageSentCountFromToday(merchantId,7,MessageType.群发));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(findMessageSentCountFromToday(merchantId,3,MessageType.挂机短信));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(findMessageSentCountFromToday(merchantId,3,MessageType.群发));
+		return messageStatisticsDto;
+	}
+	
+	public long findMessageSentCountFromToday(ObjectId merchantId,int dayCount,MessageType messageType){
+		Date endTime=new Date();
+		Date startTime=DateUtils.addDays(endTime, 0-dayCount);
+		//获取开始时间的0点0分0秒
+		startTime=DateFormateUtils.getStartDateOfDay(startTime);
+		return findMessageSentCount(merchantId,messageType,startTime,endTime);
+	}
+	
+	public long findMessageSentCount(ObjectId merchantId,MessageType messageType,Date startTime,Date endTime){
+		Query query=new Query();
+		Criteria criteria=Criteria.where("merchantId").is(merchantId).and("status").is(MessageStatus.已发送);
+		Date date = new Date();
+		if(startTime==null){
+			startTime = DateFormateUtils.getStartDateOfDay(date);
+		}
+		if(endTime==null){
+			endTime=date;
+		}
+		criteria.and("sendTime").gte(startTime).lte(endTime);
+		if(messageType!=null){
+			criteria.and("type").is(messageType);
+		}
+		return mongoTemplate.count(query, MessageSendLog.class);
+	}
+	
+	
 	public String processContent(Merchant merchant, Customer customer, String content) {
 		if (customer == null) {
 			return content;
@@ -365,22 +402,20 @@ public class MessageService extends BaseService {
 	}
 
 	public void remindSend(String title, ObjectId merchantId) {
-		 List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
-			for(MerchantRemindTemplate merchantRemindTemplate:merchantRemindTemplates){
-				if(title.equals(merchantRemindTemplate.getRemindTemplate().getTitle())){
-						Query query = new Query();
-						Criteria criteria = Criteria.where("merchantId").is(merchantId);
-						Calendar calendar = Calendar.getInstance();
-						Date startTime =new Date();
-						calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
-						Date endTime =  DateFormateUtils.getStartDateOfDay(calendar.getTime());
-					 	criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
-					 	criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
-					 	query.addCriteria(criteria);
-						//List<Customer> customers = mongoTemplate.find(query, Customer.class);
-				}
+		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
+			if (title.equals(merchantRemindTemplate.getRemindTemplate().getTitle())) {
+				Query query = new Query();
+				Criteria criteria = Criteria.where("merchantId").is(merchantId);
+				Calendar calendar = Calendar.getInstance();
+				Date startTime = new Date();
+				calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
+				Date endTime = DateFormateUtils.getStartDateOfDay(calendar.getTime());
+				criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
+				criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
+				query.addCriteria(criteria);
 			}
-		
-	}
+		}
 	}
 
+}

@@ -77,8 +77,11 @@ public class CustomerImportService extends BaseService {
 				customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
 				continue;
 			}
-			Customer customer = new Customer();
-			customer.setId(ObjectId.get());
+			Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerImportItem.getPhone()).and("merchantId").is(customerImportItem.getMerchantId())), Customer.class);
+			if (customer == null) {
+				customer=new Customer();
+				customer.setId(ObjectId.get());
+			}
 			customer.setAddress(customerImportItem.getAddress());
 			customer.setBirthday(customerImportItem.getBirthday());
 			customer.setCustomerGroupId(findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName()));
@@ -111,15 +114,7 @@ public class CustomerImportService extends BaseService {
 			customerImportItem.setFailedReason(failedReason);
 			mongoTemplate.save(customerImportItem);
 			return false;
-		} else {
-			Customer customerInDb = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerImportItem.getPhone()).and("merchantId").is(customerImportItem.getMerchantId())), Customer.class);
-			if (customerInDb != null) {
-				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
-				customerImportItem.setFailedReason("电话号码已存在");
-				mongoTemplate.save(customerImportItem);
-				return false;
-			}
-		}
+		} 
 		return true;
 	}
 

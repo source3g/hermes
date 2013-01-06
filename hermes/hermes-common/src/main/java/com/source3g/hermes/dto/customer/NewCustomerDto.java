@@ -1,4 +1,4 @@
-package com.source3g.hermes.customer.dto;
+package com.source3g.hermes.dto.customer;
 
 import java.util.Date;
 

@@ -69,6 +69,7 @@
 			<li><button onclick="exportCustomer();" class="btn">导出</button>
 			<button class="btn" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');">导入</button>
 			<button class="btn" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');">查看导入日志</button>
+			<button class="btn" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');">导入日志模板下载</button>
 			</li>
 		</ul>
 	</div>

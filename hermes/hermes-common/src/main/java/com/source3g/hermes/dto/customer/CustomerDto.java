@@ -1,4 +1,4 @@
-package com.source3g.hermes.customer.dto;
+package com.source3g.hermes.dto.customer;
 
 import java.util.Date;
 import java.util.List;
@@ -25,6 +25,16 @@ public class CustomerDto {
 	private Date operateTime;
 
 	private List<RemindDto> reminds;
+
+	public int getCallInCount() {
+		if (callRecords == null) {
+			return 0;
+		}
+		return callRecords.size();
+	}
+
+	public void setCallInCount(int callInCount) {
+	}
 
 	public String getName() {
 		return name;

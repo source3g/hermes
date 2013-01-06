@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.source3g.hermes.customer.dto.CustomerDto;
-import com.source3g.hermes.customer.dto.RemindDto;
+import com.source3g.hermes.dto.customer.CustomerDto;
+import com.source3g.hermes.dto.customer.RemindDto;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.Remind;
 
