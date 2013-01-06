@@ -102,10 +102,6 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.find(new Query(Criteria.where("customerGroupId").is(customerGroupId)), Customer.class);
 	}
 
-	// public List<Customer> listAll() {
-	// return mongoTemplate.findAll(Customer.class);
-	// }
-
 	/**
 	 * 顾客列表
 	 * 

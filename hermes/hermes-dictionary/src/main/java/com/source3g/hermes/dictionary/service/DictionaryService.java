@@ -1,6 +1,5 @@
 package com.source3g.hermes.dictionary.service;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -8,7 +7,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.service.BaseService;
