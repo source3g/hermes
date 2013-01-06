@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ include file="../../include/import.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -16,11 +17,10 @@
 			<option value="allCustomer"
 				<c:if test="${customerType eq 'allCustomer' }"> selected="selected" </c:if>>全部顾客</option>
 			<option value="newCustomer"
-				<c:if test="${customerType eq 'newCustomer' }"> selected="selected" </c:if>>新顾客</option>
+				<c:if test="${customerType eq 'newCustomer' }"> selected="selected" </c:if>>未编辑顾客</option>
 			<option value="oldCustomer"
-				<c:if test="${customerType eq 'oldCustomer' }"> selected="selected" </c:if>>老顾客</option>
-		</select>
-		 <input type="submit" class="btn btn-primary" value="查询">
+				<c:if test="${customerType eq 'oldCustomer' }"> selected="selected" </c:if>>已编辑顾客</option>
+		</select> <input type="submit" class="btn btn-primary" value="查询">
 	</form>
 
 	<table
@@ -30,7 +30,7 @@
 				<th width="20%">姓名</th>
 				<th width="20%">电话</th>
 				<th width="20%">最后来电时间</th>
-				<th width="20%">今日来电次数</th>
+				<th width="20%">来电次数</th>
 				<th width="20%">操作</th>
 			</tr>
 		</thead>
@@ -39,9 +39,10 @@
 				<td width="20%">${customer.name }</td>
 				<td width="20%">${customer.phone }</td>
 				<td width="20%">${customer.lastCallInTime }</td>
-				<td width="20%">${customer.callInCountToday }</td>
+				<td width="20%">${fn:length(customer.callRecords) }</td>
 				<td width="20%"><a class="btn btn-success"
-					href="javascript:void();" onclick="editById('${customer.id}');">编辑</a></td>
+					href="javascript:void();"
+					onclick="showCallRecords('${customer.id}');">详情</a></td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -60,6 +61,30 @@
 		</ul>
 	</div>
 
+	<div id="myModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>顾客来电详情</h3>
+		</div>
+		<div class="modal-body">
+			<table id="customersTab" class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<td>来电时间</td>
+						<td>通话时长</td>
+					</tr>
+				</thead>
+				<tbody id="callInTb">
+				</tbody>
+			</table>
+			<div>
+				<input type="button" class="btn btn-primary" id="customersFormBtn"
+					value="确定" onclick="closeModal();"></input>
+			</div>
+		</div>
+		<div class="modal-footer"></div>
+	</div>
+
 
 	<script type="text/javascript">
 		$(document).ready(function(){
@@ -69,8 +94,17 @@
 	    	});
 			initPage();
 		});
-		function editById(id) {
-			loadPage("${pageContext.request.contextPath}/merchant/customer/toUpdate/" + id + "/?isNewCustomer=true");
+		
+		function showCallRecords(id){
+			$.get("${pageContext.request.contextPath}/merchant/customer/get/"+id+"/",function callback(data){
+				$("#callInTb").html("");
+				for (var i=0;i<data.callRecords.length;i++){
+					var callRecords=data.callRecords;
+					var tr="<tr> <td>"+callRecords[i].callTime+"</td> <td>"+callRecords[i].callDuration+"</td> </tr>";
+					$("#customersTab").append(tr);
+				}
+				$("#myModal").modal();
+			});
 		}
 		
 		function goToPage(pageNo){
@@ -82,6 +116,9 @@
 			$('#queryForm').ajaxSubmit(options);
 		}
 		
+		function closeModal(){
+			$("#myModal").modal("hide");
+		}
 		
 		  function initPage(){
 		    	$('#pageOk').click(function(){

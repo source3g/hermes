@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.codehaus.jackson.JsonGenerationException;
@@ -27,7 +26,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.source3g.hermes.customer.dto.CustomerDto;
+import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.utils.DateFormateUtils;
@@ -59,7 +58,7 @@ public class Customer extends AbstractEntity {
 	private Date operateTime;
 
 	// @JsonIgnore
-	public int getCallInCountToday() {
+	/*public int getCallInCountToday() {
 		int count = 0;
 		Date date = new Date();
 		Date startDate = DateFormateUtils.getStartDateOfDay(date);
@@ -72,11 +71,11 @@ public class Customer extends AbstractEntity {
 			}
 		}
 		return count;
-	}
+	}*/
 
-	public void setCallInCountToday(int count) {
-		// 空，为了对应反序列化
-	}
+//	public void setCallInCountToday(int count) {
+//		// 空，为了对应反序列化
+//	}
 
 	public String getBirthday() {
 		return birthday;

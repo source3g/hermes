@@ -1,16 +1,16 @@
 package com.source3g.hermes.vo;
 
-public class CallInStatisticsToday {
+public class CallInStatisticsCount {
 	
 	private int newCount;
 	private int oldCount;
 	
 	
-	public CallInStatisticsToday() {
+	public CallInStatisticsCount() {
 		super();
 	}
 
-	public CallInStatisticsToday(int newCount, int oldCount) {
+	public CallInStatisticsCount(int newCount, int oldCount) {
 		super();
 		this.newCount = newCount;
 		this.oldCount = oldCount;

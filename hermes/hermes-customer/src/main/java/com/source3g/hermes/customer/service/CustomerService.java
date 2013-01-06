@@ -21,6 +21,7 @@ import javax.jms.Destination;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -38,9 +39,10 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.JmsConstants;
-import com.source3g.hermes.customer.dto.CustomerDto;
-import com.source3g.hermes.customer.dto.CustomerRemindDto;
-import com.source3g.hermes.customer.dto.CustomerRemindDto.CustomerInfo;
+import com.source3g.hermes.dto.customer.CustomerDto;
+import com.source3g.hermes.dto.customer.CustomerRemindDto;
+import com.source3g.hermes.dto.customer.CustomerStatisticsDto;
+import com.source3g.hermes.dto.customer.CustomerRemindDto.CustomerInfo;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.ObjectValue;
 import com.source3g.hermes.entity.customer.CallRecord;
@@ -59,7 +61,7 @@ import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.Page;
-import com.source3g.hermes.vo.CallInStatisticsToday;
+import com.source3g.hermes.vo.CallInStatisticsCount;
 
 @Service
 public class CustomerService extends BaseService {
@@ -139,6 +141,7 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
 			}
+			break;
 		case allCustomer:
 			if (StringUtils.isNotEmpty(customer.getName())) {
 				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
@@ -148,6 +151,7 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
 			}
+			break;
 		}
 		query.addCriteria(criteria);
 		query.with(new Sort(direction, properties));
@@ -197,6 +201,7 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
 			}
+			break;
 		case allCustomer:
 			if (StringUtils.isNotEmpty(customer.getName())) {
 				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
@@ -206,8 +211,11 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
 			}
+			break;
 		}
-		criteria.and("lastCallInTime").gt(DateFormateUtils.getStartDateOfDay(new Date()));
+		criteria.and("lastCallInTime").ne(null);
+		// criteria.and("lastCallInTime").gt(DateFormateUtils.getStartDateOfDay(new
+		// Date()));
 		query.addCriteria(criteria);
 		query.with(new Sort(Direction.DESC, "lastCallInTime"));
 		Page page = new Page();
@@ -555,13 +563,17 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.find(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
 	}
 
-	public CallInStatisticsToday findCallInStatisticsToday(String id, Date startTime, Date endTime) {
+	public CallInStatisticsCount findCallInStatisticsByCount(ObjectId merchantId, Date startTime, Date endTime) {
 		Query query = new Query();
 		Date date = new Date();
-		Date startDate = DateFormateUtils.getStartDateOfDay(date);
-		query.addCriteria(Criteria.where("merchantId").is(new ObjectId(id)).and("callRecords.callTime").gt(startDate).lt(date));
+		if(startTime==null){
+			startTime = DateFormateUtils.getStartDateOfDay(date);
+		}
+		if(endTime==null){
+			endTime=date;
+		}
+		query.addCriteria(Criteria.where("merchantId").is(merchantId).and("callRecords.callTime").gt(startTime).lt(endTime));
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-
 		int newCount = 0;
 		int oldCount = 0;
 		for (Customer c : customers) {
@@ -569,7 +581,7 @@ public class CustomerService extends BaseService {
 				continue;
 			}
 			for (CallRecord r : c.getCallRecords()) {
-				if (r.getCallTime().getTime() > startDate.getTime() && r.getCallTime().getTime() < date.getTime()) {
+				if (r.getCallTime().getTime() > startTime.getTime() && r.getCallTime().getTime() < endTime.getTime()) {
 					if (r.isNewCustomer()) {
 						newCount++;
 					} else {
@@ -578,7 +590,7 @@ public class CustomerService extends BaseService {
 				}
 			}
 		}
-		CallInStatisticsToday callInStatisticsToday = new CallInStatisticsToday(newCount, oldCount);
+		CallInStatisticsCount callInStatisticsToday = new CallInStatisticsCount(newCount, oldCount);
 		return callInStatisticsToday;
 	}
 
@@ -588,20 +600,65 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.find(query, Customer.class);
 	}
 
+	public CustomerStatisticsDto findCustomerStatistics(ObjectId merchantId) {
+		CustomerStatisticsDto customerStatisticsDto = new CustomerStatisticsDto();
+		customerStatisticsDto.setEditedCustomerCount(findAllCustomerCount(merchantId, CustomerType.oldCustomer));
+		customerStatisticsDto.setUneditedCustomerCount(findAllCustomerCount(merchantId, CustomerType.newCustomer));
+		CallInStatisticsCount callInStatisticsCountThreeDay=findCallInCountByDayFromToday(merchantId,3);
+		customerStatisticsDto.setUneditedCallInCountThreeDay(callInStatisticsCountThreeDay.getNewCount());
+		customerStatisticsDto.setEditedCallInCountThreeDay(callInStatisticsCountThreeDay.getOldCount());
+		CallInStatisticsCount callInStatisticsCountAWeek=findCallInCountByDayFromToday(merchantId,7);
+		customerStatisticsDto.setUneditedCallInCountAWeek(callInStatisticsCountAWeek.getNewCount());
+		customerStatisticsDto.setEditedCallInCountAWeek(callInStatisticsCountAWeek.getOldCount());
+		return customerStatisticsDto;
+	}
+
+	/**
+	 * 查询最近几天的来电次数
+	 * @param merchantId 商户ID
+	 * @param dayCount 天数
+	 * @param customerType 顾客类型
+	 * @return
+	 */
+	public CallInStatisticsCount findCallInCountByDayFromToday(ObjectId merchantId, int dayCount) {
+		Date endTime=new Date();
+		Date startTime=DateUtils.addDays(endTime, 0-dayCount);
+		//获取开始时间的0点0分0秒
+		startTime=DateFormateUtils.getStartDateOfDay(startTime);
+		return findCallInStatisticsByCount(merchantId,startTime,endTime);
+	}
+
+	public long findAllCustomerCount(ObjectId merchantId, CustomerType customerType) {
+		Query query = new Query();
+		Criteria criteria = Criteria.where("merchantId").is(merchantId);
+		switch (customerType) {
+		case newCustomer:
+			criteria.and("name").is(null);
+			break;
+		case oldCustomer:
+			criteria.and("name").ne(null);
+			break;
+		case allCustomer:
+			break;
+		}
+		query.addCriteria(criteria);
+		return mongoTemplate.count(query, Customer.class);
+	}
+
 	public List<CustomerRemindDto> findTodayReminds(ObjectId merchantId) {
-		 List<CustomerRemindDto>  result = new ArrayList<CustomerRemindDto>();
+		List<CustomerRemindDto> result = new ArrayList<CustomerRemindDto>();
 		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			Query query = new Query();
 			Criteria criteria = Criteria.where("merchantId").is(merchantId);
 			Calendar calendar = Calendar.getInstance();
-			Date startTime =new Date();
+			Date startTime = new Date();
 			calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
-			Date endTime =  DateFormateUtils.getStartDateOfDay(calendar.getTime());
-		 	criteria.and("reminds.remindTime").gte(startTime).lte(endTime).and("reminds.merchantRemindTemplate").is(merchantRemindTemplate);
+			Date endTime = DateFormateUtils.getStartDateOfDay(calendar.getTime());
+			criteria.and("reminds.remindTime").gte(startTime).lte(endTime).and("reminds.merchantRemindTemplate").is(merchantRemindTemplate);
 			query.addCriteria(criteria);
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);
-			if(CollectionUtils.isEmpty(customers)){
+			if (CollectionUtils.isEmpty(customers)) {
 				return null;
 			}
 			CustomerRemindDto customerRemindDto = new CustomerRemindDto();
@@ -611,7 +668,7 @@ public class CustomerService extends BaseService {
 			for (Customer customer : customers) {
 				for (Remind remind : customer.getReminds()) {
 					if (remind.getRemindTime().getTime() > startTime.getTime() && remind.getRemindTime().getTime() < endTime.getTime()) {
-						CustomerInfo customerInfo=new CustomerInfo(customer.getName(), customer.getPhone(), remind.getRemindTime());
+						CustomerInfo customerInfo = new CustomerInfo(customer.getName(), customer.getPhone(), remind.getRemindTime());
 						customerRemindDto.addRemind(customerInfo);
 					}
 				}

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
@@ -51,6 +52,12 @@ public class MessageApi {
 	@ResponseBody
 	public List<MessageTemplate> listTemplate(@PathVariable String merchantId) {
 		return messageService.listAll(merchantId);
+	}
+	
+	@RequestMapping(value="/statistics/{merchantId}",method=RequestMethod.GET)
+	@ResponseBody
+	public MessageStatisticsDto findCustomerStatistics(@PathVariable String merchantId){
+		return messageService.findMessageStastics(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)

@@ -19,6 +19,7 @@ import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.merchant.service.MerchantService;
+import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -29,6 +30,8 @@ public class MerchantApi {
 
 	@Autowired
 	private MerchantService merchantService;
+	@Autowired
+	private CommonBaseService commonBaseService;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
@@ -154,6 +157,13 @@ public class MerchantApi {
 	@ResponseBody
 	public List<MerchantRemindTemplate> merchantRemindList(@PathVariable String merchantId) {
 		return merchantService.merchantRemindList(new ObjectId(merchantId));
+	}
+	
+	@RequestMapping(value = "/merchantRemindTemplateList/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<MerchantRemindTemplate> merchantRemindTemplateListBySn(@PathVariable String sn) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		return merchantService.merchantRemindList(merchant.getId());
 	}
 
 	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)
