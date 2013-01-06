@@ -52,12 +52,13 @@
 				<input type="radio" name="birthdayRemind" id="birthdayRemind"
 					value="true"
 					<c:if test="${ merchant.setting.birthdayRemind eq true }"> checked="checked" </c:if> />开
-				<input type="radio" name="birthdayRemind" id="birthdayRemind"
+				<input type="radio" name="birthdayRemind" id="birthdayRemind1"
 					value="false"
 					<c:if test="${ merchant.setting.birthdayRemind eq false }"> checked="checked" </c:if> />关
+				<span id="templateSpan">
 
-				选择模板 <select id="sel" name="birthdayRemindTemplate.id">
-				</select> <span class="help-inline">(注：打开开关，生日提醒将出现在提醒列表中)</span>
+				</span>
+				 <span class="help-inline">(注：打开开关，生日提醒将出现在提醒列表中)</span>
 			</div>
 		</div>
 
@@ -66,8 +67,14 @@
 		</div>
 	</form>
 	<script type="text/javascript">
+	var templateData;
 		$(document).ready(function() {
-			$.get("${pageContext.request.contextPath}/merchant/account/remindTemplate/get/", showTemplates);
+			$.get("${pageContext.request.contextPath}/merchant/account/remindTemplate/get/", function callback(data){
+				templateData=data;
+				if($('input:radio[name=birthdayRemind]:checked').val()=="true"){
+					showTemplates(templateData);
+				}
+			});
 			var validateoptions = {
 				rules : {
 					autoSend : {
@@ -112,21 +119,36 @@
 				$(this).ajaxSubmit(options);
 				return false;
 			});
-
+			
+			
 			function showTemplates(data) {
+				var sel="选择模板 <select id='sel' name='birthdayRemindTemplate.id'> </select>";
+				$("#templateSpan").html(sel);
 				for ( var i = 0; i < data.length; i++) {
-					var option ="<option value='"+data[i].id+"'";
-					if(data[i].id=="${merchant.setting.birthdayRemindTemplate.id}"){
+					var  option ="<option value='"+data[i].id+"'";
+				 	if(data[i].id=="${merchant.setting.birthdayRemindTemplate.id}"){
 						option+="  selected='selected'";
-					}
+					} 
 					option +=" >";
 					option+=data[i].remindTemplate.title+"</option>";
 					$("#sel").append(option);
 				}
 			}
-
+			
+  			$("#birthdayRemind").change(function(data){
+  				if($('input:radio[name=birthdayRemind]:checked').val()=="true"){
+  					showTemplates(templateData);
+  				}
+				});
+ 	
+	 		$("#birthdayRemind1").change(function(){	
+					if($('input:radio[name=birthdayRemind]:checked').val()=="false"){
+					$("#templateSpan").html("");
+						}
+				}); 
 		});
 
+		
 		function toSwitch(data) {
 			$("#pageContentFrame").html(data);
 		}

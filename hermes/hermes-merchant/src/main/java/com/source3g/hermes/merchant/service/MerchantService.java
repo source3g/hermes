@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
@@ -152,7 +153,7 @@ public class MerchantService extends BaseService {
 	}
 
 	public List<RemindTemplate> remindList() {
-		List<RemindTemplate> list = mongoTemplate.findAll(RemindTemplate.class);
+		List<RemindTemplate> list=mongoTemplate.find(new Query(Criteria.where("isDelete").is(false)), RemindTemplate.class);
 		return list;
 	}
 
@@ -168,20 +169,21 @@ public class MerchantService extends BaseService {
 
 	public void remindDelete(ObjectId merchantId, ObjectId merchantRemindtemplateId) {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		List<MerchantRemindTemplate> merchantRemindTemplates = merchant.getMerchantRemindTemplates();
-		if (merchantRemindTemplates != null) {
-			MerchantRemindTemplate merchantRemindTemplateOld = new MerchantRemindTemplate();
-			merchantRemindTemplateOld.setId(merchantRemindtemplateId);
-			merchantRemindTemplates.remove(merchantRemindTemplateOld);
-		}
-
+		MerchantRemindTemplate merchantRemindTemplate=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantRemindtemplateId)), MerchantRemindTemplate.class);
+		merchantRemindTemplate.setIsDelete(true);
+		mongoTemplate.save(merchantRemindTemplate);
+		List<MerchantRemindTemplate> merchantRemindTemplate2=merchant.getMerchantRemindTemplates();
+		merchantRemindTemplate2.remove(merchantRemindTemplate);
 		mongoTemplate.save(merchant);
-		mongoTemplate.remove(new Query(Criteria.where("_id").is(merchantRemindtemplateId)), MerchantRemindTemplate.class);
 	}
-
 	public void remindAdd(ObjectId merchantId, ObjectId remindtemplateId) {
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("merchantRemindTemplates.remindTemplate.$id").is(remindtemplateId).and("_id").is(merchantId)), Merchant.class);
-		if (merchant != null) {
+		Merchant merchantInDb=mongoTemplate.findById(merchantId, Merchant.class);
+		if(CollectionUtils.isEmpty(merchantInDb.getMerchantRemindTemplates())){
+			merchantInDb.setMerchantRemindTemplates(new ArrayList<MerchantRemindTemplate>());
+		}
+		MerchantRemindTemplate merchantRemindTemplateOld = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindtemplateId)), MerchantRemindTemplate.class);
+		//商户是否已经绑定
+		if(merchantInDb.getMerchantRemindTemplates().contains(merchantRemindTemplateOld)){
 			return;
 		}
 		RemindTemplate template = mongoTemplate.findOne(new Query(Criteria.where("_id").is(remindtemplateId)), RemindTemplate.class);
@@ -191,19 +193,22 @@ public class MerchantService extends BaseService {
 		merchantRemindTemplate.setRemindTemplate(template);
 		merchantRemindTemplate.setMerchantId(merchantId);
 		merchantRemindTemplate.setAdvancedTime(template.getAdvancedTime());
-		MerchantRemindTemplate merchantRemindTemplateOld = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindtemplateId)), MerchantRemindTemplate.class);
+		
+		//是否已经增加过了
 		if (merchantRemindTemplateOld != null) {
-			return;
+			merchantRemindTemplateOld.setIsDelete(false);
+			mongoTemplate.save(merchantRemindTemplateOld);
+			merchantInDb.getMerchantRemindTemplates().add(merchantRemindTemplateOld);
+			mongoTemplate.save(merchantInDb);
+		}else{
+			mongoTemplate.insert(merchantRemindTemplate);
+			merchantInDb.getMerchantRemindTemplates().add(merchantRemindTemplate);
+			mongoTemplate.save(merchantInDb);
 		}
-		mongoTemplate.insert(merchantRemindTemplate);
-		Update update = new Update();
-		update.addToSet("merchantRemindTemplates", merchantRemindTemplate);
-		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchantId)), update, Merchant.class);
 	}
 
 	public List<MerchantRemindTemplate> merchantRemindList(ObjectId merchantId) {
-		//Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		List<MerchantRemindTemplate> list=mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+		List<MerchantRemindTemplate> list=mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId).and("isDelete").is(false)), MerchantRemindTemplate.class);
 		return list;
 	}
 
@@ -230,6 +235,5 @@ public class MerchantService extends BaseService {
 			update.set("password", newPassword);
 			mongoTemplate.updateFirst(new Query(Criteria.where("password").is(password).and("_id").is(merchantId)), update, Merchant.class);
 		}
-		
 	}
 }

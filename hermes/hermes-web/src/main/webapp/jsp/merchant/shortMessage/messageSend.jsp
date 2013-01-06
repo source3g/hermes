@@ -200,7 +200,7 @@
 	});
 		function drawGroupSendLogList(data){
 			for(var i=0;i<data.length;i++){
-				var str="<tr><td width=\"30%\">"+data[i].sendCount+"</td><td width=\"30%\">"+data[i].sendTime+"</td><td width=\"40%\">"+data[i].content+"</td></tr>";
+				var str="<tr><td width=\"30%\">"+data[i].sendCount+"</td><td width=\"30%\">"+data[i].sendTime+"</td><td width=\"40%\" title="+data[i].content+" ><div style=\"width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; \">"+data[i].content+"</div></td></tr>";
 				$('#groupSendLog').append(str);
 			}
 	}

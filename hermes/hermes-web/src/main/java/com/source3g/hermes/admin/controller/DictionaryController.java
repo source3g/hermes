@@ -52,7 +52,7 @@ public class DictionaryController {
 	}
 
 	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
-	public ModelAndView remindAdd(@Valid RemindTemplate remindTemplate, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
+	public ModelAndView remindAdd(@Valid RemindTemplate remindTemplate, BindingResult bindingResult,RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			// TODO 要改
 			return new ModelAndView("error");

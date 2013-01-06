@@ -91,12 +91,12 @@
 				},
 				messages : {
 					title : {
-						required : "[标题不能为空]"
+						required : "标题不能为空"
 					},
 					advancedTime:{
-						required : "[提前天数不能为空]",
-						number:"[请输入数字]",
-						digits:"[请输入整数]" 
+						required : "提前天数不能为空",
+						number:"请输入数字",
+						digits:"请输入整数" 
 					}
 				}
 			});   

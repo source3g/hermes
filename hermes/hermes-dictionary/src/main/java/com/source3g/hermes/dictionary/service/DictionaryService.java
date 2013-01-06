@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.service.BaseService;
 
@@ -15,7 +15,7 @@ import com.source3g.hermes.service.BaseService;
 public class DictionaryService extends BaseService {
 
 	public List<RemindTemplate> remindList() {
-		List<RemindTemplate> list = mongoTemplate.findAll(RemindTemplate.class);
+		List<RemindTemplate> list=mongoTemplate.find(new Query(Criteria.where("isDelete").is(false)), RemindTemplate.class);
 		return list;
 	}
 
@@ -24,18 +24,17 @@ public class DictionaryService extends BaseService {
 			remindTemplate.setId(ObjectId.get());
 			add(remindTemplate);
 		}else{
-			RemindTemplate remindTemplateInDb=mongoTemplate.findOne(new Query(Criteria.where("title").is(remindTemplate.getTitle()).and("_id").ne(remindTemplate.getTitle())), RemindTemplate.class);
-			if(remindTemplateInDb!=null){
-				throw new Exception("该标题已使用");
-			}
+			//RemindTemplate remindTemplateInDb=mongoTemplate.findOne(new Query(Criteria.where("title").is(remindTemplate.getTitle()).and("_id").is(remindTemplate.getId())), RemindTemplate.class);
 			mongoTemplate.save(remindTemplate);
 		}
 	}
 
 	public void remindDelete(ObjectId id) throws Exception {
-		List<Merchant> merchants=mongoTemplate.find(new Query(Criteria.where("merchantRemindTemplates.remindTemplate.$id").is(id)), Merchant.class);
-		if(merchants.size()==0){
-			mongoTemplate.remove(new Query(Criteria.where("_id").is(id)), RemindTemplate.class);
+		RemindTemplate remindTemplate=mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), RemindTemplate.class);
+		List<MerchantRemindTemplate> merchantRemindTemplate =mongoTemplate.find(new Query(Criteria.where("remindTemplate.$id").is(id).and("isDelete").is(false)), MerchantRemindTemplate.class);
+		if(merchantRemindTemplate.size()==0){
+			remindTemplate.setIsDelete(true);
+			mongoTemplate.save(remindTemplate);
 		}else{
 			throw new Exception("该提醒已被占用");
 		}
@@ -54,11 +53,17 @@ public class DictionaryService extends BaseService {
 	}
 
 	public void add( RemindTemplate remindTemplate) throws Exception {
-		RemindTemplate remindTemplateInDb=mongoTemplate.findOne(new Query(Criteria.where("title").is(remindTemplate.getTitle())), RemindTemplate.class);
-		if(remindTemplateInDb!=null){
-			throw new Exception("该标题已使用");
+		RemindTemplate remindTemplate1=mongoTemplate.findOne(new Query(Criteria.where("title").is(remindTemplate.getTitle())), RemindTemplate.class);
+		if(remindTemplate1!=null&&remindTemplate1.getIsDelete()==false){
+			throw new Exception("该标题已被占用");
+		}else if(remindTemplate1!=null&&remindTemplate1.getIsDelete()==true){
+			remindTemplate1.setAdvancedTime(remindTemplate.getAdvancedTime());
+			remindTemplate1.setIsDelete(false);
+			remindTemplate1.setMessageContent(remindTemplate.getMessageContent());
+			remindTemplate1.setTitle(remindTemplate.getTitle());
+			mongoTemplate.save(remindTemplate1);
+		}else{
+			mongoTemplate.insert(remindTemplate);
 		}
-		mongoTemplate.insert(remindTemplate);
-		
 	}
 }

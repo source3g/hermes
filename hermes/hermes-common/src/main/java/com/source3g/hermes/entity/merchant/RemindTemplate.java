@@ -14,7 +14,14 @@ public class RemindTemplate extends AbstractEntity {
 	private String title;
 	@NotEmpty(message="{remind.template.content.not.null}")
 	private String messageContent;
+	private Boolean isDelete=false;
 	
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
 	public String getTitle() {
 		return title;
 	}
