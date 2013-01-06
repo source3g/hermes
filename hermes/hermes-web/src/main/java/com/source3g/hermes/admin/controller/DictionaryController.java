@@ -3,6 +3,7 @@ package com.source3g.hermes.admin.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,8 +21,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.utils.ConfigParams;
+import com.source3g.hermes.utils.LoginUtils;
 
 @Controller
 @RequestMapping("/admin/dictionary")
@@ -52,7 +55,7 @@ public class DictionaryController {
 	}
 
 	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
-	public ModelAndView remindAdd(@Valid RemindTemplate remindTemplate, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
+	public ModelAndView remindAdd(@Valid RemindTemplate remindTemplate, BindingResult bindingResult,RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			// TODO 要改
 			return new ModelAndView("error");

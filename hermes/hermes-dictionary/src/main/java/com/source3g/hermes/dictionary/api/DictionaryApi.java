@@ -31,7 +31,7 @@ public class DictionaryApi {
 	}
 	
 	
-	@RequestMapping(value = "/remindAdd/", method = RequestMethod.POST)
+	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
 	@ResponseBody
 	public String remindAdd(@RequestBody RemindTemplate remindTemplate) {
 		if (remindTemplate.getId() == null) {

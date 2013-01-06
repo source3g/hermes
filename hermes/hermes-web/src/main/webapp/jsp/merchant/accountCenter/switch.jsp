@@ -144,6 +144,7 @@
 	 		$("#birthdayRemind1").change(function(){	
 					if($('input:radio[name=birthdayRemind]:checked').val()=="false"){
 					$("#templateSpan").html("");
+						}
 				}); 
 		});
 

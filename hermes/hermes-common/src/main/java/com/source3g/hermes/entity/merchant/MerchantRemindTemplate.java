@@ -17,7 +17,16 @@ public class MerchantRemindTemplate extends AbstractEntity {
 	private Integer advancedTime;
 	private String messageContent;
 	private ObjectId merchantId;
+	private Boolean isDelete=false;
 	
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+
 	public ObjectId getMerchantId() {
 		return merchantId;
 	}
