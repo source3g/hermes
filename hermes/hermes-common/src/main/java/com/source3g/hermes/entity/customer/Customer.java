@@ -54,6 +54,7 @@ public class Customer extends AbstractEntity {
 	private List<Remind> reminds;
 	private ObjectId merchantId;
 	private Date lastCallInTime; // 最后通电话时间
+	
 	private ObjectId customerGroupId;
 	private Date operateTime;
 
