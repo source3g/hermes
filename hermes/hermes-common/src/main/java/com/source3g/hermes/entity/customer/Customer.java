@@ -24,6 +24,7 @@ import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.dto.customer.CustomerDto;
@@ -53,8 +54,8 @@ public class Customer extends AbstractEntity {
 	private List<Remind> reminds;
 	private ObjectId merchantId;
 	private Date lastCallInTime; // 最后通电话时间
-	
-	private ObjectId customerGroupId;
+	@DBRef
+	private CustomerGroup customerGroup;
 	private Date operateTime;
 
 	// @JsonIgnore
@@ -189,12 +190,12 @@ public class Customer extends AbstractEntity {
 		this.lastCallInTime = lastCallInTime;
 	}
 
-	public ObjectId getCustomerGroupId() {
-		return customerGroupId;
+	public CustomerGroup getCustomerGroup() {
+		return customerGroup;
 	}
 
-	public void setCustomerGroupId(ObjectId customerGroupId) {
-		this.customerGroupId = customerGroupId;
+	public void setCustomerGroup(CustomerGroup customerGroup) {
+		this.customerGroup = customerGroup;
 	}
 
 	public Date getOperateTime() {

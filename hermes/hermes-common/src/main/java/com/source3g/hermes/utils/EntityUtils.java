@@ -11,7 +11,9 @@ import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.Remind;
 
 public class EntityUtils {
-	public static void copyCustomerEntityToDto(Customer customer, CustomerDto customerDto) {
+
+	public static void copyCustomerEntityToDto(Customer customer,
+			CustomerDto customerDto) {
 		if (customer == null || customerDto == null) {
 			return;
 		}
@@ -19,7 +21,9 @@ public class EntityUtils {
 		customerDto.setBirthday(customer.getBirthday());
 		customerDto.setBlackList(customer.isBlackList());
 		customerDto.setCallRecords(customer.getCallRecords());
-		customerDto.setCustomerGroupId(customer.getCustomerGroupId());
+		if (customer.getCustomerGroup() != null) {
+			customerDto.setCustomerGroupId(customer.getCustomerGroup().getId());
+		}
 		customerDto.setEmail(customer.getEmail());
 		customerDto.setLastCallInTime(customer.getLastCallInTime());
 		customerDto.setName(customer.getName());
@@ -32,11 +36,16 @@ public class EntityUtils {
 		if (customer.getReminds() != null) {
 			for (Remind r : customer.getReminds()) {
 				RemindDto remindDto = new RemindDto();
-				remindDto.setAdvancedTime(String.valueOf(r.getMerchantRemindTemplate().getAdvancedTime()));
+				remindDto.setAdvancedTime(String.valueOf(r
+						.getMerchantRemindTemplate().getAdvancedTime()));
 				remindDto.setAlreadyRemind(r.isAlreadyRemind());
 				remindDto.setRemindTime(r.getRemindTime());
-				if (r.getMerchantRemindTemplate() != null && r.getMerchantRemindTemplate().getRemindTemplate()!=null&&StringUtils.isNotEmpty(r.getMerchantRemindTemplate().getRemindTemplate().getTitle())) {
-					remindDto.setName(r.getMerchantRemindTemplate().getRemindTemplate().getTitle());
+				if (r.getMerchantRemindTemplate() != null
+						&& r.getMerchantRemindTemplate().getRemindTemplate() != null
+						&& StringUtils.isNotEmpty(r.getMerchantRemindTemplate()
+								.getRemindTemplate().getTitle())) {
+					remindDto.setName(r.getMerchantRemindTemplate()
+							.getRemindTemplate().getTitle());
 				}
 				reminds.add(remindDto);
 			}

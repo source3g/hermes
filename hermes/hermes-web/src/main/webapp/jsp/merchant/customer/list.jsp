@@ -38,15 +38,17 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="30%"><a href="javascript:void();" id="sortByName" onclick="sortByName()" >姓名<c:if test="${sortType eq 'asc'and empty phoneSortType   }">↑</c:if><c:if test="${sortType eq 'desc'and  empty phoneSortType  }">↓</c:if> </a></th>
-				<th width="30%"><a href="javascript:void();" id="sortByPhone" onclick="sortByPhone()" >电话<c:if test="${phoneSortType eq 'asc'and  empty sortType  }">↑</c:if><c:if test="${phoneSortType eq 'desc'and  empty sortType }">↓</c:if></a></th>
-				<th width="40%">操作</th>
+				<th width="25%"><a href="javascript:void();" id="sortByName" onclick="sortByName()" >姓名<c:if test="${sortType eq 'asc'and empty phoneSortType   }">↑</c:if><c:if test="${sortType eq 'desc'and  empty phoneSortType  }">↓</c:if> </a></th>
+				<th width="25%"><a href="javascript:void();" id="sortByPhone" onclick="sortByPhone()" >电话<c:if test="${phoneSortType eq 'asc'and  empty sortType  }">↑</c:if><c:if test="${phoneSortType eq 'desc'and  empty sortType }">↓</c:if></a></th>
+				<th width="25%">所属顾客组</th>
+				<th width="25%">操作</th>
 			</tr>
 		</thead>
 		<c:forEach items="${page.data}" var="customer">
 			<tr>
 				<td>${customer.name }</td>
 				<td>${customer.phone }</td>
+				<td>${customer.customerGroup.name }</td>
 				<td><a class="btn btn-success" href="javascript:void();"
 					onclick="toModify('${customer.id}');">修改</a> <a
 					class="btn btn-danger" href="javascript:void();"

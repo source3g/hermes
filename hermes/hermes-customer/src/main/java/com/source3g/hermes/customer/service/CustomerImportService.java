@@ -84,7 +84,8 @@ public class CustomerImportService extends BaseService {
 			}
 			customer.setAddress(customerImportItem.getAddress());
 			customer.setBirthday(customerImportItem.getBirthday());
-			customer.setCustomerGroupId(findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName()));
+			ObjectId customerGroupId= findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName());
+			customer.setCustomerGroup(new CustomerGroup(customerGroupId));
 			customer.setEmail(customerImportItem.getEmail());
 			customer.setMerchantId(customerImportItem.getMerchantId());
 			customer.setName(customerImportItem.getName());

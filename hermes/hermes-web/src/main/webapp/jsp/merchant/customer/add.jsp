@@ -46,7 +46,7 @@
 			</tr>
 			<tr>
 				<td><label class="control-label">顾客组：</label></td>
-				<td><select id="customerGroupSel" name="customerGroupId"
+				<td><select id="customerGroupSel" name="customerGroup.id"
 					class="input-medium">
 
 				</select></td>
@@ -231,16 +231,16 @@
 				url : "${pageContext.request.contextPath}/merchant/customerGroup/listAllJson",
 				type : "get",
 				dataType : "json",
-				success : initCustomerSelection,
+				success : initCustomerGroupSelection,
 				error : error
 			});
 		}
 		function error() {
 			alert("顾客组初始化失败，请重新进入该页面");
 		}
-		function initCustomerSelection(data) {
+		function initCustomerGroupSelection(data) {
 			for ( var i = 0; i < data.length; i++) {
-				if(data[i].id=='${customer.customerGroupId }'){
+				if(data[i].id=='${customer.customerGroup.id}'){
 					$("#customerGroupSel").append("<option value='"+data[i].id+"' selected>" + data[i].name + "</option>");	
 				}else{
 					$("#customerGroupSel").append("<option value='"+data[i].id+"'>" + data[i].name + "</option>");

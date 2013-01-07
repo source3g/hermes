@@ -29,7 +29,6 @@ import com.hongxun.pub.tcptrans.TcpCommTrans;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.customer.Customer;
-import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
@@ -150,9 +149,8 @@ public class MessageService extends BaseService {
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phone)), Customer.class);
 		if (c != null) {
 			customerName = c.getName();
-			CustomerGroup customerGroup = mongoTemplate.findById(c.getCustomerGroupId(), CustomerGroup.class);
-			if (customerGroup != null) {
-				customerGroupName = customerGroup.getName();
+			if (c.getCustomerGroup() != null) {
+				customerGroupName = c.getCustomerGroup().getName();
 			}
 		}
 		MessageSendLog log = genMessageSendLog(customerName, customerGroupName, merchantId, phone, 1, content, type, MessageStatus.发送中);
@@ -403,9 +401,9 @@ public class MessageService extends BaseService {
 
 	public void remindSend(String title, ObjectId merchantId) {
 		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
+		Query query = new Query();
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			if (title.equals(merchantRemindTemplate.getRemindTemplate().getTitle())) {
-				Query query = new Query();
 				Criteria criteria = Criteria.where("merchantId").is(merchantId);
 				Calendar calendar = Calendar.getInstance();
 				Date startTime = new Date();
@@ -416,6 +414,8 @@ public class MessageService extends BaseService {
 				query.addCriteria(criteria);
 			}
 		}
+	//	List<Customer> customers = mongoTemplate.find(query, Customer.class);
+	//	Set<String> phones=new HashSet<String>();
 	}
 
 }

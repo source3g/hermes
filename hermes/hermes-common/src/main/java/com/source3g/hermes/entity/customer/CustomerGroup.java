@@ -8,7 +8,13 @@ import com.source3g.hermes.entity.AbstractEntity;
 @Document
 public class CustomerGroup extends AbstractEntity {
 	private static final long serialVersionUID = 5514478207740377728L;
-
+	
+	public CustomerGroup() {
+	}
+	
+	public CustomerGroup(ObjectId id) {
+		super.setId(id);
+	}
 	@NotEmpty(message = "{customer.group.name.not.null}")
 	private String name;
 
