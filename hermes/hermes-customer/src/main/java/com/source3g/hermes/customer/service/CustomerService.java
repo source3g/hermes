@@ -741,9 +741,7 @@ public class CustomerService extends BaseService {
 
 	public List<CustomerRemindDto> findTodayReminds(ObjectId merchantId) {
 		List<CustomerRemindDto> result = new ArrayList<CustomerRemindDto>();
-		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate
-				.find(new Query(Criteria.where("merchantId").is(merchantId)),
-						MerchantRemindTemplate.class);
+		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)),MerchantRemindTemplate.class);
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			Query query = new Query();
 			Criteria criteria = Criteria.where("merchantId").is(merchantId);
@@ -753,9 +751,12 @@ public class CustomerService extends BaseService {
 					merchantRemindTemplate.getAdvancedTime());
 			Date endTime = DateFormateUtils.getStartDateOfDay(calendar
 					.getTime());
-			criteria.and("reminds.remindTime").gte(startTime).lte(endTime)
-					.and("reminds.merchantRemindTemplate")
-					.is(merchantRemindTemplate);
+			criteria.and("reminds").elemMatch(Criteria.where("remindTime").gte(startTime).lte(endTime).and("merchantRemindTemplate.$id").is(merchantRemindTemplate.getId()).and("alreadyRemind").is(false));
+			//criteria.and("reminds.remindTime").gte(startTime).lte(endTime)
+			//		.and("reminds.merchantRemindTemplate.$id")
+			//		.is(merchantRemindTemplate.getId());
+			//criteria.elemMatch(Criteria.where("reminds.remindTime").gte(startTime).lte(endTime).and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId()).and("reminds.alreadyRemind").is(false));
+			//criteria.and("reminds.alreadyRemind").is(false);
 			query.addCriteria(criteria);
 			List<Customer> customers = mongoTemplate
 					.find(query, Customer.class);
@@ -771,12 +772,8 @@ public class CustomerService extends BaseService {
 					.getRemindTemplate().getTitle());
 			for (Customer customer : customers) {
 				for (Remind remind : customer.getReminds()) {
-					if (remind.getRemindTime().getTime() > startTime.getTime()
-							&& remind.getRemindTime().getTime() < endTime
-									.getTime()) {
-						CustomerInfo customerInfo = new CustomerInfo(
-								customer.getName(), customer.getPhone(),
-								remind.getRemindTime());
+					if (remind.getMerchantRemindTemplate().getId().equals(merchantRemindTemplate.getId())&&remind.getRemindTime().getTime() > startTime.getTime()&& remind.getRemindTime().getTime() < endTime.getTime()&&remind.isAlreadyRemind()==false) {
+						CustomerInfo customerInfo = new CustomerInfo(customer.getName(), customer.getPhone(),remind.getRemindTime());
 						customerRemindDto.addRemind(customerInfo);
 					}
 				}
