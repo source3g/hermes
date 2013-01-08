@@ -48,18 +48,39 @@
 				for(var i=0;i<data.length;i++){
 					var str="<tr><td width=\"18%\">"+data[i].title+"</td><td width=\"18%\">"+data[i].content+"</td><td width=\"18%\">"+data[i].advancedTime+"</td><td width=\"28%\"><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><span>  [共有"+data[i].customers.length+"位客户]</span></td><td width=\"18%\"><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"></td></tr>";
 					$("#customerRemindDtos").append(str);
-					var index=i;
-					$("#customer"+index).click(function (){
+					$("#customer"+i).bind("click",{"remindInfo":data[i]},function (events){
 						$('#customerInfo').html("");
 						$("#myModal").modal();
-						var customers=data[index].customers;
+						var customers=events.data.remindInfo.customers;
 						for(var k=0;k<customers.length;k++){
 							var str="<tr><td>"+customers[k].customerName+"</td><td>"+customers[k].phone+"</td><td>"+customers[k].remindTime+"</td></tr>";
 							$('#customerInfo').append(str);
-						} 
+						}
 					});
 				}
 			}
+			if(${not empty success}){
+				alert("发送成功");
+			}
+			
+			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
+				var remindCount=data.length;
+				alert(remindCount);
+				if(remindCount==0||typeof(data)=="string"){
+					$("#merchantRemind").html("提醒");
+					$("#merchantRemind").css("color","");
+					return;
+				}else{
+					$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");
+					$("#remindTipContent").click(function(){
+						loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
+					});
+					$("#remindTipAlert").css("display","");
+					$("#merchantRemind").html("提醒"+"("+remindCount+")");
+					$("#merchantRemind").css("color","red");
+				}
+			});
+			
 		});
 		function sendMessages(title){
 			$.get("${pageContext.request.contextPath}/merchant/account/sendMessages/"+title+"/",showContentInfo);

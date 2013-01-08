@@ -100,7 +100,7 @@ public class MessageService extends BaseService {
 				ObjectId ObjId = new ObjectId(id);
 				customerGroupIds.add(ObjId);
 			}
-			query.addCriteria(Criteria.where("customerGroupId").in(customerGroupIds));
+			query.addCriteria(Criteria.where("customerGroup.$id").in(customerGroupIds));
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);
 			for (Customer customer : customers) {
 				phones.add(customer.getPhone());
@@ -429,11 +429,12 @@ public class MessageService extends BaseService {
 		sendMessages(merchantId, Arrayphone, content);
 		for(Customer c:customers){
 			for(Remind r: c.getReminds()){
-				if(r.getMerchantRemindTemplate().equals(merchantRemindTemplate)){
+				if(r.getMerchantRemindTemplate().equals(merchantRemindTemplate)&&r.isAlreadyRemind()==false){
 					r.setAlreadyRemind(true);
+					mongoTemplate.save(c);
 				}
 			}
-			mongoTemplate.save(c);
+			
 		}
 	}
 

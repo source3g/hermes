@@ -102,8 +102,7 @@ public class CustomerService extends BaseService {
 
 	// 短信群发页面显示顾客信息
 	public List<Customer> customerListBycustomerGroupId(ObjectId customerGroupId) {
-		return mongoTemplate.find(new Query(Criteria.where("customerGroupId")
-				.is(customerGroupId)), Customer.class);
+		return mongoTemplate.find(new Query(Criteria.where("customerGroup.$id").is(customerGroupId)), Customer.class);
 	}
 
 	/**
@@ -742,11 +741,12 @@ public class CustomerService extends BaseService {
 	public List<CustomerRemindDto> findTodayReminds(ObjectId merchantId) {
 		List<CustomerRemindDto> result = new ArrayList<CustomerRemindDto>();
 		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)),MerchantRemindTemplate.class);
+		Date startTime = new Date();
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			Query query = new Query();
 			Criteria criteria = Criteria.where("merchantId").is(merchantId);
 			Calendar calendar = Calendar.getInstance();
-			Date startTime = new Date();
+			calendar.setTime(startTime);
 			calendar.add(Calendar.DAY_OF_MONTH,
 					merchantRemindTemplate.getAdvancedTime());
 			Date endTime = DateFormateUtils.getStartDateOfDay(calendar
