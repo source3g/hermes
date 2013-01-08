@@ -85,6 +85,7 @@
 				<td colspan="3"><c:forEach items="${customer.reminds}"
 						var="remind" varStatus="status">
 						<div class="remindItem">
+								<input type=hidden value="${remind.alreadyRemind }">
 							事项：<input type="text" readonly="readonly"
 								name="reminds[${status.index }].merchantRemindTemplate.remindTemplate.title"
 								class="input-medium"
@@ -95,8 +96,8 @@
 							时间：<input type="text" name="reminds[${status.index }].remindTime"
 								class="input-medium"
 								value='<fmt:formatDate value="${remind.remindTime }" pattern="yyyy-MM-dd" />'
-								onclick="WdatePicker();"> <input type='button'
-								class='btn' value='删除' onclick='deleteRemind(this);' />
+								onclick="WdatePicker();"> <span><c:if test="${remind.alreadyRemind eq true}">[已发送提醒短信]</c:if></span>
+								<c:if test="${remind.alreadyRemind eq false}"><input type='button' class='btn' value='删除' onclick='deleteRemind(this);' /></c:if>
 						</div>
 					</c:forEach> <input type="button" id="addRemindBtn" class="btn"
 					onclick="addRemind();" value="增加一个" /></td>

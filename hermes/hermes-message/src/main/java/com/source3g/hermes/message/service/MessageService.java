@@ -29,6 +29,7 @@ import com.hongxun.pub.tcptrans.TcpCommTrans;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
@@ -399,23 +400,41 @@ public class MessageService extends BaseService {
 		return "尊敬的" + customerName + ":" + content;
 	}
 
-	public void remindSend(String title, ObjectId merchantId) {
+	public void remindSend(String title, ObjectId merchantId) throws Exception {
 		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
 		Query query = new Query();
-		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
-			if (title.equals(merchantRemindTemplate.getRemindTemplate().getTitle())) {
+		String content=null;
+		MerchantRemindTemplate merchantRemindTemplate=null;
+		for (MerchantRemindTemplate m : merchantRemindTemplates) {
+			if (title.equals(m.getRemindTemplate().getTitle())) {
+				merchantRemindTemplate=m;
+				content=m.getMessageContent();
 				Criteria criteria = Criteria.where("merchantId").is(merchantId);
 				Calendar calendar = Calendar.getInstance();
 				Date startTime = new Date();
-				calendar.add(Calendar.DAY_OF_MONTH, merchantRemindTemplate.getAdvancedTime());
+				calendar.add(Calendar.DAY_OF_MONTH, m.getAdvancedTime());
 				Date endTime = DateFormateUtils.getStartDateOfDay(calendar.getTime());
 				criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
-				criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
+				criteria.and("reminds.merchantRemindTemplate.$id").is(m.getId());
 				query.addCriteria(criteria);
 			}
 		}
-	//	List<Customer> customers = mongoTemplate.find(query, Customer.class);
-	//	Set<String> phones=new HashSet<String>();
+		List<Customer> customers = mongoTemplate.find(query, Customer.class);
+		Set<String> phones=new HashSet<String>();
+		for(Customer c:customers){
+			phones.add(c.getPhone());
+		}
+		String[] Arrayphone=new String[phones.size()];
+		phones.toArray(Arrayphone);
+		sendMessages(merchantId, Arrayphone, content);
+		for(Customer c:customers){
+			for(Remind r: c.getReminds()){
+				if(r.getMerchantRemindTemplate().equals(merchantRemindTemplate)){
+					r.setAlreadyRemind(true);
+				}
+			}
+			mongoTemplate.save(c);
+		}
 	}
 
 }
