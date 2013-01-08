@@ -14,20 +14,20 @@
 		</div>
 		<div class="span5">
 			<ul class="unstyled ">
-				<li>我们已保存的老顾客数量：</li>
-				<li>最近三天手机来电总数量：</li>
-				<li>最近三天新顾客手机来电数量：</li>
-				<li>最近三天老顾客预订数量：</li>
-				<li>最近一周老顾客预订数量：</li>
-				<li>最近三天挂机短信发送数量：</li>
-				<li>最近一周客户群发短信数量：</li>
+				<li>已编辑顾客数量：<span id="editedCustomerCount">载入中</span></li>
+				<li>未编辑顾客数量：<span id="uneditedCustomerCount">载入中</span></li>
+				<li>最近三天老顾客来电数量：<span id="editedCallInCountThreeDay">载入中</span></li>
+				<li>最近三天新顾客来电数量：<span id="uneditedCallInCountThreeDay">载入中</span></li>
+				<li>最近一周老顾客来电数量：<span id="editedCallInCountAWeek">载入中</span></li>
+				<li>最近一周新顾客来电数量：<span id="uneditedCallInCountAWeek">载入中</span></li>
 			</ul>
 		</div>
 		<div class="span5">
 			<ul class="unstyled inline">
-				<li>占来电总数的比例：</li>
-				<li>占来电数量的比例：</li>
-				<li>占来电总数的比例：</li>
+				<li>最近三天挂机短信发送数量：<span id="handUpMessageSentCountThreeDay">载入中</span></li>
+				<li>最近一周挂机短信发送数量：<span id="handUpMessageSentCountAWeek">载入中</span></li>
+				<li>最近三天客户群发短信数量：<span id="messageGroupSentCountThreeDay">载入中</span></li>
+				<li>最近一周客户群发短信数量：<span id="messageGroupSentCountAWeek">载入中</span></li>
 			</ul>
 		</div>
 	</div>
@@ -37,7 +37,7 @@
 		</div>
 		<div id="dayChartContainer"></div>
 	</div>
-	
+
 	<div class="thumbnail span10">
 		<div class="caption">
 			<h3>月度趋势</h3>
@@ -64,7 +64,21 @@
 				dataType : "json",
 				success : reDraw
 			});
-			$.get("${pageContext.request.contextPath}/merchant/customer/callInStatistics/today/",drawPieChart,"json");
+			$.get("${pageContext.request.contextPath}/merchant/customer/callInStatistics/today/", drawPieChart, "json");
+
+			$.get("${pageContext.request.contextPath}/merchant/statistics/", showStatistics);
+			function showStatistics(data) {
+				$("#editedCustomerCount").html(data.customerStatistics.editedCustomerCount);
+				$("#uneditedCustomerCount").html(data.customerStatistics.uneditedCustomerCount);
+				$("#editedCallInCountThreeDay").html(data.customerStatistics.editedCallInCountThreeDay);
+				$("#uneditedCallInCountThreeDay").html(data.customerStatistics.uneditedCallInCountThreeDay);
+				$("#editedCallInCountAWeek").html(data.customerStatistics.editedCallInCountAWeek);
+				$("#uneditedCallInCountAWeek").html(data.customerStatistics.uneditedCallInCountAWeek);
+				$("#handUpMessageSentCountThreeDay").html(data.messageStatistics.handUpMessageSentCountThreeDay);
+				$("#handUpMessageSentCountAWeek").html(data.messageStatistics.handUpMessageSentCountAWeek);
+				$("#messageGroupSentCountThreeDay").html(data.messageStatistics.messageGroupSentCountThreeDay);
+				$("#messageGroupSentCountAWeek").html(data.messageStatistics.messageGroupSentCountAWeek);
+			}
 		});
 	</script>
 </body>

@@ -89,7 +89,6 @@
 					 type:"get",
 				success : showContentInfo
 			}; 
-				alert(options.url);		
 			$(this).ajaxSubmit(options);
 			return false;
 		});

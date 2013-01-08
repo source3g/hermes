@@ -258,7 +258,7 @@
 				});
 			}
 			function initRemingSelection(data){
-				remindOptions="<option>请选择</option>"+remindOptions;
+				remindOptions="<option value=''>请选择</option>"+remindOptions;
 				for(var i=0;i<data.length;i++){
 					remindOptions+="<option value='"+data[i].id+"'>"+data[i].remindTemplate.title+"</option>"
 				}
