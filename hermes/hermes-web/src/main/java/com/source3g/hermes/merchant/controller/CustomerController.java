@@ -85,7 +85,10 @@ public class CustomerController {
 	// 添加顾客验证电话号码去重
 	@RequestMapping(value = "/phoneValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean phoneValidate(String phone,HttpServletRequest req) throws Exception {
+	public Boolean phoneValidate(String phone,String oldPhone,HttpServletRequest req) throws Exception {
+		if(StringUtils.isNotEmpty(phone)&&phone.equals(oldPhone)){
+			return true;
+		}
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "customer/phoneValidate/" + phone +"/"+merchant.getId()+ "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);

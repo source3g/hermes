@@ -115,8 +115,8 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-				<button id="addMerchantBtn" data-loading-text="增加商户中..."
-					class="btn btn-primary">增加</button>
+				<input type="submit" id="addMerchantBtn"
+					data-loading-text="增加商户中..." class="btn btn-primary" value="增加" />
 			</c:if>
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">

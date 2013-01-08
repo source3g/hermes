@@ -18,8 +18,8 @@
 			id="code" value="${code }" name="code"> <span
 			class="help-inline"><font color="red">*</font></span><input
 			id="pageNo" name="pageNo" type="hidden"> 		 
-			<button id="addBtn" data-loading-text="资源增加中..." class="btn btn-primary">
-                   	增加 </button>&nbsp;<input
+                   <input id="addBtn" type="submit" data-loading-text="资源增加中..." class="btn btn-primary" value="增加" >
+                   	&nbsp;<input
 			class="btn btn-primary" type="button" onclick="query();" value="查询">
 	</form>
 

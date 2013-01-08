@@ -47,9 +47,7 @@
 		</div>
 
 		<div class="form-actions">
-			<button id="addAccountBtn" data-loading-text="账号增加中..." class="btn btn-primary">
-                    		增加
-                 </button>
+                 <input id="addAccountBtn" data-loading-text="账号增加中..." class="btn btn-primary" value="增加"> 
 		</div>
 		
 		<div id="errorModal" class="modal hide fade">

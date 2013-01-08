@@ -13,7 +13,7 @@
 		<label class="control-label" for="name">名称：</label> <input type="text"
 			class="input-xlarge" placeholder="请输入顾客组名称..." id="name" name="name">
 		<span class="help-inline"><font color="red">*</font></span>
-		<button id="addCustomerGroupBtn" data-loading-text="增加中..." class="btn btn-primary">增加</button>
+		<input type="submit" id="addCustomerGroupBtn" data-loading-text="增加中..." class="btn btn-primary" value="增加">
 	</form>
 
 	<h3>顾客组列表</h3>

@@ -137,7 +137,7 @@ public class CustomerImportService extends BaseService {
 		// 获取工作薄
 		Sheet sheet = wb.getSheetAt(0);
 
-		if (sheet.getLastRowNum() <= 1) {
+		if (sheet.getLastRowNum() <= 0) {
 			return result;
 		}
 

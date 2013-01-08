@@ -21,9 +21,7 @@
 			</div>
 		</div>
 		<div class="form-actions">
-			<button id="addDeviceBtn" data-loading-text="盒子增加中..." class="btn btn-primary">
-                    		增加
-                  </button>
+                  <input type="submit" id="addDeviceBtn" data-loading-text="盒子增加中..." class="btn btn-primary" value="增加"/>
 		</div>
 		<c:if test="${not empty errors }">
 			<div class="alert alert-error">
