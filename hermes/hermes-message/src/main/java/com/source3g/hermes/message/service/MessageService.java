@@ -365,6 +365,7 @@ public class MessageService extends BaseService {
 		if(messageType!=null){
 			criteria.and("type").is(messageType);
 		}
+		query.addCriteria(criteria);
 		return mongoTemplate.count(query, MessageSendLog.class);
 	}
 	
