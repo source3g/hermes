@@ -50,7 +50,6 @@ import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
-import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
