@@ -65,25 +65,6 @@
 			if(${not empty success}){
 				alert("发送成功");
 			}
-			
-			/*
-			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
-				var remindCount=data.length;
-				if(remindCount==0||typeof(data)=="string"){
-					$("#merchantRemind").html("提醒");
-					$("#merchantRemind").css("color","");
-					return;
-				}else{
-					$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");
-					$("#remindTipContent").click(function(){
-						loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
-					});
-					$("#remindTipAlert").css("display","");
-					$("#merchantRemind").html("提醒"+"("+remindCount+")");
-					$("#merchantRemind").css("color","red");
-				}
-			});
-			*/
 			initRemind();
 		});
 		function sendMessages(title){

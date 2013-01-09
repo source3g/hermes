@@ -99,13 +99,8 @@ public class MessageApi {
 	
 	@RequestMapping(value = "/remindSend/{title}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindSend(@PathVariable String title,@PathVariable ObjectId merchantId ) {
-		try {
-			messageService.remindSend(title,merchantId);
-			
-		} catch (Exception e) {
-			return e.getMessage();
-		}
+	public String remindSend(@PathVariable String title,@PathVariable ObjectId merchantId ) throws Exception {
+		messageService.remindSend(title,merchantId);
 		return ReturnConstants.SUCCESS;
 	}
 	
