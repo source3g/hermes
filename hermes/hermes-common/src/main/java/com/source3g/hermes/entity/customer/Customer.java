@@ -58,26 +58,6 @@ public class Customer extends AbstractEntity {
 	private CustomerGroup customerGroup;
 	private Date operateTime;
 
-	// @JsonIgnore
-	/*public int getCallInCountToday() {
-		int count = 0;
-		Date date = new Date();
-		Date startDate = DateFormateUtils.getStartDateOfDay(date);
-		if (CollectionUtils.isEmpty(callRecords)) {
-			return count;
-		}
-		for (CallRecord callRecord : callRecords) {
-			if (startDate.getTime() < callRecord.getCallTime().getTime()) {
-				count++;
-			}
-		}
-		return count;
-	}*/
-
-//	public void setCallInCountToday(int count) {
-//		// 空，为了对应反序列化
-//	}
-
 	public String getBirthday() {
 		return birthday;
 	}
@@ -227,19 +207,11 @@ public class Customer extends AbstractEntity {
 		objectMapper.getSerializationConfig().setSerializationInclusion(org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
 		objectMapper.registerModule(module);
 		SerializationConfig serializationConfig = objectMapper.getSerializationConfig();
-		serializationConfig.addMixInAnnotations(Customer.class, CustomerForSyncIntf.class);
+		serializationConfig.addMixInAnnotations(CustomerDto.class, CustomerForSyncIntf.class);
 		CustomerDto customerDto = new CustomerDto();
 		EntityUtils.copyCustomerEntityToDto(this, customerDto);
 		String strJson = objectMapper.writer().writeValueAsString(customerDto);
-
-		// {"otherPhones":null,"merchantId":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false},"callRecords":null,"lastCallInTime":1353986159566,"customerGroupId":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false},"operateTime":null,"birthday":"80-15","phone":"13644058759","blackList":false,"qq":"123456","email":"123@123.com","note":"爱吃红烧肉","sex":"MALE","reminds":[{"alreadyRemind":true,"advancedTime":"1","remindTime":1353986159568,"name":"红酒到期"},{"alreadyRemind":true,"advancedTime":"1","remindTime":1353986159568,"name":"红酒到期"}],"name":"张三","address":"北京市","id":{"timeSecond":1353907038,"machine":-748133974,"inc":-1763053068,"time":1353907038000,"new":false}}
-		// StringBuffer stringBuffer=new StringBuffer();
-		// String quote="\"";
-		// stringBuffer.append("{name:");
-		// stringBuffer.append(quote);
-		// stringBuffer.append(name);
-		// stringBuffer.append(quote);
-
+		
 		return "REPLACE INTO CUSTOMER (phone,content) values('" + phone + "','" + strJson + "'); ";
 	}
 
