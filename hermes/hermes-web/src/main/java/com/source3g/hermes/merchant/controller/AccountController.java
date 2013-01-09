@@ -133,12 +133,15 @@ public class AccountController {
 	Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uri=ConfigParams.getBaseUrl()+"shortMessage/remindSend/"+title+"/"+merchant.getId()+"/";
 		String result=restTemplate.getForObject(uri, String.class);
+		Map<String, Object> model = new HashMap<String, Object>();
 		if(ReturnConstants.SUCCESS.equals(result)){
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("success", result);
 			return new ModelAndView("merchant/accountCenter/remindList",model);	
+		}else{
+			model.put("error", result);
+			return new ModelAndView("merchant/accountCenter/remindList",model);	
 		}
-		return new ModelAndView("admin/error");
+		
 	}
 
 }

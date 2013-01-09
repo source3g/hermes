@@ -104,8 +104,7 @@ public class MessageApi {
 			messageService.remindSend(title,merchantId);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}

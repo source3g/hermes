@@ -59,13 +59,15 @@
 					});
 				}
 			}
+			if(${not empty error}){
+				alert("${error}");
+			}
 			if(${not empty success}){
 				alert("发送成功");
 			}
 			
 			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
 				var remindCount=data.length;
-				alert(remindCount);
 				if(remindCount==0||typeof(data)=="string"){
 					$("#merchantRemind").html("提醒");
 					$("#merchantRemind").css("color","");
