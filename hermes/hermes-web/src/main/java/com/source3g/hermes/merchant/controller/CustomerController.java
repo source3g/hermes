@@ -1,5 +1,4 @@
 package com.source3g.hermes.merchant.controller;
-
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
@@ -377,7 +376,7 @@ public class CustomerController {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {
 			for (int i = reminds.size() - 1; i >= 0; i--) {
-				if (reminds.get(i).getRemindTime() == null || reminds.get(i).getMerchantRemindTemplate().getId()==null||reminds.get(i).getRemindTime()==null) {
+				if (reminds.get(i).getRemindTime() == null || reminds.get(i).getMerchantRemindTemplate().getId()==null) {
 					reminds.remove(i);
 				}
 			}

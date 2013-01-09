@@ -69,7 +69,7 @@
 			<tr>
 			<td colspan="4">
 			<input id="sendBtn"  type="submit" data-loading-text="发送中..." class="btn btn-primary" value="发送" >
-				<td>
+				</td>
 		    </tr>
 			</tbody>
 		</table>

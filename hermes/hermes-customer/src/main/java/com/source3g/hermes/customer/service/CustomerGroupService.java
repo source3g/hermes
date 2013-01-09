@@ -41,8 +41,8 @@ public class CustomerGroupService extends BaseService {
 			return ;
 		}
 		Update update=new Update();
-		update.set("customerGroupId", new ObjectId(selectorId));
-		mongoTemplate.updateMulti(new Query(Criteria.where("customerGroupId").is(new ObjectId(customerGroupId)).and("merchantId").is(new ObjectId(merchantId))), update, Customer.class);
+		update.set("customerGroup.$id", new ObjectId(selectorId));
+		mongoTemplate.updateMulti(new Query(Criteria.where("customerGroup.$id").is(new ObjectId(customerGroupId)).and("merchantId").is(new ObjectId(merchantId))), update, Customer.class);
 		mongoTemplate.remove(new Query(Criteria.where("_id").is(new ObjectId(customerGroupId))), CustomerGroup.class);
 	}
 }

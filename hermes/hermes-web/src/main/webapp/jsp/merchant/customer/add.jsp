@@ -85,7 +85,7 @@
 				<td colspan="3"><c:forEach items="${customer.reminds}"
 						var="remind" varStatus="status">
 						<div class="remindItem">
-								<input type=hidden value="${remind.alreadyRemind }">
+								<input type=hidden name="reminds[${status.index }].alreadyRemind" value="${remind.alreadyRemind }">
 							事项：<input type="text" readonly="readonly"
 								name="reminds[${status.index }].merchantRemindTemplate.remindTemplate.title"
 								class="input-medium"
