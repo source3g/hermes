@@ -8,6 +8,8 @@ public class CallInStatistics {
 	private List<ObjectValue> newList;
 	private List<ObjectValue> oldList;
 	private List<ObjectValue> allList;
+	public CallInStatistics() {
+	}
 
 	public List<ObjectValue> getNewList() {
 		return newList;

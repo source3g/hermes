@@ -317,7 +317,7 @@
 			 }
 		 	$('#addMerchantBtn').button('loading')	
 			 var options = {
-				success : toList
+				success : showContentInfo
 			}; 
 			
 			$(this).ajaxSubmit(options);
@@ -393,7 +393,7 @@
 				return false;
 			}
 			$('#addMerchantForm').ajaxSubmit({
-				success : toList
+				success : showContentInfo
 			});
 		}
 
@@ -410,10 +410,6 @@
 		}
 		function deleteDevice(deleteBtn){
 			$(deleteBtn).parents("tr").remove();
-		}
-		
-		function toList(data) {
-			$("#pageContentFrame").html(data);
 		}
 		
 		function initDialog(){
