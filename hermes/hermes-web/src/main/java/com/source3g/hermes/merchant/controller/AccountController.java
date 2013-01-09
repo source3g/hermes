@@ -143,5 +143,11 @@ public class AccountController {
 		}
 		
 	}
-
+	@RequestMapping(value = "ignoreSendMessages/{title}", method = RequestMethod.GET)
+	public ModelAndView ignoreSendMessages(@PathVariable String title, HttpServletRequest req) throws Exception {
+	Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri=ConfigParams.getBaseUrl()+"customer/ignoreSendMessages/"+title+"/"+merchant.getId()+"/";
+		restTemplate.getForObject(uri, String.class);
+			return new ModelAndView("merchant/accountCenter/remindList");	
+	}
 }

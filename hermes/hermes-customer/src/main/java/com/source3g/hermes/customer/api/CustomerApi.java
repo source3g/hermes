@@ -352,4 +352,8 @@ public class CustomerApi {
 		return customerService.findTodayReminds(merchant.getId());
 	}
 
+	@RequestMapping(value = "/ignoreSendMessages/{title}/{merchantId}", method = RequestMethod.GET)
+	public void ignoreSendMessages(@PathVariable String title, @PathVariable ObjectId merchantId) {
+		customerService.ignoreSendMessages(title,merchantId);
+	}
 }

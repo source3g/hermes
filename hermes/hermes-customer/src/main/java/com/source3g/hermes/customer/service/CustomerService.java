@@ -781,4 +781,8 @@ public class CustomerService extends BaseService {
 		}
 		return result;
 	}
+
+	public void ignoreSendMessages(String title, ObjectId merchantId) {
+		
+	}
 }

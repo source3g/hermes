@@ -31,7 +31,7 @@
 					<tr>
 						<th >顾客姓名</th>
 						<th >顾客电话</th>
-						<th >提醒日期</th>
+						<th >提醒天数</th>
 					</tr>
 				</thead>
 			</table>
@@ -46,7 +46,9 @@
 			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",drawTable);
 			function drawTable(data){
 				for(var i=0;i<data.length;i++){
-					var str="<tr><td width=\"18%\">"+data[i].title+"</td><td width=\"18%\">"+data[i].content+"</td><td width=\"18%\">"+data[i].advancedTime+"</td><td width=\"28%\"><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><span>  [共有"+data[i].customers.length+"位客户]</span></td><td width=\"18%\"><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"></td></tr>";
+					var str="<tr><td width=\"18%\">"+data[i].title+"</td><td width=\"18%\" title="+data[i].content+"><div style=\"width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; \">"
+					+data[i].content+"</div></td><td width=\"18%\">"+data[i].advancedTime+"</td><td width=\"28%\"><input type=\"button\" value=\"详细信息\" class=\"btn btn-success\" id=\"customer"+i+"\"><span>  [共有"
+					+data[i].customers.length+"位客户]</span></td><td width=\"18%\"><input type=\"button\" class=\"btn btn-success\" value=\"一键发送\" onclick=\"sendMessages('"+data[i].title+"')\"><input type=\"button\" class=\"btn btn-danger\" value=\"忽略发送\" onclick=\"ignoreSendMessages('"+data[i].title+"')\"></td></tr>";
 					$("#customerRemindDtos").append(str);
 					$("#customer"+i).bind("click",{"remindInfo":data[i]},function (events){
 						$('#customerInfo').html("");
@@ -69,6 +71,12 @@
 		});
 		function sendMessages(title){
 			$.get("${pageContext.request.contextPath}/merchant/account/sendMessages/"+title+"/",showContentInfo);
+		}
+		function ignoreSendMessages(title){
+			if(!confirm("忽略以后将不能再发送此条短信,确定该忽略吗?")){
+				return;
+			}
+			$.get("${pageContext.request.contextPath}/merchant/account/ignoreSendMessages/"+title+"/",showContentInfo);
 		}
 	</script>
 </body>
