@@ -149,5 +149,7 @@ public class AccountController {
 		return new ModelAndView("merchant/accountCenter/resourceSetting");
 	}
 	
+	
+	
 
 }

@@ -12,9 +12,6 @@ import com.source3g.hermes.entity.note.Note;
 
 @Document
 public class Merchant extends AbstractEntity {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -9148277944381440756L;
 	@NotEmpty(message = "{merchant.name.not.null}")
 	private String name;
@@ -29,6 +26,7 @@ public class Merchant extends AbstractEntity {
 	private List<ObjectId> deviceIds;
 	
 	private ShortMessage shortMessage=new ShortMessage();
+	private MerchantResource merchantResource;
 	
 	private List<Note> notes;
 	
@@ -125,6 +123,14 @@ public class Merchant extends AbstractEntity {
 
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
+	}
+
+	public MerchantResource getMerchantResource() {
+		return merchantResource;
+	}
+
+	public void setMerchantResource(MerchantResource merchantResource) {
+		this.merchantResource = merchantResource;
 	}
 	
 }
