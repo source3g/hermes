@@ -35,7 +35,7 @@ body {
 						class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="#">个人中心</a></li>
+						<li><a href="#" onclick="loadPage('${pageContext.request.contextPath}/merchant/account/toPasswordChange/');">修改密码</a></li>
 						<li class="divider"></li>
 						<li><a href="${pageContext.request.contextPath}/logout/">退出</a></li>
 					</ul>
@@ -182,6 +182,10 @@ body {
 	$(document).ready(function() {
 		loadPage("${pageContext.request.contextPath}/merchant/main/");
 		initRemind();
+		$("#remindTipContent").click(function(){
+			loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
+		});
+		
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 		});
@@ -257,11 +261,8 @@ body {
 				return;
 			}else{
 				$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");
-				$("#remindTipContent").click(function(){
-					loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
-				});
 				$("#remindTipAlert").css("display","");
-				$("#merchantRemind").append("("+remindCount+")");
+				$("#merchantRemind").html("提醒"+"("+remindCount+")");
 				$("#merchantRemind").css("color","red");
 			}
 		});
