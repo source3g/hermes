@@ -59,6 +59,9 @@
 					});
 				}
 			}
+			if(${not empty error}){
+				alert("${error}");
+			}
 			if(${not empty success}){
 				alert("发送成功");
 			}
