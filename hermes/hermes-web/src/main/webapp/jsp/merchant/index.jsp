@@ -145,6 +145,7 @@ body {
 								<li><a href="javascript:void();" id="merchantSwitch">商户开关</a></li>
 								<li><a href="javascript:void();" id="merchantRemind">提醒</a></li>
 								<li><a href="javascript:void();" id="merchantRemindSetting">提醒设置</a></li>
+								<li><a href="javascript:void();" id="merchantResourceSetting">资源设置</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -246,6 +247,9 @@ body {
 		});
 		$("#passwordChange").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
+		});
+		$("#merchantResourceSetting").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 		});
 	});
 

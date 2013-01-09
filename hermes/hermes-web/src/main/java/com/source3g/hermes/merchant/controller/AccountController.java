@@ -141,13 +141,24 @@ public class AccountController {
 			model.put("error", result);
 			return new ModelAndView("merchant/accountCenter/remindList",model);	
 		}
-		
 	}
+
 	@RequestMapping(value = "ignoreSendMessages/{title}", method = RequestMethod.GET)
 	public ModelAndView ignoreSendMessages(@PathVariable String title, HttpServletRequest req) throws Exception {
 	Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri=ConfigParams.getBaseUrl()+"customer/ignoreSendMessages/"+title+"/"+merchant.getId()+"/";
-		restTemplate.getForObject(uri, String.class);
-			return new ModelAndView("merchant/accountCenter/remindList");	
+		String uri=ConfigParams.getBaseUrl()+"shortMessage/ignoreSendMessages/"+title+"/"+merchant.getId()+"/";
+		@SuppressWarnings("unused")
+		String result=restTemplate.getForObject(uri, String.class);
+		return new ModelAndView("merchant/accountCenter/remindList");	
 	}
+
+	
+	@RequestMapping(value="toResourceSetting",method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView toResourceSetting(){
+		return new ModelAndView("merchant/accountCenter/resourceSetting");
+	}
+	
+
+
 }

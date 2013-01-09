@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.message.service.MessageService;
+import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -26,6 +28,8 @@ public class MessageApi {
 
 	@Autowired
 	private MessageService messageService;
+	@Autowired
+	private CommonBaseService commonBaseService;
 
 	@RequestMapping(value = "/template/add", method = RequestMethod.POST)
 	@ResponseBody
@@ -101,6 +105,13 @@ public class MessageApi {
 	@ResponseBody
 	public String remindSend(@PathVariable String title,@PathVariable ObjectId merchantId ) throws Exception {
 		messageService.remindSend(title,merchantId);
+		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/ignoreSendMessages/{title}/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String ignoreSendMessages(@PathVariable String title, @PathVariable ObjectId merchantId) {
+		messageService.ignoreSendMessages(title,merchantId);
 		return ReturnConstants.SUCCESS;
 	}
 	
