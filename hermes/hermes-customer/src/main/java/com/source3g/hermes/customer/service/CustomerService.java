@@ -345,13 +345,14 @@ public class CustomerService extends BaseService {
 				String fieldName = headerFieldMap.get(headers[i]);
 				Object value=null;
 				if ("customerGroupName".equals(fieldName)) {
+					HSSFCell cell = row.createCell(i);
 					if (c.getCustomerGroup() != null) {
-						HSSFCell cell = row.createCell(i);
 						HSSFRichTextString richString = new HSSFRichTextString(c.getCustomerGroup().getName());
 						cell.setCellValue(richString);
+					}else{
+						cell.setCellValue("");
 					}
 				} else {
-
 					String firstLetter = fieldName.substring(0, 1)
 							.toUpperCase();
 					Field field = c.getClass().getDeclaredField(fieldName);

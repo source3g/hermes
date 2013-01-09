@@ -41,9 +41,7 @@
 			</tr>
 			<tr>
 				<td>
-				 <button id="updateMessageBtn" data-loading-text="额度调整 中..." class="btn btn-primary">
-                    		确定
-                 </button>
+                 <input type="submit"  id="updateMessageBtn" data-loading-text="额度调整 中..." class="btn btn-primary" value="确定"> 
 				</td>
 			</tr>
 		</table>

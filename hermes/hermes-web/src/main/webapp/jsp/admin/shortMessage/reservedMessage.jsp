@@ -32,9 +32,8 @@
 		</tr>
 		<tr>
 			<td>
-			 <button id="addMessageBtn" data-loading-text="短信预存中..." class="btn btn-primary">
-                    		确定
-                 </button>
+                <input id="addMessageBtn" data-loading-text="短信预存中..." class="btn btn-primary" type="submit" value="确定" >
+                 
 			</td>
 		</tr>
 		</table>

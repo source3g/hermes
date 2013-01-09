@@ -28,9 +28,7 @@
 				<input type="submit" class="btn btn-primary" value="修改">
 			</c:if>
 			<c:if test="${ empty update}">
-					<button id="addMerchantGroupBtn" data-loading-text="增加集团商户中..." class="btn btn-primary">
-                    		增加
-                  </button>
+                  <input type="submit"  id="addMerchantGroupBtn" data-loading-text="增加集团商户中..." class="btn btn-primary" value="增加"/>
 			</c:if>
 		</div>
 	</form>

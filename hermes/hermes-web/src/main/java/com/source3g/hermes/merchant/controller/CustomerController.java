@@ -1,5 +1,4 @@
 package com.source3g.hermes.merchant.controller;
-
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
@@ -85,7 +84,10 @@ public class CustomerController {
 	// 添加顾客验证电话号码去重
 	@RequestMapping(value = "/phoneValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean phoneValidate(String phone,HttpServletRequest req) throws Exception {
+	public Boolean phoneValidate(String phone,String oldPhone,HttpServletRequest req) throws Exception {
+		if(StringUtils.isNotEmpty(phone)&&phone.equals(oldPhone)){
+			return true;
+		}
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "customer/phoneValidate/" + phone +"/"+merchant.getId()+ "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
@@ -374,7 +376,7 @@ public class CustomerController {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {
 			for (int i = reminds.size() - 1; i >= 0; i--) {
-				if (reminds.get(i).getRemindTime() == null && reminds.get(i).getMerchantRemindTemplate().getId()!=null&&reminds.get(i).getMerchantRemindTemplate().getRemindTemplate().getTitle()!=null) {
+				if (reminds.get(i).getRemindTime() == null || reminds.get(i).getMerchantRemindTemplate().getId()==null) {
 					reminds.remove(i);
 				}
 			}

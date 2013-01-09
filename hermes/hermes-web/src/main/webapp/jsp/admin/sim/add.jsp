@@ -19,23 +19,22 @@
 				<input type="text" class="input-xlarge" placeholder="请输SIM卡号..."
 					id="no" name="no" value="${sim.no}"> <span
 					class="help-inline"><font color="red">*</font></span>
-		
+
 			</div>
 		</div>
 		<div class="form-actions">
-				 <button id="addSIMBtn" data-loading-text="SIM卡增加中..." class="btn btn-primary">
-                    		增加
-                 </button>
+			<input type="submit" data-loading-text="SIM卡增加中..."
+				class="btn btn-primary" value="增加">
 		</div>
 		<c:if test="${not empty errors }">
-				<div class="alert alert-error">
-					<ul>
-						<c:forEach items="${errors }" var="error">
-							<li>${error.defaultMessage }</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</c:if>
+			<div class="alert alert-error">
+				<ul>
+					<c:forEach items="${errors }" var="error">
+						<li>${error.defaultMessage }</li>
+					</c:forEach>
+				</ul>
+			</div>
+		</c:if>
 	</form>
 
 	<div id="errorModal" class="modal hide fade">

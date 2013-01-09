@@ -60,7 +60,7 @@
 		</table>
 		<div class="form-actions">
 			<c:if test="${ empty role }">
-				<button id="addRoleBtn"  class="btn btn-primary" data-loading-text="角色增加中..."> 提交</button>
+				<input type="submit" value="提交" id="addRoleBtn"  class="btn btn-primary" data-loading-text="角色增加中..."/>
 			</c:if>
 			<c:if test="${not empty role }">
 				<input type="button" onclick="update();" class="btn btn-primary" value="修改">

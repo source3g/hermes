@@ -68,12 +68,8 @@
 			 
 			<tr>
 			<td colspan="4">
-			<button id="fat-btn" data-loading-text="发送中..." class="btn btn-primary">
-                    		发送
-                  </button>
-
-				
-				<td>
+			<input id="sendBtn"  type="submit" data-loading-text="发送中..." class="btn btn-primary" value="发送" >
+				</td>
 		    </tr>
 			</tbody>
 		</table>
@@ -171,7 +167,7 @@
 				success :showList	
 		}; 
 		$("#customerPhonesInput").attr("value",$('#customerPhones').text());
-		 $('#fat-btn').button('loading')
+		 $('#sendBtn').button('loading')
 		$(this).ajaxSubmit(options);
 		return false;
 

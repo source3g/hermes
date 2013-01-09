@@ -40,9 +40,8 @@
 					onclick="WdatePicker({dateFmt:'MM-dd'});" /></td>
 				<td><label class="control-label">移动电话：</label></td>
 				<td><input type="text" class="input-medium" name="phone"
-					id="phone" placeholder="请输入移动电话..." onblur="phoneChange();"
-					value="${customer.phone }" /><span class="help-inline"><font
-						color="red">*</font></span></td>
+					id="phone" placeholder="请输入移动电话..." value="${customer.phone }" /><span
+					class="help-inline"><font color="red">*</font></span></td>
 			</tr>
 			<tr>
 				<td><label class="control-label">顾客组：</label></td>
@@ -65,7 +64,7 @@
 					varStatus="status">
 					<td><label class="control-label">电话${status.count }：</label></td>
 					<td><input type="text" class="span8" name="otherPhones"
-						value="${otherPhone }"  /></td>
+						value="${otherPhone }" /></td>
 				</c:forEach>
 			</tr>
 
@@ -110,8 +109,7 @@
 			</c:if>
 
 			<c:if test="${ empty update }">
-				<button id="addCustomer" data-loading-text="顾客增加中..."
-					class="btn btn-primary">增加</button>
+					<input type="submit" id="addCustomer" data-loading-text="顾客增加中..." class="btn btn-primary" value="增加"/>
 			</c:if>
 			<input id="backToList" type="button"
 				onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"
@@ -132,29 +130,27 @@
 	<script type="text/javascript">
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
 		var remindOptions=null;
-		var phoneRule={
-				required : true,
- 				rangelength:[11,11],
-				number:true,
-				digits:true ,
-				remote:{
-					type: "get",
-					url:"${pageContext.request.contextPath}/merchant/customer/phoneValidate",
-					data:{"phone":function(){
-										return $('#phone').val();
-									}
-						}
-				}
-			};
-		var validateoptions=null;
 		$(document).ready(function() {
-			validateoptions={
+			var validateoptions={
 					rules: {
 						name:{
 							required : true,
 							rangelength:[0,50]
 						},
-			 			phone:phoneRule,
+			 			phone:{
+							required : true,
+			 				rangelength:[11,11],
+							number:true,
+							digits:true ,
+							remote:{
+								type: "get",
+								url:"${pageContext.request.contextPath}/merchant/customer/phoneValidate",
+								data:{"phone":function(){
+													return $('#phone').val();
+												}
+									}
+							}
+						},
 						customerGroupId:{
 							required : true
 						},
@@ -202,6 +198,14 @@
 						}
 					}
 			};
+			
+			if(${not empty update }==true){
+				validateoptions.rules.phone.remote.data={"phone":function(){
+								return $('#phone').val();
+						},
+					 "oldPhone":"${customer.phone}"
+					};
+			}
 			
 			$('#addCustomerForm').validate(validateoptions);
 			initCustomerGroupList();
@@ -303,17 +307,6 @@
 				$("#resultMessage").html("操作成功！");
 				$("#errorModal").modal();
 			}
-		}
-		
-		function phoneChange(){
-			var phone=$("#phone").val();
-			if("${customer.phone}"!=""&&"${customer.phone}"==phone){
-				 $("#phone").rules("remove");
-				 $("#phone").rules("add",{required:true});
-			 }else{
-				 $("#phone").rules("add",phoneRule);
-			 }
-			$('#addCustomerForm').valid();
 		}
 	</script>
 </body>

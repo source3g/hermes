@@ -48,7 +48,10 @@ public class MerchantController {
 	// 验证商户账号是否存在
 	@RequestMapping(value = "accountValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean accountValidate(String account) {
+	public Boolean accountValidate(String account,String oldAccount) {
+		if(StringUtils.isNotEmpty(account)&&account.equals(oldAccount)){
+			return true;
+		}
 		String uri = ConfigParams.getBaseUrl() + "merchant/accountValidate/" + account + "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
