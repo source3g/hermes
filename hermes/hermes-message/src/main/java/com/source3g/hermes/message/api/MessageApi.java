@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.message.service.MessageService;
+import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -26,6 +28,8 @@ public class MessageApi {
 
 	@Autowired
 	private MessageService messageService;
+	@Autowired
+	private CommonBaseService commonBaseService;
 
 	@RequestMapping(value = "/template/add", method = RequestMethod.POST)
 	@ResponseBody
@@ -103,5 +107,15 @@ public class MessageApi {
 		messageService.remindSend(title,merchantId);
 		return ReturnConstants.SUCCESS;
 	}
+	
+	@RequestMapping(value = "/remindSend/{title}/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public String remindSendBySn(@PathVariable String title,@PathVariable String sn) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		messageService.remindSend(title,merchant.getId());
+		return ReturnConstants.SUCCESS;
+	}
+	
+	
 	
 }

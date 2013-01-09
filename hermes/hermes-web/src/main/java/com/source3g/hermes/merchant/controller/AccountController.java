@@ -141,7 +141,13 @@ public class AccountController {
 			model.put("error", result);
 			return new ModelAndView("merchant/accountCenter/remindList",model);	
 		}
-		
 	}
+	
+	@RequestMapping(value="toResourceSetting",method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView toResourceSetting(){
+		return new ModelAndView("merchant/accountCenter/resourceSetting");
+	}
+	
 
 }

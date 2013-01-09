@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -746,12 +745,7 @@ public class CustomerService extends BaseService {
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			Query query = new Query();
 			Criteria criteria = Criteria.where("merchantId").is(merchantId);
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(startTime);
-			calendar.add(Calendar.DAY_OF_MONTH,
-					merchantRemindTemplate.getAdvancedTime());
-			Date endTime = DateFormateUtils.getStartDateOfDay(calendar
-					.getTime());
+			Date endTime = DateFormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
 			criteria.and("reminds").elemMatch(Criteria.where("remindTime").gte(startTime).lte(endTime).and("merchantRemindTemplate.$id").is(merchantRemindTemplate.getId()).and("alreadyRemind").is(false));
 			query.addCriteria(criteria);
 			List<Customer> customers = mongoTemplate

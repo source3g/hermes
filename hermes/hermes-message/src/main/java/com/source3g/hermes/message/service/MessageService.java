@@ -3,7 +3,6 @@ package com.source3g.hermes.message.service;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +31,7 @@ import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
+import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageSendLog;
@@ -333,43 +333,42 @@ public class MessageService extends BaseService {
 		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phoneNumber)), Customer.class);
 		return processContent(merchant, customer, content);
 	}
-	
-	public MessageStatisticsDto findMessageStastics(ObjectId merchantId){
-		MessageStatisticsDto messageStatisticsDto=new MessageStatisticsDto();
-		messageStatisticsDto.setHandUpMessageSentCountAWeek(findMessageSentCountFromToday(merchantId,7,MessageType.挂机短信));
-		messageStatisticsDto.setMessageGroupSentCountAWeek(findMessageSentCountFromToday(merchantId,7,MessageType.群发));
-		messageStatisticsDto.setHandUpMessageSentCountThreeDay(findMessageSentCountFromToday(merchantId,3,MessageType.挂机短信));
-		messageStatisticsDto.setMessageGroupSentCountThreeDay(findMessageSentCountFromToday(merchantId,3,MessageType.群发));
+
+	public MessageStatisticsDto findMessageStastics(ObjectId merchantId) {
+		MessageStatisticsDto messageStatisticsDto = new MessageStatisticsDto();
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(findMessageSentCountFromToday(merchantId, 7, MessageType.群发));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(findMessageSentCountFromToday(merchantId, 3, MessageType.群发));
 		return messageStatisticsDto;
 	}
-	
-	public long findMessageSentCountFromToday(ObjectId merchantId,int dayCount,MessageType messageType){
-		Date endTime=new Date();
-		Date startTime=DateUtils.addDays(endTime, 0-dayCount);
-		//获取开始时间的0点0分0秒
-		startTime=DateFormateUtils.getStartDateOfDay(startTime);
-		return findMessageSentCount(merchantId,messageType,startTime,endTime);
+
+	public long findMessageSentCountFromToday(ObjectId merchantId, int dayCount, MessageType messageType) {
+		Date endTime = new Date();
+		Date startTime = DateUtils.addDays(endTime, 0 - dayCount);
+		// 获取开始时间的0点0分0秒
+		startTime = DateFormateUtils.getStartDateOfDay(startTime);
+		return findMessageSentCount(merchantId, messageType, startTime, endTime);
 	}
-	
-	public long findMessageSentCount(ObjectId merchantId,MessageType messageType,Date startTime,Date endTime){
-		Query query=new Query();
-		Criteria criteria=Criteria.where("merchantId").is(merchantId).and("status").is(MessageStatus.已发送);
+
+	public long findMessageSentCount(ObjectId merchantId, MessageType messageType, Date startTime, Date endTime) {
+		Query query = new Query();
+		Criteria criteria = Criteria.where("merchantId").is(merchantId).and("status").is(MessageStatus.已发送);
 		Date date = new Date();
-		if(startTime==null){
+		if (startTime == null) {
 			startTime = DateFormateUtils.getStartDateOfDay(date);
 		}
-		if(endTime==null){
-			endTime=date;
+		if (endTime == null) {
+			endTime = date;
 		}
 		criteria.and("sendTime").gte(startTime).lte(endTime);
-		if(messageType!=null){
+		if (messageType != null) {
 			criteria.and("type").is(messageType);
 		}
 		query.addCriteria(criteria);
 		return mongoTemplate.count(query, MessageSendLog.class);
 	}
-	
-	
+
 	public String processContent(Merchant merchant, Customer customer, String content) {
 		if (customer == null) {
 			return content;
@@ -402,40 +401,36 @@ public class MessageService extends BaseService {
 	}
 
 	public void remindSend(String title, ObjectId merchantId) throws Exception {
-		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
-		Query query = new Query();
-		String content=null;
-		MerchantRemindTemplate merchantRemindTemplate=null;
-		for (MerchantRemindTemplate m : merchantRemindTemplates) {
-			if (title.equals(m.getRemindTemplate().getTitle())) {
-				merchantRemindTemplate=m;
-				content=m.getMessageContent();
-				Criteria criteria = Criteria.where("merchantId").is(merchantId);
-				Calendar calendar = Calendar.getInstance();
-				Date startTime = new Date();
-				calendar.add(Calendar.DAY_OF_MONTH, m.getAdvancedTime());
-				Date endTime = DateFormateUtils.getStartDateOfDay(calendar.getTime());
-				criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
-				criteria.and("reminds.merchantRemindTemplate.$id").is(m.getId());
-				query.addCriteria(criteria);
-			}
+		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
+		if (remindTemplate == null) {
+			return;
 		}
+		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())), MerchantRemindTemplate.class);
+		Query query = new Query();
+		String content = null;
+		content = merchantRemindTemplate.getMessageContent();
+		Criteria criteria = Criteria.where("merchantId").is(merchantId);
+		Date startTime = new Date();
+		Date endTime = DateFormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
+		criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
+		criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
+		query.addCriteria(criteria);
 		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-		Set<String> phones=new HashSet<String>();
-		for(Customer c:customers){
+		Set<String> phones = new HashSet<String>();
+		for (Customer c : customers) {
 			phones.add(c.getPhone());
 		}
-		String[] Arrayphone=new String[phones.size()];
+		String[] Arrayphone = new String[phones.size()];
 		phones.toArray(Arrayphone);
 		sendMessages(merchantId, Arrayphone, content);
-		for(Customer c:customers){
-			for(Remind r: c.getReminds()){
-				if(r.getMerchantRemindTemplate().equals(merchantRemindTemplate)&&r.isAlreadyRemind()==false){
+		for (Customer c : customers) {
+			for (Remind r : c.getReminds()) {
+				if (r.getMerchantRemindTemplate().equals(merchantRemindTemplate) && r.isAlreadyRemind() == false) {
 					r.setAlreadyRemind(true);
 					mongoTemplate.save(c);
 				}
 			}
-			
+
 		}
 	}
 
