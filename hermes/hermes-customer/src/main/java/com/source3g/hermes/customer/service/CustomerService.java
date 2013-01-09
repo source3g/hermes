@@ -78,11 +78,14 @@ public class CustomerService extends BaseService {
 	@Autowired
 	private JmsService jmsService;
 
-	public Customer add(Customer customer) {
+	public void add(Customer customer) throws Exception {
 		customer.setId(ObjectId.get());
 		customer.setOperateTime(new Date());
+		if(customer.getCustomerGroup()==null){
+			throw new Exception("顾客组不能为空");
+		}
+		
 		mongoTemplate.insert(customer);
-		return customer;
 	}
 
 	public Boolean phoneValidate(String phone, ObjectId merchantId) {

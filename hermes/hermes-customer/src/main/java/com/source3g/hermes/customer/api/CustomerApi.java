@@ -96,7 +96,7 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)
 	@ResponseBody
-	public String add(@RequestBody Customer customer) {
+	public String add(@RequestBody Customer customer) throws Exception {
 		customerService.add(customer);
 		return "success";
 	}
