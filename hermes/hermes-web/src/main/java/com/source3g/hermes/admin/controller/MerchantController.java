@@ -244,7 +244,7 @@ public class MerchantController {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo;
+		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo+"&merchantId="+merchant.getId();
 		Page page = restTemplate.getForObject(uriMsgLog, Page.class);
 		model.put("page", page);
 		model.put("merchant", merchant);

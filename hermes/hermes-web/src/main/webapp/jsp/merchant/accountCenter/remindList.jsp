@@ -66,6 +66,7 @@
 				alert("发送成功");
 			}
 			
+			/*
 			$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
 				var remindCount=data.length;
 				if(remindCount==0||typeof(data)=="string"){
@@ -82,7 +83,8 @@
 					$("#merchantRemind").css("color","red");
 				}
 			});
-			
+			*/
+			initRemind();
 		});
 		function sendMessages(title){
 			$.get("${pageContext.request.contextPath}/merchant/account/sendMessages/"+title+"/",showContentInfo);
