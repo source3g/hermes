@@ -23,7 +23,7 @@ body {
 					data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
-				</a> <a class="brand" href="index/"> <img alt="旺财宝"
+				</a> <a class="brand" href="${pageContext.request.contextPath}/admin/index/"> <img alt="旺财宝"
 					src="${pageContext.request.contextPath}/img/logo.png" /> <!-- <span>旺财宝</span> --></a>
 
 				<!-- theme selector ends -->
