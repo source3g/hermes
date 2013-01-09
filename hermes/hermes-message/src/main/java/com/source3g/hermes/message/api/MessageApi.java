@@ -108,14 +108,11 @@ public class MessageApi {
 		return ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value = "/remindSend/{title}/{sn}", method = RequestMethod.GET)
+	@RequestMapping(value = "/ignoreSendMessages/{title}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindSendBySn(@PathVariable String title,@PathVariable String sn) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
-		messageService.remindSend(title,merchant.getId());
+	public String ignoreSendMessages(@PathVariable String title, @PathVariable ObjectId merchantId) {
+		messageService.ignoreSendMessages(title,merchantId);
 		return ReturnConstants.SUCCESS;
 	}
-	
-	
 	
 }

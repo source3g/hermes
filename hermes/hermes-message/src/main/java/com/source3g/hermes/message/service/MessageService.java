@@ -406,16 +406,8 @@ public class MessageService extends BaseService {
 			return;
 		}
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())), MerchantRemindTemplate.class);
-		Query query = new Query();
-		String content = null;
-		content = merchantRemindTemplate.getMessageContent();
-		Criteria criteria = Criteria.where("merchantId").is(merchantId);
-		Date startTime = new Date();
-		Date endTime = DateFormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
-		criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
-		criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
-		query.addCriteria(criteria);
-		List<Customer> customers = mongoTemplate.find(query, Customer.class);
+		String content = merchantRemindTemplate.getMessageContent();
+		List<Customer> customers=findCustomerByMerchantRemindTemplate(title, merchantId,remindTemplate,merchantRemindTemplate);
 		Set<String> phones = new HashSet<String>();
 		for (Customer c : customers) {
 			phones.add(c.getPhone());
@@ -423,6 +415,27 @@ public class MessageService extends BaseService {
 		String[] Arrayphone = new String[phones.size()];
 		phones.toArray(Arrayphone);
 		sendMessages(merchantId, Arrayphone, content);
+	}
+	
+	public void ignoreSendMessages(String title, ObjectId merchantId) {
+		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
+		if (remindTemplate == null) {
+			return;
+		}
+		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())), MerchantRemindTemplate.class);
+		@SuppressWarnings("unused")
+		List<Customer> customers=findCustomerByMerchantRemindTemplate(title, merchantId,remindTemplate,merchantRemindTemplate);
+	}
+	
+	public List<Customer> findCustomerByMerchantRemindTemplate(String title, ObjectId merchantId,RemindTemplate remindTemplate,MerchantRemindTemplate merchantRemindTemplate ){
+		Query query = new Query();
+		Criteria criteria = Criteria.where("merchantId").is(merchantId);
+		Date startTime = new Date();
+		Date endTime = DateFormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
+		criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
+		criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
+		query.addCriteria(criteria);
+		List<Customer> customers = mongoTemplate.find(query, Customer.class);
 		for (Customer c : customers) {
 			for (Remind r : c.getReminds()) {
 				if (r.getMerchantRemindTemplate().equals(merchantRemindTemplate) && r.isAlreadyRemind() == false) {
@@ -432,6 +445,7 @@ public class MessageService extends BaseService {
 			}
 
 		}
+		return customers;
 	}
 
 }

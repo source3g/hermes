@@ -64,12 +64,13 @@ public class CustomerController {
 		String uri = ConfigParams.getBaseUrl() + "customer/add/";
 		HttpEntity<Customer> httpEntity = new HttpEntity<Customer>(customer);
 		String result = restTemplate.postForObject(uri, httpEntity, String.class);
+		Map<String, Object> model = new HashMap<String, Object>();
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			Map<String, Object> model = new HashMap<String, Object>();
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("merchant/customer/add", model);
 		} else {
-			return new ModelAndView("merchant/error");
+			model.put("error", result);
+			return new ModelAndView("merchant/customer/add", model);
 		}
 	}
 	

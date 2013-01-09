@@ -131,6 +131,9 @@
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
 		var remindOptions=null;
 		$(document).ready(function() {
+			if(${not empty error}){
+				alert("${error}");
+			}
 			var validateoptions={
 					rules: {
 						name:{
@@ -151,7 +154,7 @@
 									}
 							}
 						},
-						customerGroupId:{
+						"customerGroup.id":{
 							required : true
 						},
 						address:{
@@ -180,7 +183,7 @@
 							digits:"请输入整数",
 							remote:"该电话号码已存在"
 						},
-						customerGroupId:{
+						"customerGroup.id":{
 							required : "客户组不能为空"
 						},
 						address:{

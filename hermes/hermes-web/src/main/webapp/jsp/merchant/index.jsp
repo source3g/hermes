@@ -263,6 +263,8 @@ body {
 			if(remindCount==0||typeof(data)=="string"){
 				$("#merchantRemind").html("提醒");
 				$("#merchantRemind").css("color","");
+				$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");
+				$("#remindTipAlert").css("display","none");
 				return;
 			}else{
 				$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");

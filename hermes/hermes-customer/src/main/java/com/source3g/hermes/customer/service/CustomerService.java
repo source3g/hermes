@@ -50,6 +50,7 @@ import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
+import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
@@ -77,11 +78,14 @@ public class CustomerService extends BaseService {
 	@Autowired
 	private JmsService jmsService;
 
-	public Customer add(Customer customer) {
+	public void add(Customer customer) throws Exception {
 		customer.setId(ObjectId.get());
 		customer.setOperateTime(new Date());
+		if(customer.getCustomerGroup()==null){
+			throw new Exception("顾客组不能为空");
+		}
+		
 		mongoTemplate.insert(customer);
-		return customer;
 	}
 
 	public Boolean phoneValidate(String phone, ObjectId merchantId) {
@@ -772,4 +776,5 @@ public class CustomerService extends BaseService {
 		}
 		return result;
 	}
+
 }
