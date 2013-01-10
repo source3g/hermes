@@ -414,16 +414,14 @@ public class CustomerService extends BaseService {
 
 	public void callIn(String deviceSn, String phone, String time,
 			String duration) throws Exception {
-		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn")
-				.is(deviceSn)), Device.class);
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);
 		if (device == null) {
 			throw new Exception("盒子编号不存在");
 		}
 		Query findMerchantByDeviceSn = new Query();
 		findMerchantByDeviceSn.addCriteria(Criteria.where("deviceIds").is(
 				device.getId()));
-		Merchant merchant = mongoTemplate.findOne(findMerchantByDeviceSn,
-				Merchant.class);
+		Merchant merchant = mongoTemplate.findOne(findMerchantByDeviceSn,Merchant.class);
 		if (merchant == null) {
 			throw new Exception("盒子所属商户不存在");
 		}
@@ -446,11 +444,9 @@ public class CustomerService extends BaseService {
 			record.setNewCustomer(true);
 		}
 		update.set("phone", phone).set("merchantId", merchant.getId())
-				.set("lastCallInTime", callInTime)
+				.set("lastCallInTime", callInTime).set("lastCallInTime", new Date())
 				.addToSet("callRecords", record);
-		mongoTemplate.upsert(
-				new Query(Criteria.where("merchantId").is(merchant.getId())
-						.and("phone").is(phone)), update, Customer.class);
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 
 		if (merchant.getSetting().isAutoSend() == false) {
 			return;

@@ -240,10 +240,10 @@ public class CustomerApi {
 	public List<CustomerImportItem> findImportItems(@PathVariable String logId) {
 		return customerImportService.findImportItems(logId);
 	}
-	
-	@RequestMapping(value="/statistics/{merchantId}",method=RequestMethod.GET)
+
+	@RequestMapping(value = "/statistics/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public CustomerStatisticsDto findCustomerStatistics(@PathVariable String merchantId){
+	public CustomerStatisticsDto findCustomerStatistics(@PathVariable String merchantId) {
 		return customerService.findCustomerStatistics(new ObjectId(merchantId));
 	}
 
