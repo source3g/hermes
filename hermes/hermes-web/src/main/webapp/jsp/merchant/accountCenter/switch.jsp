@@ -20,7 +20,7 @@
 					<c:if test="${ merchant.setting.autoSend eq true }"> checked="checked" </c:if> />开
 				<input type="radio" name="autoSend" id="autoSend" value="false"
 					<c:if test="${merchant.setting.autoSend eq false }"> checked="checked" </c:if> />关
-				<span class="help-inline">(注：选择关时，将不会进行挂机短信发送) </span>
+				<span>(注：选择关时，将不会进行挂机短信发送) </span>
 			</div>
 		</div>
 
@@ -31,7 +31,7 @@
 					<c:if test="${ merchant.setting.nameMatch eq true }"> checked="checked" </c:if> />开
 				<input type="radio" name="nameMatch" id="nameMatch" value="false"
 					<c:if test="${ merchant.setting.nameMatch eq false }"> checked="checked" </c:if> />关
-				<span class="help-inline">(注：选择关时，发送短信将不会进行自动匹配性别 )</span>
+				<span >(注：选择关时，发送短信将不会进行自动匹配性别 )</span>
 			</div>
 		</div>
 
@@ -42,7 +42,7 @@
 					<c:if test="${ merchant.setting.salerMatch eq true }"> checked="checked" </c:if> />开
 				<input type="radio" name="salerMatch" id="salerMatch" value="false"
 					<c:if test="${ merchant.setting.salerMatch eq false }"> checked="checked" </c:if> />关
-				<span class="help-inline">(注：打开开关，群发短信自动加上对应的销售信息)</span>
+				<span >(注：打开开关，群发短信自动加上对应的销售信息)</span>
 			</div>
 		</div>
 
@@ -58,7 +58,7 @@
 				<span id="templateSpan">
 
 				</span>
-				 <span class="help-inline">(注：打开开关，生日提醒将出现在提醒列表中)</span>
+				 <span>(注：打开开关，生日提醒将出现在提醒列表中)</span>
 			</div>
 		</div>
 
@@ -86,7 +86,7 @@
 					salerMatch : {
 						required : true
 					},
-					birthdayRemind : {
+					"birthdayRemindTemplate.id" : {
 						required : true
 					}
 
@@ -101,7 +101,7 @@
 					salerMatch : {
 						required : "选项不能为空"
 					},
-					birthdayRemind : {
+					"birthdayRemindTemplate.id" : {
 						required : "选项不能为空"
 					}
 
