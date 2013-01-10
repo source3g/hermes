@@ -27,9 +27,6 @@ import com.source3g.hermes.merchant.security.service.MerchantSecurityService;
 
 @Component
 public class ShiroDbRealm extends AuthorizingRealm {
-
-//	@Autowired
-//	private SecurityService securityService;
 	
 	@Autowired
 	private AdminSecurityService adminSecurityService;

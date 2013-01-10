@@ -211,7 +211,6 @@ public class Customer extends AbstractEntity {
 		CustomerDto customerDto = new CustomerDto();
 		EntityUtils.copyCustomerEntityToDto(this, customerDto);
 		String strJson = objectMapper.writer().writeValueAsString(customerDto);
-		
 		return "REPLACE INTO CUSTOMER (phone,content) values('" + phone + "','" + strJson + "'); ";
 	}
 

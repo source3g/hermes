@@ -27,7 +27,6 @@ public class MerchantSecurityService {
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		Merchant merchant=restTemplate.postForObject(url, requestEntity, Merchant.class);
-		
 		return merchant;
 	}
 
