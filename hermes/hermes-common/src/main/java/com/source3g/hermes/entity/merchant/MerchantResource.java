@@ -8,6 +8,8 @@ public class MerchantResource {
 	private String suffix;
 	private List<String> list;
 	
+	
+	
 	public String getPrefix() {
 		return prefix;
 	}

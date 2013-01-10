@@ -45,14 +45,14 @@
 		  if(${not empty error}){
 			  alert("${error}");		 
 			  }
-			$.get("${pageContext.request.contextPath}/admin/merchant/merchantResourceList",drawTable);
+			$.get("${pageContext.request.contextPath}/merchant/account/merchantResource",drawTable);
  		 	function drawTable (data){
-		  		for(var i=0;i<data.merchantResource.list.length;i++){
-		  			var str="<tr><td>"+data.merchantResource.list[i]+"</td><td><input type='button' value='删除' class='btn btn-danger' onclick=\"deletemerchantResource('"+data.merchantResource.list[i]+"')\"></td></tr>";
+		  		for(var i=0;i<data.list.length;i++){
+		  			var str="<tr><td>"+data.list[i]+"</td><td><input type='button' value='删除' class='btn btn-danger' onclick=\"deletemerchantResource('"+data.list[i]+"')\"></td></tr>";
 		  			$("#resourceTab").append(str);
 		 		} 
-		  		var prefix=data.merchantResource.prefix;
-		  		var suffix=data.merchantResource.suffix;
+		  		var prefix=data.prefix;
+		  		var suffix=data.suffix;
 		  		$("#prefix").attr("value",prefix);
 		  		$("#suffix").attr("value",suffix);
 			}  
@@ -71,14 +71,14 @@
 			});   
 	  });
 	  function deletemerchantResource(name){
-		  $.get("${pageContext.request.contextPath}/admin/merchant/deletemerchantResource/"+name+"/",showContentInfo);
+		  $.get("${pageContext.request.contextPath}/merchant/account/deletemerchantResource/"+name+"/",showContentInfo);
 	  }
 	  $("#addMerchantResourceForm").submit(function(){
  		  if (!$('#addMerchantResourceForm').valid()) {
 				return false;
 			}  
 		  options={
-			url:"${pageContext.request.contextPath}/admin/merchant/addMerchantResource",
+			url:"${pageContext.request.contextPath}/merchant/account/addMerchantResource/",
 			type:"get",
 			success:showContentInfo
 		  };
@@ -87,7 +87,7 @@
 	  });
 	  $("#addMerchantResourceForm1").submit(function(){
 		  options={
-			url:"${pageContext.request.contextPath}/admin/merchant/updateMerchantResource",
+			url:"${pageContext.request.contextPath}/merchant/account/updateMerchantResource",
 			type:"get",
 			success:showContentInfo
 		  };
