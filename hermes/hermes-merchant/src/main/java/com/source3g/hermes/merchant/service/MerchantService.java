@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
+import com.source3g.hermes.entity.merchant.MerchantResource;
 import com.source3g.hermes.entity.merchant.MessageLog;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.entity.merchant.Setting;
@@ -235,5 +236,44 @@ public class MerchantService extends BaseService {
 			update.set("password", newPassword);
 			mongoTemplate.updateFirst(new Query(Criteria.where("password").is(password).and("_id").is(merchantId)), update, Merchant.class);
 		}
+	}
+
+	public void addMerchantResource(ObjectId merchantId,String name) throws Exception {
+		if(name==null||name.equals("")){
+			throw new Exception("名称不能为空 ");
+		}
+		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		MerchantResource merchantResource=merchant.getMerchantResource();
+		if(merchantResource==null){
+			merchant.setMerchantResource(new MerchantResource());
+		}
+		List<String> list=merchant.getMerchantResource().getList();
+		if(list==null){
+			merchant.getMerchantResource().setList(new ArrayList<String>());
+		}
+		if(list.contains(name)){
+			throw new Exception("资源名称重复 ");
+		}
+		merchant.getMerchantResource().getList().add(name);
+		mongoTemplate.save(merchant);
+	}
+
+	public void deletemerchantResource(ObjectId merchantId, String name) {
+		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		List<String> list=merchant.getMerchantResource().getList();
+	list.remove(name);
+		mongoTemplate.save(merchant);
+	}
+
+	public Merchant updateMerchantResource(String suffix, String prefix,ObjectId merchantId) {
+		Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		MerchantResource merchantResource=merchant.getMerchantResource();
+		if(merchantResource==null){
+			merchant.setMerchantResource(new MerchantResource());
+		}
+		merchant.getMerchantResource().setPrefix(prefix);
+		merchant.getMerchantResource().setSuffix(suffix);
+		mongoTemplate.save(merchant);
+		return merchant;
 	}
 }

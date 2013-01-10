@@ -196,4 +196,24 @@ public class MerchantApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
+	
+	@RequestMapping(value = "/addMerchantResource/{merchantId}/{name}", method = RequestMethod.GET)
+	@ResponseBody
+	public String addMerchantResource(@PathVariable ObjectId merchantId,@PathVariable String name) throws Exception {
+		merchantService.addMerchantResource(merchantId,name);
+		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/deletemerchantResource/{merchantId}/{name}", method = RequestMethod.GET)
+	@ResponseBody
+	public String deletemerchantResource(@PathVariable ObjectId merchantId,@PathVariable String name) {
+		merchantService.deletemerchantResource(merchantId,name);
+		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/updateMerchantResource/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Merchant updateMerchantResource(String suffix , String prefix,@PathVariable ObjectId merchantId) {
+		return 	merchantService.updateMerchantResource(suffix,prefix,merchantId);
+	}
 }

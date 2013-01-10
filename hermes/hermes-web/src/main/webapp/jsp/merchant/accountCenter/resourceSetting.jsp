@@ -11,20 +11,20 @@
 <body>
 	<h3>资源操作</h3>
 
-	<form id="addCustomerGroupForm" class="form-inline">
+	<form id="addMerchantResourceForm1" class="form-inline">
 		<label class="control-label" for="prefix">前缀：</label> <input
 			type="text" class="input-xlarge" placeholder="请输入短信前缀..." id="prefix"
-			name="prefix"> <label class="control-label" for="suffix">后缀：</label>
+			name="prefix" value="${merchant.merchantResource.prefix }"> <label class="control-label" for="suffix">后缀：</label>
 		<input type="text" class="input-xlarge" placeholder="请输入短信后缀..."
-			id="suffix" name="suffix">
+			id="suffix" name="suffix" value="${merchant.merchantResource.suffix }">
 		<input type="submit" class="btn btn-primary"  value="保存">
 	</form>
 
-	<form action="addResourceForm">
+	<form id="addMerchantResourceForm">
 		<label class="control-label" for="name">资源名称：</label> <input
 			type="text" class="input-xlarge" placeholder="请输入资源名称..." id="name"
 			name="name"> <span class="help-inline"><font
-			color="red">*</font></span> <input type="submit" id="addCustomerGroupBtn"
+			color="red">*</font></span> <input type="submit" id="addMerchantResource"
 			data-loading-text="增加中..." class="btn btn-primary" value="增加">
 	</form>
 
@@ -37,7 +37,65 @@
 				<th>操作</th>
 			</tr>
 		</thead>
-
+		<tbody>
+		</tbody>
 	</table>
+	<script type="text/javascript">
+	  $(document).ready(function() {
+		  if(${not empty error}){
+			  alert("${error}");		 
+			  }
+			$.get("${pageContext.request.contextPath}/admin/merchant/merchantResourceList",drawTable);
+ 		 	function drawTable (data){
+		  		for(var i=0;i<data.merchantResource.list.length;i++){
+		  			var str="<tr><td>"+data.merchantResource.list[i]+"</td><td><input type='button' value='删除' class='btn btn-danger' onclick=\"deletemerchantResource('"+data.merchantResource.list[i]+"')\"></td></tr>";
+		  			$("#resourceTab").append(str);
+		 		} 
+		  		var prefix=data.merchantResource.prefix;
+		  		var suffix=data.merchantResource.suffix;
+		  		$("#prefix").attr("value",prefix);
+		  		$("#suffix").attr("value",suffix);
+			}  
+ 		 	
+ 			$('#addMerchantResourceForm').validate({
+				rules : {
+					name:{
+						required:true
+					}
+				},
+				messages : {
+					name:{
+						required:"名称不能为空"
+					}
+				}
+			});   
+	  });
+	  function deletemerchantResource(name){
+		  $.get("${pageContext.request.contextPath}/admin/merchant/deletemerchantResource/"+name+"/",showContentInfo);
+	  }
+	  $("#addMerchantResourceForm").submit(function(){
+ 		  if (!$('#addMerchantResourceForm').valid()) {
+				return false;
+			}  
+		  options={
+			url:"${pageContext.request.contextPath}/admin/merchant/addMerchantResource",
+			type:"get",
+			success:showContentInfo
+		  };
+		  $(this).ajaxSubmit(options);
+			return false;
+	  });
+	  $("#addMerchantResourceForm1").submit(function(){
+		  options={
+			url:"${pageContext.request.contextPath}/admin/merchant/updateMerchantResource",
+			type:"get",
+			success:showContentInfo
+		  };
+		  $(this).ajaxSubmit(options);
+			return false;
+	  });
+	  
+	
+	</script>
 </body>
 </html>
