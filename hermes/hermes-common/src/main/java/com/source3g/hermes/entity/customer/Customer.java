@@ -27,6 +27,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.source3g.hermes.constants.Constants;
 import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
@@ -211,7 +212,12 @@ public class Customer extends AbstractEntity {
 		CustomerDto customerDto = new CustomerDto();
 		EntityUtils.copyCustomerEntityToDto(this, customerDto);
 		String strJson = objectMapper.writer().writeValueAsString(customerDto);
-		return "REPLACE INTO CUSTOMER (phone,content) values('" + phone + "','" + strJson + "'); ";
+		SimpleDateFormat sdf=new SimpleDateFormat(Constants.DATE_FORMAT);
+		String lastCallInTimeStr="";
+		if(lastCallInTime!=null){
+			lastCallInTimeStr=sdf.format(lastCallInTime);
+		}
+		return "REPLACE INTO CUSTOMER (phone,name,sex,lastCallInTime ,callInCount ,content) values('" + phone + "','"+name+"','"+sex+"','"+lastCallInTimeStr+"','"+customerDto.getCallInCount()+"','" + strJson + "'); ";
 	}
 
 	@JsonIgnore
