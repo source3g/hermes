@@ -11,17 +11,17 @@ import com.source3g.hermes.entity.dictionary.MerchantTagNode;
 import com.source3g.hermes.utils.ConfigParams;
 
 @Controller
-@RequestMapping("/admin/merchantTagNode")
+@RequestMapping("/admin/dictionary/tag")
 public class MerchantTagNodeController {
 	@Autowired
 	private RestTemplate restTemplate;
 	
-	@RequestMapping(value = "/merchantTagNodeList", method = RequestMethod.GET)
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
 	public MerchantTagNode[] merchantTagNodeList() {
 		String uri = ConfigParams.getBaseUrl() + "/dictionary/merchant/tags";
-		MerchantTagNode[] merchantTagNode = restTemplate.getForObject(uri, MerchantTagNode[].class);
-		return merchantTagNode;
+		MerchantTagNode[] merchantTagNodes = restTemplate.getForObject(uri, MerchantTagNode[].class);
+		return merchantTagNodes;
 	}
 }
 

@@ -41,7 +41,8 @@
 		<div class="control-group">
 			<label class="control-label" for="tag">标签分类选择：</label>
 			<div class="controls">
-				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="choseTags()">标签分类选择</a> 
+				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="showTags()">标签分类选择</a><span
+					id="tagName">   标签：</span>
 			</div>
 		</div>
 		
@@ -167,18 +168,13 @@
 			<a class="close" data-dismiss="modal">&times;</a>
 			<h3>标签分类</h3>
 		</div>
-		<div class="modal-body">
-				<div>
-				<input type="checkbox" style="margin:10px;">美食</div>
-				<div><input type="checkbox"  style="margin:10px;">中餐</div>
-				<div><input type="checkbox" style="margin:10px;">火锅
-				<input type="checkbox" style="margin:10px;">粤菜
-				<input type="checkbox" style="margin:10px;">川菜
-				<input type="checkbox" style="margin:10px;">湘菜</div>
-				<div><input type="checkbox" style="margin:10px;">西餐</div>
-				<div><input type="checkbox" style="margin:10px;">自助餐</div>
+		<div class="modal-body" id="modalBody">
+				
 		</div>
-		<div class="modal-footer"></div>
+			
+		<div class="modal-footer">
+			<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="choseTags()"></input>
+		</div>
 	</div>
 
 	<c:if test="${not empty errors }">
@@ -450,13 +446,44 @@
 			}
 		} 
 		
-		function choseTags(){
-			$.get("${pageContext.request.contextPath}/admin/merchantTagNode/merchantTagNodeList",drawmerchantTagNodeList);
-			//$("#tagModal").modal();
+		function showTags(){
+			$.get("${pageContext.request.contextPath}/admin/dictionary/tag/list",drawmerchantTagNodeList);
+			$("#tagModal").modal();
 		}
 		function drawmerchantTagNodeList(data){
-			alert(data);
+			for(var i=0;i<data.length;i++){
+				if(data[i].parentId==null){
+					var str="<div class=\"tag\"><input type=\"checkbox\" style=\"margin:10px;\"  name=\"tag\" value='"+data[i].name+"'>"+data[i].name+"</div>";
+					$("#modalBody").append(str);
+			/* 		alert(data[i].children==null);
+					if(data[i].children.length!=0){
+						fillTree(data[i].children) 
+					}*/
+				}
+				 
+			}
+/* 			function fillTree(list){
+				for(var i=0;i<list.length;i++){
+					if(list[i].children.length==0){
+						var str="<div><input type=\"checkbox\" style=\"margin:10px;\">"+list[i].name+"</div>";
+						$("div [class='tag']").last().after(str);
+						//$("div").after(str);
+					}else{
+						var str1="<div><input type=\"checkbox\" style=\"margin:10px;\">"+list[i].name+"</div>";
+						$("div [class='tag']").last().after(str);
+						fillTree(list[i].children);
+					}
+				}
+			} */
 		}
+		
+		function choseTags(){
+			$("input[name='tag']:checked").each(function(){
+				$('#tagName').append("["+$(this).val()+"]   ");
+			});
+			$("#tagModal").modal("hide");
+		}
+		
 	</script>
 </body>
 <%-- <%@include file="../../include/footer.jsp"%> --%>
