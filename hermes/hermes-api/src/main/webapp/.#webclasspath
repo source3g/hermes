@@ -1,6 +1,4 @@
 D:\workspaceMine\hermes\hermes\hermes-api\target\classes
-<<<<<<< HEAD
-=======
 D:\java\jdk1.7.0_04\jre\lib\resources.jar
 D:\java\jdk1.7.0_04\jre\lib\rt.jar
 D:\java\jdk1.7.0_04\jre\lib\jsse.jar
@@ -14,7 +12,6 @@ D:\java\jdk1.7.0_04\jre\lib\ext\sunjce_provider.jar
 D:\java\jdk1.7.0_04\jre\lib\ext\sunmscapi.jar
 D:\java\jdk1.7.0_04\jre\lib\ext\sunpkcs11.jar
 D:\java\jdk1.7.0_04\jre\lib\ext\zipfs.jar
->>>>>>> branch 'master' of https://github.com/source3g/hermes.git
 D:\workspaceMine\hermes\hermes\hermes-customer\target\classes
 D:\workspaceMine\hermes\hermes\hermes-common\target\classes
 D:\lib\maven-3.0.3\repositories\junit\junit\4.10\junit-4.10.jar
@@ -100,10 +97,6 @@ D:\workspaceMine\hermes\hermes\hermes-sync\target\classes
 D:\lib\maven-3.0.3\repositories\org\apache\commons\commons-compress\1.4.1\commons-compress-1.4.1.jar
 D:\lib\maven-3.0.3\repositories\org\tukaani\xz\1.0\xz-1.0.jar
 D:\workspaceMine\hermes\hermes\hermes-message\target\classes
-<<<<<<< HEAD
-F:\apache-maven-3.0.4\repository\com\hongxun\pub\1.0\pub-1.0.jar
-=======
 D:\lib\maven-3.0.3\repositories\com\hongxun\pub\1.0\pub-1.0.jar
->>>>>>> branch 'master' of https://github.com/source3g/hermes.git
 D:\workspaceMine\hermes\hermes\hermes-dictionary\target\classes
 D:\workspaceMine\hermes\hermes\hermes-security\target\classes
