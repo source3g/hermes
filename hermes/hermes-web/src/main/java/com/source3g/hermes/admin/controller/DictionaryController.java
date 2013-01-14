@@ -103,8 +103,4 @@ public class DictionaryController {
 		return ("redirect:/admin/dictionary/toRemindTemplate");
 	}
 	
-	@RequestMapping(value="/toMerchantTag",method=RequestMethod.GET)
-	public ModelAndView toMerchantTag(){
-		return new ModelAndView("/admin/dataDictionary/merchantTag");
-	}
 }

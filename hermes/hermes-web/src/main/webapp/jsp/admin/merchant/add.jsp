@@ -177,7 +177,6 @@
 				<input type="checkbox" style="margin:10px;">湘菜</div>
 				<div><input type="checkbox" style="margin:10px;">西餐</div>
 				<div><input type="checkbox" style="margin:10px;">自助餐</div>
-			
 		</div>
 		<div class="modal-footer"></div>
 	</div>
@@ -452,8 +451,11 @@
 		} 
 		
 		function choseTags(){
-		alert("aaa");
-		$("#tagModal").modal();
+			$.get("${pageContext.request.contextPath}/admin/merchantTagNode/merchantTagNodeList",drawmerchantTagNodeList);
+			//$("#tagModal").modal();
+		}
+		function drawmerchantTagNodeList(data){
+			alert(data);
 		}
 	</script>
 </body>

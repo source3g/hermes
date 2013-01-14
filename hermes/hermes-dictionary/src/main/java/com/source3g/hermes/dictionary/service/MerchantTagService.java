@@ -16,11 +16,14 @@ public class MerchantTagService extends BaseService {
 
 	public List<MerchantTagNode> findTopNodes() {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("parent").is(null));
+		query.addCriteria(Criteria.where("parentId").is(null));
 		return mongoTemplate.find(query, MerchantTagNode.class);
 	}
 
 	public void save(List<MerchantTagNode> nodes) {
+		if (CollectionUtils.isEmpty(nodes)) {
+			return;
+		}
 		for (MerchantTagNode node : nodes) {
 			mongoTemplate.save(node);
 		}
