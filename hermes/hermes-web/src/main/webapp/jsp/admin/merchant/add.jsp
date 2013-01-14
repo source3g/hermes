@@ -169,7 +169,6 @@
 			<h3>标签分类</h3>
 		</div>
 		<div class="modal-body" id="modalBody">
-				
 		</div>
 			
 		<div class="modal-footer">
@@ -451,30 +450,27 @@
 			$("#tagModal").modal();
 		}
 		function drawmerchantTagNodeList(data){
+			$("#modalBody").html("");
 			for(var i=0;i<data.length;i++){
-				if(data[i].parentId==null){
 					var str="<div class=\"tag\"><input type=\"checkbox\" style=\"margin:10px;\"  name=\"tag\" value='"+data[i].name+"'>"+data[i].name+"</div>";
 					$("#modalBody").append(str);
-			/* 		alert(data[i].children==null);
-					if(data[i].children.length!=0){
-						fillTree(data[i].children) 
-					}*/
-				}
+			 		alert(data[i].children==null);
+					if(data[i].children!=null&&data[i].children.length>=0){
+						drawByParent(data[i]) 
+					}
 				 
 			}
-/* 			function fillTree(list){
-				for(var i=0;i<list.length;i++){
-					if(list[i].children.length==0){
-						var str="<div><input type=\"checkbox\" style=\"margin:10px;\">"+list[i].name+"</div>";
-						$("div [class='tag']").last().after(str);
-						//$("div").after(str);
-					}else{
-						var str1="<div><input type=\"checkbox\" style=\"margin:10px;\">"+list[i].name+"</div>";
-						$("div [class='tag']").last().after(str);
-						fillTree(list[i].children);
-					}
+ 			function drawByParent(node){
+ 				var children=node.children;
+ 				if(children==null||children.length<=0){
+ 					return;
+ 				}
+ 				for(var i=0;i<children.length;i++){
+						var str1="<div><input type=\"checkbox\" style=\"margin:10px;\" name=\"tag\" value='"+children[i].name+"'>"+children[i].name+"</div>";
+						$("div [class='tag']").last().after(str1);
+						drawByParent(children[i]);
 				}
-			} */
+			} 
 		}
 		
 		function choseTags(){
