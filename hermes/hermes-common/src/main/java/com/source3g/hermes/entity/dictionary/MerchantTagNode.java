@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -14,7 +13,6 @@ public class MerchantTagNode extends AbstractEntity {
 	private static final long serialVersionUID = 6126138616863825251L;
 
 	private String name;
-	@DBRef
 	private ObjectId parentId;
 
 	@Transient
