@@ -24,6 +24,7 @@ public class EntityUtils {
 		if (customer.getCustomerGroup() != null) {
 			customerDto.setCustomerGroupId(customer.getCustomerGroup().getId());
 		}
+		customerDto.setFavorite(customer.getFavorite());
 		customerDto.setEmail(customer.getEmail());
 		customerDto.setLastCallInTime(customer.getLastCallInTime());
 		customerDto.setName(customer.getName());

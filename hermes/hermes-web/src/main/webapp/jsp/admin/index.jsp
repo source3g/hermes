@@ -146,7 +146,8 @@ body {
 							<ul id="security-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
-								<li><a href="javascript:void();" id="dataDictionary">提醒设置</a></li>
+								<li><a href="javascript:void();" id="remindDictionary">提醒设置</a></li>
+								<li><a href="javascript:void();" id="merchantTagDictionary">商户标签</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -227,8 +228,11 @@ body {
 		});
 		
 		//提醒设置 
-		$("#dataDictionary").click(function() {
+		$("#remindDictionary").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/dictionary/toRemindTemplate/");
+		});
+		$("#merchantTagDictionary").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/dictionary/toMerchantTag/");
 		});
 	});
 

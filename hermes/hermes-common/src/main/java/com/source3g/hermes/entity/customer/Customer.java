@@ -49,6 +49,8 @@ public class Customer extends AbstractEntity {
 	private String qq;
 	private String email;
 	private String note;
+	
+	private Boolean favorite;//常用联系人
 
 	private List<CallRecord> callRecords;
 
@@ -223,6 +225,14 @@ public class Customer extends AbstractEntity {
 	@JsonIgnore
 	public String toDeleteSql() {
 		return "delete from  CUSTOMER where phone='" + phone + "'";
+	}
+
+	public Boolean getFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(Boolean favorite) {
+		this.favorite = favorite;
 	}
 
 	public class ObjectIdSerializer extends JsonSerializer<ObjectId> {

@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
+import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.message.service.MessageService;
+import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -26,6 +28,8 @@ public class MessageApi {
 
 	@Autowired
 	private MessageService messageService;
+	@Autowired
+	private CommonBaseService commonBaseService;
 
 	@RequestMapping(value = "/template/add", method = RequestMethod.POST)
 	@ResponseBody
@@ -60,11 +64,38 @@ public class MessageApi {
 		return messageService.findMessageStastics(new ObjectId(merchantId));
 	}
 
+	/**
+	 * 短信群发
+	 * @param merchantId
+	 * @param ids
+	 * @param customerPhones
+	 * @param content
+	 * @return
+	 */
 	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String messageSend(@PathVariable String merchantId, String[] ids, String customerPhones,String content) {
 		try {
 			messageService.messageGroupSend(new ObjectId(merchantId), ids, customerPhones,content);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+	
+	/**
+	 * 短信单发
+	 * @param sn
+	 * @param customerMessageDto
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/messageSend/sn/{sn}", method = RequestMethod.POST)
+	@ResponseBody
+	public String messageSendBySn(@PathVariable String sn, @RequestBody CustomerMessageDto customerMessageDto) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		try {
+			messageService.sendMessage(merchant.getId(), customerMessageDto.getCustomerPhone(),customerMessageDto.getContent());
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -104,11 +135,48 @@ public class MessageApi {
 		return ReturnConstants.SUCCESS;
 	}
 	
+	@RequestMapping(value = "/remindSend/sn/{sn}/{title}", method = RequestMethod.GET)
+	@ResponseBody
+	public String remindSend(@PathVariable String title,@PathVariable String sn ) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		messageService.remindSend(title,merchant.getId());
+		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/remindIgnore/sn/{sn}/{title}", method = RequestMethod.GET)
+	@ResponseBody
+	public String remindIgnore(@PathVariable String title,@PathVariable String sn ) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		messageService.ignoreSendMessages(title,merchant.getId());
+		return ReturnConstants.SUCCESS;
+	}
+	//TODO 方法名要改
 	@RequestMapping(value = "/ignoreSendMessages/{title}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public String ignoreSendMessages(@PathVariable String title, @PathVariable ObjectId merchantId) {
 		messageService.ignoreSendMessages(title,merchantId);
 		return ReturnConstants.SUCCESS;
+	}
+	
+	
+	
+	
+	public static class CustomerMessageDto{
+		private String customerPhone;
+		private String content;
+		
+		public String getCustomerPhone() {
+			return customerPhone;
+		}
+		public void setCustomerPhone(String customerPhone) {
+			this.customerPhone = customerPhone;
+		}
+		public String getContent() {
+			return content;
+		}
+		public void setContent(String content) {
+			this.content = content;
+		}
 	}
 	
 }
