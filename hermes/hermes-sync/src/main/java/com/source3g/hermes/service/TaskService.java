@@ -361,9 +361,9 @@ public class TaskService extends CommonBaseService {
 	private List<Customer> findAddOrUpdateList(ObjectId merchantId, Date date) {
 		List<Customer> list = new ArrayList<Customer>();
 		if (date == null) {
-			list = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId).and("name").ne(null)), Customer.class);
+			list = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), Customer.class);
 		} else {
-			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date).and("merchantId").is(merchantId).and("name").ne(null)), Customer.class);
+			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date).and("merchantId").is(merchantId)), Customer.class);
 		}
 		return list;
 	}

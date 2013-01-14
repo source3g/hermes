@@ -307,8 +307,8 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/callInList", method = RequestMethod.GET)
-	public ModelAndView callInList(Customer customer, String pageNo, String customerType, HttpServletRequest req) throws Exception {
-		Merchant merchant = LoginUtils.getLoginMerchant(req);
+	public ModelAndView callInList(Customer customer, String pageNo, String customerType) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant();
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}

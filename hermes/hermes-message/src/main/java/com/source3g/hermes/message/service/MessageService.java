@@ -165,6 +165,22 @@ public class MessageService extends BaseService {
 	public void save(MessageTemplate messageTemplate) {
 		mongoTemplate.save(messageTemplate);
 	}
+	
+	public void sendMessage(ObjectId merchantId,String phone,String content) throws Exception{
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		if(merchant.getShortMessage().getSurplusMsgCount()-1<0) {
+			throw new Exception("余额不足");
+		}
+		ShortMessageMessage message = new ShortMessageMessage();
+		PhoneInfo phoneInfo = genPhoneInfo(merchantId, phone, content, MessageType.短信发送);
+		List<PhoneInfo> phoneInfos =Arrays.asList(phoneInfo);
+		
+		message.setContent(content);
+		message.setPhoneInfos(phoneInfos);
+		message.setMessageType(MessageType.短信发送);
+		message.setMerchantId(merchantId);
+		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+	}
 
 	public void sendMessages(ObjectId merchantId, String[] customerPhoneArray, String content) throws Exception {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
@@ -178,6 +194,36 @@ public class MessageService extends BaseService {
 		message.setMessageType(MessageType.群发);
 		message.setMerchantId(merchantId);
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+	}
+
+	/**
+	 * 生成电话信息，并生成发送日志
+	 * 
+	 * @param merchantId
+	 * @param messageSendLogId
+	 * @param customerPhoneArray
+	 * @param content
+	 * @param type
+	 * @return
+	 */
+	private PhoneInfo genPhoneInfo(ObjectId merchantId, String phone, String content, MessageType type) {
+			// 生成发送记录
+			MessageSendLog log = genMessageSendLog(phone, merchantId, content, type);
+			// 发送记录生成完成
+			PhoneInfo phoneInfo = new PhoneInfo(phone, content, log.getId());
+		// 生成短信群发记录
+		genGroupSendLog(phone, content, merchantId);
+		return phoneInfo;
+	}
+	
+	private void genGroupSendLog(String phone, String content, ObjectId merchantId) {
+		GroupSendLog groupSendLog = new GroupSendLog();
+		groupSendLog.setMerchantId(merchantId);
+		groupSendLog.setContent(content);
+		groupSendLog.setSendCount(1);
+		groupSendLog.setSendTime(new Date());
+		groupSendLog.setId(ObjectId.get());
+		mongoTemplate.insert(groupSendLog);
 	}
 
 	/**

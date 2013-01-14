@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
+import com.source3g.hermes.entity.merchant.MerchantResource;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.merchant.service.MerchantService;
@@ -216,4 +217,19 @@ public class MerchantApi {
 	public Merchant updateMerchantResource(String suffix , String prefix,@PathVariable ObjectId merchantId) {
 		return 	merchantService.updateMerchantResource(suffix,prefix,merchantId);
 	}
+	
+	@RequestMapping(value = "/merchantResource/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public MerchantResource getMerchantResource(@PathVariable ObjectId merchantId) {
+		return 	merchantService.getMerchantResource(merchantId);
+	}
+	
+	@RequestMapping(value = "/merchantResource/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public MerchantResource getMerchantResource(@PathVariable String sn) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		return 	merchantService.getMerchantResource(merchant.getId());
+	}
+	
+	
 }

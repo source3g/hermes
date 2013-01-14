@@ -444,7 +444,7 @@ public class CustomerService extends BaseService {
 			record.setNewCustomer(true);
 		}
 		update.set("phone", phone).set("merchantId", merchant.getId())
-				.set("lastCallInTime", callInTime).set("lastCallInTime", new Date())
+				.set("lastCallInTime", callInTime).set("operateTime", new Date())
 				.addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 

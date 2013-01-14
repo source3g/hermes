@@ -51,7 +51,9 @@
 				</select></td>
 				<td><label class="control-label">黑名单：</label></td>
 				<td><input type="checkbox" name="blackList"
-					<c:if test="${customer.blackList eq true}">checked="checked"</c:if> />是</td>
+					<c:if test="${customer.blackList eq true}">checked="checked"</c:if> />是
+					&nbsp;&nbsp; 常用联系人  <input type="checkbox" name="favorite" <c:if test="${customer.favorite eq true}">checked="checked"</c:if> >是
+					</td>
 			</tr>
 			<tr>
 				<td><label class="control-label">家庭地址：</label></td>

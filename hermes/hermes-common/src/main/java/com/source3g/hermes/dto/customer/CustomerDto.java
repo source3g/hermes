@@ -20,6 +20,8 @@ public class CustomerDto {
 	private String note;
 	private List<CallRecord> callRecords;
 
+	private Boolean favorite;
+
 	private Date lastCallInTime; // 最后通电话时间
 	private ObjectId customerGroupId;
 	private Date operateTime;
@@ -146,5 +148,13 @@ public class CustomerDto {
 
 	public void setReminds(List<RemindDto> reminds) {
 		this.reminds = reminds;
+	}
+
+	public Boolean getFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(Boolean favorite) {
+		this.favorite = favorite;
 	}
 }

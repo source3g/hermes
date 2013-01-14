@@ -36,5 +36,4 @@ public abstract class AbstractEntity implements Serializable{
 			this.id=null;
 		}
 	}
-
 }
