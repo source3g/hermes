@@ -30,6 +30,7 @@ public class Merchant extends AbstractEntity {
 	
 	private List<Note> notes;
 	
+	private List<Tag> tags;
 	//是否被删除
 	private boolean canceled;
 	@DBRef
@@ -131,6 +132,14 @@ public class Merchant extends AbstractEntity {
 
 	public void setMerchantResource(MerchantResource merchantResource) {
 		this.merchantResource = merchantResource;
+	}
+
+	public List<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
 	}
 	
 }

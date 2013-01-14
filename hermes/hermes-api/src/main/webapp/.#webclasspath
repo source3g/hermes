@@ -1,19 +1,4 @@
 D:\workspaceMine\hermes\hermes\hermes-api\target\classes
-C:\Program Files\Java\jre7\lib\resources.jar
-C:\Program Files\Java\jre7\lib\rt.jar
-C:\Program Files\Java\jre7\lib\jsse.jar
-C:\Program Files\Java\jre7\lib\jce.jar
-C:\Program Files\Java\jre7\lib\charsets.jar
-C:\Program Files\Java\jre7\lib\jfr.jar
-C:\Program Files\Java\jre7\lib\ext\access-bridge.jar
-C:\Program Files\Java\jre7\lib\ext\dnsns.jar
-C:\Program Files\Java\jre7\lib\ext\jaccess.jar
-C:\Program Files\Java\jre7\lib\ext\sunec.jar
-C:\Program Files\Java\jre7\lib\ext\sunjce_provider.jar
-C:\Program Files\Java\jre7\lib\ext\sunmscapi.jar
-C:\Program Files\Java\jre7\lib\ext\sunpkcs11.jar
-C:\Program Files\Java\jre7\lib\ext\zipfs.jar
-C:\Program Files\Java\jre7\lib\ext\localedata.jar
 D:\workspaceMine\hermes\hermes\hermes-customer\target\classes
 D:\workspaceMine\hermes\hermes\hermes-common\target\classes
 F:\apache-maven-3.0.4\repository\junit\junit\4.10\junit-4.10.jar
@@ -99,6 +84,6 @@ D:\workspaceMine\hermes\hermes\hermes-sync\target\classes
 F:\apache-maven-3.0.4\repository\org\apache\commons\commons-compress\1.4.1\commons-compress-1.4.1.jar
 F:\apache-maven-3.0.4\repository\org\tukaani\xz\1.0\xz-1.0.jar
 D:\workspaceMine\hermes\hermes\hermes-message\target\classes
-D:\workspaceMine\hermes\hermes\hermes-message\lib\HXPUBAPI.jar
+F:\apache-maven-3.0.4\repository\com\hongxun\pub\1.0\pub-1.0.jar
 D:\workspaceMine\hermes\hermes\hermes-dictionary\target\classes
 D:\workspaceMine\hermes\hermes\hermes-security\target\classes

@@ -71,6 +71,9 @@
 			});   
 	  });
 	  function deletemerchantResource(name){
+			if(!confirm("确定该删除吗")){
+				return;
+			}
 		  $.get("${pageContext.request.contextPath}/admin/merchant/deletemerchantResource/"+name+"/",showContentInfo);
 	  }
 	  $("#addMerchantResourceForm").submit(function(){

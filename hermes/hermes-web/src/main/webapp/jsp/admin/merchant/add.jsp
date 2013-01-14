@@ -37,7 +37,14 @@
 					class="help-inline"></span>
 			</div>
 		</div>
-
+		
+		<div class="control-group">
+			<label class="control-label" for="tag">标签分类选择：</label>
+			<div class="controls">
+				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="choseTags()">标签分类选择</a> 
+			</div>
+		</div>
+		
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
 			<div class="controls">
@@ -135,7 +142,7 @@
 			<a class="close" data-dismiss="modal">&times;</a>
 			<h3>选择集团商户</h3>
 		</div>
-		<div class="modal-body">
+		<div  class="modal-body">
 			<form class="well form-inline" id="queryMerchantGroupForm">
 				<label for="merchantGroup">集团商户名称：</label> <input
 					id="merchantGroupName" name="merchantGroupName" type="text"
@@ -151,6 +158,26 @@
 					</tr>
 				</thead>
 			</table>
+		</div>
+		<div class="modal-footer"></div>
+	</div>
+	
+	<div id="tagModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>标签分类</h3>
+		</div>
+		<div class="modal-body">
+				<div>
+				<input type="checkbox" style="margin:10px;">美食</div>
+				<div><input type="checkbox"  style="margin:10px;">中餐</div>
+				<div><input type="checkbox" style="margin:10px;">火锅
+				<input type="checkbox" style="margin:10px;">粤菜
+				<input type="checkbox" style="margin:10px;">川菜
+				<input type="checkbox" style="margin:10px;">湘菜</div>
+				<div><input type="checkbox" style="margin:10px;">西餐</div>
+				<div><input type="checkbox" style="margin:10px;">自助餐</div>
+			
 		</div>
 		<div class="modal-footer"></div>
 	</div>
@@ -424,6 +451,10 @@
 			}
 		} 
 		
+		function choseTags(){
+		alert("aaa");
+		$("#tagModal").modal();
+		}
 	</script>
 </body>
 <%-- <%@include file="../../include/footer.jsp"%> --%>

@@ -116,6 +116,9 @@
 		}
 
 		function deleteById() {
+			if(!confirm("确定该删除吗")){
+				return;
+			}
 			var title = $("#sel").find("option:selected").text();
 			if (title == '请选择') {
 				$("#id").html("");

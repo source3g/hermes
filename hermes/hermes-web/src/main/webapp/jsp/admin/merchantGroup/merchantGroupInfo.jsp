@@ -9,7 +9,7 @@
 </head>
 <body>
 		<div>
-			<p><span>集团商户详细信息:     </span>${merchantGroup.name}</p>
+			<p><span>集团商户名称:     </span>${merchantGroup.name}</p>
 		</div>
 	<table class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>

@@ -117,7 +117,7 @@ public class MerchantGroupController {
 			model.put("merchants", merchants);
 			return new ModelAndView("admin/merchantGroup/merchantGroupInfo",model);
 		}
-		return new ModelAndView("admin/merchantGroup/add", model);
+		return new ModelAndView("admin/merchantGroup/merchantGroupInfo", model);
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)

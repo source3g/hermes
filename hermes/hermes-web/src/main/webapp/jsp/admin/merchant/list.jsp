@@ -65,6 +65,9 @@
 		});		
 	}
 		function deleteById(id) {
+			if(!confirm("确定该删除吗")){
+				return;
+			}
 		$.ajax({
 			url:"${pageContext.request.contextPath}/admin/merchant/cancel/"+id+"/",
 			type:"get",
