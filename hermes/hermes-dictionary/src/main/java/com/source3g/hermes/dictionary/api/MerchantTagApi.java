@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dictionary.service.MerchantTagService;
+import com.source3g.hermes.dto.dictionary.MerchantTagDto;
 import com.source3g.hermes.entity.dictionary.MerchantTagNode;
 
 @Controller
@@ -27,8 +29,8 @@ public class MerchantTagApi {
 	
 	@RequestMapping(value = "/merchant/tags", method = RequestMethod.POST)
 	@ResponseBody
-	public String add(List<MerchantTagNode> nodes) {
-		 merchantTagService.save(nodes);
+	public String add(@RequestBody MerchantTagDto tagDto) {
+		 merchantTagService.save(tagDto.getNodes());
 		 return ReturnConstants.SUCCESS;
 	}
 

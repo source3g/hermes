@@ -232,7 +232,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/admin/dictionary/toRemindTemplate/");
 		});
 		$("#merchantTagDictionary").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/dictionary/toMerchantTag/");
+			loadPage("${pageContext.request.contextPath}/admin/dictionary/tag/toTagSetting/");
 		});
 	});
 

@@ -21,6 +21,9 @@ public class MerchantTagService extends BaseService {
 	}
 
 	public void save(List<MerchantTagNode> nodes) {
+		if (CollectionUtils.isEmpty(nodes)) {
+			return;
+		}
 		for (MerchantTagNode node : nodes) {
 			mongoTemplate.save(node);
 		}
