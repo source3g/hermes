@@ -454,7 +454,6 @@
 			for(var i=0;i<data.length;i++){
 					var str="<div class=\"tag\"><input type=\"checkbox\" style=\"margin:10px;\"  name=\"tag\" value='"+data[i].name+"'>"+data[i].name+"</div>";
 					$("#modalBody").append(str);
-			 		alert(data[i].children==null);
 					if(data[i].children!=null&&data[i].children.length>=0){
 						drawByParent(data[i]) 
 					}
