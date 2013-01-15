@@ -452,7 +452,7 @@
 		function drawmerchantTagNodeList(data){
 			$("#modalBody").html("");
 			for(var i=0;i<data.length;i++){
-					var str="<div class=\"tag\"><input type=\"checkbox\" style=\"margin:10px;\"  name=\"tag\" value='"+data[i].name+"'>"+data[i].name+"</div>";
+					var str="<div class=\"tag\"><input type=\"checkbox\" style=\"margin:10px;\"  name=\"tag\" value='"+data[i].name+"' onchange=\"change(this)\">"+data[i].name+"</div>";
 					$("#modalBody").append(str);
 					if(data[i].children!=null&&data[i].children.length>=0){
 						drawByParent(data[i]) 
@@ -470,6 +470,14 @@
 						drawByParent(children[i]);
 				}
 			} 
+ 			
+ 			function change(checkbox){
+ 				alert($("input[name='tag']").attr('checked')=='checked');
+ 				if($("input[name='tag']").attr('checked')=='checked'){
+ 				}else{
+ 					$("input[name='tag']").attr('checked',false);
+ 				}
+ 			}
 		}
 		
 		function choseTags(){
