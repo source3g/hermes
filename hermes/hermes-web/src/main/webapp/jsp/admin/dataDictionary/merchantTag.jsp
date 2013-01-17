@@ -14,20 +14,8 @@
 				<td>分类设置</td>
 			</tr>
 		</thead>
-		<tbody>
+		
 
-		</tbody>
-
-		<!-- 
-		<tbody>
-			<tr>
-				<td class="node"><input class="input-small" type="text"
-					name="name" value="默认"> <input type="hidden" name="id"
-					value="123"> <input type="hidden" name="parentId">
-					<a href="javascript:void();" onclick="addChild(this);">增加子类</a></td>
-			</tr>
-		</tbody>
- -->
 		<tbody>
 			<tr>
 				<td><a href="javascript:void();" id="addTag"

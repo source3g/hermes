@@ -10,7 +10,6 @@
 </head>
 <body>
 	<form id="addDeviceForm"
-		action="${pageContext.request.contextPath}/admin/device/add/"
 		method="post" class="form-horizontal">
 		<div class="control-group">
 			<label class="control-label" for="sn">SN:</label>
@@ -74,6 +73,7 @@
 		});  
 		
 		 var options={
+			url:"${pageContext.request.contextPath}/admin/device/add/",
 			success:toAdd,
 			error:showError
 		 };
