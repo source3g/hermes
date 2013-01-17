@@ -53,8 +53,8 @@
 							class="span8" name="messageContent"></textarea></td>
 				</tr>
 				<tr>
-					<td width="20%"><label class="control-label">字数统计：</label></td>
-					<td width="80%"><label>当前0个字，以1条短信发送</label></td>
+					<td ><label class="control-label">字数统计：</label></td>
+					<td colspan="4"><span  id="contentLength"></span></td>
 				</tr>
 				<tr>
 					<td width="20%"><label class="control-label">操作：</label></td>
@@ -80,6 +80,17 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			var i=1;
+			$("#messageContent").keyup(function(){
+				var length=$("#messageContent").val().length;
+		 		if((length%70)==0){
+					i=(length/70);
+					$("#contentLength").text("当前"+length+"个字，以"+i+"条短信发送");
+				} else{
+					i=Math.floor(length/70)+1;
+					$("#contentLength").text("当前"+length+"个字，以"+i+"条短信发送");
+				}
+			});
  			$('#remindSettingForm').validate({
 				rules : {
 					advancedTime:{

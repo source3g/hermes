@@ -65,7 +65,10 @@
 				<td colspan="4"><textarea class="span8" rows="5" name="content" id="content"></textarea>
 			 </td>
 			 </tr>
-			 
+			 <tr>
+					<td ><label class="control-label">字数统计：</label></td>
+					<td colspan="4"><span  id="contentLength"></span></td>
+			</tr>
 			<tr>
 			<td colspan="4">
 			<input id="sendBtn"  type="submit" data-loading-text="发送中..." class="btn btn-primary" value="发送" >
@@ -125,6 +128,17 @@
 	
 	<script type="text/javascript">
 	$(document).ready(function() {
+			var i=1;
+		$("#content").keyup(function(){
+			var length=$("#content").val().length;
+	 		if((length%70)==0){
+				i=(length/70);
+				$("#contentLength").text("当前"+length+"个字，以"+i+"条短信发送");
+			} else{
+				i=Math.floor(length/70)+1;
+				$("#contentLength").text("当前"+length+"个字，以"+i+"条短信发送");
+			}
+		});
 		$.get("${pageContext.request.contextPath}/merchant/message/groupSendLogList/",drawGroupSendLogList);
 		
 		if(${not empty success}==true){

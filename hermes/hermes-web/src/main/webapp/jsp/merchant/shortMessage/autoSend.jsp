@@ -25,7 +25,10 @@
 							name="newMessageCotent" id="newMessageCotent">${messageAutoSend.newMessageCotent }</textarea> 
 					</td>
 				</tr>
-
+				<tr>
+					<td ><label class="control-label">字数统计：</label></td>
+					<td colspan="4"><span  id="newContentLength"></span></td>
+				</tr>
 				<tr>
 					<td width="20%"><label class="control-label">老顾客挂机短信内容：</label></td>
 					<td colspan="4">
@@ -33,12 +36,37 @@
 							name="oldMessageCotent" id="oldMessageCotent">${messageAutoSend.oldMessageCotent }</textarea> 
 							 <input type="submit" class="btn btn-primary" value="确定">
 					</td>
-					
+					<tr>
+					<td ><label class="control-label">字数统计：</label></td>
+					<td colspan="4"><span  id="oldContentLength"></span></td>
+				</tr>
 			</tbody>
 		</table>
 	</form>
 	<script type="text/javascript">
 	$(document).ready(function() {
+		var i=1;
+		$("#oldMessageCotent").keyup(function(){
+			var length=$("#oldMessageCotent").val().length;
+	 		if((length%70)==0){
+				i=(length/70);
+				$("#oldContentLength").text("当前"+length+"个字，以"+i+"条短信发送");
+			} else{
+				i=Math.floor(length/70)+1;
+				$("#oldContentLength").text("当前"+length+"个字，以"+i+"条短信发送");
+			}
+		});
+		var k=1;
+		$("#newMessageCotent").keyup(function(){
+			var length=$("#newMessageCotent").val().length;
+	 		if((length%70)==0){
+				k=(length/70);
+				$("#newContentLength").text("当前"+length+"个字，以"+k+"条短信发送");
+			} else{
+				k=Math.floor(length/70)+1;
+				$("#newContentLength").text("当前"+length+"个字，以"+k+"条短信发送");
+			}
+		});
 		var validateOptions = {
 				rules : {
 					newMessageCotent : {
