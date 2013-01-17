@@ -237,13 +237,7 @@ body {
 	});
 
 	function loadPage(url) {
-		/*  	 $.get(url, function(data) {
-				$("#pageContentFrame").html(data)
-			}); 
-		 */
-		//$("#pageContentFrame").attr("src", url);
 		$("#pageContentFrame").load(url);
-		//		$("#pageContentFrame").html(url);
 	}
 </script>
 </html>

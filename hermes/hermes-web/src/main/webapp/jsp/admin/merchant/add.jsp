@@ -8,15 +8,7 @@
 <title>增加商户</title>
 </head>
 <body>
-	<form id="addMerchantForm"
-		<c:if test="${empty update }">
-			action="${pageContext.request.contextPath}/admin/merchant/add/"
-		</c:if>
-		<c:if test="${not empty update}">
-			action="${pageContext.request.contextPath}/admin/merchant/update/"
-		</c:if>
-		method="post" class="form-horizontal">
-
+	<form id="addMerchantForm" method="post" class="form-horizontal">
 		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
@@ -37,15 +29,15 @@
 					class="help-inline"></span>
 			</div>
 		</div>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="tag">标签分类选择：</label>
 			<div class="controls">
-				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="showTags()">标签分类选择</a><span
-					id="tagName">   标签：</span>
+				<a href="javascript:void();" class="btn btn-primary btn-small"
+					onclick="showTags()">标签分类选择</a><span id="tagName"> 标签：</span>
 			</div>
 		</div>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
 			<div class="controls">
@@ -118,8 +110,7 @@
 
 		<div class="form-actions">
 			<c:if test="${not empty update }">
-				<input class="btn btn-primary" type="button" onclick="modify();"
-					value="修改">
+				<input type="submit" class="btn btn-primary" value="修改">
 			</c:if>
 
 			<c:if test="${ empty update }">
@@ -143,7 +134,7 @@
 			<a class="close" data-dismiss="modal">&times;</a>
 			<h3>选择集团商户</h3>
 		</div>
-		<div  class="modal-body">
+		<div class="modal-body">
 			<form class="well form-inline" id="queryMerchantGroupForm">
 				<label for="merchantGroup">集团商户名称：</label> <input
 					id="merchantGroupName" name="merchantGroupName" type="text"
@@ -162,17 +153,17 @@
 		</div>
 		<div class="modal-footer"></div>
 	</div>
-	
+
 	<div id="tagModal" class="modal hide fade">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">&times;</a>
 			<h3>标签分类</h3>
 		</div>
-		<div class="modal-body" id="modalBody">
-		</div>
-			
+		<div class="modal-body" id="modalBody"></div>
+
 		<div class="modal-footer">
-			<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="choseTags()"></input>
+			<input type="button" class="btn btn-primary" id="customersFormBtn"
+				value="确定" onclick="choseTags()"></input>
 		</div>
 	</div>
 
@@ -338,9 +329,14 @@
 			 }
 		 	$('#addMerchantBtn').button('loading')	
 			 var options = {
+		 		<c:if test="${empty update }">
+				url:"${pageContext.request.contextPath}/admin/merchant/add/",
+				</c:if>
+				<c:if test="${not empty update}">
+				url:"${pageContext.request.contextPath}/admin/merchant/update/",
+				</c:if>
 				success : showContentInfo
 			}; 
-			
 			$(this).ajaxSubmit(options);
 			return false;
 		});
@@ -407,15 +403,6 @@
 		}
 		function error() {
 			alert("出错了");
-		}
-
-		function modify() {
-			if (!$("#addMerchantForm").valid()) {
-				return false;
-			}
-			$('#addMerchantForm').ajaxSubmit({
-				success : showContentInfo
-			});
 		}
 
 
