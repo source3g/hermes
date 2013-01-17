@@ -269,7 +269,6 @@
 			$("#allList").append(allList);//添加
 		}
 		function selectOne(checkBox){
-			alert(checkBox);
 			if($(checkBox).attr('checked')!='checked'){
 				$("#allCustomersList").attr("checked",false);
 			}

@@ -136,7 +136,7 @@ public class MerchantService extends BaseService {
 	}
 
 	public void updateInfo(Merchant merchant) {
-		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds");
+		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds","merchantTagNodes");
 	}
 
 	public void UpdateQuota(String id, int countInt) {
