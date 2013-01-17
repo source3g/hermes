@@ -42,4 +42,24 @@ public class MerchantTagNode extends AbstractEntity {
 		this.children = children;
 	}
 
+	@Override
+	public boolean equals(Object nodeObj) {
+		if(nodeObj.getClass()!=this.getClass()){
+			return false;
+		}
+		MerchantTagNode node=(MerchantTagNode)nodeObj;
+		if(node.getId()==null){
+			return false;
+		}
+		return node.getId().equals(this.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		if(this.getId()==null){
+			return super.hashCode();
+		}
+		return this.getId().hashCode();
+	}
+
 }

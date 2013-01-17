@@ -178,9 +178,7 @@ public class MerchantController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/update/";
 		HttpEntity<Merchant> entity = new HttpEntity<Merchant>(merchant);
 		String result = restTemplate.postForObject(uri, entity, String.class);
-
 		if (ReturnConstants.SUCCESS.equals(result)) {
-
 			return new ModelAndView("redirect:/admin/merchant/list/");
 		} else {
 			return new ModelAndView("admin/error");

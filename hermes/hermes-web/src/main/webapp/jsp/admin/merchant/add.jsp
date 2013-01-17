@@ -33,8 +33,10 @@
 		<div class="control-group">
 			<label class="control-label" for="tag">标签分类选择：</label>
 			<div class="controls">
-				<a href="javascript:void();" class="btn btn-primary btn-small"
-					onclick="showTags()">标签分类选择</a><span id="tagName"> 标签：</span>
+				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="showTags()">标签分类选择</a><span
+					id="tagName">   标签：    <c:if  test="${not empty update }"><c:forEach items="${merchant.merchantTagNodes}" var="merchantTagNode" varStatus="status">
+					<input type="hidden" class="tagId" name="merchantTagNodes[${status.index }].id" value="${merchantTagNode.id}"><span>${merchantTagNode.name}<a  href="javascript:void();" onclick="deleteTag(this)" style="color:red">×</a></span>
+					</c:forEach></c:if></span>
 			</div>
 		</div>
 
@@ -340,6 +342,8 @@
 			$(this).ajaxSubmit(options);
 			return false;
 		});
+		//查出标签分类信息
+		$.get("${pageContext.request.contextPath}/admin/dictionary/tag/list",drawmerchantTagNodeList);
 	});
 	function findDevice(){
 		var sn=$("#deviceSn").val();
@@ -407,6 +411,7 @@
 
 
 		function showDevices(data){
+			alert(data);
 			if( data.sn==null){
 				$('#deviceMessage').html(data).css("color","red");
 				return ;
@@ -433,39 +438,55 @@
 		} 
 		
 		function showTags(){
-			$.get("${pageContext.request.contextPath}/admin/dictionary/tag/list",drawmerchantTagNodeList);
+			$("input[class='tag']:checked").attr("checked",false);
 			$("#tagModal").modal();
 		}
 		function drawmerchantTagNodeList(data){
-			$("#modalBody").html("");
 			for(var i=0;i<data.length;i++){
-					var str="<div class=\"tag\"><input type=\"checkbox\" style=\"margin:10px;\"  name=\"tag\" value='"+data[i].name+"'>"+data[i].name+"</div>";
+					var str="<ul class=\"tagUl\"><li  id='li"+data[i].id+"' ><input name='tagName' type='hidden' value='"+data[i].id+"'><input type='hidden' value='"+data[i].parentId+"'><input type=\"checkbox\"  class=\"tag\" value="+data[i].name+">"+data[i].name+"</li></ul>";
 					$("#modalBody").append(str);
 					if(data[i].children!=null&&data[i].children.length>=0){
-						drawByParent(data[i]) 
+						drawByParent(data[i]) ;
 					}
-				 
 			}
+			$(".tag").css("margin","8px");
  			function drawByParent(node){
  				var children=node.children;
- 				if(children==null||children.length<=0){
+  				if(children==null||children.length<=0){
  					return;
  				}
+  				//获取子标签的ul
+  				var ul=$("#ul"+node.id);
+  				//如果没有再父级的后面创建一个空的ul
+  				if(ul==null||ul.length==0){
+  					var li=$("#li"+node.id);
+  					$("#li"+node.id).after("<ul class='tagUl' id='ul"+node.id+"'></ul>");
+  					ul=$("#ul"+node.id);
+  				}
+  				//将li放进ul里
  				for(var i=0;i<children.length;i++){
-						var str1="<div><input type=\"checkbox\" style=\"margin:10px;\" name=\"tag\" value='"+children[i].name+"'>"+children[i].name+"</div>";
-						$("div [class='tag']").last().after(str1);
+ 						var str="<li id='li"+children[i].id+"'><input name='tagName' type='hidden' value='"+children[i].id+"'><input type='hidden' value='"+children[i].parentId+"'><input type=\"checkbox\"  class=\"tag\"  value="+children[i].name+">"+children[i].name+"</li>";
+ 						$(ul).append(str);
 						drawByParent(children[i]);
 				}
-			} 
+			}  
 		}
-		
+		var  tagIndex=$("input[class='tagId']").length;
 		function choseTags(){
-			$("input[name='tag']:checked").each(function(){
-				$('#tagName').append("["+$(this).val()+"]   ");
+			$("input[class='tag']:checked").each(function(){
+				var a="["+$(this).val()+"]<a  href=\"javascript:void();\" onclick=\"deleteTag(this)\" style=\"color:red\">×</a>";
+				/* var name="<input type='hidden' name='merchantTagNodes["+tagIndex+"].name' value='"+$(this).val()+"'>"; */
+				var id="<input type='hidden'  class='tagId' name='merchantTagNodes["+tagIndex+"].id' value='"+$(this).prevAll("input[name='tagName']").val()+"'>";
+				$('#tagName').append("<span>"+a+id+"</span>");//name+id
+				tagIndex++;
 			});
 			$("#tagModal").modal("hide");
 		}
-		
+		function deleteTag(a){
+			$(a).parent().prev().remove();
+			$(a).parent().remove();
+
+		}
 	</script>
 </body>
 <%-- <%@include file="../../include/footer.jsp"%> --%>

@@ -1,6 +1,9 @@
 package com.source3g.hermes.merchant.api;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.entity.dictionary.MerchantTagNode;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
@@ -45,6 +49,7 @@ public class MerchantApi {
 	public String add(@RequestBody Merchant merchant) {
 		logger.debug("add merchant....");
 		try {
+			handleMerchantTags(merchant);
 			merchantService.add(merchant);
 		} catch (Exception e) {
 			return e.getMessage();
@@ -94,6 +99,7 @@ public class MerchantApi {
 	@ResponseBody
 	public String update(@RequestBody Merchant merchant) {
 		logger.debug("update merchant....");
+		handleMerchantTags(merchant);
 		merchantService.updateInfo(merchant);
 		return ReturnConstants.SUCCESS;
 	}
@@ -229,6 +235,25 @@ public class MerchantApi {
 	public MerchantResource getMerchantResource(@PathVariable String sn) throws Exception {
 		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
 		return 	merchantService.getMerchantResource(merchant.getId());
+	}
+	
+	
+	private void handleMerchantTags(Merchant merchant){
+		if(merchant==null||merchant.getMerchantTagNodes()==null){
+			return;
+		}
+		List<MerchantTagNode> merchantTagNodes=merchant.getMerchantTagNodes();
+		//去掉空的id
+		for (int i=merchantTagNodes.size()-1;i>=0;i--){
+			if(merchantTagNodes.get(i).getId()==null){
+				merchantTagNodes.remove(i);
+			}
+		}
+		//取重复
+		Set<MerchantTagNode> set=new HashSet<MerchantTagNode>(merchantTagNodes);
+		merchantTagNodes=new ArrayList<MerchantTagNode>();
+		merchantTagNodes.addAll(set);
+		merchant.setMerchantTagNodes(merchantTagNodes);
 	}
 	
 	

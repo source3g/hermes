@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.entity.dictionary.MerchantTagNode;
 import com.source3g.hermes.entity.note.Note;
 
 @Document
@@ -27,7 +28,8 @@ public class Merchant extends AbstractEntity {
 	
 	private ShortMessage shortMessage=new ShortMessage();
 	private MerchantResource merchantResource;
-	
+	@DBRef
+	private List<MerchantTagNode> merchantTagNodes;
 	private List<Note> notes;
 	//是否被删除
 	private boolean canceled;
@@ -36,6 +38,15 @@ public class Merchant extends AbstractEntity {
 	
 	private Setting setting=new Setting();
 	
+	
+	public List<MerchantTagNode> getMerchantTagNodes() {
+		return merchantTagNodes;
+	}
+
+	public void setMerchantTagNodes(List<MerchantTagNode> merchantTagNodes) {
+		this.merchantTagNodes=merchantTagNodes;
+	}
+
 	public List<MerchantRemindTemplate> getMerchantRemindTemplates() {
 		return merchantRemindTemplates;
 	}
