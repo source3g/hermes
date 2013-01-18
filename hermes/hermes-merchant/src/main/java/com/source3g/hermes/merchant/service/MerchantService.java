@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Sort;
@@ -171,25 +170,13 @@ public class MerchantService extends BaseService {
 	}
 
 	public void remindDelete(ObjectId merchantId, ObjectId merchantRemindtemplateId) {
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantRemindtemplateId)), MerchantRemindTemplate.class);
 		merchantRemindTemplate.setIsDelete(true);
 		mongoTemplate.save(merchantRemindTemplate);
-		List<MerchantRemindTemplate> merchantRemindTemplate2 = merchant.getMerchantRemindTemplates();
-		merchantRemindTemplate2.remove(merchantRemindTemplate);
-		mongoTemplate.save(merchant);
 	}
 
 	public void remindAdd(ObjectId merchantId, ObjectId remindtemplateId) {
-		Merchant merchantInDb = mongoTemplate.findById(merchantId, Merchant.class);
-		if (CollectionUtils.isEmpty(merchantInDb.getMerchantRemindTemplates())) {
-			merchantInDb.setMerchantRemindTemplates(new ArrayList<MerchantRemindTemplate>());
-		}
 		MerchantRemindTemplate merchantRemindTemplateOld = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindtemplateId)), MerchantRemindTemplate.class);
-		// 商户是否已经绑定
-		if (merchantInDb.getMerchantRemindTemplates().contains(merchantRemindTemplateOld)) {
-			return;
-		}
 		RemindTemplate template = mongoTemplate.findOne(new Query(Criteria.where("_id").is(remindtemplateId)), RemindTemplate.class);
 		MerchantRemindTemplate merchantRemindTemplate = new MerchantRemindTemplate();
 		merchantRemindTemplate.setId(ObjectId.get());
@@ -202,12 +189,8 @@ public class MerchantService extends BaseService {
 		if (merchantRemindTemplateOld != null) {
 			merchantRemindTemplateOld.setIsDelete(false);
 			mongoTemplate.save(merchantRemindTemplateOld);
-			merchantInDb.getMerchantRemindTemplates().add(merchantRemindTemplateOld);
-			mongoTemplate.save(merchantInDb);
 		} else {
 			mongoTemplate.insert(merchantRemindTemplate);
-			merchantInDb.getMerchantRemindTemplates().add(merchantRemindTemplate);
-			mongoTemplate.save(merchantInDb);
 		}
 	}
 
