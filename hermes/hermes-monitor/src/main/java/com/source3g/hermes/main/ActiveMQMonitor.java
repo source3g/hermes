@@ -49,8 +49,6 @@ import org.apache.activemq.usage.TempUsage;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 监控ActiveMQ的各种信息Broker,Connection,Queue,Topic的数量和压栈和出栈
@@ -58,8 +56,9 @@ import org.slf4j.LoggerFactory;
  * @author longgangbai
  * 
  */
+@SuppressWarnings("unchecked")
 public class ActiveMQMonitor {
-	private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQMonitor.class);
+//	private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQMonitor.class);
 
 	protected static final int MESSAGE_COUNT = 2000;
 	protected BrokerService brokerService;
@@ -181,7 +180,6 @@ public class ActiveMQMonitor {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	protected <T> Collection<T> getManagedObjects(ObjectName[] names, Class<T> type) throws Exception {
 		List<T> answer = new ArrayList<T>();
 		for (int i = 0; i < names.length; i++) {
@@ -200,7 +198,6 @@ public class ActiveMQMonitor {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<ConnectionViewMBean> getConnections() throws Exception {
 		String brokerName = getBrokerName();
 		ObjectName query = new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Connection,*");
@@ -214,7 +211,6 @@ public class ActiveMQMonitor {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection<String> getConnections(String connectorName) throws Exception {
 		String brokerName = getBrokerName();
 		ObjectName query = new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Connection,ConnectorName=" + connectorName + ",*");
@@ -233,7 +229,6 @@ public class ActiveMQMonitor {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	public ConnectionViewMBean getConnection(String connectionName) throws Exception {
 		connectionName = StringUtils.replace(connectionName, ":", "_");
 		String brokerName = getBrokerName();
@@ -245,7 +240,6 @@ public class ActiveMQMonitor {
 		return (ConnectionViewMBean) newProxyInstance(objectName, ConnectionViewMBean.class, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<String> getConnectors() throws Exception {
 		String brokerName = getBrokerName();
 		ObjectName query = new ObjectName("org.apache.activemq:BrokerName=" + brokerName + ",Type=Connector,*");
@@ -262,7 +256,6 @@ public class ActiveMQMonitor {
 		return (ConnectorViewMBean) newProxyInstance(objectName, ConnectorViewMBean.class, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<NetworkConnectorViewMBean> getNetworkConnectors() throws Exception {
 		String brokerName = getBrokerName();
 
@@ -278,7 +271,6 @@ public class ActiveMQMonitor {
 		return getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]), NetworkBridgeViewMBean.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<SubscriptionViewMBean> getQueueConsumers(String queueName) throws Exception {
 		String brokerName = getBrokerName();
 		queueName = StringUtils.replace(queueName, "\"", "_");
@@ -287,7 +279,6 @@ public class ActiveMQMonitor {
 		return getManagedObjects(queryResult.toArray(new ObjectName[queryResult.size()]), SubscriptionViewMBean.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<SubscriptionViewMBean> getConsumersOnConnection(String connectionName) throws Exception {
 		connectionName = StringUtils.replace(connectionName, ":", "_");
 		String brokerName = getBrokerName();
@@ -332,10 +323,11 @@ public class ActiveMQMonitor {
 		}
 		return adminView.getBroker();
 	}
-
+	@SuppressWarnings("rawtypes")
 	public void purgeQueue(ActiveMQDestination destination) throws Exception {
 		Set destinations = getManagedBroker().getQueueRegion().getDestinations(destination);
-		for (Iterator i = destinations.iterator(); i.hasNext();) {
+		for (
+		Iterator i = destinations.iterator(); i.hasNext();) {
 			Destination dest = (Destination) i.next();
 			if (dest instanceof Queue) {
 				Queue regionQueue = (Queue) dest;
@@ -351,6 +343,7 @@ public class ActiveMQMonitor {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("rawtypes")
 	public Set queryNames(ObjectName name, QueryExp query) throws Exception {
 		return getManagementContext().queryNames(name, query);
 	}
@@ -363,6 +356,7 @@ public class ActiveMQMonitor {
 	 * @param notificationBroadcaster
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes") 
 	public Object newProxyInstance(ObjectName objectName, Class interfaceClass, boolean notificationBroadcaster) {
 		return getManagementContext().newProxyInstance(objectName, interfaceClass, notificationBroadcaster);
 	}

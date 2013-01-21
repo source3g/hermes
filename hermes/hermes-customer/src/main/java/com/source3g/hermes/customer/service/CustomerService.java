@@ -494,7 +494,7 @@ public class CustomerService extends BaseService {
 		}
 		super.updateIncludeProperties(customer, "name", "sex", "birthday",
 				"phone", "blackList", "address", "otherPhones", "qq", "email",
-				"note", "reminds", "customerGroup", "operateTime");
+				"note", "reminds", "customerGroup","favorite", "operateTime");
 	}
 
 	public CustomerDto findBySnAndPhone(String sn, String phone) {

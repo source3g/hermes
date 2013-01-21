@@ -21,10 +21,10 @@ public class CustomerDto {
 
 	private List<CallRecord> callRecords;
 
-	private Boolean favorite;
+	private String favorite;
 
 	private Date lastCallInTime; // 最后通电话时间
-	private ObjectId customerGroupId;
+	private ObjectId groupId;
 	private Date operateTime;
 
 	private List<RemindDto> reminds;
@@ -127,12 +127,12 @@ public class CustomerDto {
 		this.lastCallInTime = lastCallInTime;
 	}
 
-	public ObjectId getCustomerGroupId() {
-		return customerGroupId;
+	public ObjectId getGroupId() {
+		return groupId;
 	}
 
-	public void setCustomerGroupId(ObjectId customerGroupId) {
-		this.customerGroupId = customerGroupId;
+	public void setGroupId(ObjectId groupId) {
+		this.groupId = groupId;
 	}
 
 	public Date getOperateTime() {
@@ -151,14 +151,14 @@ public class CustomerDto {
 		this.reminds = reminds;
 	}
 
-	public Boolean getFavorite() {
+	public String getFavorite() {
 		return favorite;
 	}
 
 	public void setFavorite(Boolean favorite) {
 		if (favorite == null) {
-			this.favorite = false;
+			this.favorite = "false";
 		}
-		this.favorite = favorite;
+		this.favorite = favorite.toString();
 	}
 }

@@ -22,7 +22,7 @@ public class EntityUtils {
 		customerDto.setBlackList(customer.isBlackList());
 		customerDto.setCallRecords(customer.getCallRecords());
 		if (customer.getCustomerGroup() != null) {
-			customerDto.setCustomerGroupId(customer.getCustomerGroup().getId());
+			customerDto.setGroupId(customer.getCustomerGroup().getId());
 		}
 		customerDto.setFavorite(customer.getFavorite());
 		customerDto.setEmail(customer.getEmail());
