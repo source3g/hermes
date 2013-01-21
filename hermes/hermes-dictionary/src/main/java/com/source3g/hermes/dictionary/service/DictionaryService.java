@@ -31,8 +31,8 @@ public class DictionaryService extends BaseService {
 
 	public void remindDelete(ObjectId id) throws Exception {
 		RemindTemplate remindTemplate=mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), RemindTemplate.class);
-		List<MerchantRemindTemplate> merchantRemindTemplate =mongoTemplate.find(new Query(Criteria.where("remindTemplate.$id").is(id).and("isDelete").is(false)), MerchantRemindTemplate.class);
-		if(merchantRemindTemplate.size()==0){
+		MerchantRemindTemplate merchantRemindTemplate =mongoTemplate.findOne(new Query(Criteria.where("remindTemplate.$id").is(id).and("isDelete").is(false)), MerchantRemindTemplate.class);
+		if(merchantRemindTemplate==null){
 			remindTemplate.setIsDelete(true);
 			mongoTemplate.save(remindTemplate);
 		}else{

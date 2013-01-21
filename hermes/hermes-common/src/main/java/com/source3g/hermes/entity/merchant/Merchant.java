@@ -33,8 +33,6 @@ public class Merchant extends AbstractEntity {
 	private List<Note> notes;
 	//是否被删除
 	private boolean canceled;
-	@DBRef
-	private List<MerchantRemindTemplate> merchantRemindTemplates;
 	
 	private Setting setting=new Setting();
 	
@@ -45,14 +43,6 @@ public class Merchant extends AbstractEntity {
 
 	public void setMerchantTagNodes(List<MerchantTagNode> merchantTagNodes) {
 		this.merchantTagNodes=merchantTagNodes;
-	}
-
-	public List<MerchantRemindTemplate> getMerchantRemindTemplates() {
-		return merchantRemindTemplates;
-	}
-
-	public void setMerchantRemindTemplates(List<MerchantRemindTemplate> merchantRemindTemplates) {
-		this.merchantRemindTemplates = merchantRemindTemplates;
 	}
 
 	public String getName() {
