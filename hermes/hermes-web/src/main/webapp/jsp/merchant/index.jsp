@@ -28,7 +28,7 @@ body {
 				</a> <a class="brand" target="_self"
 					href="${pageContext.request.contextPath}/index/"> <img
 					alt="旺财宝" src="${pageContext.request.contextPath}/img/logo.png" /></a>
-					 <span class="brand"  style="padding-top:25px;" > <span style="font-size:30px; color:red;">${loginUser.name } </span> <span>客户来电和情感管理系统</span> </span>
+					 <span class="brand"  style="padding-top:25px;" > <span style="font-size:30px; color:#eee;">${loginUser.name } </span> <span>客户来电和情感管理系统</span> </span>
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">

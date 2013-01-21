@@ -18,6 +18,7 @@ public class CustomerDto {
 	private String qq;
 	private String email;
 	private String note;
+
 	private List<CallRecord> callRecords;
 
 	private Boolean favorite;
@@ -155,6 +156,9 @@ public class CustomerDto {
 	}
 
 	public void setFavorite(Boolean favorite) {
+		if (favorite == null) {
+			this.favorite = false;
+		}
 		this.favorite = favorite;
 	}
 }

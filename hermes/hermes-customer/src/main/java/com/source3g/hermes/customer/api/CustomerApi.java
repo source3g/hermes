@@ -97,6 +97,7 @@ public class CustomerApi {
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody Customer customer) throws Exception {
+		logger.debug("增加了一个顾客:"+customer.getName());
 		customerService.add(customer);
 		return "success";
 	}
@@ -245,6 +246,13 @@ public class CustomerApi {
 	@ResponseBody
 	public CustomerStatisticsDto findCustomerStatistics(@PathVariable String merchantId) {
 		return customerService.findCustomerStatistics(new ObjectId(merchantId));
+	}
+	
+	@RequestMapping(value = "/statistics/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public CustomerStatisticsDto findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		return customerService.findCustomerStatistics(merchant.getId());
 	}
 
 	@RequestMapping(value = "/callInStatistics/{id}/", method = RequestMethod.GET)

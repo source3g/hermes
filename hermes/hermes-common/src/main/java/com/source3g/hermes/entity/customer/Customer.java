@@ -191,15 +191,6 @@ public class Customer extends AbstractEntity {
 
 	@JsonIgnore
 	public String toInsertOrUpdateSql() throws JsonGenerationException, JsonMappingException, IOException {
-		// FilterProvider filterProvider = new
-		// SimpleFilterProvider().addFilter("filterPropreties",
-		// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
-		// "callRecords", "operateTime"));
-		// SimpleBeanPropertyFilter filter =
-		// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
-		// "callRecords", "operateTime");
-		// FilterProvider fp = new
-		// SimpleFilterProvider().addFilter("filterForSync", filter);
 		ObjectMapper objectMapper = new ObjectMapper();
 		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
 		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
@@ -219,7 +210,7 @@ public class Customer extends AbstractEntity {
 		if(lastCallInTime!=null){
 			lastCallInTimeStr=sdf.format(lastCallInTime);
 		}
-		return "REPLACE INTO CUSTOMER (phone,name,sex,lastCallInTime ,callInCount ,content) values('" + phone + "','"+name+"','"+sex+"','"+lastCallInTimeStr+"','"+customerDto.getCallInCount()+"','" + strJson + "'); ";
+		return "REPLACE INTO CUSTOMER (phone,name,sex,lastCallInTime ,callInCount,favorite,groupId ,content) values('" + phone + "','"+name+"','"+sex+"','"+lastCallInTimeStr+"','"+customerDto.getCallInCount()+"','"+(favorite==null?"false":favorite)+"','"+(customerGroup==null?"":customerGroup.getId())+"','" + strJson + "'); ";
 	}
 
 	@JsonIgnore
