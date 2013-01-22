@@ -483,11 +483,11 @@ public class CustomerService extends BaseService {
 		mongoTemplate.insert(importLog);
 	}
 
-	public void updateInfo(Customer customer) {
+	public void updateInfo(Customer customer,String merchantId) {
 		customer.setOperateTime(new Date());
 		if (customer.getId() == null) {
 			Customer c = mongoTemplate.findOne(new Query(Criteria
-					.where("phone").is(customer.getPhone())), Customer.class);
+					.where("phone").is(customer.getPhone()).and("merchantId").is(new ObjectId(merchantId))), Customer.class);
 			if (c != null) {
 				customer.setId(c.getId());
 			}
@@ -770,6 +770,16 @@ public class CustomerService extends BaseService {
 			result.add(customerRemindDto);
 		}
 		return result;
+	}
+
+	public void updateDto(CustomerDto customerDto,ObjectId merchantId) {
+			Customer c = mongoTemplate.findOne(new Query(Criteria
+					.where("phone").is(customerDto.getPhone()).and("merchantId").is(merchantId)), Customer.class);
+			c.setOperateTime(new Date());
+		EntityUtils.copyCustomerDtoToEntity(customerDto, c);
+		super.updateIncludeProperties(c, "name", "sex", "birthday",
+				"phone", "blackList", "address", "otherPhones", "qq", "email",
+				"note","customerGroup","favorite", "operateTime");
 	}
 
 }

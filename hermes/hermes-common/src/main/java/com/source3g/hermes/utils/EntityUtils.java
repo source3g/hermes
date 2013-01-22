@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.dto.customer.RemindDto;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.Remind;
 
 public class EntityUtils {
@@ -52,5 +53,31 @@ public class EntityUtils {
 			}
 		}
 		customerDto.setReminds(reminds);
+	}
+	
+	public static void copyCustomerDtoToEntity(CustomerDto customerDto,Customer customer){
+		if (customer == null || customerDto == null) {
+			return;
+		}
+		
+		customer.setAddress(customerDto.getAddress());
+		customer.setBirthday(customerDto.getBirthday());
+		customer.setBlackList(customerDto.isBlackList());
+		if (customerDto.getGroupId() != null) {
+			CustomerGroup customerGroup=new CustomerGroup();
+			customerGroup.setId(customerDto.getGroupId());
+			customer.setCustomerGroup(customerGroup);
+		}
+		try{
+			customer.setFavorite(Boolean.parseBoolean(customerDto.getFavorite()));
+		}catch(Exception e){
+			customer.setFavorite(false);
+		}
+		customer.setEmail(customerDto.getEmail());
+		customer.setName(customerDto.getName());
+		customer.setNote(customerDto.getNote());
+		customer.setPhone(customerDto.getPhone());
+		customer.setQq(customerDto.getQq());
+		customer.setSex(customerDto.getSex());
 	}
 }

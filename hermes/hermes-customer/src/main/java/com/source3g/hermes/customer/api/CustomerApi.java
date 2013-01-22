@@ -155,11 +155,20 @@ public class CustomerApi {
 		return customerService.getLocalUrl() + "customer/export/download/" + result + "/";
 	}
 
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	@RequestMapping(value = "/update/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String update(@RequestBody Customer customer) {
+	public String update(@RequestBody Customer customer,@PathVariable String merchantId) {
 		logger.debug("update customer....");
-		customerService.updateInfo(customer);
+		customerService.updateInfo(customer,merchantId);
+		return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/update/sn/{sn}", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateByDto(@RequestBody CustomerDto customerDto,@PathVariable String sn) throws Exception {
+		logger.debug("update customer....");
+		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		customerService.updateDto(customerDto,merchant.getId());
 		return ReturnConstants.SUCCESS;
 	}
 

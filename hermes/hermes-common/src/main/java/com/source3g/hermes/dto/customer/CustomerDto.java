@@ -158,7 +158,8 @@ public class CustomerDto {
 	public void setFavorite(Boolean favorite) {
 		if (favorite == null) {
 			this.favorite = "false";
+		}else{
+			this.favorite = favorite.toString();
 		}
-		this.favorite = favorite.toString();
 	}
 }
