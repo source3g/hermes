@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import com.hongxun.pub.DataCommand;
 import com.hongxun.pub.tcptrans.TcpCommTrans;
+import com.mongodb.CommandResult;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.customer.Customer;
@@ -101,6 +102,10 @@ public class MessageService extends BaseService {
 				customerGroupIds.add(ObjId);
 			}
 			query.addCriteria(Criteria.where("customerGroup.$id").in(customerGroupIds));
+			String command="db.customer.find({\"customerGroup.$id\":ObjectId(\""+customerGroupIds.get(0)+"\")})";
+			//String command1="{\"customerGroup.$id|:ObjectId(\""+customerGroupIds.get(0)+"\")}";
+			CommandResult commandResult=mongoTemplate.executeCommand(command);
+			System.out.println(commandResult);
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);
 			for (Customer customer : customers) {
 				phones.add(customer.getPhone());
