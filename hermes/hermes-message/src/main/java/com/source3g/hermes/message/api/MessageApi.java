@@ -167,7 +167,14 @@ public class MessageApi {
 		messageService.ignoreSendMessages(title, merchantId);
 		return ReturnConstants.SUCCESS;
 	}
-
+	@RequestMapping(value = "/failedMessagelist", method = RequestMethod.GET)
+	@ResponseBody
+	public Page failedMessagelist(String pageNo) {
+		int pageNoInt = Integer.valueOf(pageNo);
+		return	messageService.failedMessagelist(pageNoInt);
+		 
+	}
+	
 	public static class CustomerMessageDto {
 		private String customerPhone;
 		private String content;

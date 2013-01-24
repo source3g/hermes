@@ -465,4 +465,17 @@ public class MessageService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)),update, ShortMessageRecord.class);
 	}
 
+	public Page failedMessagelist(int pageNoInt) {
+		Query query = new Query();
+		query.with(new Sort(Direction.DESC, "_id"));
+		query.addCriteria(Criteria.where("status").is(MessageStatus.发送失败));
+		Page page = new Page();
+		Long totalCount = mongoTemplate.count(query, ShortMessageRecord.class);
+		page.setTotalRecords(totalCount);
+		page.gotoPage(pageNoInt);
+		List<ShortMessageRecord> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), ShortMessageRecord.class);
+		page.setData(list);
+		return page;
+	}
+
 }
