@@ -59,6 +59,14 @@
 					readonly="readonly"> <span class="help-inline"></span>
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label" for="password">密码：</label>
+			<div class="controls">
+				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
+					id="password" name="password" value="${merchant.password}"
+					readonly="readonly"> <span class="help-inline"></span>
+			</div>
+		</div>
 		<h2>盒子SN列表</h2>
 		<table
 			class="table table-striped table-bordered bootstrap-datatable datatable"

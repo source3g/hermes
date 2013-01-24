@@ -113,6 +113,7 @@ body {
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
 								<li><a href="javascript:void();" id="shortMsgInfo">预存明细</a></li>
+								<li><a href="javascript:void();" id="failedMessageList">失败短信列表</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -221,8 +222,12 @@ body {
 		$("#listSim").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/sim/list/");
 		});
+		//短信管理 
 		$("#shortMsgInfo").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/merchant/messageInfo/list/");
+		});
+		$("#failedMessageList").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/message/failed/list/");
 		});
 
 		//角色管理
