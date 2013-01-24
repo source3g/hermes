@@ -12,6 +12,12 @@ public class PhoneInfo implements Serializable {
 		super();
 	}
 
+	public PhoneInfo(String phoneNumber, String content) {
+		super();
+		this.phoneNumber = phoneNumber;
+		this.content = content;
+	}
+	
 	public PhoneInfo(String phoneNumber, String content, ObjectId messageSendLogId) {
 		super();
 		this.phoneNumber = phoneNumber;

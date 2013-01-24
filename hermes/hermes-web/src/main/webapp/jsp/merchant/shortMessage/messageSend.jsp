@@ -87,9 +87,9 @@
 	</thead>
 		<tbody>
 			<tr>
-				<td width="30%">发送数量</td>
 				<td width="30%">发送时间</td>
-				<td width="40%">发送内容</td>	
+				<td width="30%">发送内容</td>	
+				<td width="40%">发送数量/成功数量</td>
 			</tr>
 		</tbody>
 	</table>
@@ -210,7 +210,7 @@
 	});
 		function drawGroupSendLogList(data){
 			for(var i=0;i<data.length;i++){
-				var str="<tr><td width=\"30%\">"+data[i].sendCount+"</td><td width=\"30%\">"+data[i].sendTime+"</td><td width=\"40%\" title="+data[i].content+" ><div style=\"width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; \">"+data[i].content+"</div></td></tr>";
+				var str="<tr><td width=\"30%\">"+data[i].sendTime+"</td><td width=\"40%\" title="+data[i].content+" ><div style=\"width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; \">"+data[i].content+"</div></td><td width=\"30%\">"+data[i].sendCount+"/"+data[i].sendSuccessCount+"</td></tr>";
 				$('#groupSendLog').append(str);
 			}
 	}

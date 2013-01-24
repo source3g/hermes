@@ -3,6 +3,7 @@ package com.source3g.hermes.service;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,6 +14,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.source3g.hermes.entity.AbstractEntity;
 
 @Component
@@ -139,6 +144,36 @@ public abstract class BaseService {
 		}
 	//	mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(entity.getId())), update, entity.getClass());
 		mongoTemplate.save(entityInDb);
+	}
+	
+	
+	public  <T extends AbstractEntity>   List<T> findByBasicDBObject(Class<T> c ,BasicDBObject params,ObjectMapper<T> mapper){
+		List<T> list=new ArrayList<T>();
+		DBCollection collection = mongoTemplate.getCollection(mongoTemplate
+				.getCollectionName(c));
+		DBCursor item = collection.find(params);
+		while(item.hasNext()){
+			DBObject obj=item.next();
+			list.add(mapper.mapping(obj));
+		}
+		return list;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public  <T extends AbstractEntity,S>   List<S> findByBasicDBObject(Class<T> c ,BasicDBObject params,String property,Class<S> propertyClass){
+		List<S> list=new ArrayList<S>();
+		DBCollection collection = mongoTemplate.getCollection(mongoTemplate
+				.getCollectionName(c));
+		DBCursor item = collection.find(params);
+		while(item.hasNext()){
+			DBObject obj=item.next();
+			list.add((S)obj.get(property));
+		}
+		return list;
+	}
+	
+	public interface ObjectMapper<T>{
+		public T mapping(DBObject obj);
 	}
 
 }

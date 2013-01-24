@@ -158,9 +158,6 @@ public class MessageApi {
 		return ReturnConstants.SUCCESS;
 	}
 	
-	
-	
-	
 	public static class CustomerMessageDto{
 		private String customerPhone;
 		private String content;
