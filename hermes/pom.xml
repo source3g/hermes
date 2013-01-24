@@ -231,6 +231,11 @@
 			<artifactId>activemq-pool</artifactId>
 			<version>${org.apache.activemq.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-web</artifactId>
+			<version>${org.apache.activemq.version}</version>
+		</dependency>
 
 
 		<dependency>

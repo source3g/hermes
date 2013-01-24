@@ -1,6 +1,7 @@
 package com.source3g.hermes.merchant.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -234,7 +235,9 @@ public class MerchantApi {
 	@ResponseBody
 	public MerchantResource getMerchantResource(@PathVariable String sn) throws Exception {
 		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
-		return 	merchantService.getMerchantResource(merchant.getId());
+		MerchantResource merchantResource=merchantService.getMerchantResource(merchant.getId());
+		Collections.sort(merchantResource.getList());
+		return 	merchantResource;
 	}
 	
 	

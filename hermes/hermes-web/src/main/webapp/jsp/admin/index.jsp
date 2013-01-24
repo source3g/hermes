@@ -152,6 +152,22 @@ body {
 							<!-- </div> -->
 						</div>
 					</div>
+<!-- 					<div class="accordion-group">
+						<div class="accordion-heading" style="background-color: #EEE;">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#accordion2" href="#collapseSeven">系统管理</a>
+						</div>
+						<div id="collapseSeven" class="accordion-body collapse">
+							<div class="accordion-inner">
+							<ul id="security-menu"
+								class="nav nav-list nav-tabs  nav-stacked  main-menu">
+								class="nav nav-list nav-tabs  nav-stacked collapse main-menu"
+								<li><a href="javascript:void();" id="failedJms">失败JMS</a></li>
+								<li><a href="javascript:void();" id="operateLog">操作日志</a></li>
+							</ul>
+							</div>
+						</div>
+					</div> -->
 				</div>
 			</div>
 
@@ -234,6 +250,12 @@ body {
 		$("#merchantTagDictionary").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/dictionary/tag/toTagSetting/");
 		});
+		/* $("#failedJms").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/system/monitor/failedJms/");
+		});
+		$("#operateLog").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/system/operateLog/");
+		}); */
 	});
 
 	function loadPage(url) {

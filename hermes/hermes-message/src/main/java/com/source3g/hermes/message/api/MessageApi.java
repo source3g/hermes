@@ -57,15 +57,23 @@ public class MessageApi {
 	public List<MessageTemplate> listTemplate(@PathVariable String merchantId) {
 		return messageService.listAll(merchantId);
 	}
-	
-	@RequestMapping(value="/statistics/{merchantId}",method=RequestMethod.GET)
+
+	@RequestMapping(value = "/statistics/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public MessageStatisticsDto findCustomerStatistics(@PathVariable String merchantId){
+	public MessageStatisticsDto findCustomerStatistics(@PathVariable String merchantId) {
 		return messageService.findMessageStastics(new ObjectId(merchantId));
+	}
+
+	@RequestMapping(value = "/statistics/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public MessageStatisticsDto findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
+		return messageService.findMessageStastics(merchant.getId());
 	}
 
 	/**
 	 * 短信群发
+	 * 
 	 * @param merchantId
 	 * @param ids
 	 * @param customerPhones
@@ -74,17 +82,18 @@ public class MessageApi {
 	 */
 	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String messageSend(@PathVariable String merchantId, String[] ids, String customerPhones,String content) {
+	public String messageSend(@PathVariable String merchantId, String[] ids, String customerPhones, String content) {
 		try {
-			messageService.messageGroupSend(new ObjectId(merchantId), ids, customerPhones,content);
+			messageService.messageGroupSend(new ObjectId(merchantId), ids, customerPhones, content);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	/**
 	 * 短信单发
+	 * 
 	 * @param sn
 	 * @param customerMessageDto
 	 * @return
@@ -93,19 +102,19 @@ public class MessageApi {
 	@RequestMapping(value = "/messageSend/sn/{sn}", method = RequestMethod.POST)
 	@ResponseBody
 	public String messageSendBySn(@PathVariable String sn, @RequestBody CustomerMessageDto customerMessageDto) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		try {
-			messageService.sendMessage(merchant.getId(), customerMessageDto.getCustomerPhone(),customerMessageDto.getContent());
+			messageService.sendMessage(merchant.getId(), customerMessageDto.getCustomerPhone(), customerMessageDto.getContent());
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/groupSendLogList/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public  List<GroupSendLog> groupSendLogList(@PathVariable String merchantId) {
-		return 	messageService.groupSendLogList(new ObjectId(merchantId));
+	public List<GroupSendLog> groupSendLogList(@PathVariable String merchantId) {
+		return messageService.groupSendLogList(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/messageSendLog/{merchantId}/list", method = RequestMethod.GET)
@@ -120,60 +129,64 @@ public class MessageApi {
 	public MessageAutoSend getMessageAutoSend(@PathVariable String merchantId) {
 		return messageService.getMessageAutoSend(new ObjectId(merchantId));
 	}
-	
+
 	@RequestMapping(value = "/autoSend/messageInfo", method = RequestMethod.POST)
 	@ResponseBody
 	public String autoSend(@RequestBody MessageAutoSend messageAutoSend) {
 		messageService.saveMessageAutoSend(messageAutoSend);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/remindSend/{title}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindSend(@PathVariable String title,@PathVariable ObjectId merchantId ) throws Exception {
-		messageService.remindSend(title,merchantId);
+	public String remindSend(@PathVariable String title, @PathVariable ObjectId merchantId) throws Exception {
+		messageService.remindSend(title, merchantId);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/remindSend/sn/{sn}/{title}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindSend(@PathVariable String title,@PathVariable String sn ) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
-		messageService.remindSend(title,merchant.getId());
+	public String remindSend(@PathVariable String title, @PathVariable String sn) throws Exception {
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
+		messageService.remindSend(title, merchant.getId());
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/remindIgnore/sn/{sn}/{title}", method = RequestMethod.GET)
 	@ResponseBody
-	public String remindIgnore(@PathVariable String title,@PathVariable String sn ) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
-		messageService.ignoreSendMessages(title,merchant.getId());
+	public String remindIgnore(@PathVariable String title, @PathVariable String sn) throws Exception {
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
+		messageService.ignoreSendMessages(title, merchant.getId());
 		return ReturnConstants.SUCCESS;
 	}
-	//TODO 方法名要改
+
+	// TODO 方法名要改
 	@RequestMapping(value = "/ignoreSendMessages/{title}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public String ignoreSendMessages(@PathVariable String title, @PathVariable ObjectId merchantId) {
-		messageService.ignoreSendMessages(title,merchantId);
+		messageService.ignoreSendMessages(title, merchantId);
 		return ReturnConstants.SUCCESS;
 	}
-	
-	public static class CustomerMessageDto{
+
+	public static class CustomerMessageDto {
 		private String customerPhone;
 		private String content;
-		
+
 		public String getCustomerPhone() {
 			return customerPhone;
 		}
+
 		public void setCustomerPhone(String customerPhone) {
 			this.customerPhone = customerPhone;
 		}
+
 		public String getContent() {
 			return content;
 		}
+
 		public void setContent(String content) {
 			this.content = content;
 		}
 	}
-	
+
 }

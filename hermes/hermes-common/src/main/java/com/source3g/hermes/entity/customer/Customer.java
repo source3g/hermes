@@ -190,34 +190,29 @@ public class Customer extends AbstractEntity {
 	}
 
 	@JsonIgnore
-	public String toInsertOrUpdateSql() throws JsonGenerationException,
-			JsonMappingException, IOException {
-		// FilterProvider filterProvider = new
-		// SimpleFilterProvider().addFilter("filterPropreties",
-		// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
-		// "callRecords", "operateTime"));
-		// SimpleBeanPropertyFilter filter =
-		// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
-		// "callRecords", "operateTime");
-		// FilterProvider fp = new
-		// SimpleFilterProvider().addFilter("filterForSync", filter);
+	// public String toInsertOrUpdateSql() throws
+	// JsonGenerationException,JsonMappingException, IOException {
+	// FilterProvider filterProvider = new
+	// SimpleFilterProvider().addFilter("filterPropreties",
+	// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
+	// "callRecords", "operateTime"));
+	// SimpleBeanPropertyFilter filter =
+	// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
+	// "callRecords", "operateTime");
+	// FilterProvider fp = new
+	// SimpleFilterProvider().addFilter("filterForSync", filter);
+	public String toInsertOrUpdateSql() throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0,
-				1, null));
+		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
 		module.addSerializer(ObjectId.class, new ObjectIdSerializer());
 		module.addDeserializer(ObjectId.class, new ObjectIdDeserializer());
 		module.addSerializer(Date.class, new CustomDateSerializer());
 		module.addDeserializer(Date.class, new CustomDateDeserializer());
 
-		objectMapper
-				.getSerializationConfig()
-				.setSerializationInclusion(
-						org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
+		objectMapper.getSerializationConfig().setSerializationInclusion(org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion.NON_NULL);
 		objectMapper.registerModule(module);
-		SerializationConfig serializationConfig = objectMapper
-				.getSerializationConfig();
-		serializationConfig.addMixInAnnotations(CustomerDto.class,
-				CustomerForSyncIntf.class);
+		SerializationConfig serializationConfig = objectMapper.getSerializationConfig();
+		serializationConfig.addMixInAnnotations(CustomerDto.class, CustomerForSyncIntf.class);
 		CustomerDto customerDto = new CustomerDto();
 		EntityUtils.copyCustomerEntityToDto(this, customerDto);
 		String strJson = objectMapper.writer().writeValueAsString(customerDto);
@@ -226,17 +221,7 @@ public class Customer extends AbstractEntity {
 		if (lastCallInTime != null) {
 			lastCallInTimeStr = sdf.format(lastCallInTime);
 		}
-		return "REPLACE INTO CUSTOMER (phone,name,sex,lastCallInTime ,callInCount ,content) values('"
-				+ phone
-				+ "','"
-				+ name
-				+ "','"
-				+ sex
-				+ "','"
-				+ lastCallInTimeStr
-				+ "','"
-				+ customerDto.getCallInCount()
-				+ "','" + strJson + "'); ";
+		return "REPLACE INTO CUSTOMER (phone,name,sex,lastCallInTime ,callInCount,favorite,groupId ,content) values('" + phone + "','" + name + "','" + sex + "','" + lastCallInTimeStr + "','" + customerDto.getCallInCount() + "','" + (favorite == null ? "false" : favorite) + "','" + (customerGroup == null ? "" : customerGroup.getId()) + "','" + strJson + "'); ";
 	}
 
 	@JsonIgnore
@@ -254,17 +239,14 @@ public class Customer extends AbstractEntity {
 
 	public class ObjectIdSerializer extends JsonSerializer<ObjectId> {
 		@Override
-		public void serialize(ObjectId value, JsonGenerator jgen,
-				SerializerProvider provider) throws IOException,
-				JsonProcessingException {
+		public void serialize(ObjectId value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 			jgen.writeString(value.toString());
 		}
 	}
 
 	public class ObjectIdDeserializer extends JsonDeserializer<ObjectId> {
 		@Override
-		public ObjectId deserialize(JsonParser jp, DeserializationContext ctxt)
-				throws IOException, JsonProcessingException {
+		public ObjectId deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			String objectIdStr = jp.getText();
 			if (StringUtils.isEmpty(objectIdStr)) {
 				return null;
@@ -275,11 +257,8 @@ public class Customer extends AbstractEntity {
 
 	public class CustomDateSerializer extends JsonSerializer<Date> {
 		@Override
-		public void serialize(Date value, JsonGenerator jgen,
-				SerializerProvider provider) throws IOException,
-				JsonProcessingException {
-			SimpleDateFormat formatterLong = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss");
+		public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+			SimpleDateFormat formatterLong = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String formattedDate = formatterLong.format(value);
 			jgen.writeString(formattedDate);
 		}
@@ -287,8 +266,7 @@ public class Customer extends AbstractEntity {
 
 	public class CustomDateDeserializer extends JsonDeserializer<Date> {
 		@Override
-		public Date deserialize(JsonParser jp, DeserializationContext ctxt)
-				throws IOException, JsonProcessingException {
+		public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			String unformatedDate = jp.getText();
 			return DateFormateUtils.getDate(unformatedDate);
 		}

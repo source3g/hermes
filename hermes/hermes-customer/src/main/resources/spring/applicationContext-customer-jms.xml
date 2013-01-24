@@ -14,38 +14,6 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 		<property name="clientId" value="clientId_customer" />
 	</bean>
 
-	<bean id="customerDelTopicListenerConnectionFactory"
-		class="org.springframework.jms.connection.CachingConnectionFactory">
-		<constructor-arg ref="jmsFactory" />
-		<!-- <property name="exceptionListener" ref="jmsExceptionListener" /> -->
-		<property name="sessionCacheSize" value="100" />
-		<property name="clientId" value="clientId_customer1" />
-	</bean>
-
-	<bean id="customerAddListenerContainer"
-		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="customerTopicListenerConnectionFactory" />
-		<property name="destination" ref="customerDestination" />
-		<property name="pubSubDomain" value="true" />
-		<property name="sessionTransacted" value="true" />
-		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
-		<property name="messageListener" ref="customerMessageListener" />
-		<property name="subscriptionDurable" value="true" />
-		<property name="durableSubscriptionName" value="clientId_customer" />
-	</bean>
-
-
-	<bean id="customerDelListenerContainer"
-		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="connectionFactory" />
-		<property name="destination" ref="customerDestination" />
-		<property name="pubSubDomain" value="true" />
-		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
-		<property name="messageListener" ref="customerDelMessageListener" />
-		<property name="subscriptionDurable" value="true" />
-		<property name="durableSubscriptionName" value="clientId_customer1" />
-	</bean>
-	
 	<bean id="customerImportListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
 		<property name="connectionFactory" ref="customerTopicListenerConnectionFactory" />
