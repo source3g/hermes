@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.message.service.MessageService;
