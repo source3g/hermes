@@ -1,30 +1,32 @@
 package com.source3g.hermes.message;
 
-import java.io.Serializable;
-
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.source3g.hermes.entity.message.GroupSendLog;
+import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
-
-public class ShortMessageMessage implements Serializable {
+@Document
+public class ShortMessageRecord extends AbstractEntity {
 
 	private static final long serialVersionUID = 4430012271716760588L;
-
+	
+	private String msgId;
 	private String phone;
 	private String content;
 	private MessageType messageType;
 	private ObjectId merchantId;
 	private ObjectId messageSendLogId;//单独发送消息时的记录，群发时不产生记录
-	private GroupSendLog groupSendLog;
-
+	private ObjectId groupLogId;//群发消息时的记录，单发时没有
 	
-	public GroupSendLog getGroupSendLog() {
-		return groupSendLog;
+	private MessageStatus status;
+	
+	public ObjectId getGroupLogId() {
+		return groupLogId;
 	}
 
-	public void setGroupSendLog(GroupSendLog groupSendLog) {
-		this.groupSendLog = groupSendLog;
+	public void setGroupLogId(ObjectId groupLogId) {
+		this.groupLogId = groupLogId;
 	}
 
 	public String getContent() {
@@ -65,6 +67,22 @@ public class ShortMessageMessage implements Serializable {
 
 	public void setMessageSendLogId(ObjectId messageSendLogId) {
 		this.messageSendLogId = messageSendLogId;
+	}
+
+	public String getMsgId() {
+		return msgId;
+	}
+
+	public void setMsgId(String msgId) {
+		this.msgId = msgId;
+	}
+
+	public MessageStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MessageStatus status) {
+		this.status = status;
 	}
 
 }

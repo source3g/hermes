@@ -39,7 +39,7 @@ public class DateFormateUtils {
 		cStart.setTime(startTime);
 		cEnd.setTime(endTime);
 		result.add(sdf.format(startTime));
-		while (cStart.get(Calendar.DAY_OF_YEAR)!= cEnd.get(Calendar.DAY_OF_YEAR)||cStart.get(Calendar.MONTH)!= cEnd.get(Calendar.MONTH)) {
+		while (cStart.get(Calendar.DAY_OF_YEAR) != cEnd.get(Calendar.DAY_OF_YEAR) || cStart.get(Calendar.MONTH) != cEnd.get(Calendar.MONTH)) {
 			cStart.add(Calendar.DAY_OF_YEAR, 1);
 			result.add(sdf.format(cStart.getTime()));
 		}
@@ -71,19 +71,21 @@ public class DateFormateUtils {
 		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 58);
 		return calendar.getTime();
 	}
-	
+
 	/**
 	 * 计算endTime,取0点0分0秒
 	 */
-	
-	public static Date calEndTime(Date startTime,int advancedDays){
+
+	public static Date calEndTime(Date startTime, int advancedDays) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startTime);
-		calendar.add(Calendar.DAY_OF_MONTH,
-				advancedDays);
-		Date endTime = DateFormateUtils.getStartDateOfDay(calendar
-				.getTime());
+		calendar.add(Calendar.DAY_OF_MONTH, advancedDays);
+		Date endTime = DateFormateUtils.getStartDateOfDay(calendar.getTime());
 		return endTime;
 	}
 
+	public static String getTimeStampStr() {
+		Date date = new Date();
+		return String.valueOf(date.getTime());
+	}
 }

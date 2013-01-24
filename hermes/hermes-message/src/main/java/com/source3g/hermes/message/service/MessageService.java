@@ -32,6 +32,7 @@ import com.mongodb.DBObject;
 import com.mongodb.DBRef;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
+import com.source3g.hermes.dto.message.StatisticObject;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.Remind;
@@ -46,7 +47,7 @@ import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.enums.PhoneOperator;
 import com.source3g.hermes.enums.Sex;
-import com.source3g.hermes.message.ShortMessageMessage;
+import com.source3g.hermes.message.ShortMessageRecord;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.DateFormateUtils;
@@ -77,9 +78,6 @@ public class MessageService extends BaseService {
 	@SuppressWarnings("unused")
 	@Value(value = "message.itemid")
 	private String itemId;
-	@SuppressWarnings("unused")
-	@Value(value = "message.msgid")
-	private String msgId;
 	@SuppressWarnings("unused")
 	@Value(value = "message.gatename.cm")
 	private String cmGateName;
@@ -162,13 +160,14 @@ public class MessageService extends BaseService {
 
 	private GroupSendLog genGroupSendLog(Set<Customer> customers, String content, ObjectId merchantId) {
 		GroupSendLog groupSendLog = new GroupSendLog();
+		groupSendLog.setId(ObjectId.get());
 		groupSendLog.setMerchantId(merchantId);
 		groupSendLog.setContent(content);
 		groupSendLog.setSendCount(customers.size());
 		groupSendLog.setSendTime(new Date());
 		groupSendLog.setId(ObjectId.get());
-		groupSendLog.setSendSuccessCount(0);
-		mongoTemplate.insert(groupSendLog);
+		groupSendLog.setSuccessCount(0);
+		mongoTemplate.save(groupSendLog);
 		return groupSendLog;
 	}
 
@@ -191,14 +190,14 @@ public class MessageService extends BaseService {
 		sendMessage(c, proceedContent, MessageType.短信发送,null);
 	}
 
-	public void sendMessage(Customer c, String content, MessageType messageType,GroupSendLog groupSendLog) {
-		ShortMessageMessage message = new ShortMessageMessage();
+	public void sendMessage(Customer c, String content, MessageType messageType,ObjectId groupLogId) {
+		ShortMessageRecord message = new ShortMessageRecord();
 		message.setContent(content);
 		message.setPhone(c.getPhone());
 		message.setMessageType(messageType);
 		message.setMerchantId(c.getMerchantId());
-		if(groupSendLog!=null){
-			message.setGroupSendLog(groupSendLog);
+		if(groupLogId!=null){
+			message.setGroupLogId(groupLogId);
 		}
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
@@ -211,7 +210,7 @@ public class MessageService extends BaseService {
 		// 生成群发记录
 		GroupSendLog groupSendLog=genGroupSendLog(customersSet, content, merchant.getId());
 		for (Customer c : customersSet) {
-			sendMessage(c, processContent(merchant, c, content), MessageType.群发, groupSendLog);
+			sendMessage(c, processContent(merchant, c, content), MessageType.群发, groupSendLog.getId());
 		}
 	}
 
@@ -267,28 +266,34 @@ public class MessageService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, MessageSendLog.class);
 	}
 
-	public MessageStatus send(String phoneNumber, String content) {
+	public MessageStatus send(ShortMessageRecord shortMessageRecord) {
+		String phoneNumber=shortMessageRecord.getPhone();
+		String content=shortMessageRecord.getContent();
+		String msgId=shortMessageRecord.getMsgId();
+		return send(msgId,phoneNumber,content);
+	}
+	
+	public MessageStatus send(String msgId, String phoneNumber, String content) {
 		if (PhoneOperator.移动.equals(PhoneUtils.getOperatior(phoneNumber))) {
-			return sendByCm(phoneNumber, content);
+			return sendByCm( msgId,phoneNumber, content);
 		}
 		if (PhoneOperator.联通.equals(PhoneUtils.getOperatior(phoneNumber))) {
-			return sendByCu(phoneNumber, content);
+			return sendByCu(msgId,phoneNumber, content);
 		}
 		if (PhoneOperator.电信.equals(PhoneUtils.getOperatior(phoneNumber))) {
-			return sendByCt(phoneNumber, content);
+			return sendByCt(msgId,phoneNumber, content);
 		}
 		logger.error("向" + phoneNumber + "发送消息" + content+"失败，电话号码有误");
 		return MessageStatus.电话号码有误;
 	}
-
-	private MessageStatus sendByCt(String phoneNumber, String content) {
-		logger.debug("通过电信向" + phoneNumber + "发送" + content);
-		sendByCu(phoneNumber, content);
+	private MessageStatus sendByCt(String msgId,String phoneNumber, String content) {
+		logger.debug("通过电信向" + phoneNumber + "发送" + content+"msgId:"+msgId);
+		sendByCu(msgId,phoneNumber, content);
 		return MessageStatus.已发送;
 	}
 
-	private MessageStatus sendByCu(String phoneNumber, String content) {
-		System.out.println("通过联通向" + phoneNumber + "发送" + content);
+	private MessageStatus sendByCu(String msgId,String phoneNumber, String content) {
+		logger.error("通过联通向" + phoneNumber + "发送" + content+"msgId:"+msgId);
 
 		TcpCommTrans tcp = null;
 		try {
@@ -307,7 +312,6 @@ public class MessageService extends BaseService {
 		command.AddNewItem("feetype", "1");
 		command.AddNewItem("usernumber", phoneNumber);
 		try {
-
 			byte bytes[] = content.getBytes("GBK");//
 			command.AddNewItem("msg", bytes, true, "GBK");
 		} catch (UnsupportedEncodingException e1) {
@@ -323,9 +327,9 @@ public class MessageService extends BaseService {
 		return MessageStatus.已发送;
 	}
 
-	private MessageStatus sendByCm(String phoneNumber, String content) {
-		System.out.println("通过移动向" + phoneNumber + "发送" + content);
-		sendByCu(phoneNumber, content);
+	private MessageStatus sendByCm(String msgId,String phoneNumber, String content) {
+		logger.error("通过移动向" + phoneNumber + "发送" + content+"msgId:"+msgId);
+		sendByCu(msgId,phoneNumber, content);
 		return MessageStatus.已发送;
 	}
 
@@ -342,10 +346,10 @@ public class MessageService extends BaseService {
 
 	public MessageStatisticsDto findMessageStastics(ObjectId merchantId) {
 		MessageStatisticsDto messageStatisticsDto = new MessageStatisticsDto();
-		messageStatisticsDto.setHandUpMessageSentCountAWeek(findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信));
-		messageStatisticsDto.setMessageGroupSentCountAWeek(findMessageSentCountFromToday(merchantId, 7, MessageType.群发));
-		messageStatisticsDto.setHandUpMessageSentCountThreeDay(findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信));
-		messageStatisticsDto.setMessageGroupSentCountThreeDay(findMessageSentCountFromToday(merchantId, 3, MessageType.群发));
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObject("一周挂机短信发送数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObject("一周短信群发数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObject("三天挂机短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObject("三天短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
 		return messageStatisticsDto;
 	}
 
@@ -449,10 +453,16 @@ public class MessageService extends BaseService {
 		return customers;
 	}
 
-	public void updateMessageSendLog(ShortMessageMessage shortMessageMessage, MessageStatus status) {
+	public void updateMessageSendLog(ShortMessageRecord shortMessageMessage, MessageStatus status) {
 		if (shortMessageMessage.getMessageSendLogId() != null) {
 			updateLog(shortMessageMessage.getMessageSendLogId(), new Date(), status);
 		}
+	}
+
+	public void updateShortMessageRecord(String msgId, MessageStatus messageStatus) {
+		Update update=new Update();
+		update.set("status", messageStatus);
+		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)),update, ShortMessageRecord.class);
 	}
 
 }

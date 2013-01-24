@@ -13,9 +13,11 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.enums.MessageStatus;
-import com.source3g.hermes.message.ShortMessageMessage;
+import com.source3g.hermes.message.ShortMessageRecord;
 import com.source3g.hermes.message.service.MessageService;
+import com.source3g.hermes.utils.DateFormateUtils;
 
 @Component
 public class MessageSendListener implements MessageListener {
@@ -32,29 +34,35 @@ public class MessageSendListener implements MessageListener {
 			ObjectMessage objectMessage = (ObjectMessage) message;
 			try {
 				Object obj = objectMessage.getObject();
-				if (obj instanceof ShortMessageMessage) {
-					ShortMessageMessage shortMessageMessage = (ShortMessageMessage) obj;
+				if (obj instanceof ShortMessageRecord) {
+					ShortMessageRecord shortMessageRecord = (ShortMessageRecord) obj;
 					try {
-						Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(shortMessageMessage.getMerchantId())), Merchant.class);
+						Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(shortMessageRecord.getMerchantId())), Merchant.class);
 						if (merchant == null) {
-							return;
+							throw new Exception("商户不存在");
 						}
 						if (merchant.getShortMessage().getSurplusMsgCount() <= 0) {
-							messageService.updateMessageSendLog(shortMessageMessage,MessageStatus.余额不足发送失败);
+							messageService.updateMessageSendLog(shortMessageRecord, MessageStatus.余额不足发送失败);
+							throw new Exception("余额不足发送失败");
 						} else {
-							MessageStatus status = messageService.send(shortMessageMessage.getPhone(), shortMessageMessage.getContent());
-							messageService.updateMessageSendLog(shortMessageMessage,status);
+							shortMessageRecord.setMsgId(DateFormateUtils.getTimeStampStr());
+							MessageStatus status = messageService.send(shortMessageRecord);
+							messageService.updateMessageSendLog(shortMessageRecord, status);
 							if (MessageStatus.已发送.equals(status)) {
-								Update update = new Update();
-								update.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
-								mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
-								int successCount=shortMessageMessage.getGroupSendLog().getSendSuccessCount();
-								shortMessageMessage.getGroupSendLog().setSendSuccessCount(successCount+1);
-								mongoTemplate.save(shortMessageMessage.getGroupSendLog());
+								Update updateSurplus = new Update();
+								updateSurplus.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
+								mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), updateSurplus, Merchant.class);
+								Update updateGroupLog = new Update();
+								updateGroupLog.inc("successCount", 1);
+								mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(shortMessageRecord.getGroupLogId())), updateGroupLog, GroupSendLog.class);
+								mongoTemplate.save(shortMessageRecord);
 							}
 						}
 					} catch (Exception e) {
-						messageService.updateMessageSendLog(shortMessageMessage,MessageStatus.发送失败);
+						messageService.updateMessageSendLog(shortMessageRecord, MessageStatus.发送失败);
+						shortMessageRecord.setStatus(MessageStatus.发送失败);
+					}finally{
+						mongoTemplate.save(shortMessageRecord);
 					}
 				}
 			} catch (JMSException e) {

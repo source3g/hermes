@@ -1,4 +1,4 @@
-package com.source3g.hermes.sync.entity;
+package com.source3g.hermes.entity.sync;
 
 import java.util.Date;
 
@@ -6,10 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
+
 /**
  * 设备同步状态
  * 
- * @author Administrator 接收到设备请求后，记录本次请求时间，并将上次更新的时间以后的增量返回
+ * @author zhaobin 接收到设备请求后，记录本次请求时间，并将上次更新的时间以后的增量返回
  * 
  * 
  */
@@ -22,8 +23,8 @@ public class DeviceStatus extends AbstractEntity {
 	private Long lastTaskId;// 上次请求的taskId
 	private Long requestTaskId;// 本次请求的taskId
 
-	private Date lastUpdateTime;// 上次更新时间
-	private Date requestTime;// 本次请求时间
+	private Date lastUpdateTime;// 上次更新时间 //并没有起作用
+	private Date requestTime;// 本次请求时间 //并没有起作用
 
 	private int failedCount; // 当前请求的taskId失败次数
 	/**
@@ -89,3 +90,4 @@ public class DeviceStatus extends AbstractEntity {
 	}
 
 }
+

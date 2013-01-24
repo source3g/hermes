@@ -180,7 +180,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public ModelAndView update(Customer customer) {
+	public ModelAndView update(Customer customer) throws Exception {
 		String result = updateCustomer(customer);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
@@ -192,7 +192,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/updateNew", method = RequestMethod.POST)
-	public ModelAndView updateNew(Customer customer) {
+	public ModelAndView updateNew(Customer customer) throws Exception {
 		String result = updateCustomer(customer);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
@@ -203,9 +203,10 @@ public class CustomerController {
 		}
 	}
 
-	private String updateCustomer(Customer customer) {
+	private String updateCustomer(Customer customer) throws Exception {
 		handleCustomer(customer);
-		String uri = ConfigParams.getBaseUrl() + "customer/update/";
+		Merchant merchant=LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "customer/update/"+merchant.getId()+"/";
 		HttpEntity<Customer> httpEntity = new HttpEntity<Customer>(customer);
 		String result = restTemplate.postForObject(uri, httpEntity, String.class);
 		return result;

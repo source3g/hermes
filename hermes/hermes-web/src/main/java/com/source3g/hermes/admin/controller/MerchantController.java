@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.dto.sync.DeviceStatusDto;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
@@ -45,18 +46,30 @@ public class MerchantController {
 		return new ModelAndView("admin/merchant/add");
 	}
 
+	@RequestMapping(value = "detail/{merchantId}", method = RequestMethod.GET)
+	public ModelAndView showDetail(@PathVariable String merchantId) {
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchantId + "/";
+		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("merchant", merchant);
+		String devicesUrl = ConfigParams.getBaseUrl() + "device/sync/status/" + merchantId + "/";
+		DeviceStatusDto[] deviceStatusDtos = restTemplate.getForObject(devicesUrl, DeviceStatusDto[].class);
+		model.put("deviceStatusDtos", deviceStatusDtos);
+		return new ModelAndView("admin/merchant/merchantDetail", model);
+	}
+
 	// 验证商户账号是否存在
 	@RequestMapping(value = "accountValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean accountValidate(String account,String oldAccount) {
-		if(StringUtils.isNotEmpty(account)&&account.equals(oldAccount)){
+	public Boolean accountValidate(String account, String oldAccount) {
+		if (StringUtils.isNotEmpty(account) && account.equals(oldAccount)) {
 			return true;
 		}
 		String uri = ConfigParams.getBaseUrl() + "merchant/accountValidate/" + account + "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public ModelAndView add(@Valid Merchant merchant, BindingResult errorResult) {
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -105,7 +118,7 @@ public class MerchantController {
 		restTemplate.getForObject(uri, String.class);
 		return new ModelAndView("redirect:/admin/merchant/list/");
 	}
-	
+
 	@RequestMapping(value = "/toSetDictionary/{merchantId}", method = RequestMethod.GET)
 	public ModelAndView setDictionary(@PathVariable String merchantId) {
 		String uri = ConfigParams.getBaseUrl() + "merchant/merchantRemindList/" + merchantId + "/";
@@ -242,7 +255,7 @@ public class MerchantController {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo+"&merchantId="+merchant.getId();
+		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo + "&merchantId=" + merchant.getId();
 		Page page = restTemplate.getForObject(uriMsgLog, Page.class);
 		model.put("page", page);
 		model.put("merchant", merchant);

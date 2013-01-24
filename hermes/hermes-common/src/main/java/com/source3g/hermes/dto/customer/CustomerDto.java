@@ -29,14 +29,14 @@ public class CustomerDto {
 
 	private List<RemindDto> reminds;
 
-	public int getCallInCount() {
+	public String getCallInCount() {
 		if (callRecords == null) {
-			return 0;
+			return "0";
 		}
-		return callRecords.size();
+		return String.valueOf(callRecords.size());
 	}
 
-	public void setCallInCount(int callInCount) {
+	public void setCallInCount(String callInCount) {
 	}
 
 	public String getName() {
@@ -158,7 +158,8 @@ public class CustomerDto {
 	public void setFavorite(Boolean favorite) {
 		if (favorite == null) {
 			this.favorite = "false";
+		} else {
+			this.favorite = favorite.toString();
 		}
-		this.favorite = favorite.toString();
 	}
 }

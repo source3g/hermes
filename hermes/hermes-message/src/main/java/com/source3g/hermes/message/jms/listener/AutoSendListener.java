@@ -20,6 +20,7 @@ import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.message.service.MessageService;
+import com.source3g.hermes.utils.DateFormateUtils;
 
 @Component
 public class AutoSendListener implements MessageListener {
@@ -64,7 +65,7 @@ public class AutoSendListener implements MessageListener {
 						mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
 						
 						String content1=messageService.processContent(merchant, customer, content);
-						MessageStatus status = messageService.send(phone, content1);
+						MessageStatus status = messageService.send(DateFormateUtils.getTimeStampStr(),phone, content1);
 						messageService.genMessageSendLog(customer, merchant.getId(), 1, content, MessageType.挂机短信, status);
 					}
 				}

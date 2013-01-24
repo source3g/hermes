@@ -25,10 +25,10 @@ import com.source3g.hermes.constants.TaskConstants;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.sync.DeviceStatus;
+import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.enums.TaskStatus;
-import com.source3g.hermes.sync.entity.DeviceStatus;
 import com.source3g.hermes.sync.entity.TaskLog;
-import com.source3g.hermes.sync.entity.TaskPackage;
 import com.source3g.hermes.sync.utils.TarGZipUtils;
 import com.source3g.hermes.utils.MD5;
 
@@ -133,6 +133,7 @@ public class TaskService extends CommonBaseService {
 		DeviceStatus deviceStatus = findStatus(sn);
 		if (result == true) {
 			deviceStatus.setLastTaskId(deviceStatus.getRequestTaskId());
+			deviceStatus.setLastUpdateTime(new Date());
 			deviceStatus.setFailedCount(0);
 			TaskLog taskLog = new TaskLog();
 			taskLog.setDeviceSn(deviceStatus.getDeviceSn());
