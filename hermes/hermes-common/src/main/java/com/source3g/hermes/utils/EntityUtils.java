@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.bson.types.ObjectId;
 
 import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.dto.customer.RemindDto;
@@ -55,11 +56,11 @@ public class EntityUtils {
 		customerDto.setReminds(reminds);
 	}
 	
-	public static void copyCustomerDtoToEntity(CustomerDto customerDto,Customer customer){
+	public static void copyCustomerDtoToEntity(CustomerDto customerDto,Customer customer,ObjectId merchantId){
 		if (customer == null || customerDto == null) {
 			return;
 		}
-		
+		customer.setMerchantId(merchantId);
 		customer.setAddress(customerDto.getAddress());
 		customer.setBirthday(customerDto.getBirthday());
 		customer.setBlackList(customerDto.isBlackList());

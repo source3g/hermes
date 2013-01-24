@@ -1,4 +1,4 @@
-package com.source3g.hermes.sync.entity;
+package com.source3g.hermes.entity.sync;
 
 import java.util.Date;
 

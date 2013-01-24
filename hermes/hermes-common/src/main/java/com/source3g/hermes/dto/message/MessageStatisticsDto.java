@@ -1,40 +1,32 @@
 package com.source3g.hermes.dto.message;
 
 public class MessageStatisticsDto {
-	private long handUpMessageSentCountThreeDay;
-	private long handUpMessageSentCountAWeek;
-	private long messageGroupSentCountThreeDay;
-	private long messageGroupSentCountAWeek;
-
-	public long getHandUpMessageSentCountThreeDay() {
+	private StatisticObject handUpMessageSentCountThreeDay;
+	private StatisticObject handUpMessageSentCountAWeek;
+	private StatisticObject messageGroupSentCountThreeDay;
+	private StatisticObject messageGroupSentCountAWeek;
+	public StatisticObject getHandUpMessageSentCountThreeDay() {
 		return handUpMessageSentCountThreeDay;
 	}
-
-	public void setHandUpMessageSentCountThreeDay(long handUpMessageSentCountThreeDay) {
+	public void setHandUpMessageSentCountThreeDay(StatisticObject handUpMessageSentCountThreeDay) {
 		this.handUpMessageSentCountThreeDay = handUpMessageSentCountThreeDay;
 	}
-
-	public long getHandUpMessageSentCountAWeek() {
+	public StatisticObject getHandUpMessageSentCountAWeek() {
 		return handUpMessageSentCountAWeek;
 	}
-
-	public void setHandUpMessageSentCountAWeek(long handUpMessageSentCountAWeek) {
+	public void setHandUpMessageSentCountAWeek(StatisticObject handUpMessageSentCountAWeek) {
 		this.handUpMessageSentCountAWeek = handUpMessageSentCountAWeek;
 	}
-
-	public long getMessageGroupSentCountThreeDay() {
+	public StatisticObject getMessageGroupSentCountThreeDay() {
 		return messageGroupSentCountThreeDay;
 	}
-
-	public void setMessageGroupSentCountThreeDay(long messageGroupSentCountThreeDay) {
+	public void setMessageGroupSentCountThreeDay(StatisticObject messageGroupSentCountThreeDay) {
 		this.messageGroupSentCountThreeDay = messageGroupSentCountThreeDay;
 	}
-
-	public long getMessageGroupSentCountAWeek() {
+	public StatisticObject getMessageGroupSentCountAWeek() {
 		return messageGroupSentCountAWeek;
 	}
-
-	public void setMessageGroupSentCountAWeek(long messageGroupSentCountAWeek) {
+	public void setMessageGroupSentCountAWeek(StatisticObject messageGroupSentCountAWeek) {
 		this.messageGroupSentCountAWeek = messageGroupSentCountAWeek;
 	}
 

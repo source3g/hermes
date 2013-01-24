@@ -68,16 +68,16 @@
 
 			$.get("${pageContext.request.contextPath}/merchant/statistics/", showStatistics);
 			function showStatistics(data) {
-				$("#editedCustomerCount").html(data.customerStatistics.editedCustomerCount);
-				$("#uneditedCustomerCount").html(data.customerStatistics.uneditedCustomerCount);
-				$("#editedCallInCountThreeDay").html(data.customerStatistics.editedCallInCountThreeDay);
-				$("#uneditedCallInCountThreeDay").html(data.customerStatistics.uneditedCallInCountThreeDay);
-				$("#editedCallInCountAWeek").html(data.customerStatistics.editedCallInCountAWeek);
-				$("#uneditedCallInCountAWeek").html(data.customerStatistics.uneditedCallInCountAWeek);
-				$("#handUpMessageSentCountThreeDay").html(data.messageStatistics.handUpMessageSentCountThreeDay);
-				$("#handUpMessageSentCountAWeek").html(data.messageStatistics.handUpMessageSentCountAWeek);
-				$("#messageGroupSentCountThreeDay").html(data.messageStatistics.messageGroupSentCountThreeDay);
-				$("#messageGroupSentCountAWeek").html(data.messageStatistics.messageGroupSentCountAWeek);
+				$("#editedCustomerCount").html(data.customerStatistics.editedCustomerCount.value);
+				$("#uneditedCustomerCount").html(data.customerStatistics.uneditedCustomerCount.value);
+				$("#editedCallInCountThreeDay").html(data.customerStatistics.editedCallInCountThreeDay.value);
+				$("#uneditedCallInCountThreeDay").html(data.customerStatistics.uneditedCallInCountThreeDay.value);
+				$("#editedCallInCountAWeek").html(data.customerStatistics.editedCallInCountAWeek.value);
+				$("#uneditedCallInCountAWeek").html(data.customerStatistics.uneditedCallInCountAWeek.value);
+				$("#handUpMessageSentCountThreeDay").html(data.messageStatistics.handUpMessageSentCountThreeDay.value);
+				$("#handUpMessageSentCountAWeek").html(data.messageStatistics.handUpMessageSentCountAWeek.value);
+				$("#messageGroupSentCountThreeDay").html(data.messageStatistics.messageGroupSentCountThreeDay.value);
+				$("#messageGroupSentCountAWeek").html(data.messageStatistics.messageGroupSentCountAWeek.value);
 			}
 		});
 	</script>

@@ -27,6 +27,7 @@ import com.hongxun.pub.DataCommand;
 import com.hongxun.pub.tcptrans.TcpCommTrans;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
+import com.source3g.hermes.dto.message.StatisticObject;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
@@ -382,10 +383,10 @@ public class MessageService extends BaseService {
 
 	public MessageStatisticsDto findMessageStastics(ObjectId merchantId) {
 		MessageStatisticsDto messageStatisticsDto = new MessageStatisticsDto();
-		messageStatisticsDto.setHandUpMessageSentCountAWeek(findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信));
-		messageStatisticsDto.setMessageGroupSentCountAWeek(findMessageSentCountFromToday(merchantId, 7, MessageType.群发));
-		messageStatisticsDto.setHandUpMessageSentCountThreeDay(findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信));
-		messageStatisticsDto.setMessageGroupSentCountThreeDay(findMessageSentCountFromToday(merchantId, 3, MessageType.群发));
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObject("一周挂机短信发送数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObject("一周短信群发数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObject("三天挂机短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObject("三天短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
 		return messageStatisticsDto;
 	}
 

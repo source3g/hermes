@@ -163,12 +163,12 @@ public class CustomerApi {
 		return ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value = "/update/sn/{sn}", method = RequestMethod.POST)
+	@RequestMapping(value = "/save/sn/{sn}", method = RequestMethod.POST)
 	@ResponseBody
-	public String updateByDto(@RequestBody CustomerDto customerDto,@PathVariable String sn) throws Exception {
+	public String saveBySn(@RequestBody CustomerDto customerDto,@PathVariable String sn) throws Exception {
 		logger.debug("update customer....");
 		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
-		customerService.updateDto(customerDto,merchant.getId());
+		customerService.saveBySn(customerDto,merchant.getId());
 		return ReturnConstants.SUCCESS;
 	}
 
