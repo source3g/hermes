@@ -368,4 +368,29 @@ public class CustomerApi {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return customerService.findTodayReminds(merchant.getId());
 	}
+
+	// @Autowired
+	// private MongoTemplate mongoTemplate;
+	//
+	// @RequestMapping(value = "/test", method = RequestMethod.GET)
+	// @ResponseBody
+	// public String test() throws Exception {
+	// DBCollection customers = mongoTemplate.getCollection(mongoTemplate
+	// .getCollectionName(Customer.class));
+	// BasicDBObject parameter = new BasicDBObject();
+	// List<ObjectId> ids=Arrays.asList( new
+	// ObjectId("50f8f68aa4fd98711331b4e5"), new
+	// ObjectId("50f37613a4fd309a8c4abfe9"));
+	// parameter.put("customerGroup.$id",new BasicDBObject("$in",ids));
+	// DBCursor item = customers.find(parameter);
+	// List<DBObject> db=new ArrayList<DBObject>();
+	// System.out.println(new Date().getTime());
+	// int i=0;
+	// while (item.hasNext()) {
+	// item.next();
+	// System.out.println(i++);
+	// }
+	// System.out.println(new Date().getTime());
+	// return ReturnConstants.SUCCESS+db.size();
+	// }
 }

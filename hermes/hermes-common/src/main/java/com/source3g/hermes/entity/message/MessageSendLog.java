@@ -3,9 +3,11 @@ package com.source3g.hermes.entity.message;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 @Document
@@ -13,7 +15,8 @@ public class MessageSendLog extends AbstractEntity{
 
 	private static final long serialVersionUID = -5667989745723926234L;
 	private String customerName;
-	private String customerGroupName;
+	@DBRef
+	private CustomerGroup customerGroup;
 	private String phone; // 电话号码
 	private int sendCount; // 发送数量
 	private Date sendTime; // 发送时间
@@ -30,13 +33,16 @@ public class MessageSendLog extends AbstractEntity{
 		this.customerName = customerName;
 	}
 
-	public String getCustomerGroupName() {
-		return customerGroupName;
+
+	public CustomerGroup getCustomerGroup() {
+		return customerGroup;
 	}
 
-	public void setCustomerGroupName(String customerGroupName) {
-		this.customerGroupName = customerGroupName;
+
+	public void setCustomerGroup(CustomerGroup customerGroup) {
+		this.customerGroup = customerGroup;
 	}
+
 
 	public String getPhone() {
 		return phone;

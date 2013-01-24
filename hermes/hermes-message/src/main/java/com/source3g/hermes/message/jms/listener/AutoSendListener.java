@@ -40,7 +40,9 @@ public class AutoSendListener implements MessageListener {
 					Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(callInMessage.getMerchantId())), Merchant.class);
 					MessageAutoSend messagecontent = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())), MessageAutoSend.class);
 
+					@SuppressWarnings("unused")
 					String customerName = null;
+					@SuppressWarnings("unused")
 					String customerGroupName = null;
 					String content = null;
 					Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phone).and("merchantId").is(merchant.getId())), Customer.class);
@@ -55,7 +57,7 @@ public class AutoSendListener implements MessageListener {
 						content = messagecontent.getNewMessageCotent();
 					}
 					if (merchant.getShortMessage().getSurplusMsgCount() <= 0) {
-						messageService.genMessageSendLog(customerName, customerGroupName, merchant.getId(), phone, 1, content, MessageType.挂机短信, MessageStatus.余额不足发送失败);
+						messageService.genMessageSendLog(customer, merchant.getId(), 1, content, MessageType.挂机短信, MessageStatus.余额不足发送失败);
 					} else {
 						Update update = new Update();
 						update.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
@@ -63,7 +65,7 @@ public class AutoSendListener implements MessageListener {
 						
 						String content1=messageService.processContent(merchant, customer, content);
 						MessageStatus status = messageService.send(phone, content1);
-						messageService.genMessageSendLog(customerName, customerGroupName, merchant.getId(), phone, 1, content, MessageType.挂机短信, status);
+						messageService.genMessageSendLog(customer, merchant.getId(), 1, content, MessageType.挂机短信, status);
 					}
 				}
 			} catch (JMSException e) {

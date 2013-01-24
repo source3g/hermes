@@ -12,11 +12,18 @@ public class GroupSendLog  extends AbstractEntity{
 	 */
 private static final long serialVersionUID = -1094950145584456608L;
 private int sendCount;// 发送数量
+private int sendSuccessCount; //发送成功数量
 private Date sendTime; // 发送时间
 private String content;//短信内容 
 private ObjectId merchantId;
 
 
+public int getSendSuccessCount() {
+	return sendSuccessCount;
+}
+public void setSendSuccessCount(int sendSuccessCount) {
+	this.sendSuccessCount = sendSuccessCount;
+}
 public ObjectId getMerchantId() {
 	return merchantId;
 }

@@ -49,8 +49,8 @@ public class Customer extends AbstractEntity {
 	private String qq;
 	private String email;
 	private String note;
-	
-	private Boolean favorite;//常用联系人
+
+	private Boolean favorite;// 常用联系人
 
 	private List<CallRecord> callRecords;
 
@@ -190,6 +190,17 @@ public class Customer extends AbstractEntity {
 	}
 
 	@JsonIgnore
+	// public String toInsertOrUpdateSql() throws
+	// JsonGenerationException,JsonMappingException, IOException {
+	// FilterProvider filterProvider = new
+	// SimpleFilterProvider().addFilter("filterPropreties",
+	// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
+	// "callRecords", "operateTime"));
+	// SimpleBeanPropertyFilter filter =
+	// SimpleBeanPropertyFilter.serializeAllExcept("otherPhones",
+	// "callRecords", "operateTime");
+	// FilterProvider fp = new
+	// SimpleFilterProvider().addFilter("filterForSync", filter);
 	public String toInsertOrUpdateSql() throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		SimpleModule module = new SimpleModule("dateModule", new Version(0, 0, 1, null));
@@ -205,12 +216,12 @@ public class Customer extends AbstractEntity {
 		CustomerDto customerDto = new CustomerDto();
 		EntityUtils.copyCustomerEntityToDto(this, customerDto);
 		String strJson = objectMapper.writer().writeValueAsString(customerDto);
-		SimpleDateFormat sdf=new SimpleDateFormat(Constants.DATE_FORMAT);
-		String lastCallInTimeStr="";
-		if(lastCallInTime!=null){
-			lastCallInTimeStr=sdf.format(lastCallInTime);
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
+		String lastCallInTimeStr = "";
+		if (lastCallInTime != null) {
+			lastCallInTimeStr = sdf.format(lastCallInTime);
 		}
-		return "REPLACE INTO CUSTOMER (phone,name,sex,lastCallInTime ,callInCount,favorite,groupId ,content) values('" + phone + "','"+name+"','"+sex+"','"+lastCallInTimeStr+"','"+customerDto.getCallInCount()+"','"+(favorite==null?"false":favorite)+"','"+(customerGroup==null?"":customerGroup.getId())+"','" + strJson + "'); ";
+		return "REPLACE INTO CUSTOMER (phone,name,sex,lastCallInTime ,callInCount,favorite,groupId ,content) values('" + phone + "','" + name + "','" + sex + "','" + lastCallInTimeStr + "','" + customerDto.getCallInCount() + "','" + (favorite == null ? "false" : favorite) + "','" + (customerGroup == null ? "" : customerGroup.getId()) + "','" + strJson + "'); ";
 	}
 
 	@JsonIgnore
@@ -259,6 +270,29 @@ public class Customer extends AbstractEntity {
 			String unformatedDate = jp.getText();
 			return DateFormateUtils.getDate(unformatedDate);
 		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj.getClass() == this.getClass()) {
+			return false;
+		}
+		if (this.phone == null) {
+			return false;
+		}
+		Customer c = (Customer) obj;
+		return c.getPhone().equals(c.getPhone());
+	}
+
+	@Override
+	public int hashCode() {
+		if (this.phone == null) {
+			return super.hashCode();
+		}
+		return phone.hashCode();
 	}
 
 }

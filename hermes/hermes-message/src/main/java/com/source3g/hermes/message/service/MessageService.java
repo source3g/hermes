@@ -14,6 +14,8 @@ import javax.jms.Destination;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -25,10 +27,14 @@ import org.springframework.stereotype.Service;
 
 import com.hongxun.pub.DataCommand;
 import com.hongxun.pub.tcptrans.TcpCommTrans;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.DBRef;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.dto.message.StatisticObject;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
@@ -41,7 +47,6 @@ import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.enums.PhoneOperator;
 import com.source3g.hermes.enums.Sex;
-import com.source3g.hermes.message.PhoneInfo;
 import com.source3g.hermes.message.ShortMessageMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
@@ -51,6 +56,7 @@ import com.source3g.hermes.utils.PhoneUtils;
 
 @Service
 public class MessageService extends BaseService {
+	private static final Logger logger=LoggerFactory.getLogger(MessageService.class);
 
 	@Autowired
 	private JmsService jmsService;
@@ -93,40 +99,61 @@ public class MessageService extends BaseService {
 	 * @param content
 	 */
 	public void messageGroupSend(ObjectId merchantId, String[] ids, String customerPhones, String content) throws Exception {
-		Set<String> phones = new HashSet<String>();
-		if (ids != null) {
-			Query query = new Query();
-			List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
-			for (String id : ids) {
-				ObjectId ObjId = new ObjectId(id);
-				customerGroupIds.add(ObjId);
-			}
-			query.addCriteria(Criteria.where("customerGroup.$id").in(customerGroupIds));
-			List<Customer> customers = mongoTemplate.find(query, Customer.class);
-			for (Customer customer : customers) {
-				phones.add(customer.getPhone());
-			}
-		}
+		String customerPhoneArray[] = null;
 		if (customerPhones != null) {
-			String customerPhoneArray[] = customerPhones.split(";");
-			for (String phone : customerPhoneArray) {
-				phones.add(phone);
-			}
+			customerPhoneArray = customerPhones.split(";");
 		}
-		String[] phoneArray = new String[phones.size()];
-		phones.toArray(phoneArray);
-		sendMessages(merchantId, phoneArray, content);
+		Set<Customer> customerSet = findCustomerByGroupIdAndPhones(ids, customerPhoneArray);
+		sendMessages(merchantId, customerSet, content);
 	}
 
-	public MessageSendLog genMessageSendLog(String name, String customerGroupName, ObjectId merchantId, String phone, int sendCount, String content, MessageType type, MessageStatus status) {
+	private Set<Customer> findCustomerByGroupIdAndPhones(String[] ids, String[] customerPhones) {
+		Set<Customer> customersSet = new HashSet<Customer>();
+		if (ids != null) {
+			List<Customer> customers = (findCustomerByGroupIds(ids));
+			customersSet.addAll(customers);
+		}
+		if (customerPhones != null && customerPhones.length > 0) {
+			List<Customer> customers = mongoTemplate.find(new Query(Criteria.where("phone").in(Arrays.asList(customerPhones))), Customer.class);
+			customersSet.addAll(customers);
+		}
+		return customersSet;
+	}
+
+	private List<Customer> findCustomerByGroupIds(String[] ids) {
+		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
+		for (String id : ids) {
+			ObjectId ObjId = new ObjectId(id);
+			customerGroupIds.add(ObjId);
+		}
+		BasicDBObject parameter = new BasicDBObject();
+		parameter.put("customerGroup.$id", new BasicDBObject("$in", customerGroupIds));
+		List<Customer> customers = findByBasicDBObject(Customer.class, parameter, new ObjectMapper<Customer>() {
+			@Override
+			public Customer mapping(DBObject obj) {
+				Customer customer = new Customer();
+				customer.setName((String) obj.get("name"));
+				customer.setPhone((String) obj.get("phone"));
+				customer.setId((ObjectId) obj.get("_id"));
+				customer.setMerchantId((ObjectId)obj.get("merchantId"));
+				DBRef dbRef = (DBRef) obj.get("customerGroup");
+				customer.setCustomerGroup(new CustomerGroup((ObjectId) dbRef.getId()));
+				return customer;
+			}
+
+		});
+		return customers;
+	}
+
+	public MessageSendLog genMessageSendLog(Customer customer, ObjectId merchantId, int sendCount, String content, MessageType type, MessageStatus status) {
 		MessageSendLog log = new MessageSendLog();
 		log.setId(ObjectId.get());
 		log.setContent(content);
 		log.setSendTime(new Date());
-		log.setCustomerName(name);
-		log.setCustomerGroupName(customerGroupName);
+		log.setCustomerName(customer.getName());
+		log.setCustomerGroup(customer.getCustomerGroup());
 		log.setMerchantId(merchantId);
-		log.setPhone(phone);
+		log.setPhone(customer.getPhone());
 		log.setSendCount(sendCount);
 		log.setType(type);
 		log.setStatus(status);
@@ -134,29 +161,16 @@ public class MessageService extends BaseService {
 		return log;
 	}
 
-	private void genGroupSendLog(String[] customerPhoneArray, String content, ObjectId merchantId) {
+	private GroupSendLog genGroupSendLog(Set<Customer> customers, String content, ObjectId merchantId) {
 		GroupSendLog groupSendLog = new GroupSendLog();
 		groupSendLog.setMerchantId(merchantId);
 		groupSendLog.setContent(content);
-		groupSendLog.setSendCount(customerPhoneArray.length);
+		groupSendLog.setSendCount(customers.size());
 		groupSendLog.setSendTime(new Date());
 		groupSendLog.setId(ObjectId.get());
+		groupSendLog.setSendSuccessCount(0);
 		mongoTemplate.insert(groupSendLog);
-
-	}
-
-	private MessageSendLog genMessageSendLog(String phone, ObjectId merchantId, String content, MessageType type) {
-		String customerName = null;
-		String customerGroupName = null;
-		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phone)), Customer.class);
-		if (c != null) {
-			customerName = c.getName();
-			if (c.getCustomerGroup() != null) {
-				customerGroupName = c.getCustomerGroup().getName();
-			}
-		}
-		MessageSendLog log = genMessageSendLog(customerName, customerGroupName, merchantId, phone, 1, content, type, MessageStatus.发送中);
-		return log;
+		return groupSendLog;
 	}
 
 	public List<MessageTemplate> listAll(String merchantId) {
@@ -166,90 +180,40 @@ public class MessageService extends BaseService {
 	public void save(MessageTemplate messageTemplate) {
 		mongoTemplate.save(messageTemplate);
 	}
-	
-	public void sendMessage(ObjectId merchantId,String phone,String content) throws Exception{
+
+	public void sendMessage(ObjectId merchantId, String phone, String content) throws Exception {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		if(merchant.getShortMessage().getSurplusMsgCount()-1<0) {
+		if (merchant.getShortMessage().getSurplusMsgCount() - 1 < 0) {
 			throw new Exception("余额不足");
 		}
+		Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(phone)), Customer.class);
+		String proceedContent = processContent(merchant, c, content);
+		genMessageSendLog(c, merchantId, 1, proceedContent, MessageType.短信发送, MessageStatus.发送中);
+		sendMessage(c, proceedContent, MessageType.短信发送,null);
+	}
+
+	public void sendMessage(Customer c, String content, MessageType messageType,GroupSendLog groupSendLog) {
 		ShortMessageMessage message = new ShortMessageMessage();
-		PhoneInfo phoneInfo = genPhoneInfo(merchantId, phone, content, MessageType.短信发送);
-		List<PhoneInfo> phoneInfos =Arrays.asList(phoneInfo);
-		
 		message.setContent(content);
-		message.setPhoneInfos(phoneInfos);
-		message.setMessageType(MessageType.短信发送);
-		message.setMerchantId(merchantId);
+		message.setPhone(c.getPhone());
+		message.setMessageType(messageType);
+		message.setMerchantId(c.getMerchantId());
+		if(groupSendLog!=null){
+			message.setGroupSendLog(groupSendLog);
+		}
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
 
-	public void sendMessages(ObjectId merchantId, String[] customerPhoneArray, String content) throws Exception {
+	public void sendMessages(ObjectId merchantId, Set<Customer> customersSet, String content) throws Exception {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		if (customerPhoneArray.length > merchant.getShortMessage().getSurplusMsgCount()) {
+		if (customersSet.size() > merchant.getShortMessage().getSurplusMsgCount()) {
 			throw new Exception("余额不足");
 		}
-		ShortMessageMessage message = new ShortMessageMessage();
-		List<PhoneInfo> phoneInfos = genPhoneInfos(merchantId, customerPhoneArray, content, MessageType.群发);
-		message.setContent(content);
-		message.setPhoneInfos(phoneInfos);
-		message.setMessageType(MessageType.群发);
-		message.setMerchantId(merchantId);
-		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
-	}
-
-	/**
-	 * 生成电话信息，并生成发送日志
-	 * 
-	 * @param merchantId
-	 * @param messageSendLogId
-	 * @param customerPhoneArray
-	 * @param content
-	 * @param type
-	 * @return
-	 */
-	private PhoneInfo genPhoneInfo(ObjectId merchantId, String phone, String content, MessageType type) {
-			// 生成发送记录
-			MessageSendLog log = genMessageSendLog(phone, merchantId, content, type);
-			// 发送记录生成完成
-			PhoneInfo phoneInfo = new PhoneInfo(phone, content, log.getId());
-		// 生成短信群发记录
-		genGroupSendLog(phone, content, merchantId);
-		return phoneInfo;
-	}
-	
-	private void genGroupSendLog(String phone, String content, ObjectId merchantId) {
-		GroupSendLog groupSendLog = new GroupSendLog();
-		groupSendLog.setMerchantId(merchantId);
-		groupSendLog.setContent(content);
-		groupSendLog.setSendCount(1);
-		groupSendLog.setSendTime(new Date());
-		groupSendLog.setId(ObjectId.get());
-		mongoTemplate.insert(groupSendLog);
-	}
-
-	/**
-	 * 生成电话信息，并生成发送日志
-	 * 
-	 * @param merchantId
-	 * @param messageSendLogId
-	 * @param customerPhoneArray
-	 * @param content
-	 * @param type
-	 * @return
-	 */
-	private List<PhoneInfo> genPhoneInfos(ObjectId merchantId, String[] customerPhoneArray, String content, MessageType type) {
-		List<PhoneInfo> result = new ArrayList<PhoneInfo>();
-		HashSet<String> hashSet = new HashSet<String>(Arrays.asList(customerPhoneArray));
-		for (String phone : hashSet) {
-			// 生成发送记录
-			MessageSendLog log = genMessageSendLog(phone, merchantId, content, type);
-			// 发送记录生成完成
-			PhoneInfo phoneInfo = new PhoneInfo(phone, content, log.getId());
-			result.add(phoneInfo);
+		// 生成群发记录
+		GroupSendLog groupSendLog=genGroupSendLog(customersSet, content, merchant.getId());
+		for (Customer c : customersSet) {
+			sendMessage(c, processContent(merchant, c, content), MessageType.群发, groupSendLog);
 		}
-		// 生成短信群发记录
-		genGroupSendLog(customerPhoneArray, content, merchantId);
-		return result;
 	}
 
 	// 查找群发记录
@@ -314,11 +278,12 @@ public class MessageService extends BaseService {
 		if (PhoneOperator.电信.equals(PhoneUtils.getOperatior(phoneNumber))) {
 			return sendByCt(phoneNumber, content);
 		}
+		logger.error("向" + phoneNumber + "发送消息" + content+"失败，电话号码有误");
 		return MessageStatus.电话号码有误;
 	}
 
 	private MessageStatus sendByCt(String phoneNumber, String content) {
-		System.out.println("通过电信向" + phoneNumber + "发送" + content);
+		logger.debug("通过电信向" + phoneNumber + "发送" + content);
 		sendByCu(phoneNumber, content);
 		return MessageStatus.已发送;
 	}
@@ -374,11 +339,6 @@ public class MessageService extends BaseService {
 
 	public MessageAutoSend getMessageAutoSend(ObjectId merchantId) {
 		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), MessageAutoSend.class);
-	}
-
-	public String processContent(Merchant merchant, String phoneNumber, String content) {
-		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phoneNumber)), Customer.class);
-		return processContent(merchant, customer, content);
 	}
 
 	public MessageStatisticsDto findMessageStastics(ObjectId merchantId) {
@@ -454,16 +414,11 @@ public class MessageService extends BaseService {
 		}
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())), MerchantRemindTemplate.class);
 		String content = merchantRemindTemplate.getMessageContent();
-		List<Customer> customers=findCustomerByMerchantRemindTemplate(title, merchantId,remindTemplate,merchantRemindTemplate);
-		Set<String> phones = new HashSet<String>();
-		for (Customer c : customers) {
-			phones.add(c.getPhone());
-		}
-		String[] Arrayphone = new String[phones.size()];
-		phones.toArray(Arrayphone);
-		sendMessages(merchantId, Arrayphone, content);
+		List<Customer> customers = findCustomerByMerchantRemindTemplate(title, merchantId, remindTemplate, merchantRemindTemplate);
+		Set<Customer> customersSet = new HashSet<Customer>(customers);
+		sendMessages(merchantId, customersSet, content);
 	}
-	
+
 	public void ignoreSendMessages(String title, ObjectId merchantId) {
 		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
 		if (remindTemplate == null) {
@@ -471,10 +426,10 @@ public class MessageService extends BaseService {
 		}
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())), MerchantRemindTemplate.class);
 		@SuppressWarnings("unused")
-		List<Customer> customers=findCustomerByMerchantRemindTemplate(title, merchantId,remindTemplate,merchantRemindTemplate);
+		List<Customer> customers = findCustomerByMerchantRemindTemplate(title, merchantId, remindTemplate, merchantRemindTemplate);
 	}
-	
-	public List<Customer> findCustomerByMerchantRemindTemplate(String title, ObjectId merchantId,RemindTemplate remindTemplate,MerchantRemindTemplate merchantRemindTemplate ){
+
+	public List<Customer> findCustomerByMerchantRemindTemplate(String title, ObjectId merchantId, RemindTemplate remindTemplate, MerchantRemindTemplate merchantRemindTemplate) {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("merchantId").is(merchantId);
 		Date startTime = new Date();
@@ -493,6 +448,12 @@ public class MessageService extends BaseService {
 
 		}
 		return customers;
+	}
+
+	public void updateMessageSendLog(ShortMessageMessage shortMessageMessage, MessageStatus status) {
+		if (shortMessageMessage.getMessageSendLogId() != null) {
+			updateLog(shortMessageMessage.getMessageSendLogId(), new Date(), status);
+		}
 	}
 
 }

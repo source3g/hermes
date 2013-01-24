@@ -40,7 +40,7 @@
 		<c:forEach items="${page.data}" var="messageSendLog">
 			<tr>
 				<td width="14%">${messageSendLog.customerName }</td>
-				<td width="14%">${messageSendLog.customerGroupName }</td>
+				<td width="14%">${messageSendLog.customerGroup.name }</td>
 				<td width="14%">${messageSendLog.phone }</td>
 				<td width="8%">${messageSendLog.sendCount }</td>
 				<td width="8%">${messageSendLog.status }</td>
