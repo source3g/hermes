@@ -47,7 +47,7 @@ public class MessageSendListener implements MessageListener {
 						} else {
 							shortMessageRecord.setMsgId(DateFormateUtils.getTimeStampStr());
 							MessageStatus status = messageService.send(shortMessageRecord);
-							shortMessageRecord.setStatus(status.发送失败);
+							shortMessageRecord.setStatus(status);
 							messageService.updateMessageSendLog(shortMessageRecord, status);
 							if (MessageStatus.已发送.equals(status)) {
 								Update updateSurplus = new Update();
