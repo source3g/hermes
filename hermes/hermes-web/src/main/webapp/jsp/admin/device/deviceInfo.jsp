@@ -10,7 +10,7 @@
 <body>
 	<form id="deviceInfo" class="form-horizontal">
 		<div class="control-group">
-			<label class="control-label">盒子:</label>
+			<label class="control-label">盒子名称:</label>
 			<div class="controls">
 				${device.sn}<input type="hidden" name="sn" value="${device.sn}">
 				<input type="hidden" name="id" value="${device.id}">
@@ -20,16 +20,14 @@
 			<label class="control-label" for="simId">请输入SIM卡号:</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入SIM卡号..."
-					id="no" name="no" value="${sim.no}"> <span
+					id="no" name="no" > <span
 					class="help-inline"> <font color="red">*</font></span>
 				<c:if test="${ empty device.simId }">
 					<input type="submit" class="btn btn-primary" value="绑定">
 				</c:if>
 				<c:if test="${ not empty device.simId }">
 					<input type="submit" class="btn btn-primary" value="修改">
-			
 				</c:if>
-
 			</div>
 		</div>
 		<c:if test="${not empty errors }">
