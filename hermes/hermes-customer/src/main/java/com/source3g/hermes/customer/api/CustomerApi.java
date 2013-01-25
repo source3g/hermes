@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,10 +43,12 @@ import com.source3g.hermes.dto.customer.CustomerStatisticsDto;
 import com.source3g.hermes.dto.customer.NewCustomerDto;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
+import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.DateFormateUtils;
@@ -97,7 +101,7 @@ public class CustomerApi {
 	@RequestMapping(value = "/add/", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody Customer customer) throws Exception {
-		logger.debug("增加了一个顾客:"+customer.getName());
+		logger.debug("增加了一个顾客:" + customer.getName());
 		customerService.add(customer);
 		return "success";
 	}
@@ -157,18 +161,18 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/update/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String update(@RequestBody Customer customer,@PathVariable String merchantId) {
+	public String update(@RequestBody Customer customer, @PathVariable String merchantId) {
 		logger.debug("update customer....");
-		customerService.updateInfo(customer,merchantId);
+		customerService.updateInfo(customer, merchantId);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/save/sn/{sn}", method = RequestMethod.POST)
 	@ResponseBody
-	public String saveBySn(@RequestBody CustomerDto customerDto,@PathVariable String sn) throws Exception {
+	public String saveBySn(@RequestBody CustomerDto customerDto, @PathVariable String sn) throws Exception {
 		logger.debug("update customer....");
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
-		customerService.saveBySn(customerDto,merchant.getId());
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
+		customerService.saveBySn(customerDto, merchant.getId());
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -256,11 +260,11 @@ public class CustomerApi {
 	public CustomerStatisticsDto findCustomerStatistics(@PathVariable String merchantId) {
 		return customerService.findCustomerStatistics(new ObjectId(merchantId));
 	}
-	
+
 	@RequestMapping(value = "/statistics/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
 	public CustomerStatisticsDto findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return customerService.findCustomerStatistics(merchant.getId());
 	}
 
@@ -369,28 +373,33 @@ public class CustomerApi {
 		return customerService.findTodayReminds(merchant.getId());
 	}
 
-	// @Autowired
-	// private MongoTemplate mongoTemplate;
-	//
-	// @RequestMapping(value = "/test", method = RequestMethod.GET)
-	// @ResponseBody
-	// public String test() throws Exception {
-	// DBCollection customers = mongoTemplate.getCollection(mongoTemplate
-	// .getCollectionName(Customer.class));
-	// BasicDBObject parameter = new BasicDBObject();
-	// List<ObjectId> ids=Arrays.asList( new
-	// ObjectId("50f8f68aa4fd98711331b4e5"), new
-	// ObjectId("50f37613a4fd309a8c4abfe9"));
-	// parameter.put("customerGroup.$id",new BasicDBObject("$in",ids));
-	// DBCursor item = customers.find(parameter);
-	// List<DBObject> db=new ArrayList<DBObject>();
-	// System.out.println(new Date().getTime());
-	// int i=0;
-	// while (item.hasNext()) {
-	// item.next();
-	// System.out.println(i++);
-	// }
-	// System.out.println(new Date().getTime());
-	// return ReturnConstants.SUCCESS+db.size();
-	// }
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
+	@RequestMapping(value = "/test")
+	public void test() {
+		for (int i = 0; i < 10000; i++) {
+			Customer c = new Customer();
+			c.setAddress("北京市");
+			c.setBirthday("01-29");
+			c.setCustomerGroup(new CustomerGroup(new ObjectId("50ef54ef0cf2dc73e191ee0c")));
+			c.setEmail("abc@163.com");
+			c.setId(ObjectId.get());
+			c.setMerchantId(new ObjectId("50ef48bf0cf2dc73e191edd4"));
+			c.setName("熊炜" + i);
+			c.setOperateTime(new Date());
+			String p = "0123456789";
+			Random rnd = new Random();
+			StringBuffer sb1 = new StringBuffer();
+			sb1.append("3");
+			for (int n = 0; n < 10; n++) {
+				int number1 = rnd.nextInt(p.length());
+				sb1.append(p.charAt(number1));
+			}
+			c.setPhone(sb1.toString());
+			c.setSex(Sex.MALE);
+			mongoTemplate.insert(c);
+		}
+
+	}
 }

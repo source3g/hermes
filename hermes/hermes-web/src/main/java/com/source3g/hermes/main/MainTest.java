@@ -23,8 +23,8 @@ public class MainTest implements Runnable {
 		String uri = "http://localhost:8080/hermes/login/";
 		PostMethod postMethod = new PostMethod(uri);
 		// 填入各个表单域的值
-		NameValuePair[] data = { new NameValuePair("username", "cjcjcj"),
-				new NameValuePair("password", "cjcjcj") };
+		NameValuePair[] data = { new NameValuePair("username", "careforesj"),
+				new NameValuePair("password", "123123") };
 		// 将表单的值放入postMethod中
 		postMethod.setRequestBody(data);
 		// 执行postMethod
@@ -53,8 +53,8 @@ public class MainTest implements Runnable {
 		} catch (IOException  e) {
 			e.printStackTrace();
 		}
-		for (int i = 0; i < 5000; i++) {
-			String uri1="http://localhost:8080/hermes/merchant/customer/add/";
+		for (int i = 0; i < 500; i++) {
+			String uri1="http://58.68.229.178/hermes/merchant/customer/add/";
 			PostMethod postMethod1 = new PostMethod(uri1);
 			//随机生成字符串名字
 			  String base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";   //生成字符串从此序列中取
@@ -66,14 +66,15 @@ public class MainTest implements Runnable {
 			        sb.append(base.charAt(number));   
 			  }
 			  String name=sb.toString();   
-			  for(int n=0;n<11;n++){
+			  sb1.append("3");
+			  for(int n=0;n<10;n++){
 				   int number1 = rnd.nextInt(p.length());   
 				   sb1.append(p.charAt(number1));   
 			  }
-			  String phone=sb1.toString();;
+			  String phone=sb1.toString();
 			// 填入各个表单域的值
 			NameValuePair[] data1 = { new NameValuePair("name", name),
-					new NameValuePair("phone",phone ),new NameValuePair("customerGroup.id", "50f8f68aa4fd98711331b4e5"),};
+					new NameValuePair("phone",phone ),new NameValuePair("customerGroup.id", "50ef54ef0cf2dc73e191ee0c"),};
 			// 将表单的值放入postMethod中
 			postMethod1.setRequestBody(data1);
 			// 执行postMethod
