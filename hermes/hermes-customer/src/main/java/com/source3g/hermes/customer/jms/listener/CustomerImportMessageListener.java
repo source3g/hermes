@@ -41,6 +41,7 @@ public class CustomerImportMessageListener implements MessageListener {
 			} catch (JMSException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
+				e.printStackTrace();
 				customerImportService.updateStatus(importLog, ImportStatus.导入失败);
 			}
 		}

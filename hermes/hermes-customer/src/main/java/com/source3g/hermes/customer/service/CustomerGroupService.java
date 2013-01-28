@@ -16,9 +16,9 @@ import com.source3g.hermes.service.BaseService;
 public class CustomerGroupService extends BaseService {
 
 	public List<CustomerGroup> listAll(String merchantId) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("merchantId").is(new ObjectId(merchantId)));
-		return mongoTemplate.find(query, CustomerGroup.class);
+		Query q = new Query();
+		q.addCriteria(Criteria.where("merchantId").is(new ObjectId(merchantId)));
+		return mongoTemplate.find(q, CustomerGroup.class);
 	}
 	public void add(CustomerGroup customerGroup) throws Exception{
 		List<CustomerGroup> list=mongoTemplate.find(new Query(Criteria.where("name").is(customerGroup.getName()).and("merchantId").is(customerGroup.getMerchantId())), CustomerGroup.class);
