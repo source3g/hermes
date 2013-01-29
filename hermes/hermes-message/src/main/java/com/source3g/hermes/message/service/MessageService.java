@@ -283,7 +283,7 @@ public class MessageService extends BaseService {
 		if (PhoneOperator.电信.equals(PhoneUtils.getOperatior(phoneNumber))) {
 			return sendByCt(msgId,phoneNumber, content);
 		}
-		logger.error("向" + phoneNumber + "发送消息" + content+"失败，电话号码有误");
+		logger.debug("向" + phoneNumber + "发送消息" + content+"失败，电话号码有误");
 		return MessageStatus.电话号码有误;
 	}
 	private MessageStatus sendByCt(String msgId,String phoneNumber, String content) {
@@ -293,8 +293,7 @@ public class MessageService extends BaseService {
 	}
 
 	private MessageStatus sendByCu(String msgId,String phoneNumber, String content) {
-		logger.error("通过联通向" + phoneNumber + "发送" + content+"msgId:"+msgId);
-
+		logger.debug("通过联通向" + phoneNumber + "发送" + content+"msgId:"+msgId);
 		TcpCommTrans tcp = null;
 		try {
 			tcp = TcpCommandService.getTcp();
@@ -324,11 +323,16 @@ public class MessageService extends BaseService {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		System.out.println(tcp.getSndQueueSize());
+		System.out.println(tcp.getUnSend().size());
+		for (String str:tcp.getUnSend()){
+			System.out.println(str);
+		}
 		return MessageStatus.已发送;
 	}
 
 	private MessageStatus sendByCm(String msgId,String phoneNumber, String content) {
-		logger.error("通过移动向" + phoneNumber + "发送" + content+"msgId:"+msgId);
+		logger.debug("通过移动向" + phoneNumber + "发送" + content+"msgId:"+msgId);
 		sendByCu(msgId,phoneNumber, content);
 		return MessageStatus.已发送;
 	}

@@ -12,6 +12,8 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.jms.core.JmsTemplate;
@@ -22,10 +24,13 @@ import com.source3g.hermes.entity.log.FailedMessage;
 
 @Service
 public class JmsService {
+	
+	private static final Logger logger=LoggerFactory.getLogger(JmsService.class);
+	
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
-
+	
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
@@ -40,6 +45,8 @@ public class JmsService {
 				}
 			});
 		} catch (Exception e) {
+			logger.debug("消息发送失败"+destination.toString()+":"+text);
+			e.printStackTrace();
 			FailedMessage failedMessage = new FailedMessage();
 			failedMessage.setId(ObjectId.get());
 			failedMessage.setDestination(destination.toString());
@@ -62,6 +69,8 @@ public class JmsService {
 				}
 			});
 		} catch (Exception e) {
+			logger.debug("消息发送失败"+destination.toString()+":"+object);
+			e.printStackTrace();
 			FailedMessage failedMessage = new FailedMessage();
 			failedMessage.setId(ObjectId.get());
 			failedMessage.setDestination(destination.toString());

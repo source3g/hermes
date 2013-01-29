@@ -70,6 +70,8 @@
 			cron="${sync.increment.cron}" />
 		<task:scheduled ref="birthdayScheduler" method="addBirthdayRemind"
 			cron="${remind.birthday.cron}" />
+		<task:scheduled ref="messageTestSchduler" method="messageTest"
+			cron="${message.test.cron}" />
 			
 	</task:scheduled-tasks>
 	

@@ -105,7 +105,7 @@ public class DeviceService extends BaseService {
 				deviceStatusDto.setLastTaskId(deviceStatus.getLastTaskId());
 				deviceStatusDto.setLastUpdateTime(deviceStatus.getLastUpdateTime());
 				deviceStatusDto.setRequestTaskId(deviceStatus.getRequestTaskId());
-				Long restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").lt(deviceStatus.getLastTaskId()).and("merchantId").is(new ObjectId(merchantId))), TaskPackage.class);
+				Long restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(new ObjectId(merchantId))), TaskPackage.class);
 				deviceStatusDto.setRestTaskCount(restTaskCount);
 			}
 			result.add(deviceStatusDto);

@@ -84,7 +84,6 @@ public class CustomerService extends BaseService {
 		if (customer.getCustomerGroup() == null) {
 			throw new Exception("顾客组不能为空");
 		}
-
 		mongoTemplate.insert(customer);
 	}
 
@@ -684,10 +683,12 @@ public class CustomerService extends BaseService {
 		if (c == null) {
 			c = new Customer();
 			c.setOperateTime(new Date());
+			c.setMerchantId(merchantId);
 			EntityUtils.copyCustomerDtoToEntity(customerDto, c,merchantId);
 			mongoTemplate.save(c);
 		} else {
 			c.setOperateTime(new Date());
+			c.setMerchantId(merchantId);
 			EntityUtils.copyCustomerDtoToEntity(customerDto, c,merchantId);
 			super.updateIncludeProperties(c, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "customerGroup", "favorite", "operateTime");
 		}

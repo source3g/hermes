@@ -364,7 +364,7 @@ public class TaskService extends CommonBaseService {
 		if (date == null) {
 			list = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), Customer.class);
 		} else {
-			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date).and("merchantId").is(merchantId)), Customer.class);
+			list = mongoTemplate.find(new Query(Criteria.where("operateTime").gte(date).and("merchantId").is(merchantId).and("name").ne(null)), Customer.class);
 		}
 		return list;
 	}

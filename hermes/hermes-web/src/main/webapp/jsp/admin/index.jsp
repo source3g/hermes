@@ -23,8 +23,10 @@ body {
 					data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
 					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
-				</a> <a class="brand" href="${pageContext.request.contextPath}/admin/index/"> <img alt="旺财宝"
-					src="${pageContext.request.contextPath}/img/logo.png" /> <!-- <span>旺财宝</span> --></a>
+				</a> <a class="brand"
+					href="${pageContext.request.contextPath}/admin/index/"> <img
+					alt="旺财宝" src="${pageContext.request.contextPath}/img/logo.png" />
+					<!-- <span>旺财宝</span> --></a>
 
 				<!-- theme selector ends -->
 
@@ -153,22 +155,22 @@ body {
 							<!-- </div> -->
 						</div>
 					</div>
-<!-- 					<div class="accordion-group">
+					<div class="accordion-group">
 						<div class="accordion-heading" style="background-color: #EEE;">
 							<a class="accordion-toggle" data-toggle="collapse"
 								data-parent="#accordion2" href="#collapseSeven">系统管理</a>
 						</div>
 						<div id="collapseSeven" class="accordion-body collapse">
-							<div class="accordion-inner">
-							<ul id="security-menu"
-								class="nav nav-list nav-tabs  nav-stacked  main-menu">
-								class="nav nav-list nav-tabs  nav-stacked collapse main-menu"
-								<li><a href="javascript:void();" id="failedJms">失败JMS</a></li>
-								<li><a href="javascript:void();" id="operateLog">操作日志</a></li>
-							</ul>
-							</div>
+							<!-- <div class="accordion-inner"> -->
+								<ul id="security-menu"
+									class="nav nav-list nav-tabs  nav-stacked  main-menu">
+									<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
+									<li><a href="javascript:void();" id="failedJms">失败消息</a></li>
+									<!-- <li><a href="javascript:void();" id="operateLog">操作日志</a></li> -->
+								</ul>
+							<!-- </div> -->
 						</div>
-					</div> -->
+					</div>
 				</div>
 			</div>
 
@@ -241,13 +243,13 @@ body {
 		$("#roleAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/security/role/add/");
 		});
-		$("#roleManage").click(function() { 
+		$("#roleManage").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/security/role/list/");
 		});
 		$("#resourceManage").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/security/resource/list/");
 		});
-		
+
 		//提醒设置 
 		$("#remindDictionary").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/dictionary/toRemindTemplate/");
@@ -255,11 +257,14 @@ body {
 		$("#merchantTagDictionary").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/dictionary/tag/toTagSetting/");
 		});
-		/* $("#failedJms").click(function() {
+
+		//系统管理
+		$("#failedJms").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/system/monitor/failedJms/");
 		});
+		/*
 		$("#operateLog").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/system/operateLog/");
+		loadPage("${pageContext.request.contextPath}/admin/system/operateLog/");
 		}); */
 	});
 
