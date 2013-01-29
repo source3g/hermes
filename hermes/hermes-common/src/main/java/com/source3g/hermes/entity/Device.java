@@ -1,7 +1,7 @@
 package com.source3g.hermes.entity;
 
-import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
@@ -11,8 +11,8 @@ public class Device extends AbstractEntity {
 
 	@NotEmpty(message = "{device.sn.not.null}")
 	private String sn;
-
-	private ObjectId simId;
+	@DBRef
+	private Sim sim;
 
 	public String getSn() {
 		return sn;
@@ -22,12 +22,13 @@ public class Device extends AbstractEntity {
 		this.sn = sn;
 	}
 
-	public ObjectId getSimId() {
-		return simId;
+	public Sim getSim() {
+		return sim;
 	}
 
-	public void setSimId(ObjectId simId) {
-		this.simId = simId;
+	public void setSim(Sim sim) {
+		this.sim = sim;
 	}
+
 
 }

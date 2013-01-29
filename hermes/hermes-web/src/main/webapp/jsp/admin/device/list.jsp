@@ -21,14 +21,16 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="50%">名称</th>
-				<th width="50%">操作</th>
+				<th width="33%">名称</th>
+				<th width="33%">绑定SIM卡号</th>
+				<th width="34%">操作</th>
 			</tr>
 		</thead>
 
 		<c:forEach items="${page.data}" var="device">
 			<tr>
 				<td>${device.sn}</td>
+				<td>${device.sim.no}</td>
 				<td><a class="btn btn-danger" href="javascript:void();"
 					onclick="deleteById('${device.id}');">删除</a>
 				<a class="btn btn-success" href="javascript:void();"

@@ -17,6 +17,7 @@ public class CustomerGroupService extends BaseService {
 
 	public List<CustomerGroup> listAll(String merchantId) {
 		Query q = new Query();
+		//q.with(new Sort(Direction.DESC,"_id"));
 		q.addCriteria(Criteria.where("merchantId").is(new ObjectId(merchantId)));
 		return mongoTemplate.find(q, CustomerGroup.class);
 	}

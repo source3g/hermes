@@ -22,10 +22,10 @@
 				<input type="text" class="input-xlarge" placeholder="请输入SIM卡号..."
 					id="no" name="no" > <span
 					class="help-inline"> <font color="red">*</font></span>
-				<c:if test="${ empty device.simId }">
+				<c:if test="${ empty device.sim }">
 					<input type="submit" class="btn btn-primary" value="绑定">
 				</c:if>
-				<c:if test="${ not empty device.simId }">
+				<c:if test="${ not empty device.sim }">
 					<input type="submit" class="btn btn-primary" value="修改">
 				</c:if>
 			</div>

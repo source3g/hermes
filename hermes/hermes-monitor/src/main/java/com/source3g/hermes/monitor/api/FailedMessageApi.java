@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.source3g.hermes.entity.log.FailedMessage;
 
 @Controller
-@RequestMapping(value="/monitor")
+@RequestMapping("/monitor")
 public class FailedMessageApi {
-	
-	
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	

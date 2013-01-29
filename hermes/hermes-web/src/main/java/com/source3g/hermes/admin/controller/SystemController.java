@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +19,7 @@ public class SystemController {
 	@Autowired
 	private RestTemplate restTemplate;
 	
-	@RequestMapping(value="/monitor/failedJms")
+	@RequestMapping(value="/monitor/failedJms", method = RequestMethod.GET)
 	public ModelAndView findFailedJms(){
 		String uri=ConfigParams.getBaseUrl()+"monitor/failedMessage/";
 		FailedMessage[] failedMessages=restTemplate.getForObject(uri, FailedMessage[].class);

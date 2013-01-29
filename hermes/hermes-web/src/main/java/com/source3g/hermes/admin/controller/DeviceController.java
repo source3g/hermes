@@ -122,8 +122,8 @@ public class DeviceController {
 		if (devices == null || devices.length != 1) {
 			return new ModelAndView(("/admin/error"));
 		}
-		if (devices[0].getSimId() != null) {
-			String uriSim = ConfigParams.getBaseUrl() + "sim/id/" + devices[0].getSimId() + "/";
+		if (devices[0].getSim() != null) {
+			String uriSim = ConfigParams.getBaseUrl() + "sim/id/" + devices[0].getSim() + "/";
 			Sim sim = restTemplate.getForObject(uriSim, Sim.class);
 			model.put("sim", sim);
 		}
@@ -152,7 +152,7 @@ public class DeviceController {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("/admin/device/deviceInfo", model);
 		}
-		device.setSimId(sim.getId());
+		device.setSim(sim);
 		String uri = ConfigParams.getBaseUrl() + "device/update/";
 		HttpEntity<Device> entity = new HttpEntity<Device>(device);
 		String result = restTemplate.postForObject(uri, entity, String.class);
