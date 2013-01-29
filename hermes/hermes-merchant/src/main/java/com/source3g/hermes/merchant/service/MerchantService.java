@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
@@ -33,11 +34,19 @@ public class MerchantService extends BaseService {
 		List<Merchant> list = mongoTemplate.find(new Query(Criteria.where("account").is(merchant.getAccount())), Merchant.class);
 		if (list.size() == 0) {
 			mongoTemplate.insert(merchant);
+			addCustomerGroup(merchant);
 		} else {
 			throw new Exception("账号已存在");
 		}
 	}
 
+	public void addCustomerGroup(Merchant merchant){
+		CustomerGroup customerGroup=new CustomerGroup();
+		customerGroup.setMerchantId(merchant.getId());
+		customerGroup.setName("默认顾客组");
+		customerGroup.setId(ObjectId.get());
+		mongoTemplate.insert(customerGroup);
+	}
 	// 是验证商户账号是否存在
 	public boolean accountValidate(String account) {
 		List<Merchant> list = mongoTemplate.find(new Query(Criteria.where("account").is(account)), Merchant.class);

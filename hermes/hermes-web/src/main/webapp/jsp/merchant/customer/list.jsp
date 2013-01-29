@@ -32,8 +32,11 @@
 			value="查询">
 			<input  type="button" class="btn btn-primary"
 			value="新增"  onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/add/');">
+			<span><input type="button" onclick="exportCustomer();" class="btn" value="导出" data-loading-text="导出中..." id="exportCustomerBtn">
+			<input class="btn" type="button"onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');" value="导入">
+			<input class="btn" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');" value="查看导入日志">
+			<input class="btn" type="button" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');" value="导入日志模板下载"></span>
 	</form>
-
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
@@ -67,11 +70,6 @@
 				共${page.totalRecords }条 转到第<input type="text" id="pageNoToGo"
 				name="pageNo" class="input-mini">页<input type="button"
 				id="pageOk" class="btn" value="确定"></input>
-			</li>
-			<li><button onclick="exportCustomer();" class="btn">导出</button>
-			<button class="btn" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');">导入</button>
-			<button class="btn" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');">查看导入日志</button>
-			<button class="btn" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');">导入日志模板下载</button>
 			</li>
 		</ul>
 	</div>
@@ -214,6 +212,7 @@
 	    
 	    function exportCustomer(){
 	    	$("#pageNo").attr("value",pageNo);
+	    	$('#exportCustomerBtn').button('loading');
 			var options={
 					url:"${pageContext.request.contextPath}/merchant/customer/export/",
 					dataType:'json',

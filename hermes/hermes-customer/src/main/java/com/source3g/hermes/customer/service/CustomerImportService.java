@@ -55,7 +55,7 @@ public class CustomerImportService extends BaseService {
 		Merchant merchant = new Merchant();
 		merchant.setId(merchantId);
 		query.addCriteria(Criteria.where("merchant").is(merchant));
-		Sort sort=new Sort(Direction.DESC, "_id");
+		Sort sort = new Sort(Direction.DESC, "_id");
 		query.with(sort);
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, CustomerImportLog.class);
@@ -73,36 +73,43 @@ public class CustomerImportService extends BaseService {
 		customerImportLog.setStatus(ImportStatus.导入中.toString());
 		mongoTemplate.save(customerImportLog);
 		for (CustomerImportItem customerImportItem : customerImportItems) {
-			if (!checkItem(customerImportItem)) {
+			try {
+				checkItem(customerImportItem);
+				Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerImportItem.getPhone()).and("merchantId").is(customerImportItem.getMerchantId())), Customer.class);
+				if (customer == null) {
+					customer = new Customer();
+					customer.setId(ObjectId.get());
+				}
+				customer.setAddress(customerImportItem.getAddress());
+				customer.setBirthday(customerImportItem.getBirthday());
+				ObjectId customerGroupId = findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName());
+				if (customerGroupId == null) {
+					throw new Exception("顾客组不能为空");
+				}
+				customer.setCustomerGroup(new CustomerGroup(customerGroupId));
+				customer.setEmail(customerImportItem.getEmail());
+				customer.setMerchantId(customerImportItem.getMerchantId());
+				customer.setName(customerImportItem.getName());
+				customer.setNote(customerImportItem.getNote());
+				customer.setPhone(customerImportItem.getPhone());
+				customer.setQq(customerImportItem.getQq());
+				customer.setSex(customerImportItem.getSex());
+				customer.setOperateTime(new Date());
+				mongoTemplate.save(customer);
+				customerImportItem.setImportStatus(ImportStatus.导入成功.toString());
+			} catch (Exception e) {
+				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
+				customerImportItem.setFailedReason(e.getMessage());
 				customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
-				continue;
+			} finally {
+				mongoTemplate.save(customerImportItem);
 			}
-			Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerImportItem.getPhone()).and("merchantId").is(customerImportItem.getMerchantId())), Customer.class);
-			if (customer == null) {
-				customer=new Customer();
-				customer.setId(ObjectId.get());
-			}
-			customer.setAddress(customerImportItem.getAddress());
-			customer.setBirthday(customerImportItem.getBirthday());
-			ObjectId customerGroupId= findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName());
-			customer.setCustomerGroup(new CustomerGroup(customerGroupId));
-			customer.setEmail(customerImportItem.getEmail());
-			customer.setMerchantId(customerImportItem.getMerchantId());
-			customer.setName(customerImportItem.getName());
-			customer.setNote(customerImportItem.getNote());
-			customer.setPhone(customerImportItem.getPhone());
-			customer.setQq(customerImportItem.getQq());
-			customer.setSex(customerImportItem.getSex());
-			customer.setOperateTime(new Date());
-			mongoTemplate.save(customer);
-			customerImportItem.setImportStatus(ImportStatus.导入成功.toString());
-			mongoTemplate.save(customerImportItem);
 		}
 		customerImportLog.setStatus(ImportStatus.导入成功.toString());
 		mongoTemplate.save(customerImportLog);
 	}
 
-	private boolean checkItem(CustomerImportItem customerImportItem) {
+	private void checkItem(CustomerImportItem customerImportItem) throws Exception {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<CustomerImportItem>> constraintViolations = validator.validate(customerImportItem);
@@ -111,12 +118,9 @@ public class CustomerImportService extends BaseService {
 			for (ConstraintViolation<CustomerImportItem> v : constraintViolations) {
 				failedReason += v.getMessage() + ",";
 			}
-			customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
-			customerImportItem.setFailedReason(failedReason);
-			mongoTemplate.save(customerImportItem);
-			return false;
-		} 
-		return true;
+			throw new Exception(failedReason);
+		}
+		return;
 	}
 
 	private ObjectId findCustomerGroupIdByName(List<CustomerGroup> customerGroups, String name) {

@@ -174,8 +174,8 @@ public class CustomerService extends BaseService {
 	 *            顾客类型，分为新顾客，老顾客，全部顾客
 	 * @param direction
 	 *            排序规则
-	 * @param properties
 	 *            排序属性
+	 * @param properties
 	 * @return
 	 */
 	public Page callInList(int pageNo, Customer customer, CustomerType customerType) {
@@ -276,7 +276,8 @@ public class CustomerService extends BaseService {
 		List<Customer> list = list(customer);
 		Date createTime = new Date();
 		// 文件名
-		String fileName = String.valueOf(createTime.getTime()) + ".xls";
+		DateFormat dateFormatExport = new SimpleDateFormat("yyyy-MM-dd");
+		String fileName = String.valueOf(dateFormatExport.format(createTime)+"顾客导出列表") + ".xls";
 		// 产生文件路径
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		// 所在商户的相对路径
