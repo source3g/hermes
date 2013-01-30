@@ -1,6 +1,9 @@
 package com.source3g.hermes.dto.message;
 
-public class StatisticObject {
+import java.io.Serializable;
+
+public class StatisticObject implements Serializable {
+	private static final long serialVersionUID = 5579093173384589902L;
 	private String displayName;
 	private long value;
 	

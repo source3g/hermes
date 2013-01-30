@@ -1,5 +1,7 @@
 package com.source3g.hermes.dto.customer;
 
+import java.io.Serializable;
+
 import com.source3g.hermes.dto.message.StatisticObject;
 
 /**
@@ -8,8 +10,9 @@ import com.source3g.hermes.dto.message.StatisticObject;
  * @author zhaobin
  * 
  */
-public class CustomerStatisticsDto {
+public class CustomerStatisticsDto implements Serializable{
 
+	private static final long serialVersionUID = 4304828757612605637L;
 	private StatisticObject editedCustomerCount;
 	private StatisticObject uneditedCustomerCount;
 	private StatisticObject editedCallInCountThreeDay;
