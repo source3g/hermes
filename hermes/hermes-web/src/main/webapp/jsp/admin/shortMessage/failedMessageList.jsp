@@ -100,7 +100,7 @@
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
 		var options={
-			    url:"${pageContext.request.contextPath}/admin/message/failed/list",
+			    url:"${pageContext.request.contextPath}/admin/system/monitor/failedJms",
 				success:showList,
 				error:showError
 		};

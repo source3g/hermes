@@ -20,7 +20,7 @@
 			<label class="control-label" for="simId">请输入SIM卡号:</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入SIM卡号..."
-					id="no" name="no" > <span
+					id="no" name="no" value="${device.sim.no}" > <span
 					class="help-inline"> <font color="red">*</font></span>
 				<c:if test="${ empty device.sim }">
 					<input type="submit" class="btn btn-primary" value="绑定">
