@@ -15,10 +15,11 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="25%">目标网址</th>
-				<th width="25%">Jsm消息内容</th>
-				<th width="25%">发送类型 </th>
-				<th width="25%">失败日期</th>
+				<th width="20%">目标网址</th>
+				<th width="20%">Jsm消息内容</th>
+				<th width="20%">发送类型 </th>
+				<th width="20%">失败日期</th>
+				<th width="20%">操作</th>
 			</tr>
 		</thead>
 		<c:forEach items="${page.data}" var="failedMessage">
@@ -27,6 +28,7 @@
 			<td>${failedMessage.message}</td>
 			<td>${failedMessage.properties}</td>
 			<td>${failedMessage.date}</td>
+			<td><input type="button" value="重新发送" onclick="sendAgain('${failedMessage.id}')"></td>
 		</tr>
 		</c:forEach>
 	</table>
@@ -108,6 +110,10 @@
 	}
 	function showList(data){
 		$("#pageContentFrame").html(data);
+	}
+	
+	function sendAgain(id){
+		$.get("${pageContext.request.contextPath}/admin/system/failedMessage/sendAgain/"+id+"/",showContentInfo);
 	}
 	</script>
 </body>

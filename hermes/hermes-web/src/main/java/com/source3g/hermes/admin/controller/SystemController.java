@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
@@ -37,4 +38,9 @@ public class SystemController {
 		return new ModelAndView("/admin/system/operateLogList");
 	}
 	
+	@RequestMapping(value="/failedMessage/sendAgain/{id}", method = RequestMethod.GET)
+	public ModelAndView filedMessageSendAgain(@PathVariable String id){
+		
+		return new ModelAndView("redirect:/admin/system/list/failedMessage/sendAgain/");
+	}
 }
