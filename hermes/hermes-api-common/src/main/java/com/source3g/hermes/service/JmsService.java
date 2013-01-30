@@ -1,6 +1,7 @@
 package com.source3g.hermes.service;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +52,7 @@ public class JmsService {
 			failedMessage.setId(ObjectId.get());
 			failedMessage.setDestination(destination.toString());
 			failedMessage.setMessage(text);
+			failedMessage.setDate(new Date());
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put(type, value);
 			failedMessage.setProperties(properties);
@@ -75,6 +77,7 @@ public class JmsService {
 			failedMessage.setId(ObjectId.get());
 			failedMessage.setDestination(destination.toString());
 			failedMessage.setMessage(object);
+			failedMessage.setDate(new Date());
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put(type, value);
 			failedMessage.setProperties(properties);

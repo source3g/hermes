@@ -1,5 +1,6 @@
 package com.source3g.hermes.entity.log;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,6 +14,16 @@ public class FailedMessage extends AbstractEntity {
 	private String destination;
 	private Object message;
 	private Map<String, String> properties;
+	private Date date;
+
+	
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
 	public String getDestination() {
 		return destination;
