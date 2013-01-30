@@ -68,7 +68,6 @@ public class DeviceApi {
 	@ResponseBody
 	public List<Device> getDeviceInfo(@PathVariable String ids) {
 		String idArray[] = ids.split(",");
-
 		return deviceService.findByIds(Arrays.asList(idArray));
 	}
 

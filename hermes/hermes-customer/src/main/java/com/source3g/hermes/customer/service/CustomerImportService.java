@@ -84,7 +84,7 @@ public class CustomerImportService extends BaseService {
 				customer.setBirthday(customerImportItem.getBirthday());
 				ObjectId customerGroupId = findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName());
 				if (customerGroupId == null) {
-					throw new Exception("顾客组不能为空");
+					throw new Exception("顾客组不存在");
 				}
 				customer.setCustomerGroup(new CustomerGroup(customerGroupId));
 				customer.setEmail(customerImportItem.getEmail());

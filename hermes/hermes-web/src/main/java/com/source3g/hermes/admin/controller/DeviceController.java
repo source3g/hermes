@@ -123,7 +123,7 @@ public class DeviceController {
 			return new ModelAndView(("/admin/error"));
 		}
 		if (devices[0].getSim() != null) {
-			String uriSim = ConfigParams.getBaseUrl() + "sim/id/" + devices[0].getSim() + "/";
+			String uriSim = ConfigParams.getBaseUrl() + "sim/id/" + devices[0].getSim().getId() + "/";
 			Sim sim = restTemplate.getForObject(uriSim, Sim.class);
 			model.put("sim", sim);
 		}

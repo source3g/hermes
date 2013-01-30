@@ -1,5 +1,6 @@
 package com.source3g.hermes.sim.api;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class SimApi {
 	
 	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public Sim findById(@PathVariable String id){
+	public Sim findById(@PathVariable ObjectId id){
 		logger.debug("find sim..");
 		return simService.findById(id);
 	}

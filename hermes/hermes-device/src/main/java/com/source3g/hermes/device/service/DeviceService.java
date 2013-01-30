@@ -67,8 +67,12 @@ public class DeviceService extends BaseService {
 	}
 
 	public List<Device> findByIds(List<String> ids) {
+		List<ObjectId> list=new ArrayList<ObjectId>();
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").in(ids));
+		for(String id:ids){
+			list.add(new ObjectId(id));
+		}
+		query.addCriteria(Criteria.where("_id").in(list));
 		return mongoTemplate.find(query, Device.class);
 	}
 

@@ -32,10 +32,10 @@
 			value="查询">
 			<input  type="button" class="btn btn-primary"
 			value="新增"  onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/add/');">
-			<span><input type="button" onclick="exportCustomer();" class="btn" value="导出" data-loading-text="导出中..." id="exportCustomerBtn">
-			<input class="btn" type="button"onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');" value="导入">
-			<input class="btn" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');" value="查看导入日志">
-			<input class="btn" type="button" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');" value="导入日志模板下载"></span>
+			<span><input type="button" onclick="exportCustomer();" class="btn btn-primary" value="导出" data-loading-text="导出中..." id="exportCustomerBtn">
+			<input class="btn btn-primary" type="button"onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');" value="导入">
+			<input class="btn btn-primary" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');" value="查看导入日志">
+			<input class="btn btn-primary" type="button" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');" value="导入日志模板下载"></span>
 	</form>
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">

@@ -60,8 +60,7 @@ public class SimService extends BaseService {
 		return mongoTemplate.findOne(new Query(Criteria.where("no").is(no)), Sim.class);
 	}
 
-	public Sim findById(String id) {
-		ObjectId objId = new ObjectId(id);
-		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(objId)), Sim.class);
+	public Sim findById(ObjectId id) {
+		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), Sim.class);
 	}
 }

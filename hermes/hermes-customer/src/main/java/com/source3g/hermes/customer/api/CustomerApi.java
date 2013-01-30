@@ -109,7 +109,8 @@ public class CustomerApi {
 	@RequestMapping(value = "/get/{sn}/{phone}", method = RequestMethod.GET)
 	@ResponseBody
 	public CustomerDto getBySn(@PathVariable String sn, @PathVariable String phone) {
-		return customerService.findBySnAndPhone(sn, phone);
+		CustomerDto customerDto=customerService.findBySnAndPhone(sn, phone);
+		return customerDto;
 	}
 
 	@RequestMapping(value = "customerListBycustomerGroupId/{customerGroupId}", method = RequestMethod.GET)
