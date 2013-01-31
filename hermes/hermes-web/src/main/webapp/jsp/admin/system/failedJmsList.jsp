@@ -11,25 +11,31 @@
 <form id="queryForm"  method="get">
 		<input id="pageNo" name="pageNo" type="hidden"> 
 	</form>
+	<form id="FailedJmsDtos">
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="25%">目标网址</th>
-				<th width="25%">Jsm消息内容</th>
-				<th width="25%">发送类型 </th>
-				<th width="25%">失败日期</th>
+				<th width="20%">目标网址</th>
+				<th width="20%">Jsm消息内容</th>
+				<th width="20%">发送类型 </th>
+				<th width="20%">失败日期</th>
+				<th width="20%">操作</th>
 			</tr>
 		</thead>
-		<c:forEach items="${page.data}" var="failedMessage">
+		<c:forEach items="${page.data}" var="failedJmsDto">
 		<tr>
-			<td>${failedMessage.destination}</td>
-			<td>${failedMessage.message}</td>
-			<td>${failedMessage.properties}</td>
-			<td>${failedMessage.date}</td>
+			<td>${failedJmsDto.destination}</td>
+			<td>${failedJmsDto.message}</td>
+			<td>${failedJmsDto.properties}</td>
+			<td>${failedJmsDto.failedTime}</td>
+			<td><input type="button" value="重新发送" class="btn btn-primary"  onclick="sendAgain('${failedJmsDto.id}')">
+				<input type="hidden" value="${failedJmsDto.id}" name="ids" ></td>
 		</tr>
 		</c:forEach>
 	</table>
+		<input type="submit" class="btn btn-primary" value="一键发送">
+	</form>
 	<div>
 		<ul class="pagination">
 			<li id="firstPage"><a href="javascript:void();">首页</a></li>
@@ -44,6 +50,16 @@
 	<script type="text/javascript">
 	$(document).ready(function(){
 		initPage();
+		
+		$('#FailedJmsDtos').submit(function() {
+			 var options = {
+				url:"${pageContext.request.contextPath}/admin/system/failedJms/groupResend/",
+				type:"post",
+				success:showContentInfo
+			}; 
+			$(this).ajaxSubmit(options);
+			return false;
+		});
 });
     function initPage(){
     	$('#pageOk').click(function(){
@@ -74,7 +90,6 @@
 			$("#frontPage").removeClass("active");
 			$("#nextPage").addClass("active");
 			$("#lastPage").addClass("active");
-			
 			$("#firstPage").click(function (){
 				goToPage(${page.firstPageNo});
 			});
@@ -108,6 +123,11 @@
 	}
 	function showList(data){
 		$("#pageContentFrame").html(data);
+	}
+	
+	function sendAgain(id){
+		var url="${pageContext.request.contextPath}/admin/system/failedJms/resend/"+id+"/";
+		$.get(url,showContentInfo);
 	}
 	</script>
 </body>

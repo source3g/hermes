@@ -172,7 +172,6 @@ public class MessageApi {
 	public Page failedMessagelist(String pageNo) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return	messageService.failedMessagelist(pageNoInt);
-		 
 	}
 	
 	public static class CustomerMessageDto {

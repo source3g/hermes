@@ -21,8 +21,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.entity.log.FailedMessage;
-
 @Service
 public class JmsService {
 	
@@ -48,15 +46,15 @@ public class JmsService {
 		} catch (Exception e) {
 			logger.debug("消息发送失败"+destination.toString()+":"+text);
 			e.printStackTrace();
-			FailedMessage failedMessage = new FailedMessage();
-			failedMessage.setId(ObjectId.get());
-			failedMessage.setDestination(destination.toString());
-			failedMessage.setMessage(text);
-			failedMessage.setDate(new Date());
+			FailedJms failedJms = new FailedJms();
+			failedJms.setId(ObjectId.get());
+			failedJms.setDestination(destination);
+			failedJms.setMessage(text);
+			failedJms.setFailedTime(new Date());
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put(type, value);
-			failedMessage.setProperties(properties);
-			saveFailedMessage(failedMessage);
+			failedJms.setProperties(properties);
+			saveFailedJms(failedJms);
 		}
 	}
 
@@ -73,20 +71,20 @@ public class JmsService {
 		} catch (Exception e) {
 			logger.debug("消息发送失败"+destination.toString()+":"+object);
 			e.printStackTrace();
-			FailedMessage failedMessage = new FailedMessage();
-			failedMessage.setId(ObjectId.get());
-			failedMessage.setDestination(destination.toString());
-			failedMessage.setMessage(object);
-			failedMessage.setDate(new Date());
+			FailedJms failedJms = new FailedJms();
+			failedJms.setId(ObjectId.get());
+			failedJms.setDestination(destination);
+			failedJms.setMessage(object);
+			failedJms.setFailedTime(new Date());
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put(type, value);
-			failedMessage.setProperties(properties);
-			saveFailedMessage(failedMessage);
+			failedJms.setProperties(properties);
+			saveFailedJms(failedJms);
 		}
 	}
 
-	public void saveFailedMessage(FailedMessage failedMessage) {
-		mongoTemplate.save(failedMessage);
+	public void saveFailedJms(FailedJms failedJms) {
+		mongoTemplate.save(failedJms);
 	}
 
 }
