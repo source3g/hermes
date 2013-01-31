@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 
@@ -26,7 +27,7 @@ public class SystemController {
 		if(StringUtils.isEmpty(pageNo)){
 			pageNo="1";
 		}
-		String uri=ConfigParams.getBaseUrl()+"monitor/failedMessage/?pageNo="+pageNo;
+		String uri=ConfigParams.getBaseUrl()+"monitor/failedJms/?pageNo="+pageNo;
 		Page page=restTemplate.getForObject(uri, Page.class);
 		Map<String,Object> map=new HashMap<String,Object>();
 		map.put("page", page);
@@ -38,9 +39,23 @@ public class SystemController {
 		return new ModelAndView("/admin/system/operateLogList");
 	}
 	
-	@RequestMapping(value="/failedMessage/sendAgain/{id}", method = RequestMethod.GET)
-	public ModelAndView filedMessageSendAgain(@PathVariable String id){
-		
-		return new ModelAndView("redirect:/admin/system/list/failedMessage/sendAgain/");
+	@RequestMapping(value="/failedJms/resend/{id}", method = RequestMethod.GET)
+	public ModelAndView resendfailedJms(@PathVariable String id){
+		String uri=ConfigParams.getBaseUrl()+"monitor/failedJms/resend/"+id+"/";
+		String result=restTemplate.getForObject(uri, String.class);
+		if(ReturnConstants.SUCCESS.equals(result)){
+			return new ModelAndView("redirect:/admin/system/monitor/failedJms");
+		}
+		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
+	}
+	
+	@RequestMapping(value="/failedJms/groupResend", method = RequestMethod.POST)
+	public ModelAndView groupResendfailedJms(String ids){
+		String uri=ConfigParams.getBaseUrl()+"monitor/failedJms/gorupResend/"+ids+"/";
+		String result=restTemplate.getForObject(uri, String.class);
+		if(ReturnConstants.SUCCESS.equals(result)){
+			return new ModelAndView("redirect:/admin/system/monitor/failedJms");
+		}
+		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
 	}
 }
