@@ -50,7 +50,6 @@
 	<script type="text/javascript">
 	$(document).ready(function(){
 		initPage();
-		
 		$('#FailedJmsDtos').submit(function() {
 			 var options = {
 				url:"${pageContext.request.contextPath}/admin/system/failedJms/groupResend/",
@@ -114,7 +113,7 @@
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
 		var options={
-			    url:"${pageContext.request.contextPath}/admin/system/monitor/failedJms",
+			    url:"${pageContext.request.contextPath}/admin/system/monitor/failedJms/",
 				success:showList,
 				error:showError
 		};

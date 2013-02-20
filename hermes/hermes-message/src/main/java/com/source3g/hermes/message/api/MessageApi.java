@@ -173,6 +173,17 @@ public class MessageApi {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return	messageService.failedMessagelist(pageNoInt);
 	}
+	/**
+	 * 测试用
+	 * @param pageNo
+	 * @return
+	 */
+	@RequestMapping(value = "/groupS")
+	@ResponseBody
+	public String groupS() {
+		messageService.groupSend();
+		return ReturnConstants.SUCCESS;
+	}
 	
 	public static class CustomerMessageDto {
 		private String customerPhone;
@@ -194,5 +205,5 @@ public class MessageApi {
 			this.content = content;
 		}
 	}
-
+	
 }

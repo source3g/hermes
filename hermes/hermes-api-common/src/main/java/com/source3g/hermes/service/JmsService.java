@@ -21,6 +21,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.entity.log.FailedJms;
+
 @Service
 public class JmsService {
 	
