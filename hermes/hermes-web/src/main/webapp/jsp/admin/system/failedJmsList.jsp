@@ -17,7 +17,7 @@
 		<thead>
 			<tr>
 				<th width="20%">目标网址</th>
-				<th width="20%">Jsm消息内容</th>
+				<th width="20%">Jms消息内容</th>
 				<th width="20%">发送类型 </th>
 				<th width="20%">失败日期</th>
 				<th width="20%">操作</th>
@@ -34,7 +34,6 @@
 		</tr>
 		</c:forEach>
 	</table>
-		<input type="submit" class="btn btn-primary" value="一键发送">
 	</form>
 	<div>
 		<ul class="pagination">
@@ -44,23 +43,17 @@
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
 			<li>当前第${page.currentPage}/${page.totalPageCount}页共${page.totalRecords }条 转到第<input
 				type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input
-				type="button" id="pageOk" class="btn" value="确定"></input></li>
+				type="button" id="pageOk" class="btn" value="确定"></input>
+				<input type="button" class="btn btn-primary" value="一键发送" onclick="groupResend()"></li>
 		</ul>
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
 		initPage();
-		
-		$('#FailedJmsDtos').submit(function() {
-			 var options = {
-				url:"${pageContext.request.contextPath}/admin/system/failedJms/groupResend/",
-				type:"post",
-				success:showContentInfo
-			}; 
-			$(this).ajaxSubmit(options);
-			return false;
-		});
 });
+	function groupResend(){
+		$.get("${pageContext.request.contextPath}/admin/system/failedJms/groupResend/",showContentInfo);
+	}
     function initPage(){
     	$('#pageOk').click(function(){
     		var pageNoToGo=$('#pageNoToGo').val();

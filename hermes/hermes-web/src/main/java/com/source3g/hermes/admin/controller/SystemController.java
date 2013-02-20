@@ -49,9 +49,9 @@ public class SystemController {
 		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
 	}
 	
-	@RequestMapping(value="/failedJms/groupResend", method = RequestMethod.POST)
-	public ModelAndView groupResendfailedJms(String ids){
-		String uri=ConfigParams.getBaseUrl()+"monitor/failedJms/gorupResend/"+ids+"/";
+	@RequestMapping(value="/failedJms/groupResend", method = RequestMethod.GET)
+	public ModelAndView groupResendfailedJms(){
+		String uri=ConfigParams.getBaseUrl()+"monitor/failedJms/gorupResend/";
 		String result=restTemplate.getForObject(uri, String.class);
 		if(ReturnConstants.SUCCESS.equals(result)){
 			return new ModelAndView("redirect:/admin/system/monitor/failedJms");

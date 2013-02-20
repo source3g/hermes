@@ -33,10 +33,10 @@ public class FailedJmsApi {
 		return ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value="failedJms/gorupResend/{ids}", method = RequestMethod.GET)
+	@RequestMapping(value="failedJms/gorupResend", method = RequestMethod.GET)
 	@ResponseBody
-	public String groupResendfailedJms(@PathVariable String ids){
-		failedJmsService.groupResendfailedJms(ids);
+	public String groupResendfailedJms(){
+		failedJmsService.groupResendfailedJms();
 		return ReturnConstants.SUCCESS;
 	}
 }
