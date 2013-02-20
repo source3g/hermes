@@ -61,7 +61,6 @@ import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
-import com.source3g.hermes.service.BaseService.ObjectMapper;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.Page;
