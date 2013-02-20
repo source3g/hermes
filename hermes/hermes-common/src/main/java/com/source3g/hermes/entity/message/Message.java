@@ -6,7 +6,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
-
+/**
+ * 新增
+ * @author Administrator
+ *
+ */
 @Document
 public class Message extends AbstractEntity{
 	private static final long serialVersionUID = -6695767113817154193L;

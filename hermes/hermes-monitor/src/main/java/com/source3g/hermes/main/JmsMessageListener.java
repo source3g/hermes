@@ -24,8 +24,6 @@ public class JmsMessageListener implements MessageListener {
 				if(mqMessage.getDestination().getPhysicalName().startsWith(AdvisorySupport.CONSUMER_ADVISORY_TOPIC_PREFIX)){
 					System.out.println(mqMessage.getDestination().getPhysicalName().substring(AdvisorySupport.CONSUMER_ADVISORY_TOPIC_PREFIX.length(),mqMessage.getDestination().getPhysicalName().length())+"掉了一个客户端");
 				}
-				
-			
 			}
 		}
 	}

@@ -60,14 +60,8 @@ public class FailedJmsService extends BaseService {
 		return result;
 	}
 
-	public void groupResendfailedJms(String ids) {
-		List<ObjectId> list=new ArrayList<ObjectId>();
-		String[] failedJmsIds=ids.split(",");
-		for(int i=0;i<failedJmsIds.length;i++){
-			ObjectId obj=new ObjectId(failedJmsIds[i]);
-			list.add(obj);
-		}
-		List<FailedJms> failedJmss=mongoTemplate.find(new Query(Criteria.where("_id").in(list)), FailedJms.class);
+	public void groupResendfailedJms() {
+		List<FailedJms> failedJmss=mongoTemplate.findAll(FailedJms.class);
 		for(FailedJms failedJms:failedJmss){
 			resendfailedJms(failedJms.getId());
 		}

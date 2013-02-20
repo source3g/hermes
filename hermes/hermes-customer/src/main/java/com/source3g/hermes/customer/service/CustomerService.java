@@ -37,6 +37,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.DBRef;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.dto.customer.CustomerRemindDto;
@@ -47,6 +50,7 @@ import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.ObjectValue;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
@@ -57,6 +61,7 @@ import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
+import com.source3g.hermes.service.BaseService.ObjectMapper;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.Page;
@@ -102,7 +107,24 @@ public class CustomerService extends BaseService {
 
 	// 短信群发页面显示顾客信息
 	public List<Customer> customerListBycustomerGroupId(ObjectId customerGroupId) {
-		return mongoTemplate.find(new Query(Criteria.where("customerGroup.$id").is(customerGroupId)), Customer.class);
+		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
+			customerGroupIds.add(customerGroupId);
+		BasicDBObject parameter = new BasicDBObject();
+		parameter.put("customerGroup.$id",  new BasicDBObject("$in", customerGroupIds));
+		List<Customer> customers = findByBasicDBObject(Customer.class, parameter, new ObjectMapper<Customer>() {
+			@Override
+			public Customer mapping(DBObject obj) {
+				Customer customer = new Customer();
+				customer.setName((String) obj.get("name"));
+				customer.setPhone((String) obj.get("phone"));
+				customer.setId((ObjectId) obj.get("_id"));
+				customer.setMerchantId((ObjectId)obj.get("merchantId"));
+				DBRef dbRef = (DBRef) obj.get("customerGroup");
+				customer.setCustomerGroup(new CustomerGroup((ObjectId) dbRef.getId()));
+				return customer;
+			}
+		});
+		 return customers ;
 	}
 
 	/**
