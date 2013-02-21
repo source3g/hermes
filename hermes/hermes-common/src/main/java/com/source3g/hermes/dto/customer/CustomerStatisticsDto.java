@@ -1,6 +1,9 @@
 package com.source3g.hermes.dto.customer;
 
+import java.io.Serializable;
+
 import com.source3g.hermes.dto.message.StatisticObjectDto;
+
 
 /**
  * 首页的最新数据
@@ -8,8 +11,12 @@ import com.source3g.hermes.dto.message.StatisticObjectDto;
  * @author zhaobin
  * 
  */
-public class CustomerStatisticsDto {
+public class CustomerStatisticsDto implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2744908961482991196L;
 	private StatisticObjectDto editedCustomerCount;
 	private StatisticObjectDto uneditedCustomerCount;
 	private StatisticObjectDto editedCallInCountThreeDay;

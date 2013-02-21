@@ -156,6 +156,7 @@ public abstract class BaseService {
 			DBObject obj=item.next();
 			list.add(mapper.mapping(obj));
 		}
+		item.close();
 		return list;
 	}
 	
@@ -169,6 +170,7 @@ public abstract class BaseService {
 			DBObject obj=item.next();
 			list.add((S)obj.get(property));
 		}
+		item.close();
 		return list;
 	}
 	

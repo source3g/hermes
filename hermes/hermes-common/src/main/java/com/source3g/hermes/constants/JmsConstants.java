@@ -14,6 +14,8 @@ public interface JmsConstants {
 	
 	public String SEND_MESSAGE="sendMessage";
 	
+	public String GROUP_SEND_MESSAGE="groupSendMessage";
+	
 	public String LOG_MESSAGE="logMessage";
 	
 	public String PACKAGE_ALL="packageAll";

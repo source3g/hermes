@@ -34,19 +34,24 @@ public class MerchantService extends BaseService {
 		List<Merchant> list = mongoTemplate.find(new Query(Criteria.where("account").is(merchant.getAccount())), Merchant.class);
 		if (list.size() == 0) {
 			mongoTemplate.insert(merchant);
-			addCustomerGroup(merchant);
+			initMerchant(merchant);
 		} else {
 			throw new Exception("账号已存在");
 		}
 	}
 
-	public void addCustomerGroup(Merchant merchant){
-		CustomerGroup customerGroup=new CustomerGroup();
+	private void initMerchant(Merchant merchant) {
+		addCustomerGroup(merchant);
+	}
+
+	private void addCustomerGroup(Merchant merchant) {
+		CustomerGroup customerGroup = new CustomerGroup();
 		customerGroup.setMerchantId(merchant.getId());
 		customerGroup.setName("默认顾客组");
 		customerGroup.setId(ObjectId.get());
 		mongoTemplate.insert(customerGroup);
 	}
+
 	// 是验证商户账号是否存在
 	public boolean accountValidate(String account) {
 		List<Merchant> list = mongoTemplate.find(new Query(Criteria.where("account").is(account)), Merchant.class);
@@ -144,7 +149,7 @@ public class MerchantService extends BaseService {
 	}
 
 	public void updateInfo(Merchant merchant) {
-		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds","merchantTagNodes");
+		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds", "merchantTagNodes");
 	}
 
 	public void UpdateQuota(String id, int countInt) {

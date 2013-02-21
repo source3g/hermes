@@ -28,6 +28,18 @@
 		<property name="durableSubscriptionName" value="message_send" />
 		<property name="messageSelector" value="type='sendMessage'"></property>
 	</bean>
+	<bean id="messageGroupSendListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="messageTopicListenerConnectionFactory" />
+		<property name="destination" ref="messageDestination" />
+		<property name="pubSubDomain" value="true" />
+		<property name="sessionTransacted" value="true" />
+		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
+		<property name="messageListener" ref="messageGroupSendListener" />
+		<property name="subscriptionDurable" value="true" />
+		<property name="durableSubscriptionName" value="message_groupSend" />
+		<property name="messageSelector" value="type='groupSendMessage'"></property>
+	</bean>
 	
 	<bean id="messageLogListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">

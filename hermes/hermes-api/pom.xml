@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>hermes-api</artifactId>
 	<packaging>war</packaging>
-	<name>Hermes-api</name>
+	<name>hermes-api</name>
 	<description>Hermes-api</description>
 
 

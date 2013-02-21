@@ -56,7 +56,7 @@ import com.source3g.hermes.utils.PhoneUtils;
 
 @Service
 public class MessageService extends BaseService {
-	private static final Logger logger=LoggerFactory.getLogger(MessageService.class);
+	private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
 
 	@Autowired
 	private JmsService jmsService;
@@ -75,18 +75,16 @@ public class MessageService extends BaseService {
 	@SuppressWarnings("unused")
 	@Value(value = "message.msgcode")
 	private String msgCode;
-	@SuppressWarnings("unused")
 	@Value(value = "message.itemid")
 	private String itemId;
-	@SuppressWarnings("unused")
 	@Value(value = "message.gatename.cm")
 	private String cmGateName;
-	@SuppressWarnings("unused")
-	@Value(value = "message.gatename.cm.spnumber")
-	private String spnumber;
-	@SuppressWarnings("unused")
+	// @Value(value = "message.gatename.cm.spnumber")
+	// private String spnumber;
 	@Value(value = "message.gatename.cu")
 	private String cuGateName;
+	@Value(value = "message.gatename.ct")
+	private String ctGateName;
 
 	/**
 	 * 短信群发
@@ -132,7 +130,7 @@ public class MessageService extends BaseService {
 				customer.setName((String) obj.get("name"));
 				customer.setPhone((String) obj.get("phone"));
 				customer.setId((ObjectId) obj.get("_id"));
-				customer.setMerchantId((ObjectId)obj.get("merchantId"));
+				customer.setMerchantId((ObjectId) obj.get("merchantId"));
 				DBRef dbRef = (DBRef) obj.get("customerGroup");
 				customer.setCustomerGroup(new CustomerGroup((ObjectId) dbRef.getId()));
 				return customer;
@@ -188,19 +186,27 @@ public class MessageService extends BaseService {
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(phone)), Customer.class);
 		String proceedContent = processContent(merchant, c, content);
 		genMessageSendLog(c, merchantId, 1, proceedContent, MessageType.短信发送, MessageStatus.发送中);
-		sendMessage(c, proceedContent, MessageType.短信发送,null);
+		sendMessage(c, proceedContent, MessageType.短信发送, null);
 	}
 
-	public void sendMessage(Customer c, String content, MessageType messageType,ObjectId groupLogId) {
+	public void sendMessage(Customer c, String content, MessageType messageType, ObjectId groupLogId) {
 		ShortMessageRecord message = new ShortMessageRecord();
 		message.setContent(content);
 		message.setPhone(c.getPhone());
 		message.setMessageType(messageType);
 		message.setMerchantId(c.getMerchantId());
-		if(groupLogId!=null){
+		if (groupLogId != null) {
 			message.setGroupLogId(groupLogId);
 		}
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+	}
+
+	/**
+	 * 暂时测试用
+	 */
+	public void groupSend() {
+		String a = "a";
+		jmsService.sendObject(messageDestination, a, JmsConstants.TYPE, JmsConstants.GROUP_SEND_MESSAGE);
 	}
 
 	public void sendMessages(ObjectId merchantId, Set<Customer> customersSet, String content) throws Exception {
@@ -209,7 +215,7 @@ public class MessageService extends BaseService {
 			throw new Exception("余额不足");
 		}
 		// 生成群发记录
-		GroupSendLog groupSendLog=genGroupSendLog(customersSet, content, merchant.getId());
+		GroupSendLog groupSendLog = genGroupSendLog(customersSet, content, merchant.getId());
 		for (Customer c : customersSet) {
 			sendMessage(c, processContent(merchant, c, content), MessageType.群发, groupSendLog.getId());
 		}
@@ -268,45 +274,48 @@ public class MessageService extends BaseService {
 	}
 
 	public MessageStatus send(ShortMessageRecord shortMessageRecord) {
-		String phoneNumber=shortMessageRecord.getPhone();
-		String content=shortMessageRecord.getContent();
-		String msgId=shortMessageRecord.getMsgId();
-		return send(msgId,phoneNumber,content);
-	}
-	
-	public MessageStatus send(String msgId, String phoneNumber, String content) {
-		if (PhoneOperator.移动.equals(PhoneUtils.getOperatior(phoneNumber))) {
-			return sendByCm( msgId,phoneNumber, content);
-		}
-		if (PhoneOperator.联通.equals(PhoneUtils.getOperatior(phoneNumber))) {
-			return sendByCu(msgId,phoneNumber, content);
-		}
-		if (PhoneOperator.电信.equals(PhoneUtils.getOperatior(phoneNumber))) {
-			return sendByCt(msgId,phoneNumber, content);
-		}
-		logger.debug("向" + phoneNumber + "发送消息" + content+"失败，电话号码有误");
-		return MessageStatus.电话号码有误;
-	}
-	private MessageStatus sendByCt(String msgId,String phoneNumber, String content) {
-		logger.debug("通过电信向" + phoneNumber + "发送" + content+"msgId:"+msgId);
-		sendByCu(msgId,phoneNumber, content);
-		return MessageStatus.已发送;
+		String phoneNumber = shortMessageRecord.getPhone();
+		String content = shortMessageRecord.getContent();
+		String msgId = shortMessageRecord.getMsgId();
+		return send(msgId, phoneNumber, content);
 	}
 
-	private MessageStatus sendByCu(String msgId,String phoneNumber, String content) {
-		logger.debug("通过联通向" + phoneNumber + "发送" + content+"msgId:"+msgId);
+	public MessageStatus send(String msgId, String phoneNumber, String content) {
+		return sendByOperator(msgId, phoneNumber, content, PhoneUtils.getOperatior(phoneNumber));
+	}
+
+	private String getGateNameByOperator(PhoneOperator operator) {
+		String result = "";
+		switch (operator) {
+		case 移动:
+			result = cmGateName;
+			break;
+		case 联通:
+			result = cuGateName;
+			break;
+		case 电信:
+			result = ctGateName;
+		default:
+			result = cuGateName;
+			break;
+		}
+		return result;
+	}
+
+	private MessageStatus sendByOperator(String msgId, String phoneNumber, String content, PhoneOperator operator) {
+		logger.debug("通过" + operator.toString() + "向" + phoneNumber + "发送" + content + "msgId:" + msgId);
 		TcpCommTrans tcp = null;
 		try {
 			tcp = TcpCommandService.getTcp();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-
+		// unicomgz_wxtl
 		DataCommand command = new DataCommand("submit");
 		command.AddNewItem("msgcode", "15");
-		command.AddNewItem("itemid", "10253901");
+		command.AddNewItem("itemid", itemId);
 		command.AddNewItem("msgid", "03251325236560000009");
-		command.AddNewItem("gatename", "unicomgzDXYD");
+		command.AddNewItem("gatename", getGateNameByOperator(operator));
 		// command.AddNewItem("gatename", "mobile0025");
 		// command.AddNewItem("spnumber", "10660025");
 		command.AddNewItem("feetype", "1");
@@ -326,15 +335,9 @@ public class MessageService extends BaseService {
 		}
 		System.out.println(tcp.getSndQueueSize());
 		System.out.println(tcp.getUnSend().size());
-		for (String str:tcp.getUnSend()){
+		for (String str : tcp.getUnSend()) {
 			System.out.println(str);
 		}
-		return MessageStatus.已发送;
-	}
-
-	private MessageStatus sendByCm(String msgId,String phoneNumber, String content) {
-		logger.debug("通过移动向" + phoneNumber + "发送" + content+"msgId:"+msgId);
-		sendByCu(msgId,phoneNumber, content);
 		return MessageStatus.已发送;
 	}
 
@@ -465,9 +468,9 @@ public class MessageService extends BaseService {
 	}
 
 	public void updateShortMessageRecord(String msgId, MessageStatus messageStatus) {
-		Update update=new Update();
+		Update update = new Update();
 		update.set("status", messageStatus);
-		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)),update, ShortMessageRecord.class);
+		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)), update, ShortMessageRecord.class);
 	}
 
 	public Page failedMessagelist(int pageNoInt) {
