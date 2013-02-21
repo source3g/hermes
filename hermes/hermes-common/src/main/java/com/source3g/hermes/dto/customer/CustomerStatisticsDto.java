@@ -1,6 +1,6 @@
 package com.source3g.hermes.dto.customer;
 
-import com.source3g.hermes.dto.message.StatisticObject;
+import com.source3g.hermes.dto.message.StatisticObjectDto;
 
 /**
  * 首页的最新数据
@@ -10,46 +10,46 @@ import com.source3g.hermes.dto.message.StatisticObject;
  */
 public class CustomerStatisticsDto {
 
-	private StatisticObject editedCustomerCount;
-	private StatisticObject uneditedCustomerCount;
-	private StatisticObject editedCallInCountThreeDay;
-	private StatisticObject uneditedCallInCountThreeDay;
-	private StatisticObject editedCallInCountAWeek;
-	private StatisticObject uneditedCallInCountAWeek;
-	public StatisticObject getEditedCustomerCount() {
+	private StatisticObjectDto editedCustomerCount;
+	private StatisticObjectDto uneditedCustomerCount;
+	private StatisticObjectDto editedCallInCountThreeDay;
+	private StatisticObjectDto uneditedCallInCountThreeDay;
+	private StatisticObjectDto editedCallInCountAWeek;
+	private StatisticObjectDto uneditedCallInCountAWeek;
+	public StatisticObjectDto getEditedCustomerCount() {
 		return editedCustomerCount;
 	}
-	public void setEditedCustomerCount(StatisticObject editedCustomerCount) {
+	public void setEditedCustomerCount(StatisticObjectDto editedCustomerCount) {
 		this.editedCustomerCount = editedCustomerCount;
 	}
-	public StatisticObject getUneditedCustomerCount() {
+	public StatisticObjectDto getUneditedCustomerCount() {
 		return uneditedCustomerCount;
 	}
-	public void setUneditedCustomerCount(StatisticObject uneditedCustomerCount) {
+	public void setUneditedCustomerCount(StatisticObjectDto uneditedCustomerCount) {
 		this.uneditedCustomerCount = uneditedCustomerCount;
 	}
-	public StatisticObject getEditedCallInCountThreeDay() {
+	public StatisticObjectDto getEditedCallInCountThreeDay() {
 		return editedCallInCountThreeDay;
 	}
-	public void setEditedCallInCountThreeDay(StatisticObject editedCallInCountThreeDay) {
+	public void setEditedCallInCountThreeDay(StatisticObjectDto editedCallInCountThreeDay) {
 		this.editedCallInCountThreeDay = editedCallInCountThreeDay;
 	}
-	public StatisticObject getUneditedCallInCountThreeDay() {
+	public StatisticObjectDto getUneditedCallInCountThreeDay() {
 		return uneditedCallInCountThreeDay;
 	}
-	public void setUneditedCallInCountThreeDay(StatisticObject uneditedCallInCountThreeDay) {
+	public void setUneditedCallInCountThreeDay(StatisticObjectDto uneditedCallInCountThreeDay) {
 		this.uneditedCallInCountThreeDay = uneditedCallInCountThreeDay;
 	}
-	public StatisticObject getEditedCallInCountAWeek() {
+	public StatisticObjectDto getEditedCallInCountAWeek() {
 		return editedCallInCountAWeek;
 	}
-	public void setEditedCallInCountAWeek(StatisticObject editedCallInCountAWeek) {
+	public void setEditedCallInCountAWeek(StatisticObjectDto editedCallInCountAWeek) {
 		this.editedCallInCountAWeek = editedCallInCountAWeek;
 	}
-	public StatisticObject getUneditedCallInCountAWeek() {
+	public StatisticObjectDto getUneditedCallInCountAWeek() {
 		return uneditedCallInCountAWeek;
 	}
-	public void setUneditedCallInCountAWeek(StatisticObject uneditedCallInCountAWeek) {
+	public void setUneditedCallInCountAWeek(StatisticObjectDto uneditedCallInCountAWeek) {
 		this.uneditedCallInCountAWeek = uneditedCallInCountAWeek;
 	}
 }

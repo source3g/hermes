@@ -41,7 +41,7 @@ public class MessageSendListener implements MessageListener {
 						if (merchant == null) {
 							throw new Exception("商户不存在");
 						}
-						if (merchant.getShortMessage().getSurplusMsgCount() <= 0) {
+						if (merchant.getMessageBalance().getSurplusMsgCount() <= 0) {
 							messageService.updateMessageSendLog(shortMessageRecord, MessageStatus.余额不足发送失败);
 							throw new Exception("余额不足发送失败");
 						} else {
@@ -51,7 +51,7 @@ public class MessageSendListener implements MessageListener {
 							messageService.updateMessageSendLog(shortMessageRecord, status);
 							if (MessageStatus.已发送.equals(status)) {
 								Update updateSurplus = new Update();
-								updateSurplus.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
+								updateSurplus.inc("messageBalance.surplusMsgCount", -1).inc("messageBalance.totalCount", -1).inc("messageBalance.sentCount", 1);
 								mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), updateSurplus, Merchant.class);
 								Update updateGroupLog = new Update();
 								updateGroupLog.inc("successCount", 1);

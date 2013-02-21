@@ -17,15 +17,15 @@
 			</tr>
 			<tr>
 				<td>短信预存总数：
-				<td><span id="totalCount">${merchant.shortMessage.totalCount}</span>
+				<td><span id="totalCount">${merchant.messageBalance.totalCount}</span>
 			</tr>
 			<tr>
 				<td>已使用短信数量：
-				<td><span id="sentCount">${merchant.shortMessage.sentCount}</span>
+				<td><span id="sentCount">${merchant.messageBalance.sentCount}</span>
 			</tr>
 			<tr>
 				<td>可用发送数量:：
-				<td><span id="surplusMsgCount">${merchant.shortMessage.surplusMsgCount}</span>
+				<td><span id="surplusMsgCount">${merchant.messageBalance.surplusMsgCount}</span>
 			</tr>
 			<tr>
 				<td>可用短信调整类型：</td>

@@ -1,16 +1,16 @@
 package com.source3g.hermes.dto.message;
 
-public class StatisticObject {
+public class StatisticObjectDto {
 	private String displayName;
 	private long value;
 	
-	public StatisticObject(String displayName, long value) {
+	public StatisticObjectDto(String displayName, long value) {
 		super();
 		this.displayName = displayName;
 		this.value = value;
 	}
 	
-	public StatisticObject() {
+	public StatisticObjectDto() {
 		super();
 	}
 	public String getDisplayName() {

@@ -26,7 +26,7 @@ public class Merchant extends AbstractEntity {
 
 	private List<ObjectId> deviceIds;
 	
-	private ShortMessage shortMessage=new ShortMessage();
+	private MessageBalance messageBalance=new MessageBalance();
 	private MerchantResource merchantResource;
 	@DBRef
 	private List<MerchantTagNode> merchantTagNodes;
@@ -93,12 +93,12 @@ public class Merchant extends AbstractEntity {
 		this.password = password;
 	}
 
-	public ShortMessage getShortMessage() {
-		return shortMessage;
+	public MessageBalance getMessageBalance() {
+		return messageBalance;
 	}
 
-	public void setShortMessage(ShortMessage shortMessage) {
-		this.shortMessage = shortMessage;
+	public void setMessageBalance(MessageBalance messageBalance) {
+		this.messageBalance = messageBalance;
 	}
 
 	public List<Note> getNotes() {

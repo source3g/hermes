@@ -2,7 +2,7 @@ package com.source3g.hermes.entity.merchant;
 
 import java.io.Serializable;
 
-public class ShortMessage implements Serializable{
+public class MessageBalance implements Serializable{
 	private static final long serialVersionUID = -3419910566493186938L;
 	private int sentCount=0;// 已发送短信数量
 	private int surplusMsgCount=0;// 可用数量

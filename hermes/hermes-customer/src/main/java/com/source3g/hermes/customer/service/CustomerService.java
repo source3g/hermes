@@ -45,7 +45,7 @@ import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.dto.customer.CustomerRemindDto;
 import com.source3g.hermes.dto.customer.CustomerRemindDto.CustomerInfo;
 import com.source3g.hermes.dto.customer.CustomerStatisticsDto;
-import com.source3g.hermes.dto.message.StatisticObject;
+import com.source3g.hermes.dto.message.StatisticObjectDto;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.ObjectValue;
 import com.source3g.hermes.entity.customer.CallRecord;
@@ -61,7 +61,6 @@ import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
-import com.source3g.hermes.service.BaseService.ObjectMapper;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.Page;
@@ -437,7 +436,7 @@ public class CustomerService extends BaseService {
 		if (merchant.getSetting().isAutoSend() == false) {
 			return;
 		}
-		if (merchant.getShortMessage().getSurplusMsgCount() > 0) {
+		if (merchant.getMessageBalance().getSurplusMsgCount() > 0) {
 			CallInMessage callInMessage = new CallInMessage();
 			callInMessage.setDeviceSn(deviceSn);
 			callInMessage.setDuration(duration);
@@ -623,14 +622,14 @@ public class CustomerService extends BaseService {
 
 	public CustomerStatisticsDto findCustomerStatistics(ObjectId merchantId) {
 		CustomerStatisticsDto customerStatisticsDto = new CustomerStatisticsDto();
-		customerStatisticsDto.setEditedCustomerCount(new StatisticObject("已编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.oldCustomer)));
-		customerStatisticsDto.setUneditedCustomerCount(new StatisticObject("未编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.newCustomer)));
+		customerStatisticsDto.setEditedCustomerCount(new StatisticObjectDto("已编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.oldCustomer)));
+		customerStatisticsDto.setUneditedCustomerCount(new StatisticObjectDto("未编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.newCustomer)));
 		CallInStatisticsCount callInStatisticsCountThreeDay = findCallInCountByDayFromToday(merchantId, 3);
-		customerStatisticsDto.setUneditedCallInCountThreeDay(new StatisticObject("三天未编辑顾客打进电话数：", callInStatisticsCountThreeDay.getNewCount()));
-		customerStatisticsDto.setEditedCallInCountThreeDay(new StatisticObject("三天已编辑顾客打进电话数：", callInStatisticsCountThreeDay.getOldCount()));
+		customerStatisticsDto.setUneditedCallInCountThreeDay(new StatisticObjectDto("三天未编辑顾客打进电话数：", callInStatisticsCountThreeDay.getNewCount()));
+		customerStatisticsDto.setEditedCallInCountThreeDay(new StatisticObjectDto("三天已编辑顾客打进电话数：", callInStatisticsCountThreeDay.getOldCount()));
 		CallInStatisticsCount callInStatisticsCountAWeek = findCallInCountByDayFromToday(merchantId, 7);
-		customerStatisticsDto.setUneditedCallInCountAWeek(new StatisticObject("七天未编辑顾客打进电话数：", callInStatisticsCountAWeek.getNewCount()));
-		customerStatisticsDto.setEditedCallInCountAWeek(new StatisticObject("七天已编辑顾客打进电话数：", callInStatisticsCountAWeek.getOldCount()));
+		customerStatisticsDto.setUneditedCallInCountAWeek(new StatisticObjectDto("七天未编辑顾客打进电话数：", callInStatisticsCountAWeek.getNewCount()));
+		customerStatisticsDto.setEditedCallInCountAWeek(new StatisticObjectDto("七天已编辑顾客打进电话数：", callInStatisticsCountAWeek.getOldCount()));
 		return customerStatisticsDto;
 	}
 

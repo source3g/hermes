@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.source3g.hermes.entity.AbstractEntity;
 
 @Document
-public class MessageLog extends AbstractEntity {
+public class MessageChargeLog extends AbstractEntity {
 
 	/**
 	 * 

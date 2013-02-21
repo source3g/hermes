@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
-import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.message.service.MessageService;
 import com.source3g.hermes.service.CommonBaseService;
@@ -126,13 +126,13 @@ public class MessageApi {
 
 	@RequestMapping(value = "/autoSend/messageInfo/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public MessageAutoSend getMessageAutoSend(@PathVariable String merchantId) {
+	public AutoSendMessageTemplate getMessageAutoSend(@PathVariable String merchantId) {
 		return messageService.getMessageAutoSend(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/autoSend/messageInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public String autoSend(@RequestBody MessageAutoSend messageAutoSend) {
+	public String autoSend(@RequestBody AutoSendMessageTemplate messageAutoSend) {
 		messageService.saveMessageAutoSend(messageAutoSend);
 		return ReturnConstants.SUCCESS;
 	}

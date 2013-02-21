@@ -4,7 +4,7 @@ import org.bson.types.ObjectId;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
-public class MessageAutoSend extends AbstractEntity {
+public class AutoSendMessageTemplate extends AbstractEntity {
 
 	private static final long serialVersionUID = -3079593257726925539L;
 	private String newMessageCotent;

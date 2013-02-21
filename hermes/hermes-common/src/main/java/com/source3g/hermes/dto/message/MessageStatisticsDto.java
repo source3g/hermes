@@ -1,32 +1,32 @@
 package com.source3g.hermes.dto.message;
 
 public class MessageStatisticsDto {
-	private StatisticObject handUpMessageSentCountThreeDay;
-	private StatisticObject handUpMessageSentCountAWeek;
-	private StatisticObject messageGroupSentCountThreeDay;
-	private StatisticObject messageGroupSentCountAWeek;
-	public StatisticObject getHandUpMessageSentCountThreeDay() {
+	private StatisticObjectDto handUpMessageSentCountThreeDay;
+	private StatisticObjectDto handUpMessageSentCountAWeek;
+	private StatisticObjectDto messageGroupSentCountThreeDay;
+	private StatisticObjectDto messageGroupSentCountAWeek;
+	public StatisticObjectDto getHandUpMessageSentCountThreeDay() {
 		return handUpMessageSentCountThreeDay;
 	}
-	public void setHandUpMessageSentCountThreeDay(StatisticObject handUpMessageSentCountThreeDay) {
+	public void setHandUpMessageSentCountThreeDay(StatisticObjectDto handUpMessageSentCountThreeDay) {
 		this.handUpMessageSentCountThreeDay = handUpMessageSentCountThreeDay;
 	}
-	public StatisticObject getHandUpMessageSentCountAWeek() {
+	public StatisticObjectDto getHandUpMessageSentCountAWeek() {
 		return handUpMessageSentCountAWeek;
 	}
-	public void setHandUpMessageSentCountAWeek(StatisticObject handUpMessageSentCountAWeek) {
+	public void setHandUpMessageSentCountAWeek(StatisticObjectDto handUpMessageSentCountAWeek) {
 		this.handUpMessageSentCountAWeek = handUpMessageSentCountAWeek;
 	}
-	public StatisticObject getMessageGroupSentCountThreeDay() {
+	public StatisticObjectDto getMessageGroupSentCountThreeDay() {
 		return messageGroupSentCountThreeDay;
 	}
-	public void setMessageGroupSentCountThreeDay(StatisticObject messageGroupSentCountThreeDay) {
+	public void setMessageGroupSentCountThreeDay(StatisticObjectDto messageGroupSentCountThreeDay) {
 		this.messageGroupSentCountThreeDay = messageGroupSentCountThreeDay;
 	}
-	public StatisticObject getMessageGroupSentCountAWeek() {
+	public StatisticObjectDto getMessageGroupSentCountAWeek() {
 		return messageGroupSentCountAWeek;
 	}
-	public void setMessageGroupSentCountAWeek(StatisticObject messageGroupSentCountAWeek) {
+	public void setMessageGroupSentCountAWeek(StatisticObjectDto messageGroupSentCountAWeek) {
 		this.messageGroupSentCountAWeek = messageGroupSentCountAWeek;
 	}
 
