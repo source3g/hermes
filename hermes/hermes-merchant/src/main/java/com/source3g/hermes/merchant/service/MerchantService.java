@@ -18,7 +18,7 @@ import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
-import com.source3g.hermes.entity.merchant.MessageLog;
+import com.source3g.hermes.entity.merchant.MessageChargeLog;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.service.BaseService;
@@ -116,13 +116,13 @@ public class MerchantService extends BaseService {
 	 */
 	public void chargeMsg(String id, int count) {
 		Update update = new Update();
-		update.inc("shortMessage.totalCount", count);
+		update.inc("messageBalance.totalCount", count);
 		if (count > 0) {
 			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id))), update, Merchant.class);
 		} else {
 			return;
-		}
-		MessageLog msgLog = new MessageLog();
+		}	
+		MessageChargeLog msgLog = new MessageChargeLog();
 		msgLog.setMerchantId(new ObjectId(id));
 		msgLog.setCount(count);
 		Date chargeTime = new Date();
@@ -131,7 +131,7 @@ public class MerchantService extends BaseService {
 
 	}
 
-	private void addMsgLog(MessageLog messageLog) {
+	private void addMsgLog(MessageChargeLog messageLog) {
 		super.add(messageLog);
 	}
 
@@ -139,10 +139,10 @@ public class MerchantService extends BaseService {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("merchantId").is(merchantId));
 		Page page = new Page();
-		Long totalCount = mongoTemplate.count(query, MessageLog.class);
+		Long totalCount = mongoTemplate.count(query, MessageChargeLog.class);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNoInt);
-		List<MessageLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), MessageLog.class);
+		List<MessageChargeLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), MessageChargeLog.class);
 		page.setData(list);
 		return page;
 
@@ -154,11 +154,11 @@ public class MerchantService extends BaseService {
 
 	public void UpdateQuota(String id, int countInt) {
 		Merchant merchant = mongoTemplate.findById(new ObjectId(id), Merchant.class);
-		if (merchant.getShortMessage().getSurplusMsgCount() + countInt < 0 || merchant.getShortMessage().getSurplusMsgCount() + countInt > merchant.getShortMessage().getTotalCount()) {
+		if (merchant.getMessageBalance().getSurplusMsgCount() + countInt < 0 || merchant.getMessageBalance().getSurplusMsgCount() + countInt > merchant.getMessageBalance().getTotalCount()) {
 			return;
 		}
 		Update update = new Update();
-		update.inc("shortMessage.surplusMsgCount", countInt);
+		update.inc("messageBalance.surplusMsgCount", countInt);
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id))), update, Merchant.class);
 	}
 

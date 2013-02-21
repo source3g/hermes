@@ -25,8 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
-import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
@@ -209,18 +209,18 @@ public class MessageController {
 	public ModelAndView toAutoSend(HttpServletRequest req) throws Exception {
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/autoSend/messageInfo/"+merchant.getId()+"/";
-		MessageAutoSend  messageAutoSend = restTemplate.getForObject(uri, MessageAutoSend.class);
+		AutoSendMessageTemplate  messageAutoSend = restTemplate.getForObject(uri, AutoSendMessageTemplate.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("messageAutoSend", messageAutoSend);
 		return new ModelAndView("merchant/shortMessage/autoSend",model);
 	}
 
 	@RequestMapping(value = "/autoSend", method = RequestMethod.POST)
-	public ModelAndView autoSend(HttpServletRequest req,MessageAutoSend messageAutoSend) throws Exception {
+	public ModelAndView autoSend(HttpServletRequest req,AutoSendMessageTemplate messageAutoSend) throws Exception {
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/messageInfo/";
 		messageAutoSend.setMerchantId(merchant.getId());
-		HttpEntity<MessageAutoSend> entity = new HttpEntity<MessageAutoSend>(messageAutoSend);
+		HttpEntity<AutoSendMessageTemplate> entity = new HttpEntity<AutoSendMessageTemplate>(messageAutoSend);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();

@@ -28,9 +28,9 @@
 		<c:forEach items="${page.data}" var="merchant">
 			<tr>
 				<td>${merchant.name }</td>
-				<td>${merchant.shortMessage.totalCount}</td>
-				<td>${merchant.shortMessage.sendCount}</td>
-				<td>${merchant.shortMessage.surplusMsgCount}</td>
+				<td>${merchant.messageBalance.totalCount}</td>
+				<td>${merchant.messageBalance.sentCount}</td>
+				<td>${merchant.messageBalance.surplusMsgCount}</td>
 				<td><a class="btn btn-success" href="javascript:void();"
 					onclick="toReservedMsg('${merchant.id}');">短信预存</a>
 					<a class="btn btn-success" href="javascript:void();"

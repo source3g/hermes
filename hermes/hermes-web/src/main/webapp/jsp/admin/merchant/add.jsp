@@ -411,7 +411,6 @@
 
 
 		function showDevices(data){
-			alert(data);
 			if( data.sn==null){
 				$('#deviceMessage').html(data).css("color","red");
 				return ;

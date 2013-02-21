@@ -3,7 +3,7 @@ package com.source3g.hermes.merchant.service;
 import java.util.List;
 
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.merchant.MessageLog;
+import com.source3g.hermes.entity.merchant.MessageChargeLog;
 import com.source3g.hermes.utils.Page;
 
 public interface MerchantServiceIntf {
@@ -26,6 +26,6 @@ public interface MerchantServiceIntf {
 
 	public void chargeMsg(String id, int count);
 
-	public void addMsgLog(MessageLog messageLog);
+	public void addMsgLog(MessageChargeLog messageLog);
 	
 }

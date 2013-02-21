@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.message.MessageAutoSend;
+import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.message.CallInMessage;
@@ -39,7 +39,7 @@ public class AutoSendListener implements MessageListener {
 					CallInMessage callInMessage = (CallInMessage) obj;
 					String phone = callInMessage.getPhone();
 					Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(callInMessage.getMerchantId())), Merchant.class);
-					MessageAutoSend messagecontent = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())), MessageAutoSend.class);
+					AutoSendMessageTemplate messagecontent = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())), AutoSendMessageTemplate.class);
 
 					@SuppressWarnings("unused")
 					String customerName = null;
@@ -57,11 +57,11 @@ public class AutoSendListener implements MessageListener {
 					} else {
 						content = messagecontent.getNewMessageCotent();
 					}
-					if (merchant.getShortMessage().getSurplusMsgCount() <= 0) {
+					if (merchant.getMessageBalance().getSurplusMsgCount() <= 0) {
 						messageService.genMessageSendLog(customer, merchant.getId(), 1, content, MessageType.挂机短信, MessageStatus.余额不足发送失败);
 					} else {
 						Update update = new Update();
-						update.inc("shortMessage.surplusMsgCount", -1).inc("shortMessage.totalCount", -1).inc("shortMessage.sentCount", 1);
+						update.inc("messageBalance.surplusMsgCount", -1).inc("messageBalance.totalCount", -1).inc("messageBalance.sentCount", 1);
 						mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
 						
 						String content1=messageService.processContent(merchant, customer, content);

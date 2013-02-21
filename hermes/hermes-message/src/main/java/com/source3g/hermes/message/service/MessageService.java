@@ -32,15 +32,15 @@ import com.mongodb.DBObject;
 import com.mongodb.DBRef;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
-import com.source3g.hermes.dto.message.StatisticObject;
+import com.source3g.hermes.dto.message.StatisticObjectDto;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
+import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
-import com.source3g.hermes.entity.message.MessageAutoSend;
 import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.enums.MessageStatus;
@@ -169,8 +169,9 @@ public class MessageService extends BaseService {
 
 	public void sendMessage(ObjectId merchantId, String phone, String content) throws Exception {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		if (merchant.getShortMessage().getSurplusMsgCount() - 1 < 0) {
+		if (merchant.getMessageBalance().getSurplusMsgCount() - 1 < 0) {
 			throw new Exception("余额不足");
+			
 		}
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(phone)), Customer.class);
 		String proceedContent = processContent(merchant, c, content);
@@ -200,7 +201,7 @@ public class MessageService extends BaseService {
 
 	public void sendMessages(ObjectId merchantId, Set<Customer> customersSet, String content) throws Exception {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		if (customersSet.size() > merchant.getShortMessage().getSurplusMsgCount()) {
+		if (customersSet.size() > merchant.getMessageBalance().getSurplusMsgCount()) {
 			throw new Exception("余额不足");
 		}
 		// 生成群发记录
@@ -330,23 +331,23 @@ public class MessageService extends BaseService {
 		return MessageStatus.已发送;
 	}
 
-	public void saveMessageAutoSend(MessageAutoSend messageAutoSend) {
+	public void saveMessageAutoSend(AutoSendMessageTemplate messageAutoSend) {
 		Update update = new Update();
 		update.set("newMessageCotent", messageAutoSend.getNewMessageCotent());
 		update.set("oldMessageCotent", messageAutoSend.getOldMessageCotent());
-		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(messageAutoSend.getMerchantId())), update, MessageAutoSend.class);
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(messageAutoSend.getMerchantId())), update, AutoSendMessageTemplate.class);
 	}
 
-	public MessageAutoSend getMessageAutoSend(ObjectId merchantId) {
-		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), MessageAutoSend.class);
+	public AutoSendMessageTemplate getMessageAutoSend(ObjectId merchantId) {
+		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), AutoSendMessageTemplate.class);
 	}
 
 	public MessageStatisticsDto findMessageStastics(ObjectId merchantId) {
 		MessageStatisticsDto messageStatisticsDto = new MessageStatisticsDto();
-		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObject("一周挂机短信发送数量：", findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObject("一周短信群发数量：", findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
-		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObject("三天挂机短信群发数量：", findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObject("三天短信群发数量：", findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObjectDto("一周挂机短信发送数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObjectDto("一周短信群发数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObjectDto("三天挂机短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObjectDto("三天短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
 		return messageStatisticsDto;
 	}
 
