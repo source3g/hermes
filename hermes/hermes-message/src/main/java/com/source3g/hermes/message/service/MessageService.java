@@ -62,28 +62,18 @@ public class MessageService extends BaseService {
 	private JmsService jmsService;
 	@Autowired
 	private Destination messageDestination;
-
-	@SuppressWarnings("unused")
-	@Value(value = "message.ip}")
-	private String messageIp;
-	@Value(value = "message.name")
-	@SuppressWarnings("unused")
-	private String messageName;
-	@Value(value = "message.pass")
-	@SuppressWarnings("unused")
-	private String messagePass;
-	@SuppressWarnings("unused")
-	@Value(value = "message.msgcode")
+	
+	@Value(value = "${message.msgcode}")
 	private String msgCode;
-	@Value(value = "message.itemid")
+	@Value(value = "${message.itemid}")
 	private String itemId;
-	@Value(value = "message.gatename.cm")
+	@Value(value = "${message.gatename.cm}")
 	private String cmGateName;
 	// @Value(value = "message.gatename.cm.spnumber")
 	// private String spnumber;
-	@Value(value = "message.gatename.cu")
+	@Value(value = "${message.gatename.cu}")
 	private String cuGateName;
-	@Value(value = "message.gatename.ct")
+	@Value(value = "${message.gatename.ct}")
 	private String ctGateName;
 
 	/**
@@ -311,7 +301,7 @@ public class MessageService extends BaseService {
 		}
 		// unicomgz_wxtl
 		DataCommand command = new DataCommand("submit");
-		command.AddNewItem("msgcode", "15");
+		command.AddNewItem("msgcode", msgCode);
 		command.AddNewItem("itemid", itemId);
 		command.AddNewItem("msgid", "03251325236560000009");
 		command.AddNewItem("gatename", getGateNameByOperator(operator));

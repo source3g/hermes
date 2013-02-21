@@ -1,4 +1,5 @@
 package com.source3g.hermes.merchant.controller;
+
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,7 +57,7 @@ public class CustomerController {
 		if (errorResult.hasErrors()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());
-			return new ModelAndView("merchant/customer/add",model);
+			return new ModelAndView("merchant/customer/add", model);
 		}
 		handleCustomer(customer);
 		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
@@ -73,24 +74,24 @@ public class CustomerController {
 			return new ModelAndView("merchant/customer/add", model);
 		}
 	}
-	
-	@RequestMapping(value="/get/{id}",method=RequestMethod.GET)
+
+	@RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public Customer get(@PathVariable String id){
-		String uri=ConfigParams.getBaseUrl()+"customer/"+id+"/";
-		Customer customer=restTemplate.getForObject(uri, Customer.class);
+	public Customer get(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "customer/" + id + "/";
+		Customer customer = restTemplate.getForObject(uri, Customer.class);
 		return customer;
 	}
 
 	// 添加顾客验证电话号码去重
 	@RequestMapping(value = "/phoneValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean phoneValidate(String phone,String oldPhone,HttpServletRequest req) throws Exception {
-		if(StringUtils.isNotEmpty(phone)&&phone.equals(oldPhone)){
+	public Boolean phoneValidate(String phone, String oldPhone, HttpServletRequest req) throws Exception {
+		if (StringUtils.isNotEmpty(phone) && phone.equals(oldPhone)) {
 			return true;
 		}
-		Merchant merchant=LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "customer/phoneValidate/" + phone +"/"+merchant.getId()+ "/";
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "customer/phoneValidate/" + phone + "/" + merchant.getId() + "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
@@ -134,7 +135,7 @@ public class CustomerController {
 		model.put("type", type);
 		return new ModelAndView("/merchant/customer/list", model);
 	}
-	
+
 	@RequestMapping(value = "/customerListBycustomerGroupId/{customerGroupId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Customer[] customerListBycustomerGroupId(@PathVariable String customerGroupId) {
@@ -142,7 +143,7 @@ public class CustomerController {
 		Customer[] customers = restTemplate.getForObject(uri, Customer[].class);
 		return customers;
 	}
-	
+
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody
 	public String export(Customer customer, HttpServletRequest req) throws Exception {
@@ -205,8 +206,8 @@ public class CustomerController {
 
 	private String updateCustomer(Customer customer) throws Exception {
 		handleCustomer(customer);
-		Merchant merchant=LoginUtils.getLoginMerchant();
-		String uri = ConfigParams.getBaseUrl() + "customer/update/"+merchant.getId()+"/";
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "customer/update/" + merchant.getId() + "/";
 		HttpEntity<Customer> httpEntity = new HttpEntity<Customer>(customer);
 		String result = restTemplate.postForObject(uri, httpEntity, String.class);
 		return result;
@@ -378,7 +379,7 @@ public class CustomerController {
 		List<Remind> reminds = customer.getReminds();
 		if (reminds != null) {
 			for (int i = reminds.size() - 1; i >= 0; i--) {
-				if (reminds.get(i).getRemindTime() == null || reminds.get(i).getMerchantRemindTemplate().getId()==null) {
+				if (reminds.get(i).getRemindTime() == null || reminds.get(i).getMerchantRemindTemplate().getId() == null) {
 					reminds.remove(i);
 				}
 			}

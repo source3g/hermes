@@ -57,7 +57,15 @@ public class MerchantApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
-
+	
+	
+	@RequestMapping(value = "/sn/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public Merchant getBySn(@PathVariable String sn) throws Exception {
+		return commonBaseService.findMerchantByDeviceSn(sn);
+	}
+	
+	
 	@RequestMapping(value = "/accountValidate/{account}", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean accountValidate(@PathVariable String account) {
