@@ -138,9 +138,9 @@ public class CustomerController {
 
 	@RequestMapping(value = "/customerListBycustomerGroupId/{customerGroupId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Customer[] customerListBycustomerGroupId(@PathVariable String customerGroupId) {
+	public Object customerListBycustomerGroupId(@PathVariable String customerGroupId) {
 		String uri = ConfigParams.getBaseUrl() + "customer/customerListBycustomerGroupId/" + customerGroupId + "/";
-		Customer[] customers = restTemplate.getForObject(uri, Customer[].class);
+		Object customers = restTemplate.getForObject(uri, Object.class);
 		return customers;
 	}
 

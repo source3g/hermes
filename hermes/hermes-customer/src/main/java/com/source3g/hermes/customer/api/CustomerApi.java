@@ -115,7 +115,7 @@ public class CustomerApi {
 
 	@RequestMapping(value = "customerListBycustomerGroupId/{customerGroupId}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Customer> customerListBycustomerGroupId(@PathVariable ObjectId customerGroupId) {
+	public Object customerListBycustomerGroupId(@PathVariable ObjectId customerGroupId) throws Exception {
 		return customerService.customerListBycustomerGroupId(customerGroupId);
 	}
 
