@@ -115,7 +115,6 @@ body {
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
 								<li><a href="javascript:void();" id="shortMsgInfo">预存明细</a></li>
-								<li><a href="javascript:void();" id="failedMessageList">失败短信列表</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -166,6 +165,7 @@ body {
 									class="nav nav-list nav-tabs  nav-stacked  main-menu">
 									<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
 									<li><a href="javascript:void();" id="failedJms">失败消息</a></li>
+									<li><a href="javascript:void();" id="failedMessageList">失败短信列表</a></li>
 									<!-- <li><a href="javascript:void();" id="operateLog">操作日志</a></li> -->
 								</ul>
 							<!-- </div> -->
@@ -228,10 +228,7 @@ body {
 		$("#shortMsgInfo").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/merchant/messageInfo/list/");
 		});
-		$("#failedMessageList").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/message/failed/list/");
-		});
-
+		
 		//角色管理
 
 		$("#accountAdd").click(function() {
@@ -262,6 +259,11 @@ body {
 		$("#failedJms").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/system/monitor/failedJms/");
 		});
+		
+		$("#failedMessageList").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/message/failed/list/");
+		});
+
 		/*
 		$("#operateLog").click(function() {
 		loadPage("${pageContext.request.contextPath}/admin/system/operateLog/");
