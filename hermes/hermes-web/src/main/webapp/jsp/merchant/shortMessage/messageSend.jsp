@@ -274,7 +274,11 @@
 			$("#myModal").modal();
 		}
 		
-		function drawTable(data){	
+		function drawTable(data){
+			if(typeof(data)=="string"){
+				alert("客户组数据过多,最多显示5000位顾客信息");
+				return;
+			}
 			for(var i=0;i<data.length;i++){
 				var str="<input type=checkbox name=\"customerName\" onchange='selectOne(this);' value="+data[i].phone+">"+data[i].name;
 			$("#customer").append(str);//添加

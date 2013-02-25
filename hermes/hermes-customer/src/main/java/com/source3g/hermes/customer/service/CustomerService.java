@@ -105,11 +105,15 @@ public class CustomerService extends BaseService {
 	}
 
 	// 短信群发页面显示顾客信息
-	public List<Customer> customerListBycustomerGroupId(ObjectId customerGroupId) {
+	public Object customerListBycustomerGroupId(ObjectId customerGroupId) throws Exception {
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
 			customerGroupIds.add(customerGroupId);
 		BasicDBObject parameter = new BasicDBObject();
 		parameter.put("customerGroup.$id",  new BasicDBObject("$in", customerGroupIds));
+		long count=mongoTemplate.count(new Query(Criteria.where("customerGroup.$id").in(customerGroupIds)), Customer.class);
+		if(count>5000){
+			throw new Exception("客户组数据过多,最多显示5000位顾客信息");
+		}
 		List<Customer> customers = findByBasicDBObject(Customer.class, parameter, new ObjectMapper<Customer>() {
 			@Override
 			public Customer mapping(DBObject obj) {
