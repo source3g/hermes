@@ -12,7 +12,7 @@ import com.source3g.hermes.enums.MessageType;
  *
  */
 @Document
-public class Message extends AbstractEntity{
+public class ShortMessage extends AbstractEntity{
 	private static final long serialVersionUID = -6695767113817154193L;
 
 	private String msgId;
@@ -21,6 +21,7 @@ public class Message extends AbstractEntity{
 	private MessageType messageType;
 	private ObjectId merchantId;
 	private ObjectId sendId;//短信对应的发送记录ID，群发ID或单发ID
+	
 	
 	private MessageStatus status;
 

@@ -18,6 +18,7 @@ import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
+import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.message.service.MessageService;
 import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.Page;
@@ -71,6 +72,7 @@ public class MessageApi {
 		return messageService.findMessageStastics(merchant.getId());
 	}
 
+	
 	/**
 	 * 短信群发
 	 * 
@@ -82,14 +84,39 @@ public class MessageApi {
 	 */
 	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
+	@Deprecated
+	//TODO 要删除
 	public String messageSend(@PathVariable String merchantId, String[] ids, String customerPhones, String content) {
 		try {
-			messageService.messageGroupSend(new ObjectId(merchantId), ids, customerPhones, content);
+			messageService.groupSend(new ObjectId(merchantId), ids, customerPhones, content);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
+	
+	
+	/**
+	 * 短信群发
+	 * 
+	 * @param merchantId
+	 * @param ids
+	 * @param customerPhones
+	 * @param content
+	 * @return
+	 */
+	@RequestMapping(value = "/groupSend/{merchantId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String groupSend(@PathVariable String merchantId, String[] ids, String customerPhones, String content) {
+		try {
+			messageService.groupSend(new ObjectId(merchantId), ids, customerPhones, content);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+	
+	
 
 	/**
 	 * 短信单发
@@ -104,7 +131,7 @@ public class MessageApi {
 	public String messageSendBySn(@PathVariable String sn, @RequestBody CustomerMessageDto customerMessageDto) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		try {
-			messageService.sendMessage(merchant.getId(), customerMessageDto.getCustomerPhone(), customerMessageDto.getContent());
+			messageService.singleSend(merchant.getId(), customerMessageDto.getCustomerPhone(), customerMessageDto.getContent(),MessageType.短信发送);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
