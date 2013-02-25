@@ -7,7 +7,7 @@ var options = {
 		marginBottom : 50
 	},
 	title : {
-		text : '旺财宝月度统计',
+		text : '顾客来电月度统计',
 		x : -20
 	// center
 	},
@@ -16,7 +16,7 @@ var options = {
 	// 不显示LOGO
 	},
 	subtitle : {
-		text : '旺财宝月度统计',
+		text : '顾客来电月度统计',
 		x : -20
 	},
 	xAxis : {

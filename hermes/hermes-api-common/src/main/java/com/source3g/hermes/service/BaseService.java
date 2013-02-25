@@ -160,6 +160,12 @@ public abstract class BaseService {
 		return list;
 	}
 	
+	public <T extends AbstractEntity> long findCountByBasicDBObject(Class<T> c,BasicDBObject params){
+		DBCollection collection = mongoTemplate.getCollection(mongoTemplate
+				.getCollectionName(c));
+		return collection.count(params);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public  <T extends AbstractEntity,S>   List<S> findByBasicDBObject(Class<T> c ,BasicDBObject params,String property,Class<S> propertyClass){
 		List<S> list=new ArrayList<S>();

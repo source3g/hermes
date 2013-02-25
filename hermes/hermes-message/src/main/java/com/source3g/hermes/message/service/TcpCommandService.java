@@ -52,9 +52,9 @@ public class TcpCommandService implements ApplicationContextAware {
 					String statemsg = result.substring(result.indexOf("statemsg:=") + "statemsg:=".length(), result.indexOf("&"));
 					MessageService messageService = (MessageService) applicationContext.getBean("messageService");
 					if ("CCE1BDBBB3C9B9A6".equals(statemsg)) {
-						messageService.updateShortMessageRecord(msgId, MessageStatus.发送成功);
+						messageService.updateShortMessageStatus(msgId, MessageStatus.发送成功);
 					} else {
-						messageService.updateShortMessageRecord(msgId, MessageStatus.提交失败);
+						messageService.updateShortMessageStatus(msgId, MessageStatus.提交失败);
 					}
 					System.out.println(o);
 					System.out.println(t.poll());
