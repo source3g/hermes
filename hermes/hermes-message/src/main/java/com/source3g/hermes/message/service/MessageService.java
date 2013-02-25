@@ -542,7 +542,7 @@ public class MessageService extends BaseService {
 	public Page failedMessagelist(int pageNoInt) {
 		Query query = new Query();
 		query.with(new Sort(Direction.DESC, "_id"));
-		query.addCriteria(Criteria.where("status").is(MessageStatus.发送失败));
+		query.addCriteria(Criteria.where("status").is(MessageStatus.提交失败));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, ShortMessage.class);
 		page.setTotalRecords(totalCount);
