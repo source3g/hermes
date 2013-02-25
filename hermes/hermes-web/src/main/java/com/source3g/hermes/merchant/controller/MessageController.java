@@ -209,23 +209,23 @@ public class MessageController {
 	public ModelAndView toAutoSend(HttpServletRequest req) throws Exception {
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/autoSend/messageInfo/"+merchant.getId()+"/";
-		AutoSendMessageTemplate  messageAutoSend = restTemplate.getForObject(uri, AutoSendMessageTemplate.class);
+		AutoSendMessageTemplate  AutoSendMessageTemplate = restTemplate.getForObject(uri, AutoSendMessageTemplate.class);
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("messageAutoSend", messageAutoSend);
+		model.put("AutoSendMessageTemplate", AutoSendMessageTemplate);
 		return new ModelAndView("merchant/shortMessage/autoSend",model);
 	}
 
 	@RequestMapping(value = "/autoSend", method = RequestMethod.POST)
-	public ModelAndView autoSend(HttpServletRequest req,AutoSendMessageTemplate messageAutoSend) throws Exception {
+	public ModelAndView autoSend(HttpServletRequest req,AutoSendMessageTemplate AutoSendMessageTemplate) throws Exception {
 		Merchant merchant=LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/messageInfo/";
-		messageAutoSend.setMerchantId(merchant.getId());
-		HttpEntity<AutoSendMessageTemplate> entity = new HttpEntity<AutoSendMessageTemplate>(messageAutoSend);
+		AutoSendMessageTemplate.setMerchantId(merchant.getId());
+		HttpEntity<AutoSendMessageTemplate> entity = new HttpEntity<AutoSendMessageTemplate>(AutoSendMessageTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("success", "success");
-			return new ModelAndView("merchant/shortMessage/autoSend");
+			return new ModelAndView("redirect:/merchant/message/toAutoSend");
 		} else {
 			return new ModelAndView("admin/error");
 		}
