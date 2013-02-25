@@ -13,21 +13,11 @@
 			<h3>最新数据</h3>
 		</div>
 		<div class="span5">
-			<ul class="unstyled ">
-				<li>已编辑顾客数量：<span id="editedCustomerCount">载入中</span></li>
-				<li>未编辑顾客数量：<span id="uneditedCustomerCount">载入中</span></li>
-				<li>最近三天老顾客来电数量：<span id="editedCallInCountThreeDay">载入中</span></li>
-				<li>最近三天新顾客来电数量：<span id="uneditedCallInCountThreeDay">载入中</span></li>
-				<li>最近一周老顾客来电数量：<span id="editedCallInCountAWeek">载入中</span></li>
-				<li>最近一周新顾客来电数量：<span id="uneditedCallInCountAWeek">载入中</span></li>
+			<ul class="unstyled " id="customerCount">
 			</ul>
 		</div>
 		<div class="span5">
-			<ul class="unstyled inline">
-				<li>最近三天挂机短信发送数量：<span id="handUpMessageSentCountThreeDay">载入中</span></li>
-				<li>最近一周挂机短信发送数量：<span id="handUpMessageSentCountAWeek">载入中</span></li>
-				<li>最近三天客户群发短信数量：<span id="messageGroupSentCountThreeDay">载入中</span></li>
-				<li>最近一周客户群发短信数量：<span id="messageGroupSentCountAWeek">载入中</span></li>
+			<ul class="unstyled inline" id="messageSentCount">
 			</ul>
 		</div>
 	</div>
@@ -68,16 +58,18 @@
 
 			$.get("${pageContext.request.contextPath}/merchant/statistics/", showStatistics);
 			function showStatistics(data) {
-				$("#editedCustomerCount").html(data.customerStatistics.editedCustomerCount.value);
-				$("#uneditedCustomerCount").html(data.customerStatistics.uneditedCustomerCount.value);
-				$("#editedCallInCountThreeDay").html(data.customerStatistics.editedCallInCountThreeDay.value);
-				$("#uneditedCallInCountThreeDay").html(data.customerStatistics.uneditedCallInCountThreeDay.value);
-				$("#editedCallInCountAWeek").html(data.customerStatistics.editedCallInCountAWeek.value);
-				$("#uneditedCallInCountAWeek").html(data.customerStatistics.uneditedCallInCountAWeek.value);
-				$("#handUpMessageSentCountThreeDay").html(data.messageStatistics.handUpMessageSentCountThreeDay.value);
-				$("#handUpMessageSentCountAWeek").html(data.messageStatistics.handUpMessageSentCountAWeek.value);
-				$("#messageGroupSentCountThreeDay").html(data.messageStatistics.messageGroupSentCountThreeDay.value);
-				$("#messageGroupSentCountAWeek").html(data.messageStatistics.messageGroupSentCountAWeek.value);
+				for(var i=0;i<data.customerStatistics.length;i++){
+					for (var j in data.customerStatistics[i]){
+						var str="<li>"+data.customerStatistics[i][j].displayName+"<span>"+data.customerStatistics[i][j].value+"</span></li>";
+						$("#customerCount").append(str);
+					}
+				}
+				for(var g=0;g<data.messageStatistics.length;g++){
+					for (var k in data.messageStatistics[g]){
+						var str="<li>"+data.messageStatistics[g][k].displayName+"<span>"+data.messageStatistics[g][k].value+"</span></li>";
+						$("#messageSentCount").append(str);
+					}
+				}
 			}
 		});
 	</script>

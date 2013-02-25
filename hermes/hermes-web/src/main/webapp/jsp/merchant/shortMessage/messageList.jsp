@@ -25,29 +25,29 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="14%">顾客姓名</th>
-				<th width="12%">顾客组别</th>
+				<th width="11%">顾客姓名</th>
+				<th width="11%">顾客组别</th>
 				<th width="12%">顾客手机号</th>
 				<th width="8%">发送数量</th>
 				<th width="10%">发送状态</th>
 				<th width="16%">发送内容</th>
 				<th width="12%">发送形式</th>
-				<th width="16%">发送时间</th>
+				<th width="20%">发送时间</th>
 				
 				
 			</tr>
 		</thead>
 		<c:forEach items="${page.data}" var="messageSendLog">
 			<tr>
-				<td width="14%">${messageSendLog.customerName }</td>
-				<td width="14%">${messageSendLog.customerGroup.name }</td>
+				<td width="11%">${messageSendLog.customerName }</td>
+				<td width="11%">${messageSendLog.customerGroup.name }</td>
 				<td width="14%">${messageSendLog.phone }</td>
 				<td width="8%">${messageSendLog.sendCount }</td>
 				<td width="8%">${messageSendLog.status }</td>
 				<td width="18%" id="content" title="${messageSendLog.content }"  >
 				<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${messageSendLog.content }</div></td>
 				<td width="14%">${messageSendLog.type }</td>
-				<td width="18%">${messageSendLog.sendTime }</td>
+				<td width="20%">${messageSendLog.sendTime }</td>
 		</c:forEach>
 	</table>
 	

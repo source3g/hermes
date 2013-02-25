@@ -2,6 +2,7 @@ package com.source3g.hermes.message.api;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.source3g.hermes.constants.ReturnConstants;
-import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
@@ -60,13 +60,13 @@ public class MessageApi {
 
 	@RequestMapping(value = "/statistics/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public MessageStatisticsDto findCustomerStatistics(@PathVariable String merchantId) {
+	public List<Map<String, Object>> findCustomerStatistics(@PathVariable String merchantId) {
 		return messageService.findMessageStastics(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/statistics/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public MessageStatisticsDto findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
+	public List<Map<String, Object>> findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return messageService.findMessageStastics(merchant.getId());
 	}
@@ -132,8 +132,8 @@ public class MessageApi {
 
 	@RequestMapping(value = "/autoSend/messageInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public String autoSend(@RequestBody AutoSendMessageTemplate messageAutoSend) {
-		messageService.saveMessageAutoSend(messageAutoSend);
+	public String autoSend(@RequestBody AutoSendMessageTemplate AutoSendMessageTemplate) {
+		messageService.saveMessageAutoSend(AutoSendMessageTemplate);
 		return ReturnConstants.SUCCESS;
 	}
 

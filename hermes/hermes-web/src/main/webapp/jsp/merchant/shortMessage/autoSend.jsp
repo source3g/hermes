@@ -20,9 +20,9 @@
 				<tr>
 					<td width="20%"><label class="control-label">新顾客挂机短信内容：</label></td>
 					<td colspan="4">
-						<input type="hidden" value="${messageAutoSend.id }" name="id">
+						<input type="hidden" value="${AutoSendMessageTemplate.id }" name="id">
 						<textarea class="span8" rows="7"
-							name="newMessageCotent" id="newMessageCotent">${messageAutoSend.newMessageCotent }</textarea> 
+							name="newMessageCotent" id="newMessageCotent">${AutoSendMessageTemplate.newMessageCotent }</textarea> 
 					</td>
 				</tr>
 				<tr>
@@ -33,7 +33,7 @@
 					<td width="20%"><label class="control-label">老顾客挂机短信内容：</label></td>
 					<td colspan="4">
 						<textarea class="span8" rows="7"
-							name="oldMessageCotent" id="oldMessageCotent">${messageAutoSend.oldMessageCotent }</textarea> 
+							name="oldMessageCotent" id="oldMessageCotent">${AutoSendMessageTemplate.oldMessageCotent }</textarea> 
 							 <input type="submit" class="btn btn-primary" value="确定">
 					</td>
 					<tr>

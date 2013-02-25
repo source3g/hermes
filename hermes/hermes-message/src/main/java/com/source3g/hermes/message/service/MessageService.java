@@ -4,8 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -341,24 +343,40 @@ public class MessageService extends BaseService {
 		return MessageStatus.已发送;
 	}
 
-	public void saveMessageAutoSend(AutoSendMessageTemplate messageAutoSend) {
+	public void saveMessageAutoSend(AutoSendMessageTemplate AutoSendMessageTemplate) {
 		Update update = new Update();
-		update.set("newMessageCotent", messageAutoSend.getNewMessageCotent());
-		update.set("oldMessageCotent", messageAutoSend.getOldMessageCotent());
-		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(messageAutoSend.getMerchantId())), update, AutoSendMessageTemplate.class);
+		update.set("newMessageCotent", AutoSendMessageTemplate.getNewMessageCotent());
+		update.set("oldMessageCotent", AutoSendMessageTemplate.getOldMessageCotent());
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(AutoSendMessageTemplate.getMerchantId())), update, AutoSendMessageTemplate.class);
 	}
 
 	public AutoSendMessageTemplate getMessageAutoSend(ObjectId merchantId) {
 		return mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), AutoSendMessageTemplate.class);
 	}
 
-	public MessageStatisticsDto findMessageStastics(ObjectId merchantId) {
+	public List<Map<String, Object>> findMessageStastics(ObjectId merchantId) {
 		MessageStatisticsDto messageStatisticsDto = new MessageStatisticsDto();
-		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObjectDto("一周挂机短信发送数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObjectDto("一周短信群发数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
-		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObjectDto("三天挂机短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObjectDto("三天短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
-		return messageStatisticsDto;
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObjectDto("一周内挂机短信发送数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObjectDto("一周内短信群发数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObjectDto("三天内挂机短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObjectDto("三天内短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
+		List<Map<String,Object>> list=new ArrayList<Map<String,Object>>();
+		
+		Map<String,Object> handUpMessageSentCountThreeDay=new HashMap<String,Object>();
+		Map<String,Object> handUpMessageSentCountAWeek=new HashMap<String,Object>();
+		Map<String,Object> messageGroupSentCountThreeDay=new HashMap<String,Object>();
+		Map<String,Object> messageGroupSentCountAWeek=new HashMap<String,Object>();
+		
+		handUpMessageSentCountThreeDay.put("handUpMessageSentCountThreeDay", messageStatisticsDto.getHandUpMessageSentCountThreeDay());
+		handUpMessageSentCountAWeek.put("handUpMessageSentCountAWeek", messageStatisticsDto.getHandUpMessageSentCountAWeek());
+		messageGroupSentCountThreeDay.put("messageGroupSentCountThreeDay", messageStatisticsDto.getMessageGroupSentCountThreeDay());
+		messageGroupSentCountAWeek.put("messageGroupSentCountAWeek", messageStatisticsDto.getMessageGroupSentCountAWeek());
+		
+		list.add(handUpMessageSentCountThreeDay);
+		list.add(handUpMessageSentCountAWeek);
+		list.add(messageGroupSentCountThreeDay);
+		list.add(messageGroupSentCountAWeek);
+		return list;
 	}
 
 	public long findMessageSentCountFromToday(ObjectId merchantId, int dayCount, MessageType messageType) {

@@ -620,18 +620,42 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.find(query, Customer.class);
 	}
 
-	public CustomerStatisticsDto findCustomerStatistics(ObjectId merchantId) {
+	public List<Map<String,Object>> findCustomerStatistics(ObjectId merchantId) {
 		CustomerStatisticsDto customerStatisticsDto = new CustomerStatisticsDto();
 		customerStatisticsDto.setEditedCustomerCount(new StatisticObjectDto("已编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.oldCustomer)));
 		customerStatisticsDto.setUneditedCustomerCount(new StatisticObjectDto("未编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.newCustomer)));
 		CallInStatisticsCount callInStatisticsCountThreeDay = findCallInCountByDayFromToday(merchantId, 3);
-		customerStatisticsDto.setUneditedCallInCountThreeDay(new StatisticObjectDto("三天未编辑顾客打进电话数：", callInStatisticsCountThreeDay.getNewCount()));
-		customerStatisticsDto.setEditedCallInCountThreeDay(new StatisticObjectDto("三天已编辑顾客打进电话数：", callInStatisticsCountThreeDay.getOldCount()));
+		customerStatisticsDto.setUneditedCallInCountThreeDay(new StatisticObjectDto("三天内未编辑顾客打进电话数：", callInStatisticsCountThreeDay.getNewCount()));
+		customerStatisticsDto.setEditedCallInCountThreeDay(new StatisticObjectDto("三天内已编辑顾客打进电话数：", callInStatisticsCountThreeDay.getOldCount()));
 		CallInStatisticsCount callInStatisticsCountAWeek = findCallInCountByDayFromToday(merchantId, 7);
-		customerStatisticsDto.setUneditedCallInCountAWeek(new StatisticObjectDto("七天未编辑顾客打进电话数：", callInStatisticsCountAWeek.getNewCount()));
-		customerStatisticsDto.setEditedCallInCountAWeek(new StatisticObjectDto("七天已编辑顾客打进电话数：", callInStatisticsCountAWeek.getOldCount()));
-		return customerStatisticsDto;
+		customerStatisticsDto.setUneditedCallInCountAWeek(new StatisticObjectDto("七天内未编辑顾客打进电话数：", callInStatisticsCountAWeek.getNewCount()));
+		customerStatisticsDto.setEditedCallInCountAWeek(new StatisticObjectDto("七天内已编辑顾客打进电话数：", callInStatisticsCountAWeek.getOldCount()));
+		List<Map<String,Object>> list=new ArrayList<Map<String,Object>>();
+		
+		Map<String,Object> editedCustomerCount=new HashMap<String,Object>();
+		Map<String,Object> uneditedCustomerCount=new HashMap<String,Object>();
+		Map<String,Object> editedCallInCountThreeDay=new HashMap<String,Object>();
+		Map<String,Object> uneditedCallInCountThreeDay=new HashMap<String,Object>();
+		Map<String,Object> uneditedCallInCountAWeek=new HashMap<String,Object>();
+		Map<String,Object> editedCallInCountAWeek=new HashMap<String,Object>();
+		
+		editedCustomerCount.put("editedCustomerCount", customerStatisticsDto.getEditedCustomerCount());
+		uneditedCustomerCount.put("uneditedCustomerCount", customerStatisticsDto.getUneditedCustomerCount());
+		editedCallInCountThreeDay.put("editedCallInCountThreeDay", customerStatisticsDto.getEditedCallInCountThreeDay());
+		uneditedCallInCountThreeDay.put("uneditedCallInCountThreeDay", customerStatisticsDto.getUneditedCallInCountThreeDay());
+		editedCallInCountAWeek.put("editedCallInCountAWeek", customerStatisticsDto.getEditedCallInCountAWeek());
+		uneditedCallInCountAWeek.put("uneditedCallInCountAWeek", customerStatisticsDto.getUneditedCallInCountAWeek());
+		
+		
+		list.add(editedCustomerCount);
+		list.add(uneditedCustomerCount);
+		list.add(editedCallInCountThreeDay);
+		list.add(uneditedCallInCountThreeDay);
+		list.add(editedCallInCountAWeek);
+		list.add(uneditedCallInCountAWeek);
+		return list;  
 	}
+	
 
 	/**
 	 * 查询最近几天的来电次数

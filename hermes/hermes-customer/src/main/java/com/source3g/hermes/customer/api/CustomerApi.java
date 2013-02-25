@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,6 @@ import com.source3g.hermes.customer.service.CustomerService;
 import com.source3g.hermes.dto.customer.CallRecordDto;
 import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.dto.customer.CustomerRemindDto;
-import com.source3g.hermes.dto.customer.CustomerStatisticsDto;
 import com.source3g.hermes.dto.customer.NewCustomerDto;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
@@ -258,13 +258,13 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/statistics/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public CustomerStatisticsDto findCustomerStatistics(@PathVariable String merchantId) {
+	public List<Map<String,Object>> findCustomerStatistics(@PathVariable String merchantId) {
 		return customerService.findCustomerStatistics(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/statistics/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public CustomerStatisticsDto findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
+	public List<Map<String,Object>> findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return customerService.findCustomerStatistics(merchant.getId());
 	}

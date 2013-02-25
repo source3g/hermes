@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.source3g.hermes.dto.customer.CustomerStatisticsDto;
-import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
@@ -29,14 +27,15 @@ public class MainController {
 		return new ModelAndView("merchant/main");
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/statistics",method=RequestMethod.GET)
 	@ResponseBody
 	public Map<String,Object> statistics() throws Exception{
 		Merchant merchant=LoginUtils.getLoginMerchant();
 		String merchantUrl=ConfigParams.getBaseUrl()+"/customer/statistics/"+merchant.getId()+"/";
-		CustomerStatisticsDto customerStatisticsDto=restTemplate.getForObject(merchantUrl, CustomerStatisticsDto.class);
+		Map<String,Object> customerStatisticsDto[]=restTemplate.getForObject(merchantUrl, Map[].class);
 		String messageUrl=ConfigParams.getBaseUrl()+"/shortMessage/statistics/"+merchant.getId()+"/";
-		MessageStatisticsDto messageStatisticsDto=restTemplate.getForObject(messageUrl, MessageStatisticsDto.class);
+		Map<String,Object> messageStatisticsDto[]=restTemplate.getForObject(messageUrl, Map[].class);
 		Map<String,Object> map=new HashMap<String,Object>();
 		map.put("customerStatistics", customerStatisticsDto);
 		map.put("messageStatistics", messageStatisticsDto);
