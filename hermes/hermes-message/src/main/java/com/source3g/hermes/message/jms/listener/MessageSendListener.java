@@ -42,6 +42,10 @@ public class MessageSendListener implements MessageListener {
 			if (merchant.getMessageBalance().getSurplusMsgCount() <= 0) {
 				throw new Exception("余额不足发送失败");
 			} else {
+				if(MessageStatus.重新发送.equals(shortMessage.getStatus())){
+					messageService.send(shortMessage);
+					return;
+				}
 				shortMessage.setMsgId(DateFormateUtils.getTimeStampStr());
 				MessageStatus status = messageService.send(shortMessage);
 				if (MessageStatus.已发送.equals(status)) {

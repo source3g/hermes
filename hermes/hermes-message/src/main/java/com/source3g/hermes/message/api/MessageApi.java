@@ -200,6 +200,21 @@ public class MessageApi {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return	messageService.failedMessagelist(pageNoInt);
 	}
+	
+	@RequestMapping(value = "/failedMessageSendAgain/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String failedMessageSendAgain(@PathVariable String id) {
+		messageService.failedMessageSendAgain(id);
+		return	ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/allFailedMessagesSendAgain", method = RequestMethod.GET)
+	@ResponseBody
+	public String allFailedMessagesSendAgain() {
+		messageService.allFailedMessagesSendAgain();
+		return	ReturnConstants.SUCCESS;
+	}
+	
 	/**
 	 * 测试用
 	 * @param pageNo

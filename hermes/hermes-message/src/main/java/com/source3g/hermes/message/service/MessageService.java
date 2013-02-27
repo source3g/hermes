@@ -86,9 +86,9 @@ public class MessageService extends BaseService {
 	 * @param content
 	 */
 	public void groupSend(ObjectId merchantId, String[] ids, String customerPhones, String content) throws Exception {
-		String customerPhoneArray[] = {};
+		String customerPhoneArray[]={};
 		if (customerPhones != null) {
-			customerPhoneArray = customerPhones.split(";");
+			customerPhoneArray =isNumeric(customerPhones);
 		}
 		Long count = findCustomerCountByGroupIds(ids);
 		count += customerPhoneArray.length;
@@ -99,6 +99,20 @@ public class MessageService extends BaseService {
 		jmsService.sendObject(messageDestination, groupSendMsg, JmsConstants.TYPE, JmsConstants.GROUP_SEND_MESSAGE);
 	}
 
+	public String[] isNumeric(String customerPhones){
+	Pattern pattern = Pattern.compile("\\d{11}");
+//	Matcher isNum =null;
+	String customerPhoneArray[] = customerPhones.split(";");
+	List<String> list=new ArrayList<String>();
+	for( int i=0;i<customerPhoneArray.length;i++){
+		if(pattern.matcher(customerPhoneArray[i]).matches()){
+			list.add(customerPhoneArray[i]);
+		}
+	}	
+	String[] length=new String[list.size()];
+	return list.toArray(length);
+	} 
+	
 	private long findCustomerCountByGroupIds(String[] ids) {
 		if (ids == null || ids.length == 0) {
 			return 0L;
@@ -341,6 +355,7 @@ public class MessageService extends BaseService {
 		MessageStatus status=sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
 		System.out.println("submit");
 		message.setStatus(status);
+		message.setSendTime(new Date());
 		save(message);
 		return status;
 	}
@@ -567,6 +582,20 @@ public class MessageService extends BaseService {
 		List<ShortMessage> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), ShortMessage.class);
 		page.setData(list);
 		return page;
+	}
+
+	public void failedMessageSendAgain(String id) {
+		ShortMessage message=mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), ShortMessage.class);
+		message.setStatus(MessageStatus.重新发送);
+		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+	}
+
+	public void allFailedMessagesSendAgain() {
+		List<ShortMessage> list=mongoTemplate.find(new Query(Criteria.where("status").is(MessageStatus.提交失败)),ShortMessage.class);
+		for(ShortMessage s:list){
+			s.setStatus(MessageStatus.重新发送);
+			jmsService.sendObject(messageDestination, s, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+		}
 	}
 
 }

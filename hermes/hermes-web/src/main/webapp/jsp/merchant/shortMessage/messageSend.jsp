@@ -163,11 +163,11 @@
 		};
 		$('#messageSendForm').validate(validateOptions); 
 	 $('#messageSendForm').submit(function() {
-		 if($('#customerPhones').text()!=""){
+		 /* if($('#customerPhones').text()!=""){
 			 if ((!testCustomerPhones())||(!fastSend())) {
 					return false;
 				} 
-		 }
+		 } */
 		 if($("input:checked[name='ids']").length==0&&$('#customerPhones').text()==""){
 			 alert("请填写有效电话号码");
 			 return false;
@@ -225,7 +225,7 @@
 			$("#pageContentFrame").html(data);
 		}
 		
-		function testCustomerPhones() {
+		/* function testCustomerPhones() {
 			var j = 1;
 			var customerPhones = $('#customerPhones').text();
 			customerPhones.replace("<span id=\"wrongPhone\" >","");
@@ -261,7 +261,7 @@
 				}
 			}
 			return true;
-		}
+		} */
 		function customerListBycustomerGroupId(id){
 			$("#customer").html("");
 			$("#allList").html("");
