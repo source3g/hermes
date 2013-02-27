@@ -244,8 +244,6 @@ public class MessageService extends BaseService {
 	 * @throws Exception
 	 */
 	private void sendMessageWithProceedContent(Customer c, String proceedContent, MessageType messageType, ObjectId logId) {
-		// MessageSendLog log = genMessageSendLog(c, 1, proceedContent,
-		// messageType, MessageStatus.发送中);
 		ShortMessage shortMessage = new ShortMessage();
 		shortMessage.setContent(proceedContent);
 		shortMessage.setMessageType(messageType);
@@ -340,7 +338,8 @@ public class MessageService extends BaseService {
 	}
 
 	public MessageStatus send(ShortMessage message) {
-		MessageStatus status = sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
+		MessageStatus status=sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
+		System.out.println("submit");
 		message.setStatus(status);
 		save(message);
 		return status;
@@ -381,7 +380,7 @@ public class MessageService extends BaseService {
 		DataCommand command = new DataCommand("submit");
 		command.AddNewItem("msgcode", msgCode);
 		command.AddNewItem("itemid", itemId);
-		command.AddNewItem("msgid", "03251325236560000009");
+		command.AddNewItem("msgid", msgId);
 		command.AddNewItem("gatename", getGateNameByOperator(operator));
 		// command.AddNewItem("gatename", "mobile0025");
 		// command.AddNewItem("spnumber", "10660025");
@@ -402,9 +401,9 @@ public class MessageService extends BaseService {
 		}
 		System.out.println(tcp.getSndQueueSize());
 		System.out.println(tcp.getUnSend().size());
-		for (String str : tcp.getUnSend()) {
-			System.out.println(str);
-		}
+//		for (String str : tcp.getUnSend()) {
+//			System.out.println(str);
+//		}
 		return MessageStatus.已发送;
 	}
 
