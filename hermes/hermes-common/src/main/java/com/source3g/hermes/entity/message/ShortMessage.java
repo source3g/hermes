@@ -1,5 +1,7 @@
 package com.source3g.hermes.entity.message;
 
+import java.util.Date;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,9 +23,18 @@ public class ShortMessage extends AbstractEntity{
 	private MessageType messageType;
 	private ObjectId merchantId;
 	private ObjectId sendId;//短信对应的发送记录ID，群发ID或单发ID
-	
+	private Date sendTime;
 	
 	private MessageStatus status;
+
+	
+	public Date getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Date sendTime) {
+		this.sendTime = sendTime;
+	}
 
 	public String getMsgId() {
 		return msgId;

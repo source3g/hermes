@@ -6,10 +6,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
@@ -33,4 +35,23 @@ public class MessageAdminController {
 		return new ModelAndView("/admin/shortMessage/failedMessageList",model);
 	}
 
+	@RequestMapping(value="/failedMessageSendAgain/{id}")
+	public ModelAndView failedMessageSendAgain(@PathVariable String id){
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/failedMessageSendAgain/" + id+"/";
+		String result=restTemplate.getForObject(uri, String.class);
+		if(ReturnConstants.SUCCESS.equals(result)){
+			return new ModelAndView("redirect:/admin/message/failed/list");
+		}
+		return new ModelAndView("admin/error");
+	}
+	
+	@RequestMapping(value="/allFailedMessagesSendAgain")
+	public ModelAndView allFailedMessagesSendAgain(){
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/allFailedMessagesSendAgain/";
+		String result=restTemplate.getForObject(uri, String.class);
+		if(ReturnConstants.SUCCESS.equals(result)){
+			return new ModelAndView("redirect:/admin/message/failed/list");
+		}
+		return new ModelAndView("admin/error");
+	}
 }
