@@ -23,8 +23,8 @@ public class MainTest implements Runnable {
 		String uri = "http://localhost:8080/hermes/login/";
 		PostMethod postMethod = new PostMethod(uri);
 		// 填入各个表单域的值
-		NameValuePair[] data = { new NameValuePair("username", "careforesj"),
-				new NameValuePair("password", "123123") };
+		NameValuePair[] data = { new NameValuePair("username", "003"),
+				new NameValuePair("password", "003") };
 		// 将表单的值放入postMethod中
 		postMethod.setRequestBody(data);
 		// 执行postMethod
@@ -74,7 +74,7 @@ public class MainTest implements Runnable {
 			  String phone=sb1.toString();
 			// 填入各个表单域的值
 			NameValuePair[] data1 = { new NameValuePair("name", name),
-					new NameValuePair("phone",phone ),new NameValuePair("customerGroup.id", "50ef54ef0cf2dc73e191ee0c"),};
+					new NameValuePair("phone",phone ),new NameValuePair("customerGroup.id", "50ee335630ff9cfc19554b6a"),};
 			// 将表单的值放入postMethod中
 			postMethod1.setRequestBody(data1);
 			// 执行postMethod

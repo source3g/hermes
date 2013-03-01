@@ -383,10 +383,10 @@ public class CustomerApi {
 			Customer c = new Customer();
 			c.setAddress("北京市");
 			c.setBirthday("01-29");
-			c.setCustomerGroup(new CustomerGroup(new ObjectId("50ef54ef0cf2dc73e191ee0c")));
+			c.setCustomerGroup(new CustomerGroup(new ObjectId("50ee335630ff9cfc19554b6a")));
 			c.setEmail("abc@163.com");
 			c.setId(ObjectId.get());
-			c.setMerchantId(new ObjectId("50ef48bf0cf2dc73e191edd4"));
+			c.setMerchantId(new ObjectId("50ee332730ff9cfc19554b67"));
 			c.setName("熊炜" + i);
 			c.setOperateTime(new Date());
 			String p = "0123456789";
