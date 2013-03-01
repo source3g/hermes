@@ -410,6 +410,7 @@ public class MessageService extends BaseService {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		System.out.println("command:"+command.toString());
 		System.out.println(tcp.getSndQueueSize());
 		System.out.println(tcp.getUnSend().size());
 		// for (String str : tcp.getUnSend()) {
