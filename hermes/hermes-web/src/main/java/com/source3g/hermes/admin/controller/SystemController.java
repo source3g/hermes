@@ -43,7 +43,7 @@ public class SystemController {
 	public ModelAndView resendfailedJms(@PathVariable String id, RedirectAttributes redirectAttributes) {
 		String uri = ConfigParams.getBaseUrl() + "monitor/failedJms/resend/" + id + "/";
 		String result = restTemplate.getForObject(uri, String.class);
-		redirectAttributes.addFlashAttribute("success", result);
+		redirectAttributes.addFlashAttribute("result", result);
 		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
 	}
 
@@ -51,7 +51,7 @@ public class SystemController {
 	public ModelAndView groupResendfailedJms(RedirectAttributes redirectAttributes) {
 		String uri = ConfigParams.getBaseUrl() + "monitor/failedJms/gorupResend/";
 		String result = restTemplate.getForObject(uri, String.class);
-		redirectAttributes.addFlashAttribute("success", result);
+		redirectAttributes.addFlashAttribute("result", result);
 		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
 	}
 }

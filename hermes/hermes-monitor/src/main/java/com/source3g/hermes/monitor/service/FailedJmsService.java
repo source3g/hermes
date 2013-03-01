@@ -38,7 +38,7 @@ public class FailedJmsService extends BaseService {
 		return page;
 	}
 
-	public String resendfailedJms(ObjectId id) {
+	public Boolean resendfailedJms(ObjectId id) {
 		long primitiveCount=mongoTemplate.count(new Query(), FailedJms.class);
 		FailedJms failedJms=mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), FailedJms.class);
 		Map<String, String> map=failedJms.getProperties();
@@ -46,9 +46,9 @@ public class FailedJmsService extends BaseService {
 		 jmsService.reSendObject(failedJms.getDestination(), failedJms.getMessage(), "type",type, failedJms);
 		long count=mongoTemplate.count(new Query(), FailedJms.class);
 		if(primitiveCount!=count){
-			return "发送成功";
+			return true;
 		}
-		return "发送失败"; 
+		return false; 
 	}
 	
 	private List<FailedJmsDto> processFailedJms(List<FailedJms> list){
@@ -65,7 +65,7 @@ public class FailedJmsService extends BaseService {
 		return result;
 	}
 
-	public String groupResendfailedJms() {
+	public Boolean groupResendfailedJms() {
 		long primitiveCount=mongoTemplate.count(new Query(), FailedJms.class);
 		List<FailedJms> failedJmss=mongoTemplate.findAll(FailedJms.class);
 		for(FailedJms failedJms:failedJmss){
@@ -73,9 +73,9 @@ public class FailedJmsService extends BaseService {
 		}
 		long count=mongoTemplate.count(new Query(), FailedJms.class);
 		if(primitiveCount!=count){
-			return "发送成功";
+			return true;
 		}
-		return "发送失败"; 
+		return false; 
 	}
 
 }

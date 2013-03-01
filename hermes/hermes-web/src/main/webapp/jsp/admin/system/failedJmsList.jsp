@@ -49,9 +49,12 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
-		if(${not empty success}==true){
-			alert("${success}");
+		if(${result eq 'true'}){
+			alert("发送成功");
 		}	
+		if(${result eq 'false'}){
+			alert("发送失败");
+		}
 		initPage();
 });
 	function groupResend(){
