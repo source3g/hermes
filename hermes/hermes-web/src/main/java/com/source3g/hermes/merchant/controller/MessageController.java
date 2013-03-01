@@ -155,7 +155,7 @@ public class MessageController {
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/messageSend/" + merchant.getId() + "/";
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/groupSend/" + merchant.getId() + "/";
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			model.put("success", "success");

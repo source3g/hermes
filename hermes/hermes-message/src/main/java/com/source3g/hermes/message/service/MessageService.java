@@ -86,9 +86,9 @@ public class MessageService extends BaseService {
 	 * @param content
 	 */
 	public void groupSend(ObjectId merchantId, String[] ids, String customerPhones, String content) throws Exception {
-		String customerPhoneArray[]={};
+		String customerPhoneArray[] = {};
 		if (customerPhones != null) {
-			customerPhoneArray =isNumeric(customerPhones);
+			customerPhoneArray = isNumeric(customerPhones);
 		}
 		Long count = findCustomerCountByGroupIds(ids);
 		count += customerPhoneArray.length;
@@ -99,20 +99,20 @@ public class MessageService extends BaseService {
 		jmsService.sendObject(messageDestination, groupSendMsg, JmsConstants.TYPE, JmsConstants.GROUP_SEND_MESSAGE);
 	}
 
-	public String[] isNumeric(String customerPhones){
-	Pattern pattern = Pattern.compile("\\d{11}");
-//	Matcher isNum =null;
-	String customerPhoneArray[] = customerPhones.split(";");
-	List<String> list=new ArrayList<String>();
-	for( int i=0;i<customerPhoneArray.length;i++){
-		if(pattern.matcher(customerPhoneArray[i]).matches()){
-			list.add(customerPhoneArray[i]);
+	public String[] isNumeric(String customerPhones) {
+		Pattern pattern = Pattern.compile("\\d{11}");
+		// Matcher isNum =null;
+		String customerPhoneArray[] = customerPhones.split(";");
+		List<String> list = new ArrayList<String>();
+		for (int i = 0; i < customerPhoneArray.length; i++) {
+			if (pattern.matcher(customerPhoneArray[i]).matches()) {
+				list.add(customerPhoneArray[i]);
+			}
 		}
-	}	
-	String[] length=new String[list.size()];
-	return list.toArray(length);
-	} 
-	
+		String[] length = new String[list.size()];
+		return list.toArray(length);
+	}
+
 	private long findCustomerCountByGroupIds(String[] ids) {
 		if (ids == null || ids.length == 0) {
 			return 0L;
@@ -224,8 +224,6 @@ public class MessageService extends BaseService {
 	 */
 	private void sendByPhone(ObjectId merchantId, String phone, String content, MessageType messageType, ObjectId logId) {
 		ShortMessage shortMessage = new ShortMessage();
-		// MessageSendLog log = genMessageSendLog(merchantId, phone, 1,
-		// content, messageType, MessageStatus.发送中);
 		shortMessage.setContent(content);
 		shortMessage.setMessageType(messageType);
 		shortMessage.setId(ObjectId.get());
@@ -245,8 +243,6 @@ public class MessageService extends BaseService {
 	public void sendMessage(Customer c, String content, MessageType messageType, ObjectId logId) {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(c.getMerchantId())), Merchant.class);
 		String proceedContent = processContent(merchant, c, content);
-		// MessageSendLog log = genMessageSendLog(c, 1, proceedContent,
-		// messageType, MessageStatus.发送中);
 		sendMessageWithProceedContent(c, proceedContent, messageType, logId);
 	}
 
@@ -352,7 +348,7 @@ public class MessageService extends BaseService {
 	}
 
 	public MessageStatus send(ShortMessage message) {
-		MessageStatus status=sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
+		MessageStatus status = sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
 		System.out.println("submit");
 		message.setStatus(status);
 		message.setSendTime(new Date());
@@ -416,9 +412,9 @@ public class MessageService extends BaseService {
 		}
 		System.out.println(tcp.getSndQueueSize());
 		System.out.println(tcp.getUnSend().size());
-//		for (String str : tcp.getUnSend()) {
-//			System.out.println(str);
-//		}
+		// for (String str : tcp.getUnSend()) {
+		// System.out.println(str);
+		// }
 		return MessageStatus.已发送;
 	}
 
@@ -435,22 +431,22 @@ public class MessageService extends BaseService {
 
 	public List<Map<String, Object>> findMessageStastics(ObjectId merchantId) {
 		MessageStatisticsDto messageStatisticsDto = new MessageStatisticsDto();
-		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObjectDto("一周内挂机短信发送数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObjectDto("一周内短信群发数量：",findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
-		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObjectDto("三天内挂机短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObjectDto("三天内短信群发数量：",findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
-		List<Map<String,Object>> list=new ArrayList<Map<String,Object>>();
-		
-		Map<String,Object> handUpMessageSentCountThreeDay=new HashMap<String,Object>();
-		Map<String,Object> handUpMessageSentCountAWeek=new HashMap<String,Object>();
-		Map<String,Object> messageGroupSentCountThreeDay=new HashMap<String,Object>();
-		Map<String,Object> messageGroupSentCountAWeek=new HashMap<String,Object>();
-		
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObjectDto("一周内挂机短信发送数量：", findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObjectDto("一周内短信群发数量：", findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObjectDto("三天内挂机短信群发数量：", findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObjectDto("三天内短信群发数量：", findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+		Map<String, Object> handUpMessageSentCountThreeDay = new HashMap<String, Object>();
+		Map<String, Object> handUpMessageSentCountAWeek = new HashMap<String, Object>();
+		Map<String, Object> messageGroupSentCountThreeDay = new HashMap<String, Object>();
+		Map<String, Object> messageGroupSentCountAWeek = new HashMap<String, Object>();
+
 		handUpMessageSentCountThreeDay.put("handUpMessageSentCountThreeDay", messageStatisticsDto.getHandUpMessageSentCountThreeDay());
 		handUpMessageSentCountAWeek.put("handUpMessageSentCountAWeek", messageStatisticsDto.getHandUpMessageSentCountAWeek());
 		messageGroupSentCountThreeDay.put("messageGroupSentCountThreeDay", messageStatisticsDto.getMessageGroupSentCountThreeDay());
 		messageGroupSentCountAWeek.put("messageGroupSentCountAWeek", messageStatisticsDto.getMessageGroupSentCountAWeek());
-		
+
 		list.add(handUpMessageSentCountThreeDay);
 		list.add(handUpMessageSentCountAWeek);
 		list.add(messageGroupSentCountThreeDay);
@@ -584,17 +580,20 @@ public class MessageService extends BaseService {
 		return page;
 	}
 
-	public void failedMessageSendAgain(String id) {
-		ShortMessage message=mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), ShortMessage.class);
+	public void failedMessageResend(String id) {
+		ShortMessage message = mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), ShortMessage.class);
+		failedMessageResend(message);
+	}
+
+	public void failedMessageResend(ShortMessage message) {
 		message.setStatus(MessageStatus.重新发送);
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
 
-	public void allFailedMessagesSendAgain() {
-		List<ShortMessage> list=mongoTemplate.find(new Query(Criteria.where("status").is(MessageStatus.提交失败)),ShortMessage.class);
-		for(ShortMessage s:list){
-			s.setStatus(MessageStatus.重新发送);
-			jmsService.sendObject(messageDestination, s, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+	public void allFailedMessagesResend() {
+		List<ShortMessage> list = mongoTemplate.find(new Query(Criteria.where("status").is(MessageStatus.提交失败)), ShortMessage.class);
+		for (ShortMessage shortMessage : list) {
+			failedMessageResend(shortMessage);
 		}
 	}
 

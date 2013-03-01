@@ -120,10 +120,10 @@
 		$("#errorModal").modal();
 	}
 	function failedMessageSendAgain(id){
-		$.get("${pageContext.request.contextPath}/admin/message/failedMessageSendAgain/"+id+"/",showContentInfo);
+		$.get("${pageContext.request.contextPath}/admin/message/failed/resend/"+id+"/",showContentInfo);
 	}
 	function oneKeyAllSend(){
-		$.get("${pageContext.request.contextPath}/admin/message/allFailedMessagesSendAgain",showContentInfo);
+		$.get("${pageContext.request.contextPath}/admin/message/failed/resendAll",showContentInfo);
 	}
 	</script>
 </body>
