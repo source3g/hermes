@@ -27,13 +27,13 @@ public class FailedJmsApi {
 	
 	@RequestMapping(value="failedJms/resend/{id}")
 	@ResponseBody
-	public String resendfailedJms(@PathVariable String id){
+	public Boolean resendfailedJms(@PathVariable String id){
 		return failedJmsService.resendfailedJms(new ObjectId(id));
 	}
 	
 	@RequestMapping(value="failedJms/gorupResend", method = RequestMethod.GET)
 	@ResponseBody
-	public String groupResendfailedJms(){
+	public Boolean groupResendfailedJms(){
 		return failedJmsService.groupResendfailedJms();
 	}
 }

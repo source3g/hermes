@@ -22,9 +22,10 @@ import com.source3g.hermes.utils.Page;
 public class FailedJmsService extends BaseService {
 	@Autowired
 	private JmsService jmsService;
-	//@Autowired
-	//private BaseService baseService;
-	
+
+	// @Autowired
+	// private BaseService baseService;
+
 	public Page findAll(String pageNo) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		Query query = new Query();
@@ -38,29 +39,24 @@ public class FailedJmsService extends BaseService {
 		return page;
 	}
 
-	public String resendfailedJms(ObjectId id) {
-		boolean result=true;
-//		long primitiveCount=mongoTemplate.count(new Query(), FailedJms.class);
-		FailedJms failedJms=mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), FailedJms.class);
-		Map<String, String> map=failedJms.getProperties();
-		String type=map.get("type");
-		try{
-		 jmsService.reSendObject(failedJms.getDestination(), failedJms.getMessage(), "type",type);
-		 mongoTemplate.remove(failedJms);
-		}catch(Exception e){
-			result=false;
+	public Boolean resendfailedJms(ObjectId id) {
+		Boolean result = true;
+		FailedJms failedJms = mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), FailedJms.class);
+		Map<String, String> map = failedJms.getProperties();
+		String type = map.get("type");
+		try {
+			jmsService.reSendObject(failedJms.getDestination(), failedJms.getMessage(), "type", type);
+			mongoTemplate.remove(failedJms);
+		} catch (Exception e) {
+			result = false;
 		}
-//		long count=mongoTemplate.count(new Query(), FailedJms.class);
-//		if(primitiveCount!=count){
-//			return "发送成功";
-//		}
-		return "发送失败"; 
+		return result;
 	}
-	
-	private List<FailedJmsDto> processFailedJms(List<FailedJms> list){
-		List<FailedJmsDto> result=new ArrayList<FailedJmsDto>();
-		for (FailedJms jms:list){
-			FailedJmsDto failedJmsDto=new FailedJmsDto();
+
+	private List<FailedJmsDto> processFailedJms(List<FailedJms> list) {
+		List<FailedJmsDto> result = new ArrayList<FailedJmsDto>();
+		for (FailedJms jms : list) {
+			FailedJmsDto failedJmsDto = new FailedJmsDto();
 			failedJmsDto.setFailedTime(jms.getFailedTime());
 			failedJmsDto.setId(jms.getId());
 			failedJmsDto.setProperties(jms.getProperties());
@@ -71,17 +67,12 @@ public class FailedJmsService extends BaseService {
 		return result;
 	}
 
-	public String groupResendfailedJms() {
-		long primitiveCount=mongoTemplate.count(new Query(), FailedJms.class);
-		List<FailedJms> failedJmss=mongoTemplate.findAll(FailedJms.class);
-		for(FailedJms failedJms:failedJmss){
+	public Boolean groupResendfailedJms() {
+		List<FailedJms> failedJmss = mongoTemplate.findAll(FailedJms.class);
+		for (FailedJms failedJms : failedJmss) {
 			resendfailedJms(failedJms.getId());
 		}
-		long count=mongoTemplate.count(new Query(), FailedJms.class);
-		if(primitiveCount!=count){
-			return "发送成功";
-		}
-		return "发送失败"; 
+		return true;
 	}
 
 }
