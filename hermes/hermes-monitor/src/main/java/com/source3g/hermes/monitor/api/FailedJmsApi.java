@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.monitor.service.FailedJmsService;
 import com.source3g.hermes.utils.Page;
 
@@ -29,14 +28,12 @@ public class FailedJmsApi {
 	@RequestMapping(value="failedJms/resend/{id}")
 	@ResponseBody
 	public String resendfailedJms(@PathVariable String id){
-		failedJmsService.resendfailedJms(new ObjectId(id));
-		return ReturnConstants.SUCCESS;
+		return failedJmsService.resendfailedJms(new ObjectId(id));
 	}
 	
 	@RequestMapping(value="failedJms/gorupResend", method = RequestMethod.GET)
 	@ResponseBody
 	public String groupResendfailedJms(){
-		failedJmsService.groupResendfailedJms();
-		return ReturnConstants.SUCCESS;
+		return failedJmsService.groupResendfailedJms();
 	}
 }

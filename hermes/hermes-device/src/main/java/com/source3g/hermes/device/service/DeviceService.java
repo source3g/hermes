@@ -20,6 +20,7 @@ import com.source3g.hermes.entity.sync.DeviceStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.vo.DeviceVo;
 
 @Service
 public class DeviceService extends BaseService {
@@ -53,8 +54,18 @@ public class DeviceService extends BaseService {
 		Long totalCount = mongoTemplate.count(query, Device.class);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
-		List<Device> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
-		page.setData(list);
+		List<Device> devices = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
+		List<DeviceVo> deviceVosList=new ArrayList<DeviceVo>();
+		for(Device d:devices){
+			DeviceVo deviceVo=new DeviceVo();
+			deviceVo.setDevice(d);
+			Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(d.getId())), Merchant.class);
+			if(merchant!=null){
+				deviceVo.setMerchant(merchant);
+			}
+			deviceVosList.add(deviceVo);
+		}
+		page.setData(deviceVosList);
 		return page;
 	}
 
@@ -116,4 +127,6 @@ public class DeviceService extends BaseService {
 		}
 		return result;
 	}
+
+
 }

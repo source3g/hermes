@@ -21,22 +21,25 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="33%">名称</th>
-				<th width="33%">绑定SIM卡号</th>
-				<th width="34%">操作</th>
+				<th width="25%">名称</th>
+				<th width="25%">绑定SIM卡号</th>
+				<th width="25%">绑定状态</th>
+				<th width="25%">操作</th>
 			</tr>
 		</thead>
 
-		<c:forEach items="${page.data}" var="device">
+		 <c:forEach items="${page.data}" var="deviceVo">
 			<tr>
-				<td>${device.sn}</td>
-				<td>${device.sim.no}</td>
+				<td>${deviceVo.device.sn}</td>
+				<td>${deviceVo.device.sim.no}</td>
+				<td><c:if test="${not empty deviceVo.merchant.name}">[已绑定商户 : ${deviceVo.merchant.name}]</c:if>
+				<c:if test="${empty deviceVo.merchant.name}">[未绑定商户]</c:if></td>
 				<td><a class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${device.id}');">删除</a>
+					onclick="deleteById('${deviceVo.device.id}');">删除</a>
 				<a class="btn btn-success" href="javascript:void();"
-					onclick="findById('${device.id}');">详细信息</a></td>	
+					onclick="findById('${deviceVo.device.id}');">详细信息</a></td>	
 			</tr>
-		</c:forEach>
+		</c:forEach> 
 
 	</table>
 	<div>
@@ -73,6 +76,7 @@
 				return false;
 			});
 		});
+		
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);
 			var options = {

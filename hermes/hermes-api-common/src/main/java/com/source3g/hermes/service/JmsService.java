@@ -70,6 +70,7 @@ public class JmsService {
 					return objectMessage;
 				}
 			});
+			
 		} catch (Exception e) {
 			logger.debug("消息发送失败"+destination.toString()+":"+object);
 			e.printStackTrace();
@@ -85,6 +86,23 @@ public class JmsService {
 		}
 	}
 
+	public void reSendObject(Destination destination, final Serializable object, final String type, final String value,FailedJms failedJms) {
+		try {
+			jmsTemplate.send(destination, new MessageCreator() {
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					ObjectMessage objectMessage = session.createObjectMessage(object);
+					objectMessage.setStringProperty(type, value);
+					return objectMessage;
+				}
+			});
+			mongoTemplate.remove(failedJms);
+		} catch (Exception e) {
+			logger.debug("消息发送失败"+destination.toString()+":"+object);
+			e.printStackTrace();
+			saveFailedJms(failedJms);
+		}
+	}
 	public void saveFailedJms(FailedJms failedJms) {
 		mongoTemplate.save(failedJms);
 	}

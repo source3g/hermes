@@ -29,7 +29,7 @@
 			<td>${failedJmsDto.message}</td>
 			<td>${failedJmsDto.properties}</td>
 			<td>${failedJmsDto.failedTime}</td>
-			<td><input type="button" value="重新发送" class="btn btn-primary"  onclick="sendAgain('${failedJmsDto.id}')">
+			<td><input id="sendBtn${failedJmsDto.id}" type="button"  value="重新发送" class="btn btn-primary"  data-loading-text="发送中..."  onclick="sendAgain('${failedJmsDto.id}')">
 				<input type="hidden" value="${failedJmsDto.id}" name="ids" ></td>
 		</tr>
 		</c:forEach>
@@ -44,14 +44,18 @@
 			<li>当前第${page.currentPage}/${page.totalPageCount}页共${page.totalRecords }条 转到第<input
 				type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input
 				type="button" id="pageOk" class="btn" value="确定"></input>
-				<input type="button" class="btn btn-primary" value="一键发送" onclick="groupResend()"></li>
+				<input id="allSendBtn" type="button" class="btn btn-primary"  data-loading-text="发送中..."  value="一键发送" onclick="groupResend()"></li>
 		</ul>
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
+		if(${not empty success}==true){
+			alert("${success}");
+		}	
 		initPage();
 });
 	function groupResend(){
+		 $('#allSendBtn').button('loading')
 		$.get("${pageContext.request.contextPath}/admin/system/failedJms/groupResend/",showContentInfo);
 	}
     function initPage(){
@@ -119,6 +123,7 @@
 	}
 	
 	function sendAgain(id){
+		 $('#sendBtn'+id).button('loading')
 		var url="${pageContext.request.contextPath}/admin/system/failedJms/resend/"+id+"/";
 		$.get(url,showContentInfo);
 	}
