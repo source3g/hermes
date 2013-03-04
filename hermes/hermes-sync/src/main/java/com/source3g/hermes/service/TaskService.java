@@ -79,7 +79,8 @@ public class TaskService extends CommonBaseService {
 			deviceStatus.setDeviceSn(sn);
 		}
 		if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
-			taskPackage = findAllPackage(merchant.getId());
+			taskPackage = findAllPackage(merchant.getId(),deviceStatus.getLastTaskId());
+			//拿着了就变为增量，没拿着接着下次再拿初始化包
 			if (taskPackage != null) {
 				deviceStatus.setStatus(TaskConstants.INCREMENT);
 			}
@@ -160,12 +161,17 @@ public class TaskService extends CommonBaseService {
 	 * 拿全包
 	 * 
 	 * @param merchantId
+	 * @param lastTaskId 
 	 * @return
 	 */
-	public TaskPackage findAllPackage(ObjectId merchantId) {
+	public TaskPackage findAllPackage(ObjectId merchantId, Long lastTaskId) {
 		// 找到最新的全包
 		Query findLastAllPackage = new Query();
-		findLastAllPackage.addCriteria(Criteria.where("merchantId").is(merchantId).and("type").is(TaskConstants.ALL_PACKAGE));
+		Criteria criteria=Criteria.where("merchantId").is(merchantId).and("type").is(TaskConstants.ALL_PACKAGE);
+		if(lastTaskId!=null){
+			criteria.and("taskId").gt(lastTaskId);
+		}
+		findLastAllPackage.addCriteria(criteria);
 		// 按任务序号降序排序，取第一个即为最新的全包
 		Sort sort = new Sort(new Order(Direction.DESC, "taskId"));
 		// 拿一个全包

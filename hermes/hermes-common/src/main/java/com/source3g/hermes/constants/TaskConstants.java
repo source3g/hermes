@@ -7,5 +7,6 @@ public interface TaskConstants {
 	// 设备状态
 	public String INIT = "init";
 	public String INCREMENT = "increment";
+	String INITING="initing";
 
 }

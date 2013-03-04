@@ -22,9 +22,10 @@ import com.source3g.hermes.utils.Page;
 public class FailedJmsService extends BaseService {
 	@Autowired
 	private JmsService jmsService;
-	//@Autowired
-	//private BaseService baseService;
-	
+
+	// @Autowired
+	// private BaseService baseService;
+
 	public Page findAll(String pageNo) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		Query query = new Query();
@@ -39,22 +40,23 @@ public class FailedJmsService extends BaseService {
 	}
 
 	public Boolean resendfailedJms(ObjectId id) {
-		long primitiveCount=mongoTemplate.count(new Query(), FailedJms.class);
-		FailedJms failedJms=mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), FailedJms.class);
-		Map<String, String> map=failedJms.getProperties();
-		String type=map.get("type");
-		 jmsService.reSendObject(failedJms.getDestination(), failedJms.getMessage(), "type",type, failedJms);
-		long count=mongoTemplate.count(new Query(), FailedJms.class);
-		if(primitiveCount!=count){
-			return true;
+		Boolean result = true;
+		FailedJms failedJms = mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), FailedJms.class);
+		Map<String, String> map = failedJms.getProperties();
+		String type = map.get("type");
+		try {
+			jmsService.reSendObject(failedJms.getDestination(), failedJms.getMessage(), "type", type);
+			mongoTemplate.remove(failedJms);
+		} catch (Exception e) {
+			result = false;
 		}
-		return false; 
+		return result;
 	}
-	
-	private List<FailedJmsDto> processFailedJms(List<FailedJms> list){
-		List<FailedJmsDto> result=new ArrayList<FailedJmsDto>();
-		for (FailedJms jms:list){
-			FailedJmsDto failedJmsDto=new FailedJmsDto();
+
+	private List<FailedJmsDto> processFailedJms(List<FailedJms> list) {
+		List<FailedJmsDto> result = new ArrayList<FailedJmsDto>();
+		for (FailedJms jms : list) {
+			FailedJmsDto failedJmsDto = new FailedJmsDto();
 			failedJmsDto.setFailedTime(jms.getFailedTime());
 			failedJmsDto.setId(jms.getId());
 			failedJmsDto.setProperties(jms.getProperties());
@@ -66,16 +68,11 @@ public class FailedJmsService extends BaseService {
 	}
 
 	public Boolean groupResendfailedJms() {
-		long primitiveCount=mongoTemplate.count(new Query(), FailedJms.class);
-		List<FailedJms> failedJmss=mongoTemplate.findAll(FailedJms.class);
-		for(FailedJms failedJms:failedJmss){
+		List<FailedJms> failedJmss = mongoTemplate.findAll(FailedJms.class);
+		for (FailedJms failedJms : failedJmss) {
 			resendfailedJms(failedJms.getId());
 		}
-		long count=mongoTemplate.count(new Query(), FailedJms.class);
-		if(primitiveCount!=count){
-			return true;
-		}
-		return false; 
+		return true;
 	}
 
 }

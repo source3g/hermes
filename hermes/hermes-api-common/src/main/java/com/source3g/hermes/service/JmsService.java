@@ -25,13 +25,9 @@ import com.source3g.hermes.entity.log.FailedJms;
 
 @Service
 public class JmsService {
-	
-	private static final Logger logger=LoggerFactory.getLogger(JmsService.class);
-	
-
+	private static final Logger logger = LoggerFactory.getLogger(JmsService.class);
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	
 	@Autowired
 	private JmsTemplate jmsTemplate;
 
@@ -46,7 +42,7 @@ public class JmsService {
 				}
 			});
 		} catch (Exception e) {
-			logger.debug("消息发送失败"+destination.toString()+":"+text);
+			logger.debug("消息发送失败" + destination.toString() + ":" + text);
 			e.printStackTrace();
 			FailedJms failedJms = new FailedJms();
 			failedJms.setId(ObjectId.get());
@@ -70,9 +66,9 @@ public class JmsService {
 					return objectMessage;
 				}
 			});
-			
+
 		} catch (Exception e) {
-			logger.debug("消息发送失败"+destination.toString()+":"+object);
+			logger.debug("消息发送失败" + destination.toString() + ":" + object);
 			e.printStackTrace();
 			FailedJms failedJms = new FailedJms();
 			failedJms.setId(ObjectId.get());
@@ -86,24 +82,17 @@ public class JmsService {
 		}
 	}
 
-	public void reSendObject(Destination destination, final Serializable object, final String type, final String value,FailedJms failedJms) {
-		try {
-			jmsTemplate.send(destination, new MessageCreator() {
-				@Override
-				public Message createMessage(Session session) throws JMSException {
-					ObjectMessage objectMessage = session.createObjectMessage(object);
-					objectMessage.setStringProperty(type, value);
-					return objectMessage;
-				}
-			});
-			mongoTemplate.remove(failedJms);
-		} catch (Exception e) {
-			logger.debug("消息发送失败"+destination.toString()+":"+object);
-			e.printStackTrace();
-			failedJms.setFailedTime(new Date());
-			saveFailedJms(failedJms);
-		}
+	public void reSendObject(Destination destination, final Serializable object, final String type, final String value) {
+		jmsTemplate.send(destination, new MessageCreator() {
+			@Override
+			public Message createMessage(Session session) throws JMSException {
+				ObjectMessage objectMessage = session.createObjectMessage(object);
+				objectMessage.setStringProperty(type, value);
+				return objectMessage;
+			}
+		});
 	}
+
 	public void saveFailedJms(FailedJms failedJms) {
 		mongoTemplate.save(failedJms);
 	}

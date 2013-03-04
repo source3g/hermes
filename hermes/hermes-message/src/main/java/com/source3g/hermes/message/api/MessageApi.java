@@ -82,18 +82,21 @@ public class MessageApi {
 	 * @param content
 	 * @return
 	 */
-	@RequestMapping(value = "/messageSend/{merchantId}", method = RequestMethod.POST)
-	@ResponseBody
-	@Deprecated
-	//TODO 要删除
-	public String messageSend(@PathVariable String merchantId, String[] ids, String customerPhones, String content) {
-		try {
-			messageService.groupSend(new ObjectId(merchantId), ids, customerPhones, content);
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-		return ReturnConstants.SUCCESS;
-	}
+	// @RequestMapping(value = "/messageSend/{merchantId}", method =
+	// RequestMethod.POST)
+	// @ResponseBody
+	// @Deprecated
+	// //TODO 要删除
+	// public String messageSend(@PathVariable String merchantId, String[] ids,
+	// String customerPhones, String content) {
+	// try {
+	// messageService.groupSend(new ObjectId(merchantId), ids, customerPhones,
+	// content);
+	// } catch (Exception e) {
+	// return e.getMessage();
+	// }
+	// return ReturnConstants.SUCCESS;
+	// }
 	
 	
 	/**
@@ -201,30 +204,18 @@ public class MessageApi {
 		return	messageService.failedMessagelist(pageNoInt);
 	}
 	
-	@RequestMapping(value = "/failedMessageSendAgain/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/failed/resend/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String failedMessageSendAgain(@PathVariable String id) {
-		messageService.failedMessageSendAgain(id);
+		messageService.failedMessageResend(id);
 		return	ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value = "/allFailedMessagesSendAgain", method = RequestMethod.GET)
+	@RequestMapping(value = "/failed/resendAll", method = RequestMethod.GET)
 	@ResponseBody
 	public String allFailedMessagesSendAgain() {
-		messageService.allFailedMessagesSendAgain();
+		messageService.allFailedMessagesResend();
 		return	ReturnConstants.SUCCESS;
-	}
-	
-	/**
-	 * 测试用
-	 * @param pageNo
-	 * @return
-	 */
-	@RequestMapping(value = "/groupS")
-	@ResponseBody
-	public String groupS() {
-		messageService.groupSend();
-		return ReturnConstants.SUCCESS;
 	}
 	
 	public static class CustomerMessageDto {
