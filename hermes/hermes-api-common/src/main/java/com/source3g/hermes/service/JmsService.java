@@ -100,6 +100,7 @@ public class JmsService {
 		} catch (Exception e) {
 			logger.debug("消息发送失败"+destination.toString()+":"+object);
 			e.printStackTrace();
+			failedJms.setFailedTime(new Date());
 			saveFailedJms(failedJms);
 		}
 	}

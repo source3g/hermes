@@ -67,6 +67,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			alert(location.href);
 			if(${not empty error}==true){
 				alert('${error}');
 			} 
