@@ -49,7 +49,7 @@ public class TaskApi {
 			deviceStatus.setDeviceSn(sn);
 		}
 		deviceStatus.setStatus(TaskConstants.INIT);
-		deviceStatus.setLastTaskId(null);
+//		deviceStatus.setLastTaskId(null);
 		taskService.saveDeviceStatus(deviceStatus);
 		jmsService.sendString(syncDestination, sn, JmsConstants.TYPE, JmsConstants.PACKAGE_ALL);
 		return ReturnConstants.SUCCESS;
