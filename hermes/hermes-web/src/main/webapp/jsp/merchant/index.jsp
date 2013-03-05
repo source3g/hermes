@@ -190,11 +190,15 @@ body {
 		
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
+			$.history.load("${pageContext.request.contextPath}/merchant/customer/list/");
 		});
 		$("#customerAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/add/");
+			$.history.load("${pageContext.request.contextPath}/merchant/customer/add/");
 		});
+		
 		$("#customerGroup").click(function() {
+			$.history.load("${pageContext.request.contextPath}/merchant/customerGroup/");
 			loadPage("${pageContext.request.contextPath}/merchant/customerGroup/");
 		});
 

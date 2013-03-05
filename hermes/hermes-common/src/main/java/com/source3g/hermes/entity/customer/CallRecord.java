@@ -24,4 +24,5 @@ public class CallRecord {
 	public void setNewCustomer(boolean newCustomer) {
 		this.newCustomer = newCustomer;
 	}
+	
 }
