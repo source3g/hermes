@@ -33,7 +33,6 @@ public class MessageSendListener implements MessageListener {
 	public void onMessage(Message msg) {
 		ShortMessage shortMessage = null;
 		try {
-			System.out.println("哇哈哈");
 			shortMessage = JmsUtils.getObject(msg, ShortMessage.class);
 			Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(shortMessage.getMerchantId())), Merchant.class);
 			if (merchant == null) {
