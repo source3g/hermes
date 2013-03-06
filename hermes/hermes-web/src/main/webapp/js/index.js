@@ -11,6 +11,11 @@ function loadContent(hash) {
 	}
 }
 
+function loadPage(url) {
+	$("#pageContentFrame").load(url);
+	$.history.load(url);
+}
+
 $(document).ready(function() {
 	if (!isInit) {
 		$.history.init(loadContent);
