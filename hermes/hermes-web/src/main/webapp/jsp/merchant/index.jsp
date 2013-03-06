@@ -190,15 +190,12 @@ body {
 		
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
-			$.history.load("${pageContext.request.contextPath}/merchant/customer/list/");
 		});
 		$("#customerAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/add/");
-			$.history.load("${pageContext.request.contextPath}/merchant/customer/add/");
 		});
 		
 		$("#customerGroup").click(function() {
-			$.history.load("${pageContext.request.contextPath}/merchant/customerGroup/");
 			loadPage("${pageContext.request.contextPath}/merchant/customerGroup/");
 		});
 
@@ -257,9 +254,7 @@ body {
 		});
 	});
 
-	function loadPage(url) {
-		$("#pageContentFrame").load(url);
-	}
+
 	
 	function initRemind(){
 		$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){

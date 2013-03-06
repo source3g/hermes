@@ -134,7 +134,6 @@
 		}
 		function toModify(id){
 		loadPage("${pageContext.request.contextPath}/merchant/customer/toUpdate/"+id+"/");
-		$.history.load("${pageContext.request.contextPath}/merchant/customer/toUpdate/"+id+"/");
 		}
 		
 		function goToPage(pageNo){
