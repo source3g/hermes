@@ -1,5 +1,6 @@
 var origContent = "";
 var isInit = false;
+var hashCode="";
 function loadContent(hash) {
 	if (hash != "") {
 		if (origContent == "") {
