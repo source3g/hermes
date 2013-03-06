@@ -72,6 +72,7 @@
 					<tr>
 						<td>来电时间</td>
 						<td>通话时长</td>
+						<td>通话状态</td>
 					</tr>
 				</thead>
 				<tbody id="callInTb">
@@ -87,12 +88,12 @@
 
 
 	<script type="text/javascript">
-		$(document).ready(function(){
+		$(document).ready(function (){
 			$('#queryForm').submit(function(){
 	    		goToPage(1);
 	    		return false;
 	    	});
-			initPage();
+			initPage(${page.currentPage},${page.totalPageCount});
 		});
 		
 		function showCallRecords(id){
@@ -100,13 +101,12 @@
 				$("#callInTb").html("");
 				for (var i=0;i<data.callRecords.length;i++){
 					var callRecords=data.callRecords;
-					var tr="<tr> <td>"+callRecords[i].callTime+"</td> <td>"+callRecords[i].callDuration+"</td> </tr>";
+					var tr="<tr> <td>"+callRecords[i].callTime+"</td> <td>"+callRecords[i].callDuration+"</td><td>"+callRecords[i].callStatus+"</td> </tr>";
 					$("#customersTab").append(tr);
 				}
 				$("#myModal").modal();
 			});
 		}
-		
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
 			var options={
@@ -119,58 +119,6 @@
 		function closeModal(){
 			$("#myModal").modal("hide");
 		}
-		
-		  function initPage(){
-		    	$('#pageOk').click(function(){
-		    		var pageNoToGo=$('#pageNoToGo').val();
-		    		goToPage(pageNoToGo);
-		    	});
-		    	
-		    	if(${page.totalPageCount}==1||${page.totalPageCount}==0){
-		    		$("#firstPage").addClass("active");
-					$("#frontPage").addClass("active");
-					$("#nextPage").addClass("active");
-					$("#lastPage").addClass("active");
-		    	}else if(${page.currentPage}==1){
-		    		$("#firstPage").addClass("active");
-					$("#frontPage").addClass("active");
-					$("#nextPage").removeClass("active");
-					$("#lastPage").removeClass("active");
-					
-					$('#nextPage').click(function(){
-						goToPage(${page.nextPageNo});
-					});
-					$("#lastPage").click(function (){
-						goToPage(${page.lastPageNo});
-					});		
-					
-		    	}else if(${page.currentPage}==${page.totalPageCount}){
-		    		$("#firstPage").removeClass("active");
-					$("#frontPage").removeClass("active");
-					$("#nextPage").addClass("active");
-					$("#lastPage").addClass("active");
-					
-					$("#firstPage").click(function (){
-						goToPage(${page.firstPageNo});
-					});
-					$("#frontPage").click(function (){
-						goToPage(${page.previousPageNo});
-					});
-		    	}else{
-					$("#firstPage").click(function (){
-						goToPage(${page.firstPageNo});				
-						});
-					$("#frontPage").click(function (){
-						goToPage(${page.previousPageNo});				
-						});
-					$("#nextPage").click(function (){
-						goToPage(${page.nextPageNo});			
-						});
-					$("#lastPage").click(function (){
-						goToPage(${page.lastPageNo});			
-						});
-				}
-		    }
 		  function showList(data){
 				$("#pageContentFrame").html(data);
 			}

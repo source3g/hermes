@@ -66,8 +66,7 @@
 	</div>
 	<script type="text/javascript">
 	 $(document).ready(function(){
-		 
-			initPage();
+		 initPage(${page.currentPage},${page.totalPageCount});
 			$('#queryForm').submit(function(){
 				goToPage(1);
 				return false;
@@ -85,57 +84,6 @@
 			$('#queryForm').ajaxSubmit(options);
 			
 		}
-	    function initPage(){
-	    	$('#pageOk').click(function(){
-	    		var pageNoToGo=$('#pageNoToGo').val();
-	    		goToPage(pageNoToGo);
-	    	});
-	    	
-	    	if(${page.totalPageCount}==1||${page.totalPageCount}==0){
-	    		$("#firstPage").addClass("active");
-				$("#frontPage").addClass("active");
-				$("#nextPage").addClass("active");
-				$("#lastPage").addClass("active");
-	    	}else if(${page.currentPage}==1){
-	    		$("#firstPage").addClass("active");
-				$("#frontPage").addClass("active");
-				$("#nextPage").removeClass("active");
-				$("#lastPage").removeClass("active");
-				
-				$('#nextPage').click(function(){
-					goToPage(${page.nextPageNo});
-				});
-				$("#lastPage").click(function (){
-					goToPage(${page.lastPageNo});
-				});		
-				
-	    	}else if(${page.currentPage}==${page.totalPageCount}){
-	    		$("#firstPage").removeClass("active");
-				$("#frontPage").removeClass("active");
-				$("#nextPage").addClass("active");
-				$("#lastPage").addClass("active");
-				
-				$("#firstPage").click(function (){
-					goToPage(${page.firstPageNo});
-				});
-				$("#frontPage").click(function (){
-					goToPage(${page.previousPageNo});
-				});
-	    	}else{
-				$("#firstPage").click(function (){
-					goToPage(${page.firstPageNo});				
-					});
-				$("#frontPage").click(function (){
-					goToPage(${page.previousPageNo});				
-					});
-				$("#nextPage").click(function (){
-					goToPage(${page.nextPageNo});			
-					});
-				$("#lastPage").click(function (){
-					goToPage(${page.lastPageNo});			
-					});
-			}
-	    }
 		function showList(data){
 			$("#pageContentFrame").html(data);
 		}

@@ -55,6 +55,7 @@ import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
+import com.source3g.hermes.enums.CallStatus;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
@@ -407,7 +408,7 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.findById(new ObjectId(id), Customer.class);
 	}
 
-	public void callIn(String deviceSn, String phone, String time, String duration) throws Exception {
+	public void callIn(String deviceSn, String phone, String time, String duration,CallStatus status) throws Exception {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);
 		if (device == null) {
 			throw new Exception("盒子编号不存在");
@@ -428,6 +429,7 @@ public class CustomerService extends BaseService {
 		}
 		record.setCallTime(callInTime);
 		record.setCallDuration(Integer.parseInt(duration));
+		record.setCallStatus(status);
 		Update update = new Update();
 
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phone).and("merchantId").is(merchant.getId())), Customer.class);
