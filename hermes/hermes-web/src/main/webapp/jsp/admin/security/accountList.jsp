@@ -67,9 +67,6 @@
 			success:showContentInfo		
 		});	
 	}
-		function showList(data){
-			$("#pageContentFrame").html(data);
-		}
 		function toModify(id){
 		loadPage("${pageContext.request.contextPath}/admin/security/account/toUpdate/"+id+"/");
 	}
@@ -78,7 +75,7 @@
 			$("#pageNo").attr("value",pageNo);
 			var options={
 					url:"${pageContext.request.contextPath}/admin/security/account/list/",
-					success:showList,
+					success:showContentInfo,
 					error:showError
 			};
 			$('#queryForm').ajaxSubmit(options);

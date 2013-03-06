@@ -232,10 +232,6 @@
 				return false;
 			});
 		});	
-		function showList(data){
-			$("#pageContentFrame").html(data);
-		}
-		
 		function initCustomerGroupList() {
 			$.ajax({
 				url : "${pageContext.request.contextPath}/merchant/customerGroup/listAllJson",

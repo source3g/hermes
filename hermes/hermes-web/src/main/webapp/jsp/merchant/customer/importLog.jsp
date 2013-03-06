@@ -72,7 +72,7 @@ function goToPage(pageNo){
 	$("#pageNo").attr("value",pageNo);
 	var options={
 			url:"${pageContext.request.contextPath}/merchant/customer/importLog/",
-			success:showList,
+			success:showContentInfo,
 			error:showError
 	};
 	$('#queryForm').ajaxSubmit(options);
@@ -82,14 +82,11 @@ function showError() {
 	$("#resultMessage").html("操作失败，请重试");
 	$("#errorModal").modal();
 }
-function showList(data){
-	$("#pageContentFrame").html(data);
-}
 	function importLogInfo(id){
 		$.ajax({
 			url:"${pageContext.request.contextPath}/merchant/customer/importLog/items/"+id+"/",
 			type:"get",
-		success:showList
+		success:showContentInfo
 		});
 	}
 </script>

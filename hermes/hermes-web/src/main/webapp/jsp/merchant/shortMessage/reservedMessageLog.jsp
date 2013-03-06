@@ -45,14 +45,11 @@
 		$("#pageNo").attr("value",pageNo);
 		var options={
 			    url:"${pageContext.request.contextPath}/merchant/message/reservedMsgLog/",
-				success:showList,
+				success:showContentInfo,
 				error:showError
 		};
 		$('#queryForm').ajaxSubmit(options);
 		
-	}
-	function showList(data){
-		$("#pageContentFrame").html(data);
 	}
 	function showError() {
 		$("#resultMessage").html("操作失败，请重试");

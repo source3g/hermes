@@ -81,7 +81,7 @@
 			$("#pageNo").attr("value",pageNo);
 			var options = {
 				url : "${pageContext.request.contextPath}/admin/device/list/",
-				success : showList, // post-submit callback
+				success : showContentInfo, // post-submit callback
 				error : showError
 			};
 			$('#queryForm').ajaxSubmit(options);
@@ -92,12 +92,8 @@
 			$.ajax({
 				url : "${pageContext.request.contextPath}/admin/device/delete/" + id + "/",
 				type : "get",
-				success : showList
+				success : showContentInfo
 			});
-		}
-		function showList(data) {
-			$("#pageContentFrame").html(data);
-			
 		}
 		function showError() {
 			$("#resultMessage").html("操作失败，请重试");

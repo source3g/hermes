@@ -111,7 +111,7 @@
 			$("#pageNo").attr("value",pageNo);
 			var options={
 					url:"${pageContext.request.contextPath}/merchant/customer/callInList/",
-					success:showList
+					success:showContentInfo
 			};
 			$('#queryForm').ajaxSubmit(options);
 		}
@@ -119,9 +119,6 @@
 		function closeModal(){
 			$("#myModal").modal("hide");
 		}
-		  function showList(data){
-				$("#pageContentFrame").html(data);
-			}
 	</script>
 </body>
 </html>

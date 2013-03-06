@@ -71,14 +71,14 @@
 			$.ajax({
 				url:"${pageContext.request.contextPath}/admin/merchantGroup/toUpdate/"+id+"/",
 				type:"get",
-				success:showList
+				success:showContentInfo
 			});
 		}
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);
 			var options = {
 				url : "${pageContext.request.contextPath}/admin/merchantGroup/list/",
-				success : showList, // post-submit callback
+				success : showContentInfo, // post-submit callback
 				error : showError
 			};
 			$('#queryForm').ajaxSubmit(options);
@@ -89,14 +89,8 @@
 			$.ajax({
 				url : "${pageContext.request.contextPath}/admin/merchantGroup/delete/" + id + "/",
 				type : "get",
-				success : showList
+				success : showContentInfo
 			});
-		}
-		function showList(data) {
-			if(${not empty merchants }==true){
-				$("#pageContentFrame").html(data);	
-			}
-			$("#pageContentFrame").html(data);
 		}
 		function toUpdate(id) {
 			loadPage("${pageContext.request.contextPath}/admin/merchantGroup/toUpdate/" + id + "/");

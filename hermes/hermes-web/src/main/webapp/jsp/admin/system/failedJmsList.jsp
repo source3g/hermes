@@ -65,16 +65,12 @@
 		$("#pageNo").attr("value",pageNo);
 		var options={
 			    url:"${pageContext.request.contextPath}/admin/system/monitor/failedJms/",
-				success:showList,
+				success:showContentInfo,
 				error:showError
 		};
 		$('#queryForm').ajaxSubmit(options);
 		
 	}
-	function showList(data){
-		$("#pageContentFrame").html(data);
-	}
-	
 	function sendAgain(id){
 		 $('#sendBtn'+id).button('loading')
 		var url="${pageContext.request.contextPath}/admin/system/failedJms/resend/"+id+"/";
