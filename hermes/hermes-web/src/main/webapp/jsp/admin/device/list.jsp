@@ -37,7 +37,7 @@
 				<td><a class="btn btn-danger" href="javascript:void();"
 					onclick="deleteById('${deviceVo.device.id}');">删除</a>
 				<a class="btn btn-success" href="javascript:void();"
-					onclick="findById('${deviceVo.device.id}');">详细信息</a></td>	
+					onclick="detialOfDevice('${deviceVo.device.id}');">详细信息</a></td>	
 			</tr>
 		</c:forEach> 
 
@@ -99,9 +99,9 @@
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
-		function findById(id){
+		function detialOfDevice(id){
 			$.ajax({
-				url:"${pageContext.request.contextPath}/admin/device/findById/"+id+"/",
+				url:"${pageContext.request.contextPath}/admin/device/detialOfDevice/"+id+"/",
 				type:"get",
 				success:toDeviceInformation
 			});

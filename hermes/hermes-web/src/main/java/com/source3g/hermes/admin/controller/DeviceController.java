@@ -114,7 +114,7 @@ public class DeviceController {
 		return device;
 	}
 
-	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/detialOfDevice/{id}", method = RequestMethod.GET)
 	public ModelAndView findById(@PathVariable String id) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		String uri = ConfigParams.getBaseUrl() + "device/" + id + "/";
