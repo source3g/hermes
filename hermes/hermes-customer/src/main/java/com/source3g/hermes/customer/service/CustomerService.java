@@ -630,8 +630,8 @@ public class CustomerService extends BaseService {
 		customerStatisticsDto.setUneditedCallInCountThreeDay(new StatisticObjectDto("三天内未编辑顾客打进电话数：", callInStatisticsCountThreeDay.getNewCount()));
 		customerStatisticsDto.setEditedCallInCountThreeDay(new StatisticObjectDto("三天内已编辑顾客打进电话数：", callInStatisticsCountThreeDay.getOldCount()));
 		CallInStatisticsCount callInStatisticsCountAWeek = findCallInCountByDayFromToday(merchantId, 7);
-		customerStatisticsDto.setUneditedCallInCountAWeek(new StatisticObjectDto("七天内未编辑顾客打进电话数：", callInStatisticsCountAWeek.getNewCount()));
-		customerStatisticsDto.setEditedCallInCountAWeek(new StatisticObjectDto("七天内已编辑顾客打进电话数：", callInStatisticsCountAWeek.getOldCount()));
+		customerStatisticsDto.setUneditedCallInCountAWeek(new StatisticObjectDto("一周内未编辑顾客打进电话数：", callInStatisticsCountAWeek.getNewCount()));
+		customerStatisticsDto.setEditedCallInCountAWeek(new StatisticObjectDto("一周内已编辑顾客打进电话数：", callInStatisticsCountAWeek.getOldCount()));
 		List<Map<String,Object>> list=new ArrayList<Map<String,Object>>();
 		
 		Map<String,Object> editedCustomerCount=new HashMap<String,Object>();

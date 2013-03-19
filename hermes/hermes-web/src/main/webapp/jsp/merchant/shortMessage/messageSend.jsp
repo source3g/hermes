@@ -178,7 +178,7 @@
 		 var options = {
 				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
 				 type:"post",
-				success :showList	
+				success :showContentInfo	
 		}; 
 		$("#customerPhonesInput").attr("value",$('#customerPhones').text());
 		 $('#sendBtn').button('loading')
@@ -220,11 +220,6 @@
 				$("#sel").after("<span id="+data[i].id+" style='display: none;'>" + data[i].content + "</span>");
 			}
 		}
-	
-		function showList(data){
-			$("#pageContentFrame").html(data);
-		}
-		
 		 function testCustomerPhones() {
 			var j = 1;
 			var customerPhones = $('#customerPhones').text();

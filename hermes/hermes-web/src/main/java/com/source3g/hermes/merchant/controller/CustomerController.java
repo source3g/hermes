@@ -260,7 +260,6 @@ public class CustomerController {
 			MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 			formData.add("file", resource);
 			formData.add("oldName", new String(file.getOriginalFilename()));
-
 			HttpHeaders requestHeaders = new HttpHeaders();
 			requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 			HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);

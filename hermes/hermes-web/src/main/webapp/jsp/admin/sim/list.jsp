@@ -56,18 +56,14 @@
 		$.ajax({
 			url:"${pageContext.request.contextPath}/admin/sim/delete/"+id+"/",
 			type:"get",
-			success:showList		
+			success:showContentInfo		
 		});	
 	}
-		function showList(data){
-			$("#pageContentFrame").html(data);
-		}
-		
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
 			var options={
 					url:"${pageContext.request.contextPath}/admin/sim/list/",
-					success:showList,
+					success:showContentInfo,
 					error:showError
 			};
 			$('#queryForm').ajaxSubmit(options);

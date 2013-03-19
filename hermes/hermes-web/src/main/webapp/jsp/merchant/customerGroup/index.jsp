@@ -58,7 +58,7 @@
 			var submitOptions = {
 				url : "${pageContext.request.contextPath}/merchant/customerGroup/add",
 				type : "post",
-				success : showList
+				success : showContentInfo
 			}
 
 			$("#addCustomerGroupForm").validate({
@@ -118,10 +118,6 @@
 			 
 			$("#myModal").modal('hide');
 		}
-		function showList(data) {
-			$("#pageContentFrame").html(data);
-			
-		} 
 	</script>
 </body>
 </html>

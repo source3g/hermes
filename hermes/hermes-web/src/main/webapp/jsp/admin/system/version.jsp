@@ -1,21 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
-<!DOCTYPE html PUBLIC
-"-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>导入顾客信息</title>
+<title>版本更新</title>
 </head>
 <body>
 	<form id="importForm"
-		action="${pageContext.request.contextPath}/merchant/customer/import/"
+		action="${pageContext.request.contextPath}/admin/version/import/"
 		method="post" enctype="multipart/form-data" class="form-horizontal">
 
 		<div class="control-group">
-			<label class="control-label" for="fileUpload">请选择要上传的文件：</label>
+			<label class="control-label" for="fileUpload">请选择要上传的文件版本：</label>
 			<div class="controls">
 				<input type="file" name="file" id="fileUpload">
 			</div>
@@ -36,8 +34,8 @@
 			<input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" />
 		</div>
 	</form>
-
-
+	
+	<input type="button" onclick="exportNewVersion();" class="btn btn-primary" value="导出" data-loading-text="导出中..." id="exportCustomerBtn">
 	<script type="text/javascript">
 		$(document).ready(function() {
 			initForm();
@@ -59,6 +57,7 @@
 					percent.html(percentVal);
 				},
 				complete : function(xhr) {
+					alert(xhr.responseText);
 					if ("\"success\"" == xhr.responseText) {
 						percent.html("上传成功");
 					} else {
@@ -67,6 +66,7 @@
 				}
 			});
 		}
+		
 	</script>
 </body>
 </html>

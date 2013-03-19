@@ -66,13 +66,10 @@
 			$("#pageNo").attr("value",pageNo);
 			var options={
 					url:"${pageContext.request.contextPath}/merchant/customer/newCustomerList/",
-					success:showList
+					success:showContentInfo
 			};
 			$('#queryForm').ajaxSubmit(options);
 		}
-		  function showList(data){
-				$("#pageContentFrame").html(data);
-			}
 	</script>
 </body>
 </html>

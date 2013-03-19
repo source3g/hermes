@@ -126,12 +126,9 @@
 		$.ajax({
 			url:"${pageContext.request.contextPath}/merchant/customer/delete/"+id+"/",
 			type:"get",
-			success:showList		
+			success:showContentInfo		
 		});	
 	}
-		function showList(data){
-			$("#pageContentFrame").html(data);
-		}
 		function toModify(id){
 		loadPage("${pageContext.request.contextPath}/merchant/customer/toUpdate/"+id+"/");
 		}
@@ -140,7 +137,7 @@
 			$("#pageNo").attr("value",pageNo);
 			var options={
 					url:"${pageContext.request.contextPath}/merchant/customer/list/",
-					success:showList,
+					success:showContentInfo,
 					error:showError
 			};
 			$('#queryForm').ajaxSubmit(options);
@@ -156,20 +153,6 @@
 	    	});
 	    	initPage(${page.currentPage},${page.totalPageCount});
 	});
-	    
-	    function exportCustomer(){
-	    	$("#pageNo").attr("value",pageNo);
-	    	$('#exportCustomerBtn').button('loading');
-			var options={
-					url:"${pageContext.request.contextPath}/merchant/customer/export/",
-					dataType:'json',
-					success:function (data){
-						window.open(data);
-					},
-					error:showError
-			};
-			$('#queryForm').ajaxSubmit(options);
-	    }
 	</script>
 </body>
 </html>
