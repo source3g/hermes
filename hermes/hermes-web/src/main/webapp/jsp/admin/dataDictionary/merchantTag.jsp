@@ -48,7 +48,9 @@
 				return;
 			}
 			var length = $("#" + node.id).find(".subNode").length;
+			alert(length);
 			var children = node.children;
+			alert(children.length);
 			for ( var i = 0; i < children.length; i++) {
 				var tr = "<tr id='"+children[i].id+"'><td  class='node'><span>";
 				for ( var j = 0; j < length; j++) {
@@ -57,12 +59,19 @@
 				tr += "<image class='subNode' src='${pageContext.request.contextPath}/img/subNode.gif'></image></span><input class='input-small' type='text' name='name' value='"+children[i].name+"'>";
 				tr += "<input type='hidden' name='parentId' value='"+node.id+"'>";
 				tr += "<input type='hidden' name='id' value='"+children[i].id+"'>";
-				tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a></td></tr>";
+				tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a>";
+				tr += "<a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td></tr>";
 				$("#" + node.id).after(tr);
 				initChildren(children[i]);
 			}
 		}
-
+		function remove(node){
+			//alert($("#"+node.id+"[class='subNode']").length);
+			//$("#"+node.id+"[class='subNode']").remove();
+			alert(node.children.length);
+			$(node).parent().parent().remove();
+		}
+		
 		function initTag(node) {
 			var tbody = "<tbody><tr id='"+node.id+"'> <td class='node'> <input class='input-small' type='text' name='name' value='"+node.name+"'> <input type='hidden' name='id' value='"+node.id+"' >";
 			if (node.parentId == null) {
@@ -70,10 +79,9 @@
 			} else {
 				tbody += " <input name='parentId' type='hidden' value= '"+node.parentId+"'>";
 			}
-			tbody += " <a href='javascript:void();' onclick='addChild(this);'>增加子类</a></td> </tr></tbody> ";
+			tbody += " <a href='javascript:void();' onclick='addChild(this);'>增加子类</a><a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td> </tr></tbody> ";
 			$("#addTag").parents("tbody").before(tbody);
 		}
-
 		function commitTree() {
 			var tags = new Array();
 			$("td[class='node']").each(function(index) {
@@ -84,6 +92,7 @@
 				tags.push(tag);
 			});
 			var strJson = "{";
+		//	alert(tags.length);
 			for ( var tagsIndex = 0; tagsIndex < tags.length; tagsIndex++) {
 				strJson += "\"nodes[" + tagsIndex + "].id\":\"";
 				strJson += tags[tagsIndex].id + "\",";
@@ -98,6 +107,7 @@
 			strJson += "}";
 
 			var dataJson = eval('(' + strJson + ')');
+			alert(strJson);
 			$.post("${pageContext.request.contextPath}/admin/dictionary/tag/add/", dataJson, showContentInfo);
 		}
 		function addChild(el) {
@@ -114,7 +124,7 @@
 			tr += "<image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image></span><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\">";
 			tr += "<input type='hidden' name='parentId' value='"+parentId+"'>";
 			tr += "<input type='hidden' name='id' value=''>";
-			tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a></td></tr>";
+			tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a><a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td></tr>";
 			$(el).parents("tr").after(tr);
 		}
 
@@ -122,7 +132,7 @@
 			var tbody = "<tbody> <tr> <td class='node'><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\"> <input type=\"hidden\" name=\"id\">";
 			tbody += "<input type=\"hidden\" name=\"parentId\">";
 			tbody += "<input type='hidden' name='id' value=''>";
-			tbody += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a></td>";
+			tbody += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a><a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td>";
 			tbody += "</tr></tbody>";
 			$(el).parents("tbody").before(tbody);
 		}

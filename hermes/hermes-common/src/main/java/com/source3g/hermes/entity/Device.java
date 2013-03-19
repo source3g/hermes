@@ -13,6 +13,34 @@ public class Device extends AbstractEntity {
 	private String sn;
 	@DBRef
 	private Sim sim;
+	
+	private String saler;
+	private Double longitude;
+	private Double latitude;
+	
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getSaler() {
+		return saler;
+	}
+
+	public void setSaler(String saler) {
+		this.saler = saler;
+	}
 
 	public String getSn() {
 		return sn;

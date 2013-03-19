@@ -21,6 +21,7 @@ public class MerchantTagService extends BaseService {
 	}
 
 	public void save(List<MerchantTagNode> nodes) {
+		mongoTemplate.remove(new Query(), MerchantTagNode.class);
 		if (CollectionUtils.isEmpty(nodes)) {
 			return;
 		}

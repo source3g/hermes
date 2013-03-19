@@ -62,12 +62,12 @@ body {
 							<!-- <div class="accordion-inner"> -->
 							<ul id="merchant-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
-								<li><a href="javascript:void();" id="customerList">顾客管理</a></li>
+								<li><a href="#" id="customerList">顾客管理</a></li>
 								<!-- <li><a href="javascript:void();" id="customerAdd">顾客新增</a></li> -->
-								<li><a href="javascript:void();" id="customerGroup">顾客组管理</a></li>
+								<li><a href="#" id="customerGroup">顾客组管理</a></li>
 								<!--<li><a href="javascript:void();" id="newCustomerList">新顾客列表</a></li> -->
-								<li><a href="javascript:void();" id="callInList">来电记录</a></li>
-								<li><a href="javascript:void();" id="callInStatistics">来电顾客统计</a></li>
+								<li><a href="#" id="callInList">来电记录</a></li>
+								<li><a href="#" id="callInStatistics">来电顾客统计</a></li>
 								<!-- <li><a href="javascript:void();" id="importCustomer">导入顾客信息</a></li> -->
 								<!-- <li><a href="javascript:void();" id="importLog">导入日志</a></li> -->
 							</ul>
@@ -85,12 +85,12 @@ body {
 							<!-- <div class="accordion-inner"> -->
 							<ul id="message-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
-								<li><a href="javascript:void();" id="messageList">短信列表</a></li>
-								<li><a href="javascript:void();" id="messageAdd">短信群发</a></li>
+								<li><a href="#" id="messageList">短信列表</a></li>
+								<li><a href="#" id="messageAdd">短信群发</a></li>
 								<!--  <li><a href="javascript:void();" id="messageSentLog">发送记录</a></li>-->
-								<li><a href="javascript:void();" id="messageLog">预存记录</a></li>
-								<li><a href="javascript:void();" id="messageAutoSend">挂机短信</a></li>
-								<li><a href="javascript:void();" id="messageTemplate">短信模板</a></li>
+								<li><a href="#" id="messageLog">预存记录</a></li>
+								<li><a href="#" id="messageAutoSend">挂机短信</a></li>
+								<li><a href="#" id="messageTemplate">短信模板</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -105,8 +105,8 @@ body {
 								<!-- <div class="accordion-inner"> -->
 								<ul id="message-menu"
 									class="nav nav-list nav-tabs  nav-stacked  main-menu">
-									<li><a href="javascript:void();" id="salerList">销售列表</a></li>
-									<li><a href="javascript:void();" id="salerAdd">销售新增</a></li>
+									<li><a href="#" id="salerList">销售列表</a></li>
+									<li><a href="#" id="salerAdd">销售新增</a></li>
 								</ul>
 								<!-- </div> -->
 							</div>
@@ -122,9 +122,9 @@ body {
 								<!-- <div class="accordion-inner"> -->
 								<ul id="message-menu"
 									class="nav nav-list nav-tabs  nav-stacked  main-menu">
-									<li><a href="javascript:void();" id="noteList">备忘录列表</a></li>
-									<li><a href="javascript:void();" id="noteAdd">新增</a></li>
-									<li><a href="javascript:void();" id="noteHistory">历史记录</a></li>
+									<li><a href="#" id="noteList">备忘录列表</a></li>
+									<li><a href="#" id="noteAdd">新增</a></li>
+									<li><a href="#" id="noteHistory">历史记录</a></li>
 								</ul>
 								<!-- </div> -->
 							</div>
@@ -141,11 +141,11 @@ body {
 							<!-- <div class="accordion-inner"> -->
 							<ul id="message-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
-								<li><a href="javascript:void();" id="passwordChange">密码修改</a></li>
-								<li><a href="javascript:void();" id="merchantSwitch">商户开关</a></li>
-								<li><a href="javascript:void();" id="merchantRemind">提醒</a></li>
-								<li><a href="javascript:void();" id="merchantRemindSetting">提醒设置</a></li>
-								<li><a href="javascript:void();" id="merchantResourceSetting">资源设置</a></li>
+								<li><a href="#" id="passwordChange">密码修改</a></li>
+								<li><a href="#" id="merchantSwitch">商户开关</a></li>
+								<li><a href="#" id="merchantRemind">提醒</a></li>
+								<li><a href="#" id="merchantRemindSetting">提醒设置</a></li>
+								<li><a href="#" id="merchantResourceSetting">资源设置</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -186,71 +186,91 @@ body {
 		initRemind();
 		$("#remindTipContent").click(function(){
 			loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
+			return false;
 		});
 		
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
+			return false;
 		});
 		$("#customerAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/add/");
+			return false;
 		});
 		
 		$("#customerGroup").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customerGroup/");
+			return false;
 		});
 
 		$("#newCustomerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/newCustomerList/");
+			return false;
 		});
 		$("#callInList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/callInList/");
+			return false;
 		});
 
 		$("#callInStatistics").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/callInStatistics/");
+			return false;
 		});
 
 		$("#importCustomer").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/import/");
+			return false;
 		});
 		$("#importLog").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/importLog/");
+			return false;
 		});
 		$("#messageLog").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/reservedMsgLog/");
+			return false;
 		});
 		$("#messageTemplate").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/template/");
+			return false;
 		});
 		$("#messageAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageSend/");
+			return false;
 		});
 
 		$("#messageList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toMessageList/");
+			return false;
 		});
 		$("#noteAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/note/add/");
+			return false;
 		});
 		$("#messageAutoSend").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/message/toAutoSend/");
+			return false;
 		});
 
 		//商户中心
 		$("#merchantSwitch").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toSwitch/");
+			return false;
 		});
 		$("#merchantRemindSetting").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/remindSetting/");
+			return false;
 		});
 		$("#merchantRemind").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
+			return false;
 		});
 		$("#passwordChange").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
+			return false;
 		});
 		$("#merchantResourceSetting").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
+			return false;
 		});
 	});
 
