@@ -6,7 +6,17 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>登录</title>
 <%@include file="../include/header.jsp"%>
-<%@include file="../include/footer.jsp"%>
+<script type='text/javascript'
+	src='${pageContext.request.contextPath}/js/jquery/jquery.js'></script>
+<script type='text/javascript'
+	src='${pageContext.request.contextPath}/css/bootstrap/bootstrap.js'></script>
+<script type='text/javascript'
+	src='${pageContext.request.contextPath}/js/jquery/jquery.history.js'></script>
+<script type='text/javascript'
+	src='${pageContext.request.contextPath}/js/jquery/jquery.form.js'></script>
+
+<script type='text/javascript'
+	src='${pageContext.request.contextPath}/js/jquery/jquery.validate.js'></script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -41,7 +51,8 @@
 				</div>
 				<div class="well span3 center login-box">
 					<div class="alert alert-info">请输入帐号密码</div>
-					<form class="form-horizontal" action="${pageContext.request.contextPath}/login" method="post">
+					<form class="form-horizontal"
+						action="${pageContext.request.contextPath}/login" method="post">
 						<fieldset>
 							<div title="用户名" data-rel="tooltip">
 								<span class="add-on"><i class="icon-user"></i><input
@@ -49,13 +60,14 @@
 									id="username" type="text" /></span>
 							</div>
 							<!-- <div class="clearfix"></div> -->
-	
-							<div  title="密码" data-rel="tooltip"><!-- class="input-prepend" -->
+
+							<div title="密码" data-rel="tooltip">
+								<!-- class="input-prepend" -->
 								<span class="add-on"><i class="icon-lock"></i></span><input
 									class="input-large span10" name="password" id="password"
-									type="password"  />
+									type="password" />
 							</div>
-							 <div class="clearfix"></div> 
+							<div class="clearfix"></div>
 
 							<div class="input-prepend">
 								<label class="remember" for="rememberMe"><input
@@ -79,5 +91,12 @@
 	</div>
 	<!--/.fluid-container-->
 	<%@include file="../include/copyright.jsp"%>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$.ajaxSetup({
+				cache : false
+			});
+		});
+	</script>
 </body>
 </html>

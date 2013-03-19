@@ -101,7 +101,7 @@
 				$("#callInTb").html("");
 				for (var i=0;i<data.callRecords.length;i++){
 					var callRecords=data.callRecords;
-					var tr="<tr> <td>"+callRecords[i].callTime+"</td> <td>"+callRecords[i].callDuration+"</td><td>"+callRecords[i].callStatus+"</td> </tr>";
+					var tr="<tr> <td>"+callRecords[i].callTime+"</td> <td>"+callRecords[i].callDuration+"</td><td></td> </tr>";
 					$("#customersTab").append(tr);
 				}
 				$("#myModal").modal();

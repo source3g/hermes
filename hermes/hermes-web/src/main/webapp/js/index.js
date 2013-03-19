@@ -6,14 +6,13 @@ function loadContent(hash) {
 		if (origContent == "") {
 			origContent = $('#pageContentFrame').html();
 		}
-		loadPage(hash);
+		$("#pageContentFrame").load(hash);
 	} else if (origContent != "") {
 		$('#pageContentFrame').html(origContent);
 	}
 }
 
 function loadPage(url) {
-	$("#pageContentFrame").load(url);
 	$.history.load(url);
 }
 

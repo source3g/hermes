@@ -33,6 +33,7 @@ public class TcpCommandService implements ApplicationContextAware {
 				@Override
 				public void TransLogined(CommReceiveEvent commreceiveevent) {
 					System.out.println("1111");
+					System.out.println("sms logined In");
 					isLogin = true;
 				}
 
@@ -48,6 +49,7 @@ public class TcpCommandService implements ApplicationContextAware {
 					// report
 					// msgid=03251325236560000009&commandid=7a7cf8&statemsg:=CCE1BDBBB3C9B9A6&state=0&areacode=0577,�㽭,����,100&gatename=unicomgzDXYD&itemid=10253901&sloginservers=smdispatch1,&feetype=1&usernumber=13057707697
 					String result = t.poll();
+					try{
 					String msgId = result.substring(result.indexOf("msgid=") + "msgid=".length(), result.indexOf("&"));
 					String statemsg = result.substring(result.indexOf("statemsg:=") + "statemsg:=".length(), result.indexOf("&"));
 					MessageService messageService = (MessageService) applicationContext.getBean("messageService");
@@ -56,8 +58,11 @@ public class TcpCommandService implements ApplicationContextAware {
 					} else {
 						messageService.updateShortMessageStatus(msgId, MessageStatus.提交失败);
 					}
+					}catch(Exception e ){
+						System.out.println("解析返回失败"+e.getMessage());
+					}
 					System.out.println(o);
-					System.out.println(t.poll());
+					System.out.println(result);
 					System.out.println("333");
 				}
 			});

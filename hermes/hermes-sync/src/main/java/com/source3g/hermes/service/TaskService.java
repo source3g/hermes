@@ -81,9 +81,9 @@ public class TaskService extends CommonBaseService {
 		if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
 			taskPackage = findAllPackage(merchant.getId(),deviceStatus.getLastTaskId());
 			//拿着了就变为增量，没拿着接着下次再拿初始化包
-			if (taskPackage != null) {
-				deviceStatus.setStatus(TaskConstants.INCREMENT);
-			}
+			//if (taskPackage != null) {
+			//	deviceStatus.setStatus(TaskConstants.INCREMENT);
+			//}
 		} else if (deviceStatus.getLastTaskId() == null) {
 			taskPackage = findFirstPackage(merchant.getId());
 		} else {
@@ -140,6 +140,9 @@ public class TaskService extends CommonBaseService {
 			taskLog.setDeviceSn(deviceStatus.getDeviceSn());
 			taskLog.setReportTime(new Date());
 			taskLog.setTaskStatus(TaskStatus.成功);
+			if(TaskConstants.INIT.equals(deviceStatus.getStatus())){
+				deviceStatus.setStatus(TaskConstants.INCREMENT);
+			}
 			mongoTemplate.save(taskLog);
 			// deviceStatus.setLastUpdateTime(deviceStatus.getRequestTime());
 		} else {

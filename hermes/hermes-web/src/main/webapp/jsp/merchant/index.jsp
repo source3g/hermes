@@ -62,9 +62,9 @@ body {
 							<!-- <div class="accordion-inner"> -->
 							<ul id="merchant-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
-								<li><a href="javascript:void();" id="customerList">顾客管理</a></li>
+								<li><a href="#" id="customerList">顾客管理</a></li>
 								<!-- <li><a href="javascript:void();" id="customerAdd">顾客新增</a></li> -->
-								<li><a href="javascript:void();" id="customerGroup">顾客组管理</a></li>
+								<li><a href="#" id="customerGroup">顾客组管理</a></li>
 								<!--<li><a href="javascript:void();" id="newCustomerList">新顾客列表</a></li> -->
 								<li><a href="javascript:void();" id="callInList">来电记录</a></li>
 								<li><a href="javascript:void();" id="callInStatistics">来电顾客统计</a></li>
@@ -186,10 +186,13 @@ body {
 		initRemind();
 		$("#remindTipContent").click(function(){
 			loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
+			return false;
 		});
+		
 		
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
+			return false;
 		});
 		$("#customerAdd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/add/");
@@ -197,6 +200,7 @@ body {
 		
 		$("#customerGroup").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customerGroup/");
+			return false;
 		});
 
 		$("#newCustomerList").click(function() {
@@ -204,6 +208,7 @@ body {
 		});
 		$("#callInList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/callInList/");
+			return false;
 		});
 
 		$("#callInStatistics").click(function() {
@@ -252,10 +257,16 @@ body {
 		$("#merchantResourceSetting").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 		});
+		$("#aa").click(function() {
+			loadPage("${pageContext.request.contextPath}/jsp/merchant/accountCenter/a.jsp");
+		});
 	});
 
 
-	
+	function aabb(){
+		loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
+		return false;
+	}
 	function initRemind(){
 		$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
 			var remindCount=data.length;
