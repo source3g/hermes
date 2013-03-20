@@ -34,8 +34,6 @@
 			<input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" />
 		</div>
 	</form>
-	
-	<input type="button" onclick="exportNewVersion();" class="btn btn-primary" value="导出" data-loading-text="导出中..." id="exportCustomerBtn">
 	<script type="text/javascript">
 		$(document).ready(function() {
 			initForm();
