@@ -75,6 +75,9 @@
 			var url= "${pageContext.request.contextPath}/admin/security/role/toUpdate/" + id + "/";
 			$.get(url,showContentInfo);
 		}
+		function deleteById(id){
+			$.get("${pageContext.request.contextPath}/admin/security/role/delete/" + id + "/",showContentInfo);
+		}
 	</script>
 </body>
 </html>

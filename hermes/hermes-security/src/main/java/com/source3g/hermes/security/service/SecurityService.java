@@ -127,11 +127,12 @@ public class SecurityService {
 			role.setResources(resources);
 			}
 			mongoTemplate.save(role);
+		}else if(resourceIds==null){
+			throw new Exception("资源代码不能为空");
 		}else{
-		throw new Exception("账号已存在");
+			throw new Exception("账号已存在");
 		}
 	}
-
 
 	public Role getRoleById(String id) {
 		return mongoTemplate.findById(new ObjectId(id), Role.class);
@@ -145,6 +146,9 @@ public class SecurityService {
 		mongoTemplate.save(role);
 	}
 
+	public void delete(String id) {
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(new ObjectId(id))), Role.class);
+	}
 	public Account getAccountById(String id) {
 		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(new ObjectId(id))), Account.class);
 	}
@@ -157,7 +161,6 @@ public class SecurityService {
 		} else {
 			roles = new ArrayList<Role>();
 		}
-
 		for (String roleId : roleIdArray) {
 			Role role = new Role();
 			role.setId(roleId);
@@ -192,4 +195,5 @@ public class SecurityService {
 	public Account findUserByLoginName(String loginName) {
 		return mongoTemplate.findOne(new Query(Criteria.where("account").is(loginName)), Account.class);
 	}
+
 }

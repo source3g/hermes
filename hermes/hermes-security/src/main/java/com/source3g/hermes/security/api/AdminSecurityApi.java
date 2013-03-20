@@ -79,7 +79,7 @@ public class AdminSecurityApi {
 	@RequestMapping(value = "/resource/list", method = RequestMethod.GET)
 	@ResponseBody
 	public Page listResouce(String pageNo, String name, String code) {
-		
+
 		int pageNoInt = 0;
 		if (StringUtils.isNotEmpty(pageNo)) {
 			pageNoInt = Integer.parseInt(pageNo);
@@ -90,14 +90,16 @@ public class AdminSecurityApi {
 
 	@RequestMapping(value = "/resource/add", method = RequestMethod.POST)
 	@ResponseBody
-	public String addResource( @RequestBody   Resource resource) {//, BindingResult errorResult
-		//if (errorResult.hasErrors()) {
-		//	String error = "";
-		//	for (ObjectError err : errorResult.getAllErrors()) {
-		//		error += "|" + err.getDefaultMessage();
-		//	}
-		//	return error;
-	//	}
+	public String addResource(@RequestBody Resource resource) {// ,
+																// BindingResult
+																// errorResult
+		// if (errorResult.hasErrors()) {
+		// String error = "";
+		// for (ObjectError err : errorResult.getAllErrors()) {
+		// error += "|" + err.getDefaultMessage();
+		// }
+		// return error;
+		// }
 		securityService.addResource(resource);
 		return ReturnConstants.SUCCESS;
 	}
@@ -119,12 +121,11 @@ public class AdminSecurityApi {
 
 	@RequestMapping(value = "/role/add", method = RequestMethod.POST)
 	@ResponseBody
-	public String addRole(String name, String[] resourceIds) {
+	public String addRole(String name,String[] resourceIds) {
 		try {
 			securityService.addRole(name, resourceIds);
 		} catch (Exception e) {
-			String error = e.getMessage();
-			return error;
+			return  e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
@@ -159,6 +160,13 @@ public class AdminSecurityApi {
 		}
 		role.setResources(result);
 		securityService.update(role);
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/role/delete/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public String delete(@PathVariable String id) {
+		securityService.delete(id);
 		return ReturnConstants.SUCCESS;
 	}
 

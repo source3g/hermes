@@ -74,7 +74,7 @@
 			if(!confirm("确定该删除吗")){
 				return;
 			}
-		  $.get("${pageContext.request.contextPath}/admin/merchant/deletemerchantResource/"+name+"/",showContentInfo);
+		  $.get("${pageContext.request.contextPath}/merchant/account/deletemerchantResource/"+name+"/",showContentInfo);
 	  }
 	  $("#addMerchantResourceForm").submit(function(){
  		  if (!$('#addMerchantResourceForm').valid()) {

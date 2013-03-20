@@ -161,7 +161,7 @@ public class SecurityController {
 		String uri = ConfigParams.getBaseUrl() + "admin/security/role/add/";
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("name", name);
-		if(StringUtils.isNotEmpty(resourceIds)){
+		if (StringUtils.isNotEmpty(resourceIds)) {
 			formData.add("resourceIds", resourceIds);
 		}
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -207,15 +207,28 @@ public class SecurityController {
 		if (StringUtils.isEmpty(id)) {
 			return new ModelAndView("error");
 		}
-		String uri = ConfigParams.getBaseUrl() + "admin/security/role/add/";
+		String uri = ConfigParams.getBaseUrl() + "admin/security/role/update/";
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("name", name);
-		formData.add("resourceIds", resourceIds);
+		for (String r : resourceIds) {
+			formData.add("resourceIds", r);
+		}
+		formData.add("id", id);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		restTemplate.postForObject(uri, requestEntity, String.class);
 		return new ModelAndView("/admin/security/roleAdd");
+	}
+
+	@RequestMapping(value = "role/delete/{id}", method = RequestMethod.GET)
+	public ModelAndView delete(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "admin/security/role/delete/" + id + "/";
+		String result = restTemplate.getForObject(uri, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return new ModelAndView("redirect:/admin/security/role/list/");
+		}
+		return new ModelAndView("admin/error");
 	}
 
 	@RequestMapping(value = "/role/get/{id}", method = RequestMethod.GET)
