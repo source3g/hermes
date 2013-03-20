@@ -11,7 +11,12 @@
 	<form id="importForm"
 		action="${pageContext.request.contextPath}/admin/version/import/"
 		method="post" enctype="multipart/form-data" class="form-horizontal">
-
+		<div class="control-group">
+			<label class="control-label" for="fileUpload">请输入版本号：</label>
+			<div class="controls">
+				<input type="text" name="version" id="version">
+			</div>
+		</div>
 		<div class="control-group">
 			<label class="control-label" for="fileUpload">请选择要上传的文件版本：</label>
 			<div class="controls">
@@ -30,12 +35,16 @@
 		</div>
 
 		<div class="form-actions">
-			<input type="submit" class="btn btn-primary" value="上传">
-			<input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" />
+			<input type="submit" class="btn btn-primary" value="上传"> <input
+				id="backToList" type="button"
+				onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"
+				class="btn btn-primary" value="返回" />
 		</div>
 	</form>
-	
-	<input type="button" onclick="exportNewVersion();" class="btn btn-primary" value="导出" data-loading-text="导出中..." id="exportCustomerBtn">
+
+	<input type="button" onclick="exportNewVersion();"
+		class="btn btn-primary" value="导出" data-loading-text="导出中..."
+		id="exportCustomerBtn">
 	<script type="text/javascript">
 		$(document).ready(function() {
 			initForm();
@@ -66,7 +75,6 @@
 				}
 			});
 		}
-		
 	</script>
 </body>
 </html>

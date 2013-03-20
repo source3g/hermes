@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.dto.sync.DeviceStatusDto;
@@ -19,6 +20,7 @@ import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.sync.DeviceStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.service.BaseService;
+import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.DeviceVo;
 
@@ -102,6 +104,12 @@ public class DeviceService extends BaseService {
 
 	public Device findBySimId(ObjectId simId) {
 		return mongoTemplate.findOne(new Query(Criteria.where("simId").is(simId)), Device.class);
+	}
+	
+	public void updateGpsPoint(String sn,GpsPoint gpsPoint){
+		Update update=new Update();
+		update.set("gpsPoint", gpsPoint);
+		mongoTemplate.updateFirst(new Query(Criteria.where("sn").is(sn)), update, Device.class);
 	}
 
 	public List<DeviceStatusDto> findDeviceStatusByMerchantId(String merchantId) {

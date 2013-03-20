@@ -5,22 +5,37 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.source3g.hermes.constants.ReturnConstants;
+import com.source3g.hermes.service.VersionService;
+import com.source3g.hermes.sync.entity.ApkVersion;
 
 @Controller
 @RequestMapping("/version")
 public class VersionApi {
 
+	@Autowired
+	private VersionService versionService;
+
 	@RequestMapping(value = "/download/{year}/{month}/{fileName}", method = RequestMethod.GET)
-	public void versionDowload(@PathVariable String year,@PathVariable String month,@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException{
-		String path="D:/aaa/file/"+year+"/"+month+"/"+fileName;
+	public void versionDowload(@PathVariable String year, @PathVariable String month, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String path = versionService.getUploadDir() + year + "/" + month + "/" + fileName;
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
 
@@ -39,4 +54,31 @@ public class VersionApi {
 		bis.close();
 		bos.close();
 	}
+
+	@RequestMapping(value = "/upload")
+	@ResponseBody
+	public String upload(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version) throws IOException {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
+		String suffxPath = dateFormat.format(new Date()) + oldName;
+		String dir = versionService.getUploadDir() + suffxPath;
+		File fileToCopy = new File(dir);
+		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
+		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date());
+		versionService.addVersion(apkVersion);
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/last")
+	@ResponseBody
+	public ApkVersion getLastVersion() {
+		ApkVersion apkVersion = versionService.getLastVersion();
+		if (apkVersion != null) {
+			processUrl(apkVersion);
+		}
+		return null;
+	}
+
+	private void processUrl(ApkVersion apkVersion) {
+		apkVersion.setUrl(versionService.getLocalUrl() + apkVersion.getUrl());
+	};
 }
