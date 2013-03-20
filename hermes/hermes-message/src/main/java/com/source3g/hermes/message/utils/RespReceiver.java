@@ -8,7 +8,7 @@ public class RespReceiver implements IRespReceiver {
 
 	@Override
 	public void receive(IApiSubmit submit, IApiSubmitResp resp) {
-		System.out.println("�յ���Ӧ:" + "submit:" + submit + "resp" + resp);
+		System.out.println("收到响应:" + "submit:" + submit + "resp" + resp);
 	}
 
 }
