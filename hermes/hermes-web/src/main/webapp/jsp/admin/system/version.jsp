@@ -42,9 +42,6 @@
 		</div>
 	</form>
 
-	<input type="button" onclick="exportNewVersion();"
-		class="btn btn-primary" value="导出" data-loading-text="导出中..."
-		id="exportCustomerBtn">
 	<script type="text/javascript">
 		$(document).ready(function() {
 			initForm();

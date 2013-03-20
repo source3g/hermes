@@ -48,9 +48,7 @@
 				return;
 			}
 			var length = $("#" + node.id).find(".subNode").length;
-			alert(length);
 			var children = node.children;
-			alert(children.length);
 			for ( var i = 0; i < children.length; i++) {
 				var tr = "<tr id='"+children[i].id+"'><td  class='node'><span>";
 				for ( var j = 0; j < length; j++) {
@@ -68,7 +66,6 @@
 		function remove(node){
 			//alert($("#"+node.id+"[class='subNode']").length);
 			//$("#"+node.id+"[class='subNode']").remove();
-			alert(node.children.length);
 			$(node).parent().parent().remove();
 		}
 		
@@ -107,7 +104,6 @@
 			strJson += "}";
 
 			var dataJson = eval('(' + strJson + ')');
-			alert(strJson);
 			$.post("${pageContext.request.contextPath}/admin/dictionary/tag/add/", dataJson, showContentInfo);
 		}
 		function addChild(el) {
