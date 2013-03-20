@@ -189,6 +189,7 @@ body {
 			return false;
 		});
 		
+		
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 			return false;
@@ -272,10 +273,16 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 			return false;
 		});
+		$("#aa").click(function() {
+			loadPage("${pageContext.request.contextPath}/jsp/merchant/accountCenter/a.jsp");
+		});
 	});
 
 
-	
+	function aabb(){
+		loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
+		return false;
+	}
 	function initRemind(){
 		$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
 			var remindCount=data.length;

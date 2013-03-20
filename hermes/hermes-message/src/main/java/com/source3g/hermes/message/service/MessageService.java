@@ -403,14 +403,16 @@ public class MessageService extends BaseService {
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-
+		
 		try {
 			tcp.SendCommand(command);
+			logger.debug("发送短信");
 			System.out.println("OK");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("command:"+command.toString());
+		System.out.println("command:"+command.getCommand());
+		logger.debug("queueSize:"+tcp.getSndQueueSize()+"unsendSize"+tcp.getUnSend().size()+"command:"+command.getCommand());
 		System.out.println(tcp.getSndQueueSize());
 		System.out.println(tcp.getUnSend().size());
 		// for (String str : tcp.getUnSend()) {

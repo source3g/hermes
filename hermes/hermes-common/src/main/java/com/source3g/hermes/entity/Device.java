@@ -4,6 +4,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.source3g.hermes.utils.GpsPoint;
+
 
 @Document
 public class Device extends AbstractEntity {
@@ -15,23 +17,14 @@ public class Device extends AbstractEntity {
 	private Sim sim;
 	
 	private String saler;
-	private Double longitude;
-	private Double latitude;
-	
-	public Double getLongitude() {
-		return longitude;
+	private GpsPoint gpsPoint;
+
+	public GpsPoint getGpsPoint() {
+		return gpsPoint;
 	}
 
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
-	}
-
-	public Double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
+	public void setGpsPoint(GpsPoint gpsPoint) {
+		this.gpsPoint = gpsPoint;
 	}
 
 	public String getSaler() {

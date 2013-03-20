@@ -47,7 +47,6 @@ import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.enums.CallStatus;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
@@ -185,12 +184,12 @@ public class CustomerApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/callIn/{deviceSn}/{phone}/{time}/{duration}/{callStatus}", method = RequestMethod.GET)
+	@RequestMapping(value = "/callIn/{deviceSn}/{phone}/{time}/{duration}", method = RequestMethod.GET)///{callStatus}
 	@ResponseBody
-	public String callIn(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration,@PathVariable String callStatus) {
+	public String callIn(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration) {//,@PathVariable String callStatus
 		try {
-			CallStatus status=CallStatus.valueOf(callStatus);
-			customerService.callIn(deviceSn, phone, time, duration,status);
+			//CallStatus status=CallStatus.valueOf(callStatus);
+			customerService.callIn(deviceSn, phone, time, duration);//,status
 		} catch (Exception e) {
 			return e.getMessage();
 		}
