@@ -18,6 +18,7 @@ import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.device.service.DeviceService;
 import com.source3g.hermes.dto.sync.DeviceStatusDto;
 import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
 
 @Controller
@@ -88,6 +89,14 @@ public class DeviceApi {
 	public String update(@RequestBody Device device) {
 		logger.debug("update device....");
 		deviceService.update(device);
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/gps/report/{sn}/{x}/{y}", method = RequestMethod.GET)
+	@ResponseBody
+	public String gpsReport(@PathVariable String sn, @PathVariable Double x, @PathVariable Double y) {
+		GpsPoint gpsPoint = new GpsPoint(x, y);
+		deviceService.updateGpsPoint(sn, gpsPoint);
 		return ReturnConstants.SUCCESS;
 	}
 

@@ -1,6 +1,5 @@
 package com.source3g.hermes.message.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +17,6 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -26,8 +24,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import com.hongxun.pub.DataCommand;
-import com.hongxun.pub.tcptrans.TcpCommTrans;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
@@ -64,19 +60,8 @@ public class MessageService extends BaseService {
 	private JmsService jmsService;
 	@Autowired
 	private Destination messageDestination;
-
-	@Value(value = "${message.msgcode}")
-	private String msgCode;
-	@Value(value = "${message.itemid}")
-	private String itemId;
-	@Value(value = "${message.gatename.cm}")
-	private String cmGateName;
-	// @Value(value = "message.gatename.cm.spnumber")
-	// private String spnumber;
-	@Value(value = "${message.gatename.cu}")
-	private String cuGateName;
-	@Value(value = "${message.gatename.ct}")
-	private String ctGateName;
+	@Autowired
+	private CbipMesssageService cbipMesssageService;
 
 	/**
 	 * 短信群发
@@ -361,63 +346,14 @@ public class MessageService extends BaseService {
 		return sendByOperator(msgId, phoneNumber, content, PhoneUtils.getOperatior(phoneNumber));
 	}
 
-	private String getGateNameByOperator(PhoneOperator operator) {
-		String result = "";
-		switch (operator) {
-		case 移动:
-			result = cmGateName;
-			break;
-		case 联通:
-			result = cuGateName;
-			break;
-		case 电信:
-			result = ctGateName;
-		default:
-			result = cuGateName;
-			break;
-		}
-		return result;
-	}
-
 	private MessageStatus sendByOperator(String msgId, String phoneNumber, String content, PhoneOperator operator) {
 		logger.debug("通过" + operator.toString() + "向" + phoneNumber + "发送" + content + "msgId:" + msgId);
-		TcpCommTrans tcp = null;
 		try {
-			tcp = TcpCommandService.getTcp();
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		// unicomgz_wxtl
-		DataCommand command = new DataCommand("submit");
-		command.AddNewItem("msgcode", msgCode);
-		command.AddNewItem("itemid", itemId);
-		command.AddNewItem("msgid", msgId);
-		command.AddNewItem("gatename", getGateNameByOperator(operator));
-		// command.AddNewItem("gatename", "mobile0025");
-		// command.AddNewItem("spnumber", "10660025");
-		command.AddNewItem("feetype", "1");
-		command.AddNewItem("usernumber", phoneNumber);
-		try {
-			byte bytes[] = content.getBytes("GBK");//
-			command.AddNewItem("msg", bytes, true, "GBK");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
-		
-		try {
-			tcp.SendCommand(command);
-			logger.debug("发送短信");
-			System.out.println("OK");
-		} catch (InterruptedException e) {
+			cbipMesssageService.send(msgId, phoneNumber, content, operator);
+		} catch (Exception e) {
 			e.printStackTrace();
+			return MessageStatus.发送失败;
 		}
-		System.out.println("command:"+command.getCommand());
-		logger.debug("queueSize:"+tcp.getSndQueueSize()+"unsendSize"+tcp.getUnSend().size()+"command:"+command.getCommand());
-		System.out.println(tcp.getSndQueueSize());
-		System.out.println(tcp.getUnSend().size());
-		// for (String str : tcp.getUnSend()) {
-		// System.out.println(str);
-		// }
 		return MessageStatus.已发送;
 	}
 

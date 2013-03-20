@@ -4,6 +4,12 @@ public class GpsPoint {
 	private Double x;
 	private Double y;
 
+	public GpsPoint(Double x, Double y) {
+		super();
+		this.x = x;
+		this.y = y;
+	}
+
 	public Double getX() {
 		return x;
 	}
