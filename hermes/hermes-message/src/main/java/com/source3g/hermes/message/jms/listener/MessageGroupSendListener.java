@@ -34,7 +34,6 @@ public class MessageGroupSendListener implements MessageListener {
 			if (groupSendMsg.getPhoneArray() != null && groupSendMsg.getPhoneArray().length > 0) {
 				for (String phone : groupSendMsg.getPhoneArray()) {
 					messageService.sendMessage(groupSendMsg.getMerchantId(), phone, groupSendMsg.getContent(), MessageType.群发,groupSendMsg.getGroupLogId());
-					//System.out.println("发了一个短信"+phone);
 				}
 			}
 

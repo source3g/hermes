@@ -126,6 +126,10 @@ public class MessageService extends BaseService {
 				Customer customer = new Customer();
 				customer.setName((String) obj.get("name"));
 				customer.setPhone((String) obj.get("phone"));
+				Object sexObj = obj.get("sex");
+				if (sexObj != null) {
+					customer.setSex(Sex.valueOf((String) sexObj));
+				}
 				customer.setId((ObjectId) obj.get("_id"));
 				customer.setMerchantId((ObjectId) obj.get("merchantId"));
 				DBRef dbRef = (DBRef) obj.get("customerGroup");

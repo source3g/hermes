@@ -223,7 +223,7 @@
 				var options={
 						url : "${pageContext.request.contextPath}/merchant/customer/add/",
 						type : "post",
-						success : addSuccess
+						success : showContentInfo
 				};
 				if(${not empty update }==true){
 					options.url="${pageContext.request.contextPath}${action}";
@@ -296,10 +296,6 @@
 		}
 		function deleteRemind(element) {
 			$(element).parent(".remindItem").remove();
-		}
-
-		function addSuccess(data) {
-			$("#pageContentFrame").html(data);
 		}
 		
 		function initDialog(){

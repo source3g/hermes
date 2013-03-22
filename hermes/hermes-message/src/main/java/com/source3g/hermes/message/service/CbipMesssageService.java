@@ -33,6 +33,8 @@ public class CbipMesssageService {
 	private Integer clientId;
 	@Value(value = "${cbip.productId}")
 	private Integer productId;
+	@Value(value = "${cbip.test}")
+	private Boolean isTest;
 
 	public void init() {
 		MsgConstant.clientId = clientId;
@@ -46,7 +48,7 @@ public class CbipMesssageService {
 		MsgConstant.IdleTime = 10;
 		MsgConstant.controlWindowsSize = 10;
 		MsgConstant.maxSendTime = 3;
-		MsgConstant.clearTimeOut = 10;
+		MsgConstant.clearTimeOut = 1000;
 		MsgConstant.clearSleepTime = 10;
 		MsgConstant.reconnectTime = 3;
 		client = new ClientEngine(new RespReceiver(), new ReportReceiver(), new DeliverReceiver());
@@ -62,6 +64,10 @@ public class CbipMesssageService {
 	}
 
 	public void send(String msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
+		if (isTest) {
+			System.out.println("摸拟向" + phoneNumber + "发送了内容：" + content);
+			return ;
+		}
 		if (client == null) {
 			init();
 		}
@@ -133,5 +139,13 @@ public class CbipMesssageService {
 
 	public void setProductId(Integer productId) {
 		this.productId = productId;
+	}
+
+	public Boolean getIsTest() {
+		return isTest;
+	}
+
+	public void setIsTest(Boolean isTest) {
+		this.isTest = isTest;
 	}
 }
