@@ -287,6 +287,8 @@ public class MessageService extends BaseService {
 	// 查找群发记录
 	public List<GroupSendLog> groupSendLogList(ObjectId merchantId) {
 		Query query = new Query();
+		Criteria criteria=Criteria.where("merchantId").is(merchantId);
+		query.addCriteria(criteria);
 		Sort sort = new Sort(Direction.DESC, "_id");
 		query.with(sort);
 		return mongoTemplate.find(query.skip(0).limit(5), GroupSendLog.class);

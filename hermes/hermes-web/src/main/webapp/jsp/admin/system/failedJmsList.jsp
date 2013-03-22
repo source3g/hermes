@@ -26,7 +26,8 @@
 		<c:forEach items="${page.data}" var="failedJmsDto">
 		<tr>
 			<td>${failedJmsDto.destination}</td>
-			<td>${failedJmsDto.message}</td>
+			<td  title="${failedJmsDto.message }" >
+			<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${failedJmsDto.message}</div></td>
 			<td>${failedJmsDto.properties}</td>
 			<td>${failedJmsDto.failedTime}</td>
 			<td><input id="sendBtn${failedJmsDto.id}" type="button"  value="重新发送" class="btn btn-primary"  data-loading-text="发送中..."  onclick="sendAgain('${failedJmsDto.id}')">

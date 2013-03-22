@@ -42,7 +42,6 @@
 				}
 			}
 		});
-
 		function initChildren(node) {
 			if (node.children == null || node.children.length <= 0) {
 				return;
@@ -58,25 +57,26 @@
 				tr += "<input type='hidden' name='parentId' value='"+node.id+"'>";
 				tr += "<input type='hidden' name='id' value='"+children[i].id+"'>";
 				tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a>";
-				tr += "<a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td></tr>";
+				tr += "<a href=\"javascript:void();\" onclick=\"remove();\">          删除本栏</a></td></tr>";
 				$("#" + node.id).after(tr);
 				initChildren(children[i]);
 			}
 		}
-		function remove(node){
-			//alert($("#"+node.id+"[class='subNode']").length);
+		function remove(){
+			alert("a");
+			/* //alert($("#"+node.id+"[class='subNode']").length);
 			//$("#"+node.id+"[class='subNode']").remove();
-			$(node).parent().parent().remove();
+			$(node).parent().parent().remove(); */
 		}
 		
-		function initTag(node) {
+		 function initTag(node) {
 			var tbody = "<tbody><tr id='"+node.id+"'> <td class='node'> <input class='input-small' type='text' name='name' value='"+node.name+"'> <input type='hidden' name='id' value='"+node.id+"' >";
 			if (node.parentId == null) {
 				tbody += " <input name='parentId' type='hidden' value= ''>";
 			} else {
 				tbody += " <input name='parentId' type='hidden' value= '"+node.parentId+"'>";
 			}
-			tbody += " <a href='javascript:void();' onclick='addChild(this);'>增加子类</a><a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td> </tr></tbody> ";
+			tbody += " <a href='javascript:void();' onclick='addChild(this);'>增加子类</a></td> </tr></tbody> ";
 			$("#addTag").parents("tbody").before(tbody);
 		}
 		function commitTree() {
@@ -105,8 +105,8 @@
 
 			var dataJson = eval('(' + strJson + ')');
 			$.post("${pageContext.request.contextPath}/admin/dictionary/tag/add/", dataJson, showContentInfo);
-		}
-		function addChild(el) {
+		} 
+ 		function addChild(el) {
 			var parentId = $(el).prevAll("input[name='id']").val();
 			if (parentId == null || parentId == "") {
 				alert("请先提交");
@@ -120,18 +120,18 @@
 			tr += "<image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image></span><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\">";
 			tr += "<input type='hidden' name='parentId' value='"+parentId+"'>";
 			tr += "<input type='hidden' name='id' value=''>";
-			tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a><a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td></tr>";
+			tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a></td></tr>";
 			$(el).parents("tr").after(tr);
 		}
 
-		function addTag(el) {
+		 function addTag(el) {
 			var tbody = "<tbody> <tr> <td class='node'><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\"> <input type=\"hidden\" name=\"id\">";
 			tbody += "<input type=\"hidden\" name=\"parentId\">";
 			tbody += "<input type='hidden' name='id' value=''>";
-			tbody += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a><a href=\"javascript:void();\" onclick=\"remove(this);\">                    删除本栏</a></td>";
+			tbody += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a></td>";
 			tbody += "</tr></tbody>";
 			$(el).parents("tbody").before(tbody);
-		}
+		}  
 	</script>
 </body>
 </html>

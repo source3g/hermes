@@ -195,7 +195,9 @@
  	$('#name').blur(function(){
 		var name=$('#name').val();
 		var myStr=GetChineseSpell(name)
-		$('#account').attr("value",myStr);
+		if(${empty update }){
+			$('#account').attr("value",myStr);
+ 		}
 	}); 
 		
 	function GetChineseSpell(name){
@@ -206,7 +208,6 @@
         }
         return myStr;
     }
-		
  		function getSpell(strText){
  			var Text=strText.charCodeAt(0);
 				if(Text<19968||Text>40869){

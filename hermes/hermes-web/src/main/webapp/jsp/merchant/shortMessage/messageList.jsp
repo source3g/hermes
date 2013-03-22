@@ -44,7 +44,7 @@
 				<td width="14%">${messageSendLog.phone }</td>
 				<td width="8%">${messageSendLog.sendCount }</td>
 				<td width="8%">${messageSendLog.status }</td>
-				<td width="18%" id="content" title="${messageSendLog.content }"  >
+				<td width="18%" id="content" title="${messageSendLog.content }">
 				<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${messageSendLog.content }</div></td>
 				<td width="14%">${messageSendLog.type }</td>
 				<td width="20%">${messageSendLog.sendTime }</td>
