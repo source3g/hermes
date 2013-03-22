@@ -146,6 +146,21 @@
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
+		 function exportCustomer(){
+		    	$("#pageNo").attr("value",pageNo);
+		    	$('#exportCustomerBtn').button('loading');
+				var options={
+						url:"${pageContext.request.contextPath}/merchant/customer/export/",
+						dataType:'json',
+						success:function (data){
+							window.open(data);
+							$('#exportCustomerBtn').button('reset');
+						},
+						error:showError
+				};
+				$('#queryForm').ajaxSubmit(options);
+		    }
+
 	    $(document).ready(function(){
 	    	$('#queryForm').submit(function(){
 	    		goToPage(1);

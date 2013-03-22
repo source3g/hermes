@@ -97,8 +97,6 @@
 		  $(this).ajaxSubmit(options);
 			return false;
 	  });
-	  
-	
 	</script>
 </body>
 </html>
