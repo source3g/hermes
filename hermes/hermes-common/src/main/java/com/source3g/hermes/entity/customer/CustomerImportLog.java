@@ -1,6 +1,5 @@
 package com.source3g.hermes.entity.customer;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
