@@ -14,7 +14,7 @@
 				<td>分类设置</td>
 			</tr>
 		</thead>
-		
+
 
 		<tbody>
 			<tr>
@@ -57,19 +57,18 @@
 				tr += "<input type='hidden' name='parentId' value='"+node.id+"'>";
 				tr += "<input type='hidden' name='id' value='"+children[i].id+"'>";
 				tr += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a>";
-				tr += "<a href=\"javascript:void();\" onclick=\"remove();\">          删除本栏</a></td></tr>";
+				tr += "<a href=\"javascript:void();\" onclick=\"deleteSelf(this);\">          删除本栏</a></td></tr>";
 				$("#" + node.id).after(tr);
 				initChildren(children[i]);
 			}
 		}
-		function remove(){
-			alert("a");
-			/* //alert($("#"+node.id+"[class='subNode']").length);
+		function deleteSelf(del) {
+			//alert($("#"+node.id+"[class='subNode']").length);
 			//$("#"+node.id+"[class='subNode']").remove();
-			$(node).parent().parent().remove(); */
+			$(del).parents("tr").remove();
 		}
-		
-		 function initTag(node) {
+
+		function initTag(node) {
 			var tbody = "<tbody><tr id='"+node.id+"'> <td class='node'> <input class='input-small' type='text' name='name' value='"+node.name+"'> <input type='hidden' name='id' value='"+node.id+"' >";
 			if (node.parentId == null) {
 				tbody += " <input name='parentId' type='hidden' value= ''>";
@@ -89,7 +88,7 @@
 				tags.push(tag);
 			});
 			var strJson = "{";
-		//	alert(tags.length);
+			//	alert(tags.length);
 			for ( var tagsIndex = 0; tagsIndex < tags.length; tagsIndex++) {
 				strJson += "\"nodes[" + tagsIndex + "].id\":\"";
 				strJson += tags[tagsIndex].id + "\",";
@@ -105,8 +104,8 @@
 
 			var dataJson = eval('(' + strJson + ')');
 			$.post("${pageContext.request.contextPath}/admin/dictionary/tag/add/", dataJson, showContentInfo);
-		} 
- 		function addChild(el) {
+		}
+		function addChild(el) {
 			var parentId = $(el).prevAll("input[name='id']").val();
 			if (parentId == null || parentId == "") {
 				alert("请先提交");
@@ -124,14 +123,14 @@
 			$(el).parents("tr").after(tr);
 		}
 
-		 function addTag(el) {
+		function addTag(el) {
 			var tbody = "<tbody> <tr> <td class='node'><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\"> <input type=\"hidden\" name=\"id\">";
 			tbody += "<input type=\"hidden\" name=\"parentId\">";
 			tbody += "<input type='hidden' name='id' value=''>";
 			tbody += "<a href=\"javascript:void();\" onclick=\"addChild(this);\">增加子类</a></td>";
 			tbody += "</tr></tbody>";
 			$(el).parents("tbody").before(tbody);
-		}  
+		}
 	</script>
 </body>
 </html>

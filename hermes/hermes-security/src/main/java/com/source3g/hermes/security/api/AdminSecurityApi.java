@@ -31,6 +31,12 @@ public class AdminSecurityApi {
 		return securityService.login(name, password);
 	}
 
+	@RequestMapping(value = "/install", method = RequestMethod.GET)
+	@ResponseBody
+	public void install() {
+		securityService.install();
+	}
+
 	@RequestMapping(value = "/account/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String addAccount(@RequestBody Account account) {
@@ -121,11 +127,11 @@ public class AdminSecurityApi {
 
 	@RequestMapping(value = "/role/add", method = RequestMethod.POST)
 	@ResponseBody
-	public String addRole(String name,String[] resourceIds) {
+	public String addRole(String name, String[] resourceIds) {
 		try {
 			securityService.addRole(name, resourceIds);
 		} catch (Exception e) {
-			return  e.getMessage();
+			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}

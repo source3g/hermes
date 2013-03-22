@@ -17,6 +17,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -62,6 +63,11 @@ public class MessageService extends BaseService {
 	private Destination messageDestination;
 	@Autowired
 	private CbipMesssageService cbipMesssageService;
+	@Autowired
+	private TcpCommandService tcpCommandService;
+
+	@Value(value = "${message.channel.select}")
+	private int channel;
 
 	/**
 	 * 短信群发
@@ -287,7 +293,7 @@ public class MessageService extends BaseService {
 	// 查找群发记录
 	public List<GroupSendLog> groupSendLogList(ObjectId merchantId) {
 		Query query = new Query();
-		Criteria criteria=Criteria.where("merchantId").is(merchantId);
+		Criteria criteria = Criteria.where("merchantId").is(merchantId);
 		query.addCriteria(criteria);
 		Sort sort = new Sort(Direction.DESC, "_id");
 		query.with(sort);
@@ -355,7 +361,11 @@ public class MessageService extends BaseService {
 	private MessageStatus sendByOperator(String msgId, String phoneNumber, String content, PhoneOperator operator) {
 		logger.debug("通过" + operator.toString() + "向" + phoneNumber + "发送" + content + "msgId:" + msgId);
 		try {
-			cbipMesssageService.send(msgId, phoneNumber, content, operator);
+			if (channel == 1) {
+				cbipMesssageService.send(msgId, phoneNumber, content, operator);
+			} else {
+				tcpCommandService.send(msgId, phoneNumber, content, operator);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return MessageStatus.发送失败;
@@ -540,6 +550,22 @@ public class MessageService extends BaseService {
 		for (ShortMessage shortMessage : list) {
 			failedMessageResend(shortMessage);
 		}
+	}
+
+	public int getChannel() {
+		return channel;
+	}
+
+	public void setChannel(int channel) {
+		this.channel = channel;
+	}
+
+	public TcpCommandService getTcpCommandService() {
+		return tcpCommandService;
+	}
+
+	public void setTcpCommandService(TcpCommandService tcpCommandService) {
+		this.tcpCommandService = tcpCommandService;
 	}
 
 }

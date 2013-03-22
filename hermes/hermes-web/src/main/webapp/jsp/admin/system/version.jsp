@@ -9,7 +9,7 @@
 </head>
 <body>
 	<form id="importForm"
-		action="${pageContext.request.contextPath}/admin/version/import/"
+		action="${pageContext.request.contextPath}/admin/version/upload/"
 		method="post" enctype="multipart/form-data" class="form-horizontal">
 		<div class="control-group">
 			<label class="control-label" for="fileUpload">请输入版本号：</label>
