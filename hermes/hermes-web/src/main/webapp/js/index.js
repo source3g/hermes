@@ -1,8 +1,11 @@
 var origContent = "";
 var isInit = false;
-var hashCode="";
+var hashCode = "";
 function loadContent(hash) {
 	if (hash != "") {
+		if (hash == "#") {
+			return;
+		}
 		if (origContent == "") {
 			origContent = $('#pageContentFrame').html();
 		}
@@ -27,7 +30,8 @@ $(document).ready(function() {
 });
 
 function showContentInfo(data) {
-	$("#pageContentFrame").html(data)
+	$("#pageContentFrame").html(data);
+	$.history.load("#");
 }
 function showError(data) {
 	alert("出错了");

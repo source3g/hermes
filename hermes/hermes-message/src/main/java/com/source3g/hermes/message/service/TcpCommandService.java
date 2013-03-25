@@ -37,6 +37,13 @@ public class TcpCommandService implements ApplicationContextAware {
 	@Value(value = "${message.gatename.ct}")
 	private String ctGateName;
 
+	@Value(value = "${message.ip}")
+	private String ip;
+	@Value(value = "${message.name}")
+	private String name;
+	@Value(value = "${message.pass}")
+	private String pass;
+
 	private static TcpCommTrans tcp = null;
 	public static boolean isLogin = false;
 	public static List<byte[]> list = new ArrayList<byte[]>();
@@ -49,7 +56,7 @@ public class TcpCommandService implements ApplicationContextAware {
 	public void send(String msgId, String phoneNumber, String content, PhoneOperator operator) {
 		TcpCommTrans tcp = null;
 		try {
-			tcp = TcpCommandService.getTcp();
+			tcp = getTcp();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -101,9 +108,9 @@ public class TcpCommandService implements ApplicationContextAware {
 		return result;
 	}
 
-	public static TcpCommTrans getTcp() throws InterruptedException {
+	public TcpCommTrans getTcp() throws InterruptedException {
 		if (tcp == null) {
-			tcp = new TcpCommTrans("60.28.194.246", 8011, "Q3h2O6XY", "ATN2XX5Y", 0);
+			tcp = new TcpCommTrans(ip, 8011, name, pass, 0);
 			tcp.start(1000);
 			tcp.SetCommReceiveListener(new CommReceiveListener() {
 				@Override
@@ -200,5 +207,29 @@ public class TcpCommandService implements ApplicationContextAware {
 
 	public void setCtGateName(String ctGateName) {
 		this.ctGateName = ctGateName;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPass() {
+		return pass;
+	}
+
+	public void setPass(String pass) {
+		this.pass = pass;
 	}
 }
