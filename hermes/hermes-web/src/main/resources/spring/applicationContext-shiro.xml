@@ -17,21 +17,13 @@
 	</bean>
 
 	<!-- Shiro Filter -->
-<!-- 	<bean id="shiroAdminFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
-		<property name="securityManager" ref="securityAdminManager" />
-		<property name="loginUrl" value="/admin/login" />
-		<property name="successUrl" value="/admin/index" />
-		<property name="filterChainDefinitions">
-			<value>
-			    /admin/login = anon
-				/admin/install/** = anon
-				/admin/** = authc
-				/** = anon
-			</value>
-		</property>
-	</bean> -->
-	
-	
+	<!-- <bean id="shiroAdminFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"> 
+		<property name="securityManager" ref="securityAdminManager" /> <property 
+		name="loginUrl" value="/admin/login" /> <property name="successUrl" value="/admin/index" 
+		/> <property name="filterChainDefinitions"> <value> /admin/login = anon /admin/install/** 
+		= anon /admin/** = authc /** = anon </value> </property> </bean> -->
+
+
 	<!-- Shiro Filter -->
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
@@ -47,12 +39,14 @@
 				/img/** = anon
 				/css/** = anon
 				/admin/** = anon
+				/adminLogin/** = anon
+				/jsp/admin/login.jsp = anon
 				/** = authc
 			</value>
 		</property>
-	</bean> 
- 
-	
+	</bean>
+
+
 
 
 	<!-- 用户授权信息Cache -->

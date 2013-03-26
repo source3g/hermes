@@ -57,12 +57,12 @@ public class DeviceService extends BaseService {
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
 		List<Device> devices = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
-		List<DeviceVo> deviceVosList=new ArrayList<DeviceVo>();
-		for(Device d:devices){
-			DeviceVo deviceVo=new DeviceVo();
+		List<DeviceVo> deviceVosList = new ArrayList<DeviceVo>();
+		for (Device d : devices) {
+			DeviceVo deviceVo = new DeviceVo();
 			deviceVo.setDevice(d);
-			Merchant merchant=mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(d.getId())), Merchant.class);
-			if(merchant!=null){
+			Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(d.getId())), Merchant.class);
+			if (merchant != null) {
 				deviceVo.setMerchant(merchant);
 			}
 			deviceVosList.add(deviceVo);
@@ -80,9 +80,9 @@ public class DeviceService extends BaseService {
 	}
 
 	public List<Device> findByIds(List<String> ids) {
-		List<ObjectId> list=new ArrayList<ObjectId>();
+		List<ObjectId> list = new ArrayList<ObjectId>();
 		Query query = new Query();
-		for(String id:ids){
+		for (String id : ids) {
 			list.add(new ObjectId(id));
 		}
 		query.addCriteria(Criteria.where("_id").in(list));
@@ -105,9 +105,9 @@ public class DeviceService extends BaseService {
 	public Device findBySimId(ObjectId simId) {
 		return mongoTemplate.findOne(new Query(Criteria.where("simId").is(simId)), Device.class);
 	}
-	
-	public void updateGpsPoint(String sn,GpsPoint gpsPoint){
-		Update update=new Update();
+
+	public void updateGpsPoint(String sn, GpsPoint gpsPoint) {
+		Update update = new Update();
 		update.set("gpsPoint", gpsPoint);
 		mongoTemplate.updateFirst(new Query(Criteria.where("sn").is(sn)), update, Device.class);
 	}
@@ -135,6 +135,5 @@ public class DeviceService extends BaseService {
 		}
 		return result;
 	}
-
 
 }

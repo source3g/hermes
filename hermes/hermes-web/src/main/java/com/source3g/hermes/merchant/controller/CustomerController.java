@@ -249,9 +249,9 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
-	@ResponseBody
-	public String importCustomer(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
+	public ModelAndView importCustomer(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
+		Map<String, Object> map = new HashMap<String, Object>();
 		try {
 			Merchant merchant = LoginUtils.getLoginMerchant(req);
 			String uri = ConfigParams.getBaseUrl() + "customer/import/" + merchant.getId() + "/";
@@ -269,11 +269,13 @@ public class CustomerController {
 			// HttpMethod.POST, requestEntity, String.class);
 			// System.out.println(response.getBody());
 		} catch (Exception e) {
-			return "上传失败";
+			map.put("result", "上传失败");
+			return new ModelAndView("/merchant/customer/uploadResult", map);
 		} finally {
 			fileToCopy.delete();
 		}
-		return ReturnConstants.SUCCESS;
+		map.put("result", "上传成功");
+		return new ModelAndView("/merchant/customer/uploadResult", map);
 	}
 
 	@RequestMapping(value = "/importLog", method = RequestMethod.GET)

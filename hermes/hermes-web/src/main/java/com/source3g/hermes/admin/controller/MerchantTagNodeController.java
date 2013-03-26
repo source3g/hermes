@@ -3,6 +3,7 @@ package com.source3g.hermes.admin.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import com.source3g.hermes.utils.ConfigParams;
 
 @Controller
 @RequestMapping("/admin/dictionary/tag")
+@RequiresRoles("admin")
 public class MerchantTagNodeController {
 	@Autowired
 	private RestTemplate restTemplate;

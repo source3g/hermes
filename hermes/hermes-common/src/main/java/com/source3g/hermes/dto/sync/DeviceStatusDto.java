@@ -3,8 +3,8 @@ package com.source3g.hermes.dto.sync;
 import java.util.Date;
 
 public class DeviceStatusDto {
-	
-	private long lastTaskId;
+
+	private Long lastTaskId;
 	private Date lastUpdateTime;
 	private Long requestTaskId;
 	private String sn;
@@ -13,15 +13,23 @@ public class DeviceStatusDto {
 	 * 当设备发送初始化请求时，将此状态置为INIT
 	 */
 	private String status;
-	
-	private long restTaskCount;
 
-	public long getLastTaskId() {
+	private Long restTaskCount;
+
+	public Long getLastTaskId() {
 		return lastTaskId;
 	}
 
-	public void setLastTaskId(long lastTaskId) {
+	public void setLastTaskId(Long lastTaskId) {
 		this.lastTaskId = lastTaskId;
+	}
+
+	public Long getRestTaskCount() {
+		return restTaskCount;
+	}
+
+	public void setRestTaskCount(Long restTaskCount) {
+		this.restTaskCount = restTaskCount;
 	}
 
 	public Long getRequestTaskId() {
@@ -40,14 +48,6 @@ public class DeviceStatusDto {
 		this.status = status;
 	}
 
-	public long getRestTaskCount() {
-		return restTaskCount;
-	}
-
-	public void setRestTaskCount(long restTaskCount) {
-		this.restTaskCount = restTaskCount;
-	}
-
 	public String getSn() {
 		return sn;
 	}
@@ -64,6 +64,4 @@ public class DeviceStatusDto {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
-	
-	
 }

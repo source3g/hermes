@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -27,6 +28,7 @@ import com.source3g.hermes.utils.ConfigParams;
 
 @Controller
 @RequestMapping("/admin/version")
+@RequiresRoles("admin")
 public class VersionController {
 
 	@Autowired

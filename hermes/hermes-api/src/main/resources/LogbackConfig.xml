@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+	<!-- 持久保存日志 -->
+	<appender name="standard_deliver"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/sms/standard_deliver.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/sms/standard_deliver.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>Error</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<appender name="standard_report"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/sms/standard_report.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/sms/standard_report.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<appender name="standard_resp"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/sms/standard_resp.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/sms/standard_resp.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<!-- 彩信持久保存日志 -->
+	<appender name="standard_deliver_mms"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/mms/standard_deliver.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/mms/standard_deliver.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>Error</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<appender name="standard_report_mms"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/mms/standard_report.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/mms/standard_report.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<appender name="standard_resp_mms"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/mms/standard_resp.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/mms/standard_resp.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<appender name="smsSendTaskList"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/sms/sendlist.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/sms/sendlist.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<appender name="mmsSendTaskList"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/mms/sendlist.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>logs/mms/sendlist.log.%d{yyyy-MM-dd.HHmm}
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS}%msg%n</Pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<logger name="LOG_SAVE_SMS" level="debug" additivity="false">
+		<appender-ref ref="standard_deliver" />
+		<appender-ref ref="standard_resp" />
+		<appender-ref ref="standard_report" />
+	</logger>
+	
+	<logger name="LOG_SAVE_MMS" level="debug" additivity="false">
+		<appender-ref ref="standard_deliver_mms" />
+		<appender-ref ref="standard_resp_mms" />
+		<appender-ref ref="standard_report_mms" />
+	</logger>
+	
+	
+</configuration>

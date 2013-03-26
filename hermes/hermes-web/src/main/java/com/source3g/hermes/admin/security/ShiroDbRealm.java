@@ -27,11 +27,8 @@ import com.source3g.hermes.merchant.security.service.MerchantSecurityService;
 
 @Component
 public class ShiroDbRealm extends AuthorizingRealm {
-	
 	@Autowired
 	private AdminSecurityService adminSecurityService;
-	
-	
 	@Autowired
 	private MerchantSecurityService merchantSecurityService;
 
@@ -44,6 +41,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		Account account = shiroUser.getAccount();
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 		if (account != null) {
+			info.addRole("admin");
 			for (Role role : account.getRoles()) {
 				// 基于Permission的权限信息
 				for (Resource resource : role.getResources())

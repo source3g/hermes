@@ -41,7 +41,7 @@
 				</div>
 				<div class="well span3 center login-box">
 					<div class="alert alert-info">请输入帐号密码</div>
-					<form class="form-horizontal" action="${pageContext.request.contextPath}/admin/login" method="post">
+					<form class="form-horizontal" action="${pageContext.request.contextPath}/adminLogin/login" method="post">
 						<fieldset>
 							<div  title="用户名" data-rel="tooltip">
 								<span class="add-on"><i class="icon-user"></i></span><input

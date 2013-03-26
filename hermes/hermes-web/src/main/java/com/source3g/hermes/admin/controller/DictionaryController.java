@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -25,6 +26,7 @@ import com.source3g.hermes.utils.ConfigParams;
 
 @Controller
 @RequestMapping("/admin/dictionary")
+@RequiresRoles("admin")
 public class DictionaryController {
 	// sprivate static final Logger logger =
 	// LoggerFactory.getLogger(DictionaryController.class);

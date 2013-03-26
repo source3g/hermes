@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import com.source3g.hermes.utils.Page;
 
 @Controller
 @RequestMapping("/admin/sim")
+@RequiresRoles("admin")
 public class SimController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(MerchantController.class);

@@ -13,60 +13,40 @@
 	<form id="importForm"
 		action="${pageContext.request.contextPath}/merchant/customer/import/"
 		method="post" enctype="multipart/form-data" class="form-horizontal">
-
 		<div class="control-group">
 			<label class="control-label" for="fileUpload">请选择要上传的文件：</label>
 			<div class="controls">
-				<input type="file" name="file" id="fileUpload">
+				<input id="file" type="file" name="file" id="fileUpload">
 			</div>
 		</div>
 
 		<div class="control-group">
-			<label class="control-label">上传进度：</label>
-			<div class="progress progress-striped progress-success active"
-				style="width: 40%;">
-				<div class="bar" style="width: 0%;">
-					<font color="black" class="percent">0%</font>
-				</div>
-			</div>
+			<label class="control-label">状态：</label>
+			<!-- <div class="progress progress-striped progress-success active"
+				style="width: 40%;"> -->
+			<!-- <div class="bar" style="width: 0%;" > -->
+			 <!-- <font color="black" id="status" class="percent"></font>  -->
+			<img id="loader" alt="" style="display: none;"
+				src="${pageContext.request.contextPath}/img/ajax-loader-7.gif">
+			<!-- </div> -->
+			<!-- </div> -->
 		</div>
 
 		<div class="form-actions">
-			<input type="submit" class="btn btn-primary" value="上传">
-			<input id="backToList" type="button" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"  class="btn btn-primary" value="返回" />
+			<input type="submit" id="uploadBtn" class="btn btn-primary"
+				value="上传"> <input id="backToList" type="button"
+				onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"
+				class="btn btn-primary" value="返回" />
 		</div>
 	</form>
-
-
 	<script type="text/javascript">
-		$(document).ready(function() {
-			initForm();
-		});
-		function initForm() {
-			var bar = $('.bar');
-			var percent = $('.percent');
-			var status = $('#uploadStatus');
-			$('#importForm').ajaxForm({
-				beforeSend : function() {
-					//status.empty();
-					var percentVal = '0%';
-					bar.css("width", percentVal);
-					percent.html(percentVal);
-				},
-				uploadProgress : function(event, position, total, percentComplete) {
-					var percentVal = percentComplete + '%';
-					bar.css("width", percentVal);
-					percent.html(percentVal);
-				},
-				complete : function(xhr) {
-					if ("\"success\"" == xhr.responseText) {
-						percent.html("上传成功");
-					} else {
-						percent.html("上传失败");
-					}
-				}
+		$("#importForm").submit(function() {
+			$("#loader").css("display","");
+			$(this).ajaxSubmit({
+				success : showContentInfo
 			});
-		}
+			return false;
+		});
 	</script>
 </body>
 </html>
