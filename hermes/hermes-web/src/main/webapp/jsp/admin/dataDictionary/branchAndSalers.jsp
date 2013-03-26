@@ -24,11 +24,14 @@
 		</c:forEach>
 	</table>
 	<script type="text/javascript">
-		function addBranch() {
+ 		function addBranch() {
 			var branch = "<tbody><tr> <td class='info'><input class=\"input-small\"  placeholder=\"请输入分公司名字...\" type=\"text\" name=\"name\"><a href=\"javascript:void();\" onclick=\"addBranchCompany(this)\">保存 </a><a href=\"javascript:void();\" onclick=\"add(this);\">增加销售</a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\"> 删除</a></td></tr></tbody>"
 			$('table').append(branch);
 		}
 		function deleteThis(el){
+			$(el).parents('tbody').remove();
+		}
+		function deleteMySelf(el){
 			$(el).parents('tr').remove();
 		}
 		function addBranchCompany(el) {
@@ -39,10 +42,11 @@
 			}
 			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/addBranchCompany/"+ branchCompanyName + "/",showContentInfo);
 		}
-		function add(el) {
+	 	function add(el) {
 			var branchCompanyId = $(el).parents('tr').attr("id");
-			var saler = "<tr id=\""+branchCompanyId+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image>"
-					+ "<input type=\"text\" class=\"input-small\" name=\salerName\" placeholder=\"请输入销售员名字...\"></input><a href=\"javascript:void();\" onclick=\"addSaler(this)\">增加 </a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\">删除</a></td></tr>";
+			var status=$(el).prev().text();
+			var saler = "<tr id=\""+branchCompanyId+"\"><td class=\""+status+"\"><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image>"
+					+ "<input type=\"text\" class=\"input-small\" name=\salerName\" placeholder=\"请输入销售员名字...\"></input><a href=\"javascript:void();\" onclick=\"addSaler(this)\">增加 </a><a href=\"javascript:void();\" onclick=\"deleteMySelf(this)\">删除</a></td></tr>";
 			$(el).parents('tr').after(saler);
 		}
 		function deleteSaler(id) {
@@ -53,7 +57,7 @@
 		function deleteBranch(id){
 			$("#"+id).parent().remove();
 			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/deleteBranch/"+ id + "/");
-		}
+		} 
 		function addSaler(el) {
 			var salerName = $(el).prev().val();
 			var branchCompanyId=$(el).parents('tr').attr('id');
@@ -67,15 +71,16 @@
 			}
 			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/addSaler/"+ salerName + "/" + branchCompanyId + "/",salerInfo);
 			function salerInfo(data){
-				if(data==""){
+				if(data==""||$(el).parents('td').attr('class')=="展开 "){
+					$(el).parents('tr').remove();
 					return;
+				}else{
+					var saler = "<tr id=\""+data.id+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+$(el).prev().val()+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data.id+"')\"> 删除</a></td></tr>";
+					$(el).parents('tr').first().after(saler);
+					$(el).parents('tr').remove();
 				}
-				var saler = "<tr id=\""+data.id+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+$(el).prev().val()+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data.id+"')\"> 删除</a></td></tr>";
-				$(el).parents('tbody').append(saler);
-				$(el).parents('tr').remove();
 			}
-		} 
-		
+		}  
 		function showSalers(id) {
  		 	 if($("#"+id).children().children("span").next().text()=="收回 "){
  			 	$("#"+id).nextAll().attr("style","display:none"); 
