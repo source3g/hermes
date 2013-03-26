@@ -29,7 +29,6 @@
 			</tr>
 		</tfoot>
 	</table>
-
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$.get("${pageContext.request.contextPath}/admin/dictionary/tag/list/", callback);

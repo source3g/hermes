@@ -150,6 +150,7 @@ body {
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
 								<li><a href="#" id="remindDictionary">提醒设置</a></li>
 								<li><a href="#" id="merchantTagDictionary">商户标签</a></li>
+								<li><a href="#" id="BranchAndSalers">销售管理</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -271,7 +272,10 @@ body {
 			loadPage("${pageContext.request.contextPath}/admin/dictionary/tag/toTagSetting/");
 			return false;
 		});
-
+		$("#BranchAndSalers").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/BranchAndSalers/toBranchAndSalers/");
+			return false;
+		});
 		//系统管理
 		$("#failedJms").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/system/monitor/failedJms/");
