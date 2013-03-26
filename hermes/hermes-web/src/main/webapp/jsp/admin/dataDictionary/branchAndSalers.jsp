@@ -25,7 +25,7 @@
 	</table>
 	<script type="text/javascript">
 		function addBranch() {
-			var branch = "<tbody><tr> <td class='info'><input class=\"input-small\" type=\"text\" name=\"name\" value=\"分公司名字\"><a href=\"javascript:void();\" onclick=\"addBranchCompany(this)\">保存 </a><a href=\"javascript:void();\" onclick=\"add(this);\">增加销售</a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\"> 删除</a></td></tr></tbody>"
+			var branch = "<tbody><tr> <td class='info'><input class=\"input-small\"  placeholder=\"请输入分公司名字...\" type=\"text\" name=\"name\"><a href=\"javascript:void();\" onclick=\"addBranchCompany(this)\">保存 </a><a href=\"javascript:void();\" onclick=\"add(this);\">增加销售</a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\"> 删除</a></td></tr></tbody>"
 			$('table').append(branch);
 		}
 		function deleteThis(el){
@@ -33,11 +33,16 @@
 		}
 		function addBranchCompany(el) {
 			var branchCompanyName = $(el).prev().val();
+			if(branchCompanyName==""){
+				alert("请输入分公司名字 ");
+				return;
+			}
 			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/addBranchCompany/"+ branchCompanyName + "/",showContentInfo);
 		}
 		function add(el) {
-			var saler = "<tr><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image>"
-					+ "<input type=\"text\" class=\"input-small\" name=\salerName\" value=\"销售员\"></input><a href=\"javascript:void();\" onclick=\"addSaler(this)\">增加 </a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\">删除</a></td></tr>";
+			var branchCompanyId = $(el).parents('tr').attr("id");
+			var saler = "<tr id=\""+branchCompanyId+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image>"
+					+ "<input type=\"text\" class=\"input-small\" name=\salerName\" placeholder=\"请输入销售员名字...\"></input><a href=\"javascript:void();\" onclick=\"addSaler(this)\">增加 </a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\">删除</a></td></tr>";
 			$(el).parents('tr').after(saler);
 		}
 		function deleteSaler(id) {
@@ -50,16 +55,22 @@
 			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/deleteBranch/"+ id + "/");
 		}
 		function addSaler(el) {
-			var branchCompanyId = $(el).parents('tr').prev().attr("id");
 			var salerName = $(el).prev().val();
-			var salerId=$(el).parents('tr').attr('id');
-			if(branchCompanyId==null){
-				alert("请先保存分公司名字");
+			var branchCompanyId=$(el).parents('tr').attr('id');
+			if(salerName==""){
+				alert("请填写销售名字 ");
 				return ;
+			}
+			if(branchCompanyId=="undefined"){
+				alert("请先保存分公司名字");
+				return;
 			}
 			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/addSaler/"+ salerName + "/" + branchCompanyId + "/",salerInfo);
 			function salerInfo(data){
-				var saler = "<tr id=\""+data.id+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">销售："+$(el).prev().val()+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data.id+"')\"> 删除</a></td></tr>";
+				if(data==""){
+					return;
+				}
+				var saler = "<tr id=\""+data.id+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+$(el).prev().val()+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data.id+"')\"> 删除</a></td></tr>";
 				$(el).parents('tbody').append(saler);
 				$(el).parents('tr').remove();
 			}
@@ -70,19 +81,16 @@
  			 	$("#"+id).nextAll().attr("style","display:none"); 
  			 	$("#"+id).children().children("span").next().text("展开 ");
 			}  else{
-				if (typeof($("#"+id).next().attr("id"))=="undefined"){
+					$("#"+id).nextAll().html("");
 					$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/showSalers/"+ id + "/", showSaler);
 					function showSaler(data) {
 				  		for(var i=0;i<data.length;i++){
-							var str="<tr id="+data[i].id+"><td><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">销售："+data[i].name+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data[i].id+"')\"> 删除</a></td></tr>";
+							var str="<tr id="+data[i].id+"><td><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+data[i].name+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data[i].id+"')\"> 删除</a></td></tr>";
 							$("#"+id).after(str);
 						}  
-				  		$("#"+id).children().children("span").next().text("收回 ");
 					} 
-					}else{
 						$("#"+id).nextAll().attr("style","display:block"); 
 						$("#"+id).children().children("span").next().text("收回 ");
-					} 
 			}
 		}
 	
