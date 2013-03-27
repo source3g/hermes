@@ -51,6 +51,7 @@ public class AccountController {
 		merchant.setSetting(setting);
 		model.put("merchant", merchant);
 		if (ReturnConstants.SUCCESS.equals(result)) {
+			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("merchant/accountCenter/switch", model);
 		}
 		return new ModelAndView("admin/error");
@@ -133,90 +134,84 @@ public class AccountController {
 
 	@RequestMapping(value = "sendMessages/{title}", method = RequestMethod.GET)
 	public ModelAndView sendMessages(@PathVariable String title, HttpServletRequest req) throws Exception {
-	Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri=ConfigParams.getBaseUrl()+"shortMessage/remindSend/"+title+"/"+merchant.getId()+"/";
-		String result=restTemplate.getForObject(uri, String.class);
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/remindSend/" + title + "/" + merchant.getId() + "/";
+		String result = restTemplate.getForObject(uri, String.class);
 		Map<String, Object> model = new HashMap<String, Object>();
-		if(ReturnConstants.SUCCESS.equals(result)){
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			model.put("success", result);
-			return new ModelAndView("merchant/accountCenter/remindList",model);	
-		}else{
+			return new ModelAndView("merchant/accountCenter/remindList", model);
+		} else {
 			model.put("error", result);
-			return new ModelAndView("merchant/accountCenter/remindList",model);	
+			return new ModelAndView("merchant/accountCenter/remindList", model);
 		}
 	}
 
 	@RequestMapping(value = "ignoreSendMessages/{title}", method = RequestMethod.GET)
 	public ModelAndView ignoreSendMessages(@PathVariable String title, HttpServletRequest req) throws Exception {
-	Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri=ConfigParams.getBaseUrl()+"shortMessage/ignoreSendMessages/"+title+"/"+merchant.getId()+"/";
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/ignoreSendMessages/" + title + "/" + merchant.getId() + "/";
 		@SuppressWarnings("unused")
-		String result=restTemplate.getForObject(uri, String.class);
-		return new ModelAndView("merchant/accountCenter/remindList");	
+		String result = restTemplate.getForObject(uri, String.class);
+		return new ModelAndView("merchant/accountCenter/remindList");
 	}
 
-	
-	@RequestMapping(value="toResourceSetting",method=RequestMethod.GET)
+	@RequestMapping(value = "toResourceSetting", method = RequestMethod.GET)
 	@ResponseBody
-	public ModelAndView toResourceSetting(){
+	public ModelAndView toResourceSetting() {
 		return new ModelAndView("/merchant/accountCenter/resourceSetting");
 	}
-	
-	
+
 	@RequestMapping(value = "/addMerchantResource", method = RequestMethod.GET)
-	public ModelAndView addMerchantResource( String name,RedirectAttributes redirectAttributes) throws Exception {
-		if(StringUtils.isEmpty(name)){
+	public ModelAndView addMerchantResource(String name, RedirectAttributes redirectAttributes) throws Exception {
+		if (StringUtils.isEmpty(name)) {
 			return new ModelAndView("/merchant/accountCenter/resourceSetting/");
 		}
-		Merchant merchant=LoginUtils.getLoginMerchant();
-		String uri = ConfigParams.getBaseUrl() + "merchant/addMerchantResource/" +merchant.getId()+"/"+name+"/";
-		String result = restTemplate.getForObject(uri, String.class); 
-		if(ReturnConstants.SUCCESS.equals(result)){
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "merchant/addMerchantResource/" + merchant.getId() + "/" + name + "/";
+		String result = restTemplate.getForObject(uri, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
-		}else{
-			redirectAttributes.addFlashAttribute("error",result);
+		} else {
+			redirectAttributes.addFlashAttribute("error", result);
 			return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
 		}
 	}
-	
+
 	@RequestMapping(value = "/merchantResource", method = RequestMethod.GET)
 	@ResponseBody
 	public MerchantResource getMerchantResourceList(HttpServletRequest req) throws Exception {
-		Merchant merchant=LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "merchant/merchantResource/"+merchant.getId()+"/";
-		MerchantResource result = restTemplate.getForObject(uri, MerchantResource.class); 
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "merchant/merchantResource/" + merchant.getId() + "/";
+		MerchantResource result = restTemplate.getForObject(uri, MerchantResource.class);
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/deletemerchantResource/{name}", method = RequestMethod.GET)
 	public ModelAndView deletemerchantResource(@PathVariable String name) throws Exception {
-		Merchant merchant=LoginUtils.getLoginMerchant();
-		String uri = ConfigParams.getBaseUrl() + "merchant/deletemerchantResource/"+merchant.getId()+"/"+name+"/";
-		String  result = restTemplate.getForObject(uri, String.class); 
-		if(ReturnConstants.SUCCESS.equals(result)){
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "merchant/deletemerchantResource/" + merchant.getId() + "/" + name + "/";
+		String result = restTemplate.getForObject(uri, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
 		}
 		return new ModelAndView("/merchant/accountCenter/resourceSetting/");
 	}
-	
+
 	@RequestMapping(value = "/updateMerchantResource", method = RequestMethod.GET)
-	public ModelAndView updateMerchantResource(String suffix ,String prefix ) throws Exception {
-		Merchant merchant=LoginUtils.getLoginMerchant();
-		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/"+merchant.getId()+"/?1=1";
-		if(StringUtils.isNotEmpty(suffix)){
-			uri+="&suffix="+suffix;
+	public ModelAndView updateMerchantResource(String suffix, String prefix) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/?1=1";
+		if (StringUtils.isNotEmpty(suffix)) {
+			uri += "&suffix=" + suffix;
 		}
-		if(StringUtils.isNotEmpty(prefix)){
-			uri+="&prefix="+prefix;
+		if (StringUtils.isNotEmpty(prefix)) {
+			uri += "&prefix=" + prefix;
 		}
-		Merchant  result = restTemplate.getForObject(uri, Merchant.class); 
+		Merchant result = restTemplate.getForObject(uri, Merchant.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("Merchant", result);
-		return new ModelAndView("/merchant/accountCenter/resourceSetting/",model);
+		return new ModelAndView("/merchant/accountCenter/resourceSetting/", model);
 	}
-	
-	
-	
-
 
 }

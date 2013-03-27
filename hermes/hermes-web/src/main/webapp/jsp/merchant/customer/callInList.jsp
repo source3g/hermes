@@ -30,7 +30,7 @@
 				<th width="20%">姓名</th>
 				<th width="20%">电话</th>
 				<th width="20%">最后来电时间</th>
-				<th width="20%">来电次数</th>
+				<th width="20%">通话次数</th>
 				<th width="20%">操作</th>
 			</tr>
 		</thead>
@@ -101,7 +101,22 @@
 				$("#callInTb").html("");
 				for (var i=0;i<data.callRecords.length;i++){
 					var callRecords=data.callRecords;
-					var tr="<tr> <td>"+callRecords[i].callTime+"</td> <td>"+callRecords[i].callDuration+"</td><td></td> </tr>";
+					var status="未知";
+					if(callRecords[i].callStatus==0){
+						if(callRecords[i].callDuration==0){
+							status="打入未接通";
+						}else{
+							status="打入";
+						}
+					}
+					if(callRecords[i].callStatus==1){
+						if(callRecords[i].callDuration==0){
+							status="拨出未接通";
+						}else{
+							status="拨出";
+						}
+					}
+					var tr="<tr> <td>"+callRecords[i].callTime+"</td> <td>"+callRecords[i].callDuration+"</td><td>"+status+"</td> </tr>";
 					$("#customersTab").append(tr);
 				}
 				$("#myModal").modal();

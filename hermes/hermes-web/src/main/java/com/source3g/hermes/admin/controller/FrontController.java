@@ -45,7 +45,7 @@ public class FrontController {
 			req.getSession().setAttribute("admin", account);
 			return new ModelAndView("redirect:/admin/index/");
 		} else {
-			return new ModelAndView("/admin/login/");
+			return new ModelAndView("/admin/login");
 		}
 
 	}
@@ -60,7 +60,7 @@ public class FrontController {
 		// Subject currentUser = SecurityUtils.getSubject();
 		// currentUser.logout();
 		req.getSession().removeAttribute("admin");
-		return new ModelAndView("redirect:/admin/login");
+		return new ModelAndView("/admin/login");
 	}
 
 	@SuppressWarnings("unused")

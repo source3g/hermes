@@ -44,7 +44,6 @@ import com.source3g.hermes.dto.customer.NewCustomerDto;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
-import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
@@ -109,7 +108,7 @@ public class CustomerApi {
 	@RequestMapping(value = "/get/{sn}/{phone}", method = RequestMethod.GET)
 	@ResponseBody
 	public CustomerDto getBySn(@PathVariable String sn, @PathVariable String phone) {
-		CustomerDto customerDto=customerService.findBySnAndPhone(sn, phone);
+		CustomerDto customerDto = customerService.findBySnAndPhone(sn, phone);
 		return customerDto;
 	}
 
@@ -184,12 +183,27 @@ public class CustomerApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/callIn/{deviceSn}/{phone}/{time}/{duration}", method = RequestMethod.GET)///{callStatus}
+	@RequestMapping(value = "/callIn/{deviceSn}/{phone}/{time}/{duration}", method = RequestMethod.GET)
 	@ResponseBody
-	public String callIn(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration) {//,@PathVariable String callStatus
+	@Deprecated
+	public String callIn(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration) {// ,@PathVariable
 		try {
-			//CallStatus status=CallStatus.valueOf(callStatus);
-			customerService.callIn(deviceSn, phone, time, duration);//,status
+			// CallStatus status=CallStatus.valueOf(callStatus);
+			Integer durationInt = Integer.parseInt(duration);
+			durationInt = durationInt == 0 ? 1 : durationInt;
+			customerService.callIn(deviceSn, phone, time, durationInt, 0);// ,status
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/call/{deviceSn}/{phone}/{time}/{duration}/{callStatus}", method = RequestMethod.GET)
+	@ResponseBody
+	public String call(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration, @PathVariable Integer callStatus) {// ,@PathVariable
+		try {
+			Integer durationInt = Integer.parseInt(duration);
+			customerService.callIn(deviceSn, phone, time, durationInt, callStatus);// ,status
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -253,19 +267,28 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/importLog/items/{logId}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<CustomerImportItem> findImportItems(@PathVariable String logId) {
-		return customerImportService.findImportItems(logId);
+	public Page findImportItems(String pageNo, @PathVariable String logId) {
+		int pageNoInt = Integer.valueOf(pageNo);
+		return customerImportService.findImportItems(pageNoInt, logId);
+	}
+
+	@RequestMapping(value = "/importLog/items/import/test", method = RequestMethod.GET)
+	@ResponseBody
+	@Deprecated
+	public String testImport() {
+		customerImportService.testImport();
+		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/statistics/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Map<String,Object>> findCustomerStatistics(@PathVariable String merchantId) {
+	public List<Map<String, Object>> findCustomerStatistics(@PathVariable String merchantId) {
 		return customerService.findCustomerStatistics(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/statistics/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Map<String,Object>> findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
+	public List<Map<String, Object>> findCustomerStatisticsBySn(@PathVariable String sn) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return customerService.findCustomerStatistics(merchant.getId());
 	}

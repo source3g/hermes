@@ -26,6 +26,9 @@ public class AdminSecurityService {
 		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
 		Account account = restTemplate.postForObject(url, requestEntity, Account.class);
+		if (account == null || account.getAccount() == null || account.getPassword() == null) {
+			return null;
+		}
 		return account;
 	}
 }

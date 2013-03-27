@@ -55,6 +55,7 @@ import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
+import com.source3g.hermes.enums.CallStatus;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
@@ -107,11 +108,11 @@ public class CustomerService extends BaseService {
 	// 短信群发页面显示顾客信息
 	public Object customerListBycustomerGroupId(ObjectId customerGroupId) throws Exception {
 		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
-			customerGroupIds.add(customerGroupId);
+		customerGroupIds.add(customerGroupId);
 		BasicDBObject parameter = new BasicDBObject();
-		parameter.put("customerGroup.$id",  new BasicDBObject("$in", customerGroupIds));
-		long count=mongoTemplate.count(new Query(Criteria.where("customerGroup.$id").in(customerGroupIds)), Customer.class);
-		if(count>5000){
+		parameter.put("customerGroup.$id", new BasicDBObject("$in", customerGroupIds));
+		long count = mongoTemplate.count(new Query(Criteria.where("customerGroup.$id").in(customerGroupIds)), Customer.class);
+		if (count > 5000) {
 			throw new Exception("客户组数据过多,最多显示5000位顾客信息");
 		}
 		List<Customer> customers = findByBasicDBObject(Customer.class, parameter, new ObjectMapper<Customer>() {
@@ -121,13 +122,13 @@ public class CustomerService extends BaseService {
 				customer.setName((String) obj.get("name"));
 				customer.setPhone((String) obj.get("phone"));
 				customer.setId((ObjectId) obj.get("_id"));
-				customer.setMerchantId((ObjectId)obj.get("merchantId"));
+				customer.setMerchantId((ObjectId) obj.get("merchantId"));
 				DBRef dbRef = (DBRef) obj.get("customerGroup");
 				customer.setCustomerGroup(new CustomerGroup((ObjectId) dbRef.getId()));
 				return customer;
 			}
 		});
-		 return customers ;
+		return customers;
 	}
 
 	/**
@@ -198,8 +199,7 @@ public class CustomerService extends BaseService {
 	 * @param customerType
 	 *            顾客类型，分为新顾客，老顾客，全部顾客
 	 * @param direction
-	 *            排序规则
-	 *            排序属性
+	 *            排序规则 排序属性
 	 * @param properties
 	 * @return
 	 */
@@ -302,7 +302,7 @@ public class CustomerService extends BaseService {
 		Date createTime = new Date();
 		// 文件名
 		DateFormat dateFormatExport = new SimpleDateFormat("yyyy-MM-dd");
-		String fileName = String.valueOf(dateFormatExport.format(createTime)+"顾客导出列表") + ".xls";
+		String fileName = String.valueOf(dateFormatExport.format(createTime) + "顾客导出列表") + ".xls";
 		// 产生文件路径
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		// 所在商户的相对路径
@@ -407,7 +407,8 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.findById(new ObjectId(id), Customer.class);
 	}
 
-	public void callIn(String deviceSn, String phone, String time, String duration) throws Exception {//,CallStatus status
+	public void callIn(String deviceSn, String phone, String time, Integer duration, Integer callStatus) throws Exception {// ,CallStatus
+																															// status
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);
 		if (device == null) {
 			throw new Exception("盒子编号不存在");
@@ -427,8 +428,8 @@ public class CustomerService extends BaseService {
 			throw new Exception("接听时间格式不正确");
 		}
 		record.setCallTime(callInTime);
-		record.setCallDuration(Integer.parseInt(duration));
-	//	record.setCallStatus(status);
+		record.setCallDuration(duration);
+		record.setCallStatus(callStatus);
 		Update update = new Update();
 
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(phone).and("merchantId").is(merchant.getId())), Customer.class);
@@ -438,7 +439,7 @@ public class CustomerService extends BaseService {
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).set("operateTime", new Date()).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 
-		if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() > 0) {
+		if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() > 0 && record.getCallDuration() > 0 && CallStatus.CALL_IN.equals(record.getCallStatus())) {
 			CallInMessage callInMessage = new CallInMessage();
 			callInMessage.setDeviceSn(deviceSn);
 			callInMessage.setDuration(duration);
@@ -622,7 +623,7 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.find(query, Customer.class);
 	}
 
-	public List<Map<String,Object>> findCustomerStatistics(ObjectId merchantId) {
+	public List<Map<String, Object>> findCustomerStatistics(ObjectId merchantId) {
 		CustomerStatisticsDto customerStatisticsDto = new CustomerStatisticsDto();
 		customerStatisticsDto.setEditedCustomerCount(new StatisticObjectDto("已编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.oldCustomer)));
 		customerStatisticsDto.setUneditedCustomerCount(new StatisticObjectDto("未编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.newCustomer)));
@@ -632,32 +633,30 @@ public class CustomerService extends BaseService {
 		CallInStatisticsCount callInStatisticsCountAWeek = findCallInCountByDayFromToday(merchantId, 7);
 		customerStatisticsDto.setUneditedCallInCountAWeek(new StatisticObjectDto("一周内未编辑顾客打进电话数：", callInStatisticsCountAWeek.getNewCount()));
 		customerStatisticsDto.setEditedCallInCountAWeek(new StatisticObjectDto("一周内已编辑顾客打进电话数：", callInStatisticsCountAWeek.getOldCount()));
-		List<Map<String,Object>> list=new ArrayList<Map<String,Object>>();
-		
-		Map<String,Object> editedCustomerCount=new HashMap<String,Object>();
-		Map<String,Object> uneditedCustomerCount=new HashMap<String,Object>();
-		Map<String,Object> editedCallInCountThreeDay=new HashMap<String,Object>();
-		Map<String,Object> uneditedCallInCountThreeDay=new HashMap<String,Object>();
-		Map<String,Object> uneditedCallInCountAWeek=new HashMap<String,Object>();
-		Map<String,Object> editedCallInCountAWeek=new HashMap<String,Object>();
-		
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+
+		Map<String, Object> editedCustomerCount = new HashMap<String, Object>();
+		Map<String, Object> uneditedCustomerCount = new HashMap<String, Object>();
+		Map<String, Object> editedCallInCountThreeDay = new HashMap<String, Object>();
+		Map<String, Object> uneditedCallInCountThreeDay = new HashMap<String, Object>();
+		Map<String, Object> uneditedCallInCountAWeek = new HashMap<String, Object>();
+		Map<String, Object> editedCallInCountAWeek = new HashMap<String, Object>();
+
 		editedCustomerCount.put("editedCustomerCount", customerStatisticsDto.getEditedCustomerCount());
 		uneditedCustomerCount.put("uneditedCustomerCount", customerStatisticsDto.getUneditedCustomerCount());
 		editedCallInCountThreeDay.put("editedCallInCountThreeDay", customerStatisticsDto.getEditedCallInCountThreeDay());
 		uneditedCallInCountThreeDay.put("uneditedCallInCountThreeDay", customerStatisticsDto.getUneditedCallInCountThreeDay());
 		editedCallInCountAWeek.put("editedCallInCountAWeek", customerStatisticsDto.getEditedCallInCountAWeek());
 		uneditedCallInCountAWeek.put("uneditedCallInCountAWeek", customerStatisticsDto.getUneditedCallInCountAWeek());
-		
-		
+
 		list.add(editedCustomerCount);
 		list.add(uneditedCustomerCount);
 		list.add(editedCallInCountThreeDay);
 		list.add(uneditedCallInCountThreeDay);
 		list.add(editedCallInCountAWeek);
 		list.add(uneditedCallInCountAWeek);
-		return list;  
+		return list;
 	}
-	
 
 	/**
 	 * 查询最近几天的来电次数
@@ -732,12 +731,12 @@ public class CustomerService extends BaseService {
 			c = new Customer();
 			c.setOperateTime(new Date());
 			c.setMerchantId(merchantId);
-			EntityUtils.copyCustomerDtoToEntity(customerDto, c,merchantId);
+			EntityUtils.copyCustomerDtoToEntity(customerDto, c, merchantId);
 			mongoTemplate.save(c);
 		} else {
 			c.setOperateTime(new Date());
 			c.setMerchantId(merchantId);
-			EntityUtils.copyCustomerDtoToEntity(customerDto, c,merchantId);
+			EntityUtils.copyCustomerDtoToEntity(customerDto, c, merchantId);
 			super.updateIncludeProperties(c, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "customerGroup", "favorite", "operateTime");
 		}
 	}

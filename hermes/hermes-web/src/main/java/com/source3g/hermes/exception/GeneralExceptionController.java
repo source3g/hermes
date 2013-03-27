@@ -14,12 +14,13 @@ public class GeneralExceptionController implements HandlerExceptionResolver {
 
 	@Override
 	public ModelAndView resolveException(HttpServletRequest req, HttpServletResponse resp, Object obj, Exception e) {
+		e.printStackTrace();
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (e instanceof UnauthorizedException) {
 			model.put("errorMsg", "sorry,您没有权限访问此页面");
 		} else if (e instanceof NotLoginException) {
 			model.put("errorMsg", "sorry,请重新登录");
-		}else{
+		} else {
 			model.put("errorMsg", e.getMessage());
 		}
 		return new ModelAndView("/exception", model);

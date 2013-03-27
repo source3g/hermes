@@ -28,7 +28,7 @@
 				<th width="10%">新文件名</th>
 				<th width="10%">导入状态</th>
 				<th width="10%">总记录数</th>
-				<th width="10%">导入记录数</th>
+				<th width="10%">失败数量</th>
 				<th width="10%">导入时间</th>
 				<th width="10%">操作</th>
 			</tr>
@@ -39,7 +39,7 @@
 				<td>${importLog.newName }</td>
 				<td>${importLog.status }</td>
 				<td>${importLog.totalCount }</td>
-				<td>${importLog.totalCount - importLog.failedCount }</td>
+				<td>${importLog.failedCount }</td>
 				<td>${importLog.importTime }</td>
 				<td><input type="button" class="btn btn-success" onclick="importLogInfo('${importLog.id }')" value="详情"></td>
 			</tr>

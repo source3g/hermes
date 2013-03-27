@@ -10,22 +10,19 @@ import org.springframework.stereotype.Service;
 import com.source3g.hermes.service.BaseService;
 import com.sourse3g.hermes.branch.BranchCompany;
 import com.sourse3g.hermes.branch.Saler;
+
 @Service
 public class BranchAndSalersService extends BaseService {
 
-	
 	public List<BranchCompany> showBranchCompany() {
-		List<BranchCompany>  c=mongoTemplate.findAll(BranchCompany.class, "branchCompany");
+		List<BranchCompany> c = mongoTemplate.findAll(BranchCompany.class, "branchCompany");
 		return c;
 	}
-	
-	public Saler addSaler(String salerName, String branchCompanyId) {
-		if("undefined".equals(branchCompanyId)){
-			return null;
-		}
-		Saler s=new Saler();
+
+	public Saler addSaler(String salerName, ObjectId branchCompanyId) {
+		Saler s = new Saler();
 		s.setName(salerName);
-		s.setBranchCompanyId(new ObjectId(branchCompanyId));
+		s.setBranchCompanyId(branchCompanyId);
 		s.setId(ObjectId.get());
 		mongoTemplate.insert(s);
 		return s;
@@ -36,7 +33,7 @@ public class BranchAndSalersService extends BaseService {
 	}
 
 	public void addBranchCompany(String branchCompanyName) {
-		BranchCompany b=new BranchCompany();
+		BranchCompany b = new BranchCompany();
 		b.setName(branchCompanyName);
 		add(b);
 	}

@@ -25,15 +25,14 @@
 				<th width="10%">失败原因</th>
 			</tr>
 		</thead>
-		<c:forEach items="${customerImportItem}" var="customerImportItem">
+		<c:forEach items="${page.data}" var="customerImportItem">
 			<tr>
 				<td>${customerImportItem.name }</td>
-				<c:if test="${customerImportItem.sex eq 'MALE'}">
-					<td>男</td>
-				</c:if>
-				<c:if test="${customerImportItem.sex eq 'FEMALE'}">
-					<td>女</td>
-				</c:if>
+				<td><c:if test="${customerImportItem.sex eq 'MALE'}">
+					男
+				</c:if> <c:if test="${customerImportItem.sex eq 'FEMALE'}">
+					女
+				</c:if></td>
 				<td>${customerImportItem.birthday }</td>
 				<td>${customerImportItem.phone }</td>
 				<td>${customerImportItem.address }</td>
@@ -43,9 +42,33 @@
 				<td>${customerImportItem.customerGroupName }</td>
 				<td>${customerImportItem.importStatus }</td>
 				<td>${customerImportItem.failedReason }</td>
-
 			</tr>
 		</c:forEach>
 	</table>
+
+	<div>
+		<ul class="pagination">
+			<li id="firstPage"><a href="javascript:void();">首页</a></li>
+			<li id="frontPage"><a href="javascript:void();">前一页</a></li>
+			<li id="nextPage"><a href="javascript:void();">后一页</a></li>
+			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
+			<li>当前第${page.currentPage}/${page.totalPageCount}页
+				共${page.totalRecords }条 转到第<input type="text" id="pageNoToGo"
+				name="pageNo" class="input-mini">页<input type="button"
+				id="pageOk" class="btn" value="确定"></input>
+			</li>
+		</ul>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			initPage(${page.currentPage},${page.totalPageCount});
+		});
+		
+		function goToPage(pageNo){
+			$.get("${pageContext.request.contextPath}/merchant/customer/importLog/items/${logId}/?pageNo="+pageNo,showContentInfo);
+		}
+	
+	</script>
+
 </body>
 </html>

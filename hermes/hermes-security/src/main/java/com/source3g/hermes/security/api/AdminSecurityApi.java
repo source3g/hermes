@@ -27,8 +27,9 @@ public class AdminSecurityApi {
 	private SecurityService securityService;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public Account login(String name, String password) {
-		return securityService.login(name, password);
+	@ResponseBody
+	public Account login(String username, String password) {
+		return securityService.login(username, password);
 	}
 
 	@RequestMapping(value = "/install", method = RequestMethod.GET)

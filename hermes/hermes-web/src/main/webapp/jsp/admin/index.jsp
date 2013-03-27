@@ -38,7 +38,7 @@ body {
 					<ul class="dropdown-menu">
 						<li><a href="#">个人中心</a></li>
 						<li class="divider"></li>
-						<li><a href="login.html">退出</a></li>
+						<li><a href="${pageContext.request.contextPath}/admin/logout/">退出</a></li>
 					</ul>
 				</div>
 				<!-- user dropdown ends -->

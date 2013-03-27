@@ -73,14 +73,7 @@ public class BranchAndSalersController {
 		String result=restTemplate.getForObject(uri, String.class);
 		return result;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 }
 
 

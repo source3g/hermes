@@ -2,6 +2,7 @@ package com.source3g.hermes.customer.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -37,6 +40,8 @@ import com.source3g.hermes.utils.Page;
 
 @Service
 public class CustomerImportService extends BaseService {
+
+	private static Logger logger = LoggerFactory.getLogger(CustomerImportService.class);
 
 	public void updateStatus(CustomerImportLog customerImportLog, ImportStatus status) {
 		customerImportLog.setStatus(status.toString());
@@ -72,6 +77,8 @@ public class CustomerImportService extends BaseService {
 		customerImportLog.setTotalCount(customerImportItems.size());
 		customerImportLog.setStatus(ImportStatus.导入中.toString());
 		mongoTemplate.save(customerImportLog);
+		List<Customer> customerList = new ArrayList<Customer>();
+		logger.error("开始导入");
 		for (CustomerImportItem customerImportItem : customerImportItems) {
 			try {
 				checkItem(customerImportItem);
@@ -79,6 +86,8 @@ public class CustomerImportService extends BaseService {
 				if (customer == null) {
 					customer = new Customer();
 					customer.setId(ObjectId.get());
+				} else {
+					mongoTemplate.remove(customer);
 				}
 				customer.setAddress(customerImportItem.getAddress());
 				customer.setBirthday(customerImportItem.getBirthday());
@@ -95,16 +104,20 @@ public class CustomerImportService extends BaseService {
 				customer.setQq(customerImportItem.getQq());
 				customer.setSex(customerImportItem.getSex());
 				customer.setOperateTime(new Date());
-				mongoTemplate.save(customer);
-				customerImportItem.setImportStatus(ImportStatus.导入成功.toString());
+				customerList.add(customer);
+				// customerImportItem只显示导入失败的数据
+				// customerImportItem.setImportStatus(ImportStatus.导入成功.toString());
 			} catch (Exception e) {
 				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
 				customerImportItem.setFailedReason(e.getMessage());
 				customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
-			} finally {
 				mongoTemplate.save(customerImportItem);
+			} finally {
+
 			}
 		}
+		mongoTemplate.insertAll(customerList);
+		logger.error("导入完成 ");
 		customerImportLog.setStatus(ImportStatus.导入成功.toString());
 		mongoTemplate.save(customerImportLog);
 	}
@@ -132,7 +145,7 @@ public class CustomerImportService extends BaseService {
 		return null;
 	}
 
-	public List<CustomerImportItem> fromExcelToDb(Resource resource, String merchantId, String customerImportLogId) throws InvalidFormatException, IOException {
+	public List<CustomerImportItem> readFromExcelToDb(Resource resource, String merchantId, String customerImportLogId) throws InvalidFormatException, IOException {
 		List<CustomerImportItem> result = new ArrayList<CustomerImportItem>();
 		// 创建文件输入流对象
 		InputStream is = resource.getInputStream();
@@ -242,16 +255,49 @@ public class CustomerImportService extends BaseService {
 
 			customerImportItem.setImportStatus(ImportStatus.未导入.toString());
 			customerImportItem.setCustomerImportLogId(new ObjectId(customerImportLogId));
-			mongoTemplate.insert(customerImportItem);
+			// mongoTemplate.insert(customerImportItem);
 			result.add(customerImportItem);
 		}
+		mongoTemplate.insertAll(result);
 		return result;
 	}
 
-	public List<CustomerImportItem> findImportItems(String importLogId) {
+	public Page findImportItems(int pageNo, String importLogId) {
 		ObjectId importLogObjId = new ObjectId(importLogId);
-		List<CustomerImportItem> customerImportItem = mongoTemplate.find(new Query(Criteria.where("customerImportLogId").is(importLogObjId)), CustomerImportItem.class);
-		return customerImportItem;
+
+		Query query = new Query(Criteria.where("customerImportLogId").is(importLogObjId));
+		Page page = new Page();
+		page.setTotalRecords(mongoTemplate.count(query, CustomerImportItem.class));
+		page.gotoPage(pageNo);
+		List<CustomerImportItem> customerImportItem = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), CustomerImportItem.class);
+		page.setData(customerImportItem);
+		return page;
+	}
+
+	public void testImport() {
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		System.out.println("开始导入" + sdf.format(date));
+		List<CustomerImportItem> list = new ArrayList<CustomerImportItem>();
+
+		for (int i = 0; i < 100; i++) {
+			CustomerImportItem customerImportItem = new CustomerImportItem();
+			customerImportItem.setAddress("111");
+			customerImportItem.setBirthday("02-01");
+			customerImportItem.setCustomerGroupName("普通顾客组");
+			customerImportItem.setEmail("aa.com");
+			customerImportItem.setPhone("13057707964");
+			customerImportItem.setCustomerImportLogId(new ObjectId("514faef36abaed4035070e23"));
+			customerImportItem.setFailedReason("123");
+
+			customerImportItem.setQq("303844824");
+			customerImportItem.setSex(Sex.MALE);
+			// mongoTemplate.insert(customerImportItem);
+			list.add(customerImportItem);
+		}
+		mongoTemplate.insertAll(list);
+		date = new Date();
+		System.out.println("导入完成" + sdf.format(date));
 	}
 
 }

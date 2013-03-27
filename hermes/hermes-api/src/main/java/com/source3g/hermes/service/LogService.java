@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.source3g.hermes.entity.log.OperatorLog;
+
 @Component
 @Aspect
 public class LogService {
@@ -32,7 +34,9 @@ public class LogService {
 
 	@Before("execution(* com.source3g.hermes..api.*Api.*(..))")
 	public void doBefore(JoinPoint jp) {
-		System.out.println("log Begining method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+		Object[] args = jp.getArgs();
+		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
+		System.out.println("log: " + operatorLog);
 	}
 
 	// 有参无返回值的方法
@@ -49,7 +53,7 @@ public class LogService {
 	}
 
 	// 有参并有返回值的方法
-	// @Pointcut("execution(* com.test.spring.aop.pointcutexp..JoinPointObjP2.*(..))")
+	// @AfterReturning("execution(* com.source3g.hermes..api.*Api.*(..))")
 	public void logArgAndReturn(JoinPoint point, Object returnObj) {
 		// 此方法返回的是一个数组，数组中包括request以及ActionCofig等类对象
 		Object[] args = point.getArgs();

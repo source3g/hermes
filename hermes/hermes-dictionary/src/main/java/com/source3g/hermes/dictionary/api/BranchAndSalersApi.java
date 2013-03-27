@@ -2,6 +2,7 @@ package com.source3g.hermes.dictionary.api;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ public class BranchAndSalersApi {
 	
 	@RequestMapping(value = "/addSaler/{salerName}/{branchCompanyId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Saler addSaler(@PathVariable String salerName,@PathVariable String branchCompanyId) {
+	public Saler addSaler(@PathVariable String salerName,@PathVariable ObjectId branchCompanyId) {
 		 return BranchAndSalersService.addSaler(salerName, branchCompanyId);
 	}
 	

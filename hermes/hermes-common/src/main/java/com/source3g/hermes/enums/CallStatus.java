@@ -1,5 +1,7 @@
 package com.source3g.hermes.enums;
 
-public enum CallStatus {
-	接听, 拨打, 未接
+public interface CallStatus {
+	Integer CALL_IN=0;
+	Integer CALL_OUT=1;
+	
 }

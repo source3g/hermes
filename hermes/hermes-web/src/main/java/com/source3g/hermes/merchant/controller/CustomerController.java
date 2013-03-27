@@ -31,7 +31,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.Customer;
-import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
@@ -300,12 +299,16 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/importLog/items/{id}", method = RequestMethod.GET)
-	public ModelAndView importLogMerchantInfo(@PathVariable String id) throws Exception {
+	public ModelAndView importLogMerchantInfo(String pageNo, @PathVariable String id) throws Exception {
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
 		Map<String, Object> model = new HashMap<String, Object>();
-		String uri = ConfigParams.getBaseUrl() + "customer/importLog/items/" + id + "/";
-		@SuppressWarnings("unchecked")
-		List<CustomerImportItem> customerImportItem = restTemplate.getForObject(uri, List.class);
-		model.put("customerImportItem", customerImportItem);
+		String uri = ConfigParams.getBaseUrl() + "customer/importLog/items/" + id + "/?pageNo=" + pageNo;
+
+		Page page = restTemplate.getForObject(uri, Page.class);
+		model.put("page", page);
+		model.put("logId", id);
 		return new ModelAndView("/merchant/customer/importItems", model);
 	}
 
