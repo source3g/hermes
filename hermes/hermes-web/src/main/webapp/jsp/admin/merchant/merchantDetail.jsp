@@ -43,6 +43,13 @@
 		</div>
 
 		<div class="control-group">
+			<label class="control-label" for="tag"> 商户所属销售： </label>
+			<div class="controls">
+				<span id="salerName">${merchant.saler.name}</span>
+			</div>
+		</div>
+		
+		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
 			<div class="controls">
 				<input type="text" class="input-xlarge" readonly="readonly"

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.entity.dictionary.MerchantTagNode;
 import com.source3g.hermes.entity.note.Note;
+import com.sourse3g.hermes.branch.Saler;
 
 @Document
 public class Merchant extends AbstractEntity {
@@ -33,10 +34,16 @@ public class Merchant extends AbstractEntity {
 	private List<Note> notes;
 	//是否被删除
 	private boolean canceled;
-	
 	private Setting setting=new Setting();
+	private Saler saler;
 	
-	
+	public Saler getSaler() {
+		return saler;
+	}
+
+	public void setSaler(Saler saler) {
+		this.saler = saler;
+	}
 	public List<MerchantTagNode> getMerchantTagNodes() {
 		return merchantTagNodes;
 	}

@@ -39,6 +39,14 @@
 					</c:forEach></c:if></span>
 			</div>
 		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="tag">所属销售选择：</label>
+			<div class="controls">
+			<a href="javascript:void();" class="btn btn-primary btn-small" onclick="branchCompanyList()">所属销售选择</a><span id="salerName">
+			   商户所属销售:   <c:if test="${not empty merchant.saler }"><span>${merchant.saler.name}<a href="javascript:void();" onclick="deleteSaler(this)" style="color:red">×</a></span></c:if></span>
+		</div>
+		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
@@ -158,7 +166,7 @@
 
 	<div id="tagModal" class="modal hide fade">
 		<div class="modal-header">
-			<a class="close" data-dismiss="modal">&times;</a>
+		 	<a class="close" data-dismiss="modal">&times;</a> 
 			<h3>标签分类</h3>
 		</div>
 		<div class="modal-body" id="modalBody"></div>
@@ -168,7 +176,16 @@
 				value="确定" onclick="choseTags()"></input>
 		</div>
 	</div>
-
+	<div id="salersModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>销售员列表</h3>
+		</div>
+		<div class="modal-body"  id="companyModalBody"></div>
+		<div class="modal-footer">
+		<input type="button" class="btn btn-primary" id=""
+				value="确定" onclick="choseSalers()"></input>
+	</div>
 	<c:if test="${not empty errors }">
 		<div class="alert alert-error">
 			<ul>
@@ -231,7 +248,7 @@
 	 	var validateOptions = {
 				rules : { 
 					 account:{
-							required : true,
+						 	required : true,
 							minlength : 2,
 							validateAccount:true,
 							remote:{	
@@ -356,12 +373,10 @@
 			
 			}
 		});
-		
 		if(isInTable==true){
 			$('#deviceMessage').html("  盒子已存在表格中").css("color","red");
 			return;
 		}
-		
 		$.ajax({
 				type: "get",
 				url:"${pageContext.request.contextPath}/admin/device/sn/"+sn+"/",
@@ -370,18 +385,15 @@
 				error: showError
 		});
 	}
-	
 	function showError(){
 		$('#deviceMessgae').html("  请输入盒子名称").css("color","red");
 	}
-	
 		function select(id, name) {
 			$("#myModal").modal("toggle");
 			$("#merchantGroupId").attr("value", id);
 			$("#merchantGroupSel").attr("value", name);
 			
 		}
-
 		function queryMerchantGroup() {
 			$("#merchantGroupTab tr:gt(0)").each(function() {
 				$(this).remove();
@@ -397,7 +409,6 @@
 				success : drawTable,
 				error : error
 			});
-
 		}
 		function drawTable(data) {
 			for ( var i = 0; i < data.length; i++) {
@@ -487,8 +498,53 @@
 			$(a).parent().remove();
 
 		}
+		
+		
+		
+ 		function branchCompanyList(){
+			$("#companyModalBody").html("");
+			$.get("${pageContext.request.contextPath}/admin/dictionary/branchCompanyList",showBranchCompanys);
+			function showBranchCompanys(data){
+				for(var i=0;i<data.length;i++){
+					var company="<div><p id=\""+data[i].id+"\"><a href=\"javascript:void();\" onclick=\"showSalers('"+data[i].id+"')\">+ </a><span>"+data[i].name+"</span></p><p>";
+					$("#companyModalBody").append(company);
+				}
+			}
+			$("#salersModal").modal();
+		}  
+  		function showSalers(id){
+  			if($("#"+id).children('a').text()=="- "){
+  				$("#"+id).nextAll().attr("style","display:none");
+  				$("#"+id).children('a').text("+ ");
+  			}else{
+  				$.get("${pageContext.request.contextPath}/admin/dictionary/showSalers/"+ id +"/", showSaler);
+  				function showSaler(data){
+  				 	 for(var i=0;i<data.length;i++){
+  						var saler="<span id=\""+id+"\"><input type=\"radio\" calss=\"saler\" style=\"width:20px\" value=\""+data[i].name+"\">"+data[i].name+"</input></span>";
+  						$("#"+id).after(saler);
+  					} 	 
+  				 	$("#"+id).append("</p></div>");
+  				 	$("#"+id).children('a').text("- ");
+  				}
+  			}
+		} 
+		function choseSalers(){
+			$("input[calss='saler']:checked").each(function (){
+				var saler="["+$(this).val()+"]<a  href=\"javascript:void();\" onclick=\"deleteSaler(this)\" style=\"color:red\">×</a>";
+				var comId=$(this).parent().attr("id");
+				var salerName="<input type=\"hidden\" name=\"saler.name\" value=\""+$(this).val()+"\"></input>";
+				var companyId="<input type=\"hidden\" name=\"saler.branchCompanyId\" value=\""+comId+"\"></input>";
+				$("#salerName").children().remove();
+					
+				
+				$("#salerName").append("<span>"+saler+companyId+salerName+"</span>");
+			});
+			$("#salersModal").modal("hide");
+		} 
+		function deleteSaler(el){
+			$(el).parent().remove();
+		}
 	</script>
 </body>
 <%-- <%@include file="../../include/footer.jsp"%> --%>
-
 </html>

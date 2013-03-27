@@ -26,6 +26,7 @@
 			</tr>
 		</thead>
 		<c:forEach items="${page.data}" var="merchant">
+		<c:if test="${merchant.canceled==false }">
 			<tr>
 				<td>${merchant.name }</td>
 				<td>${merchant.messageBalance.totalCount}</td>
@@ -39,6 +40,7 @@
 					onclick="updateQuota('${merchant.id}');">额度调整</a>				
 				</td>					
 			</tr>
+			</c:if>
 		</c:forEach>
 	</table>
 	<div>

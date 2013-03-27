@@ -15,10 +15,10 @@
 					onclick="addBranch();">增加分公司</a></td>
 			</tr>
 		</thead>
-		<c:forEach items="${BranchCompanys}" var="BranchCompany">
+		<c:forEach items="${branchCompanys}" var="branchCompany">
 			<tbody>
-				<tr id="${BranchCompany.id}">
-					<td><span style="font-size:15px">${BranchCompany.name}</span><a href="javascript:void();" onclick="showSalers('${BranchCompany.id}')">展开 </a><a href="javascript:void();" onclick="add(this);">增加销售</a><a href="javascript:void();" onclick="deleteBranch('${BranchCompany.id}');"> 删除</a></td>
+				<tr id="${branchCompany.id}">
+					<td><span style="font-size:15px">${branchCompany.name}</span><a href="javascript:void();" onclick="showSalers('${branchCompany.id}')">展开 </a><a href="javascript:void();" onclick="add(this);">增加销售</a><a href="javascript:void();" onclick="deleteBranch('${branchCompany.id}');"> 删除</a></td>
 				</tr>
 			</tbody>
 		</c:forEach>
@@ -40,7 +40,12 @@
 				alert("请输入分公司名字 ");
 				return;
 			}
-			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/addBranchCompany/"+ branchCompanyName + "/",showContentInfo);
+			$.get("${pageContext.request.contextPath}/admin/dictionary/addBranchCompany/"+ branchCompanyName + "/",branchCompanyInfo);
+			function branchCompanyInfo(data){
+				$(el).parents('tbody').remove();
+				var branchCompany="<tbody><tr id=\""+data.id+"\"> <td class='info'><span style=\"font-size:15px\">"+data.name+"</span><a href=\"javascript:void();\" onclick=\"showSalers('"+data.id+"')\">展开 </a><a href=\"javascript:void();\" onclick=\"add(this);\">增加销售</a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\"> 删除</a></td></tr></tbody>";
+				$('table').append(branchCompany);
+			}
 		}
 	 	function add(el) {
 			var branchCompanyId = $(el).parents('tr').attr("id");
@@ -51,16 +56,16 @@
 		}
 		function deleteSaler(id) {
 			$("#"+id).remove();
-			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/deleteSaler/"+ id + "/");
-		
+			$.get("${pageContext.request.contextPath}/admin/dictionary/deleteSaler/"+ id + "/");
 		}
 		function deleteBranch(id){
 			$("#"+id).parent().remove();
-			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/deleteBranch/"+ id + "/");
+			$.get("${pageContext.request.contextPath}/admin/dictionary/deleteBranch/"+ id + "/");
 		} 
 		function addSaler(el) {
 			var salerName = $(el).prev().val();
 			var branchCompanyId=$(el).parents('tr').attr('id');
+			//alert($(el).parents('tr').nextAll().attr("id"));
 			if(salerName==""){
 				alert("请填写销售名字 ");
 				return ;
@@ -69,7 +74,13 @@
 				alert("请先保存分公司名字");
 				return;
 			}
-			$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/addSaler/"+ salerName + "/" + branchCompanyId + "/",salerInfo);
+			$("span[style='font-size:15px']").each(function (){
+				if(salerName==$(this).text()){
+					alert("销售名已存在");
+					return;
+				}
+			});
+	 	 	$.get("${pageContext.request.contextPath}/admin/dictionary/addSaler/"+ salerName + "/" + branchCompanyId + "/",salerInfo);
 			function salerInfo(data){
 				if(data==""||$(el).parents('td').attr('class')=="展开 "){
 					$(el).parents('tr').remove();
@@ -79,7 +90,7 @@
 					$(el).parents('tr').first().after(saler);
 					$(el).parents('tr').remove();
 				}
-			}
+			}  
 		}  
 		function showSalers(id) {
  		 	 if($("#"+id).children().children("span").next().text()=="收回 "){
@@ -87,7 +98,7 @@
  			 	$("#"+id).children().children("span").next().text("展开 ");
 			}  else{
 					$("#"+id).nextAll().html("");
-					$.get("${pageContext.request.contextPath}/admin/BranchAndSalers/showSalers/"+ id + "/", showSaler);
+					$.get("${pageContext.request.contextPath}/admin/dictionary/showSalers/"+ id + "/", showSaler);
 					function showSaler(data) {
 				  		for(var i=0;i<data.length;i++){
 							var str="<tr id="+data[i].id+"><td><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+data[i].name+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data[i].id+"')\"> 删除</a></td></tr>";
