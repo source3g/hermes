@@ -20,6 +20,10 @@ public class BranchAndSalersService extends BaseService {
 	}
 	
 	public Saler addSaler(String salerName, String branchCompanyId) {
+		List<Saler> salers=mongoTemplate.find(new Query(Criteria.where("name").is(salerName)), Saler.class);
+		if(salers.size()>0){
+			return null;
+		}
 		if("undefined".equals(branchCompanyId)){
 			return null;
 		}
@@ -35,10 +39,12 @@ public class BranchAndSalersService extends BaseService {
 		return mongoTemplate.find(new Query(Criteria.where("branchCompanyId").is(new ObjectId(id))), Saler.class);
 	}
 
-	public void addBranchCompany(String branchCompanyName) {
+	public BranchCompany addBranchCompany(String branchCompanyName) {
 		BranchCompany b=new BranchCompany();
 		b.setName(branchCompanyName);
-		add(b);
+		b.setId(ObjectId.get());
+		mongoTemplate.insert(b);
+		return b;
 	}
 
 	public void deleteSaler(String id) {
@@ -49,5 +55,6 @@ public class BranchAndSalersService extends BaseService {
 		mongoTemplate.remove(new Query(Criteria.where("branchCompanyId").is(new ObjectId(id))), Saler.class);
 		mongoTemplate.remove(new Query(Criteria.where("_id").is(new ObjectId(id))), BranchCompany.class);
 	}
+
 
 }

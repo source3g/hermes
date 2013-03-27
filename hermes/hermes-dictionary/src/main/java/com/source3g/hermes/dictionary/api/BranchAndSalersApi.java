@@ -41,9 +41,8 @@ public class BranchAndSalersApi {
 	
 	@RequestMapping(value = "/addBranchCompany/{branchCompanyName}", method = RequestMethod.GET)
 	@ResponseBody
-	public String addBranchCompany(@PathVariable String branchCompanyName) {
-		   BranchAndSalersService.addBranchCompany(branchCompanyName);
-		   return ReturnConstants.SUCCESS;
+	public BranchCompany addBranchCompany(@PathVariable String branchCompanyName) {
+		return    BranchAndSalersService.addBranchCompany(branchCompanyName);
 	}
 	
 	@RequestMapping(value = "/deleteSaler/{id}", method = RequestMethod.GET)
