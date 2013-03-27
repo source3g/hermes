@@ -25,7 +25,7 @@
 		</thead>
 		<c:forEach items="${page.data}" var="merchant">
 			<tr>
-				<td>${merchant.name }</td>
+				<td>${merchant.name }<c:if test="${merchant.canceled==true }">  [已删除]</c:if></td>
 				<td>${merchant.addr }</td>
 				<td>
 				<a class="btn btn-success" href="javascript:void();" onclick="toDetail('${merchant.id}');">详细信息</a>
