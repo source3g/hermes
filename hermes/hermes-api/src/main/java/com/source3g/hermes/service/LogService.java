@@ -18,7 +18,7 @@ public class LogService {
 	private Logger logger = LoggerFactory.getLogger(LogService.class);
 	@Autowired
 	protected MongoTemplate mongoTemplate;
-	
+
 	public void log() {
 		System.out.println("*************Log*******************");
 	}
@@ -40,7 +40,7 @@ public class LogService {
 	public void doBefore(JoinPoint jp) {
 		Object[] args = jp.getArgs();
 		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
-		//System.out.println("log: " + operatorLog);
+		// System.out.println("log: " + operatorLog);
 		mongoTemplate.insert(operatorLog);
 	}
 

@@ -33,19 +33,32 @@
 		<div class="control-group">
 			<label class="control-label" for="tag">标签分类选择：</label>
 			<div class="controls">
-				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="showTags()">标签分类选择</a><span
-					id="tagName">   标签：    <c:if  test="${not empty update }"><c:forEach items="${merchant.merchantTagNodes}" var="merchantTagNode" varStatus="status">
-					<input type="hidden" class="tagId" name="merchantTagNodes[${status.index }].id" value="${merchantTagNode.id}"><span>${merchantTagNode.name}<a  href="javascript:void();" onclick="deleteTag(this)" style="color:red">×</a></span>
-					</c:forEach></c:if></span>
+				<a href="javascript:void();" class="btn btn-primary btn-small"
+					onclick="showTags()">标签分类选择</a><span id="tagName"> 标签： <c:if
+						test="${not empty update }">
+						<c:forEach items="${merchant.merchantTagNodes}"
+							var="merchantTagNode" varStatus="status">
+							<input type="hidden" class="tagId"
+								name="merchantTagNodes[${status.index }].id"
+								value="${merchantTagNode.id}">
+							<span>${merchantTagNode.name}<a href="javascript:void();"
+								onclick="deleteTag(this)" style="color: red">×</a></span>
+						</c:forEach>
+					</c:if></span>
 			</div>
 		</div>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="tag">所属销售选择：</label>
 			<div class="controls">
-			<a href="javascript:void();" class="btn btn-primary btn-small" onclick="branchCompanyList()">所属销售选择</a><span id="salerName">
-			   商户所属销售:   <c:if test="${not empty merchant.saler }"><span>${merchant.saler.name}<a href="javascript:void();" onclick="deleteSaler(this)" style="color:red">×</a></span></c:if></span>
-		</div>
+				<a href="javascript:void();" class="btn btn-primary btn-small"
+					onclick="branchCompanyList()">所属销售选择</a><span id="salerName">
+					商户所属销售: <c:if test="${not empty merchant.saler }">
+						<span>${merchant.saler.name}<a href="javascript:void();"
+							onclick="deleteSaler(this)" style="color: red">×</a></span>
+					</c:if>
+				</span>
+			</div>
 		</div>
 
 		<div class="control-group">
@@ -104,7 +117,6 @@
 				<tr>
 					<th width="100%">盒子SN编码</th>
 				</tr>
-
 			</thead>
 			<c:if test="${not empty update }">
 				<c:forEach items="${devices}" var="device">
@@ -122,7 +134,6 @@
 			<c:if test="${not empty update }">
 				<input type="submit" class="btn btn-primary" value="修改">
 			</c:if>
-
 			<c:if test="${ empty update }">
 				<input type="submit" id="addMerchantBtn"
 					data-loading-text="增加商户中..." class="btn btn-primary" value="增加" />
@@ -166,7 +177,7 @@
 
 	<div id="tagModal" class="modal hide fade">
 		<div class="modal-header">
-		 	<a class="close" data-dismiss="modal">&times;</a> 
+			<a class="close" data-dismiss="modal">&times;</a>
 			<h3>标签分类</h3>
 		</div>
 		<div class="modal-body" id="modalBody"></div>
@@ -181,10 +192,11 @@
 			<a class="close" data-dismiss="modal">&times;</a>
 			<h3>销售员列表</h3>
 		</div>
-		<div class="modal-body"  id="companyModalBody"></div>
+		<div class="modal-body" id="companyModalBody"></div>
 		<div class="modal-footer">
-		<input type="button" class="btn btn-primary" id=""
-				value="确定" onclick="choseSalers()"></input>
+			<input type="button" class="btn btn-primary" id="" value="确定"
+				onclick="choseSalers()"></input>
+		</div>
 	</div>
 	<c:if test="${not empty errors }">
 		<div class="alert alert-error">

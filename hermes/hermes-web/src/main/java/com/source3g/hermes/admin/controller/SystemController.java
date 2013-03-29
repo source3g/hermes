@@ -56,24 +56,24 @@ public class SystemController {
 		redirectAttributes.addFlashAttribute("result", result);
 		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
 	}
-	
+
 	@RequestMapping(value = "/toLogList", method = RequestMethod.GET)
-	public ModelAndView toLogList(String  pageNo,String startTime,String endTime) {
+	public ModelAndView toLogList(String pageNo, String startTime, String endTime) {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		String uri = ConfigParams.getBaseUrl() + "operatorLog/toLogList/?pageNo="+pageNo;
-		if(StringUtils.isNotEmpty(startTime)){
-			uri+="&startTime="+startTime;
+		String uri = ConfigParams.getBaseUrl() + "operatorLog/toLogList/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(startTime)) {
+			uri += "&startTime=" + startTime;
 		}
-		if(StringUtils.isNotEmpty(endTime)){
-			uri+="&endTime="+endTime;
+		if (StringUtils.isNotEmpty(endTime)) {
+			uri += "&endTime=" + endTime;
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
 		model.put("startTime", startTime);
 		model.put("endTime", endTime);
-		return new ModelAndView("/admin/system/operateLogList",model);
+		return new ModelAndView("/admin/system/operateLogList", model);
 	}
 }

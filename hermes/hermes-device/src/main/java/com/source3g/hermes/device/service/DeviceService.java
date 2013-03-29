@@ -22,6 +22,7 @@ import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.vo.DeviceDistributeVo;
 import com.source3g.hermes.vo.DeviceVo;
 
 @Service
@@ -134,6 +135,10 @@ public class DeviceService extends BaseService {
 			result.add(deviceStatusDto);
 		}
 		return result;
+	}
+
+	public List<DeviceDistributeVo> findDeviceDistribution() {
+		return new ArrayList<DeviceDistributeVo>();
 	}
 
 }

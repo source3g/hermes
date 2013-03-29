@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -26,8 +28,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
@@ -76,19 +81,15 @@ public class CustomerImportService extends BaseService {
 		List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), CustomerGroup.class);
 		customerImportLog.setTotalCount(customerImportItems.size());
 		customerImportLog.setStatus(ImportStatus.导入中.toString());
+		customerImportLog.setFailedCount(0);
 		mongoTemplate.save(customerImportLog);
+		Map<String, SimpleCustomer> phoneMap = findPhoneMap(new ObjectId(merchantId));
 		List<Customer> customerList = new ArrayList<Customer>();
 		logger.error("开始导入");
 		for (CustomerImportItem customerImportItem : customerImportItems) {
 			try {
 				checkItem(customerImportItem);
-				Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerImportItem.getPhone()).and("merchantId").is(customerImportItem.getMerchantId())), Customer.class);
-				if (customer == null) {
-					customer = new Customer();
-					customer.setId(ObjectId.get());
-				} else {
-					mongoTemplate.remove(customer);
-				}
+				Customer customer = new Customer();
 				customer.setAddress(customerImportItem.getAddress());
 				customer.setBirthday(customerImportItem.getBirthday());
 				ObjectId customerGroupId = findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName());
@@ -104,22 +105,44 @@ public class CustomerImportService extends BaseService {
 				customer.setQq(customerImportItem.getQq());
 				customer.setSex(customerImportItem.getSex());
 				customer.setOperateTime(new Date());
-				customerList.add(customer);
-				// customerImportItem只显示导入失败的数据
-				// customerImportItem.setImportStatus(ImportStatus.导入成功.toString());
+				if (phoneMap.get(customer.getPhone()) != null) {
+					customer.setId(phoneMap.get(customer.getPhone()).getId());
+					mongoTemplate.save(customer);
+				} else {
+					customerList.add(customer);
+				}
 			} catch (Exception e) {
 				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
 				customerImportItem.setFailedReason(e.getMessage());
 				customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
-				mongoTemplate.save(customerImportItem);
+				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(customerImportItem.getId())), new Update().set("importStatus", ImportStatus.导入失败.toString()).set("failedReason", e.getMessage()), CustomerImportItem.class);// (customerImportItem);
 			} finally {
 
 			}
 		}
 		mongoTemplate.insertAll(customerList);
 		logger.error("导入完成 ");
-		customerImportLog.setStatus(ImportStatus.导入成功.toString());
+		customerImportLog.setStatus(ImportStatus.导入完成.toString());
 		mongoTemplate.save(customerImportLog);
+	}
+
+	private Map<String, SimpleCustomer> findPhoneMap(ObjectId merchantId) {
+		Map<String, SimpleCustomer> map = new HashMap<String, SimpleCustomer>();
+		BasicDBObject parameter = new BasicDBObject();
+		parameter.put("merchantId", merchantId);
+		List<SimpleCustomer> simpleCustomers = super.findByBasicDBObject(Customer.class, parameter, new ObjectMapper<SimpleCustomer>() {
+			@Override
+			public SimpleCustomer mapping(DBObject obj) {
+				SimpleCustomer simpleCustomer = new SimpleCustomer();
+				simpleCustomer.setId((ObjectId) obj.get("_id"));
+				simpleCustomer.setPhone((String) obj.get("phone"));
+				return simpleCustomer;
+			}
+		});
+		for (SimpleCustomer simpleCustomer : simpleCustomers) {
+			map.put(simpleCustomer.getPhone(), simpleCustomer);
+		}
+		return map;
 	}
 
 	private void checkItem(CustomerImportItem customerImportItem) throws Exception {
@@ -298,6 +321,28 @@ public class CustomerImportService extends BaseService {
 		mongoTemplate.insertAll(list);
 		date = new Date();
 		System.out.println("导入完成" + sdf.format(date));
+	}
+
+	static class SimpleCustomer {
+		private String phone;
+		private ObjectId Id;
+
+		public String getPhone() {
+			return phone;
+		}
+
+		public void setPhone(String phone) {
+			this.phone = phone;
+		}
+
+		public ObjectId getId() {
+			return Id;
+		}
+
+		public void setId(ObjectId id) {
+			Id = id;
+		}
+
 	}
 
 }

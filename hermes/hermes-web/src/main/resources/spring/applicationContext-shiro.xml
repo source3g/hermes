@@ -41,6 +41,7 @@
 				/admin/** = anon
 				/adminLogin/** = anon
 				/jsp/admin/login.jsp = anon
+				/device/** = anon
 				/** = authc
 			</value>
 		</property>
