@@ -34,8 +34,12 @@ public class MerchantService extends BaseService {
 	public void add(Merchant merchant) throws Exception {
 		List<Merchant> list = mongoTemplate.find(new Query(Criteria.where("account").is(merchant.getAccount())), Merchant.class);
 		Saler s=merchant.getSaler();
-		Saler saler=mongoTemplate.findOne(new Query(Criteria.where("name").is(s.getName()).and("branchCompanyId").is(s.getBranchCompanyId())), Saler.class);
-		merchant.setSaler(saler);
+		if(s!=null){
+			Saler saler=mongoTemplate.findOne(new Query(Criteria.where("name").is(s.getName()).and("branchCompanyId").is(s.getBranchCompanyId())), Saler.class);
+			if(saler!=null){
+				merchant.setSaler(saler);
+			}
+		}
 		if (list.size() == 0) {
 			mongoTemplate.insert(merchant);
 			initMerchant(merchant);
