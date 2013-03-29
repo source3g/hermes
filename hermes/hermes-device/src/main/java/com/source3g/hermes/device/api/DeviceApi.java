@@ -20,6 +20,7 @@ import com.source3g.hermes.dto.sync.DeviceStatusDto;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.vo.DeviceDistributeVo;
 
 @Controller
 @RequestMapping("/device")
@@ -100,8 +101,8 @@ public class DeviceApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "devices")
-	public List<Device> findDeviceDistribution() {
+	@RequestMapping(value = "deviceDistribution")
+	public List<DeviceDistributeVo> findDeviceDistribution() {
 		return deviceService.findDeviceDistribution();
 	}
 

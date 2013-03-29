@@ -30,8 +30,7 @@ import com.sourse3g.hermes.branch.Saler;
 @RequestMapping("/admin/dictionary")
 @RequiresRoles("admin")
 public class DictionaryController {
-	// sprivate static final Logger logger =
-	// LoggerFactory.getLogger(DictionaryController.class);
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -56,7 +55,7 @@ public class DictionaryController {
 	}
 
 	@RequestMapping(value = "/remindAdd", method = RequestMethod.POST)
-	public ModelAndView remindAdd(@Valid RemindTemplate remindTemplate, BindingResult bindingResult,RedirectAttributes redirectAttributes) throws Exception {
+	public ModelAndView remindAdd(@Valid RemindTemplate remindTemplate, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws Exception {
 		if (bindingResult.hasErrors()) {
 			// TODO 要改
 			return new ModelAndView("error");
@@ -106,61 +105,61 @@ public class DictionaryController {
 		redirectAttributes.addFlashAttribute("error", result);
 		return ("redirect:/admin/dictionary/toRemindTemplate");
 	}
-	
+
 	@RequestMapping(value = "toBranchAndSalers", method = RequestMethod.GET)
 	public ModelAndView toBranchAndSalers() {
 		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/branchCompanyList/";
-		BranchCompany[] branchCompanys=restTemplate.getForObject(uri, BranchCompany[].class);
-		Map<String, Object> model=new HashMap<String, Object>();
+		BranchCompany[] branchCompanys = restTemplate.getForObject(uri, BranchCompany[].class);
+		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("branchCompanys", branchCompanys);
-		return new ModelAndView("admin/dataDictionary/branchAndSalers",model);
+		return new ModelAndView("admin/dataDictionary/branchAndSalers", model);
 	}
-	
+
 	@RequestMapping(value = "addSaler/{salerName}/{branchCompanyId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Saler addSaler(@PathVariable String salerName,@PathVariable String branchCompanyId) {
-		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/addSaler/" + salerName +"/"+branchCompanyId+"/";
-		Saler saler=restTemplate.getForObject(uri, Saler.class);
+	public Saler addSaler(@PathVariable String salerName, @PathVariable String branchCompanyId) {
+		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/addSaler/" + salerName + "/" + branchCompanyId + "/";
+		Saler saler = restTemplate.getForObject(uri, Saler.class);
 		return saler;
 	}
-	
+
 	@RequestMapping(value = "showSalers/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public  Saler[] showSalers(@PathVariable String id) {
-		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/showSalers/" + id +"/";
-		Saler[] salers=restTemplate.getForObject(uri, Saler[].class);
-			return salers;
+	public Saler[] showSalers(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/showSalers/" + id + "/";
+		Saler[] salers = restTemplate.getForObject(uri, Saler[].class);
+		return salers;
 	}
-	
+
 	@RequestMapping(value = "addBranchCompany/{branchCompanyName}", method = RequestMethod.GET)
 	@ResponseBody
-	public  BranchCompany addBranchCompany(@PathVariable String branchCompanyName) {
-		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/addBranchCompany/" +branchCompanyName +"/";
-		BranchCompany branchCompany=restTemplate.getForObject(uri, BranchCompany.class);
+	public BranchCompany addBranchCompany(@PathVariable String branchCompanyName) {
+		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/addBranchCompany/" + branchCompanyName + "/";
+		BranchCompany branchCompany = restTemplate.getForObject(uri, BranchCompany.class);
 		return branchCompany;
 	}
-	
+
 	@RequestMapping(value = "deleteSaler/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public  String deleteSaler(@PathVariable String id) {
-		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/deleteSaler/" +id +"/";
-		String result=restTemplate.getForObject(uri, String.class);
+	public String deleteSaler(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/deleteSaler/" + id + "/";
+		String result = restTemplate.getForObject(uri, String.class);
 		return result;
 	}
-	
+
 	@RequestMapping(value = "deleteBranch/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public  String deleteBranch(@PathVariable String id) {
-		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/deleteBranch/" +id +"/";
-		String result=restTemplate.getForObject(uri, String.class);
+	public String deleteBranch(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/deleteBranch/" + id + "/";
+		String result = restTemplate.getForObject(uri, String.class);
 		return result;
 	}
-	
+
 	@RequestMapping(value = "branchCompanyList", method = RequestMethod.GET)
 	@ResponseBody
-	public  BranchCompany[] branchCompanyList() {
+	public BranchCompany[] branchCompanyList() {
 		String uri = ConfigParams.getBaseUrl() + "branchAndSalers/branchCompanyList/";
-		BranchCompany[] branchCompanys=restTemplate.getForObject(uri, BranchCompany[].class);
+		BranchCompany[] branchCompanys = restTemplate.getForObject(uri, BranchCompany[].class);
 		return branchCompanys;
 	}
 }
