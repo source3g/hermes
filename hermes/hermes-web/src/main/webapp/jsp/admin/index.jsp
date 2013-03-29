@@ -169,6 +169,7 @@ body {
 									<li><a href="#" id="failedMessageList">失败短信列表</a></li>
 									<!-- <li><a href="javascript:void();" id="operateLog">操作日志</a></li> -->
 									<li><a href="#" id="versionUpdate">版本更新</a></li>
+									<li><a href="#" id="logList">日志列表</a></li>
 								</ul>
 							<!-- </div> -->
 						</div>
@@ -294,6 +295,10 @@ body {
 		$("#operateLog").click(function() {
 		loadPage("${pageContext.request.contextPath}/admin/system/operateLog/");
 		}); */
+		$("#logList").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/system/toLogList/");
+			return false;
+		});
 	});
 
 	function loadPage(url) {

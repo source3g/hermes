@@ -20,7 +20,7 @@ public class BranchAndSalersService extends BaseService {
 	}
 
 	public Saler addSaler(String salerName, ObjectId branchCompanyId) {
-		List<Saler> salers = mongoTemplate.find(new Query(Criteria.where("name").is(salerName)), Saler.class);
+		List<Saler> salers = mongoTemplate.find(new Query(Criteria.where("name").is(salerName).and("branchCompanyId").is(branchCompanyId)), Saler.class);
 		if (salers.size() > 0) {
 			return null;
 		}

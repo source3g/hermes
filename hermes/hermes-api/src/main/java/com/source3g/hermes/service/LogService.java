@@ -6,6 +6,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.entity.log.OperatorLog;
@@ -14,7 +16,9 @@ import com.source3g.hermes.entity.log.OperatorLog;
 @Aspect
 public class LogService {
 	private Logger logger = LoggerFactory.getLogger(LogService.class);
-
+	@Autowired
+	protected MongoTemplate mongoTemplate;
+	
 	public void log() {
 		System.out.println("*************Log*******************");
 	}
@@ -36,7 +40,9 @@ public class LogService {
 	public void doBefore(JoinPoint jp) {
 		Object[] args = jp.getArgs();
 		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
-		System.out.println("log: " + operatorLog);
+		//System.out.println("log: " + operatorLog);
+		mongoTemplate.insert(operatorLog);
+		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	// 有参无返回值的方法
