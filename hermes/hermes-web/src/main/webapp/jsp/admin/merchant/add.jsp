@@ -355,7 +355,7 @@
 				<c:if test="${not empty update}">
 				url:"${pageContext.request.contextPath}/admin/merchant/update/",
 				</c:if>
-				success : showContentInfo
+				success :showContentInfo
 			}; 
 			$(this).ajaxSubmit(options);
 			return false;
@@ -420,7 +420,6 @@
 		function error() {
 			alert("出错了");
 		}
-
 
 		function showDevices(data){
 			if( data.sn==null){
@@ -496,10 +495,7 @@
 		function deleteTag(a){
 			$(a).parent().prev().remove();
 			$(a).parent().remove();
-
 		}
-		
-		
 		
  		function branchCompanyList(){
 			$("#companyModalBody").html("");
@@ -520,7 +516,7 @@
   				$.get("${pageContext.request.contextPath}/admin/dictionary/showSalers/"+ id +"/", showSaler);
   				function showSaler(data){
   				 	 for(var i=0;i<data.length;i++){
-  						var saler="<span id=\""+id+"\"><input type=\"radio\" calss=\"saler\" style=\"width:20px\" value=\""+data[i].name+"\">"+data[i].name+"</input></span>";
+  						var saler="<span id=\""+data[i].id+"\"><input type=\"radio\" name=\"salername\" calss=\"saler\" style=\"width:20px\" value=\""+data[i].name+"\">"+data[i].name+"</input></span>";
   						$("#"+id).after(saler);
   					} 	 
   				 	$("#"+id).append("</p></div>");
@@ -531,13 +527,11 @@
 		function choseSalers(){
 			$("input[calss='saler']:checked").each(function (){
 				var saler="["+$(this).val()+"]<a  href=\"javascript:void();\" onclick=\"deleteSaler(this)\" style=\"color:red\">×</a>";
-				var comId=$(this).parent().attr("id");
-				var salerName="<input type=\"hidden\" name=\"saler.name\" value=\""+$(this).val()+"\"></input>";
-				var companyId="<input type=\"hidden\" name=\"saler.branchCompanyId\" value=\""+comId+"\"></input>";
+				var saId=$(this).parent().attr("id");
+				//var salerName="<input type=\"hidden\" name=\"saler.name\" value=\""+$(this).val()+"\"></input>";
+				var salerId="<input type=\"hidden\" name=\"salerId\" value=\""+saId+"\"></input>";
 				$("#salerName").children().remove();
-					
-				
-				$("#salerName").append("<span>"+saler+companyId+salerName+"</span>");
+				$("#salerName").append("<span>"+saler+salerId+"</span>");
 			});
 			$("#salersModal").modal("hide");
 		} 

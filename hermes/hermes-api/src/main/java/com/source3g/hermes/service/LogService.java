@@ -42,7 +42,6 @@ public class LogService {
 		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
 		//System.out.println("log: " + operatorLog);
 		mongoTemplate.insert(operatorLog);
-		System.out.println("OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	// 有参无返回值的方法
