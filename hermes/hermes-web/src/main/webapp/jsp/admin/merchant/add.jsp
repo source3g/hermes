@@ -53,9 +53,9 @@
 			<div class="controls">
 				<a href="javascript:void();" class="btn btn-primary btn-small"
 					onclick="branchCompanyList()">所属销售选择</a><span id="salerName">
-					商户所属销售: <c:if test="${not empty merchant.saler }">
-						<span>${merchant.saler.name}<a href="javascript:void();"
-							onclick="deleteSaler(this)" style="color: red">×</a></span>
+					商户所属销售: <c:if test="${not empty saler }">
+						<span>${saler.name}<a href="javascript:void();"
+							onclick="deleteSaler(this)" style="color: red">×</a><input type="hidden" name="salerId" value="${saler.id}"></span>
 					</c:if>
 				</span>
 			</div>

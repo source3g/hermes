@@ -33,6 +33,7 @@ import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
+import com.sourse3g.hermes.branch.Saler;
 
 @Controller
 @RequestMapping("/admin/merchant")
@@ -53,6 +54,11 @@ public class MerchantController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchantId + "/";
 		Merchant merchant = restTemplate.getForObject(uri, Merchant.class);
 		Map<String, Object> model = new HashMap<String, Object>();
+		if(merchant.getSalerId()!=null){
+			String url=ConfigParams.getBaseUrl() +"branchAndSalers/findSalerById/"+merchant.getSalerId();
+			Saler saler = restTemplate.getForObject(url, Saler.class);
+			model.put("saler", saler);
+		}
 		model.put("merchant", merchant);
 		String devicesUrl = ConfigParams.getBaseUrl() + "device/sync/status/" + merchantId + "/";
 		DeviceStatusDto[] deviceStatusDtos = restTemplate.getForObject(devicesUrl, DeviceStatusDto[].class);
@@ -182,6 +188,11 @@ public class MerchantController {
 			String uriDevice = ConfigParams.getBaseUrl() + "/device/" + deviceIds.toString() + "/";
 			Device[] devices = restTemplate.getForObject(uriDevice, Device[].class);
 			model.put("devices", devices);
+		}
+		if(merchant.getSalerId()!=null){
+			String url=ConfigParams.getBaseUrl() +"branchAndSalers/findSalerById/"+merchant.getSalerId();
+			Saler saler = restTemplate.getForObject(url, Saler.class);
+			model.put("saler", saler);
 		}
 		model.put("merchant", merchant);
 		model.put("update", true);

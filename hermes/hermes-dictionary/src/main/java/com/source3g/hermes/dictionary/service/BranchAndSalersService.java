@@ -53,4 +53,8 @@ public class BranchAndSalersService extends BaseService {
 		mongoTemplate.remove(new Query(Criteria.where("_id").is(new ObjectId(id))), BranchCompany.class);
 	}
 
+	public Saler findSalerById(String id) {
+	return mongoTemplate.findOne(new Query(Criteria.where("_id").is(new ObjectId(id))), Saler.class);
+	}
+
 }

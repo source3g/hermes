@@ -59,6 +59,13 @@ public class BranchAndSalersApi {
 		   BranchAndSalersService.deleteBranch(id);
 		   return ReturnConstants.SUCCESS;
 	}
+	@RequestMapping(value = "/findSalerById/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public Saler findSalerById(@PathVariable String id) {
+		return   BranchAndSalersService.findSalerById(id);
+		    
+	}
+	
 }
 
 

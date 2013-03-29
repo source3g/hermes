@@ -23,7 +23,6 @@ import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
-import com.sourse3g.hermes.branch.Saler;
 
 @Service
 public class MerchantService extends BaseService {
@@ -33,13 +32,6 @@ public class MerchantService extends BaseService {
 
 	public void add(Merchant merchant) throws Exception {
 		List<Merchant> list = mongoTemplate.find(new Query(Criteria.where("account").is(merchant.getAccount())), Merchant.class);
-	/*	ObjectId salerId=merchant.getSalerId();
-		if(salerId!=null){
-			Saler saler=mongoTemplate.findOne(new Query(Criteria.where("name").is(s.getName()).and("branchCompanyId").is(s.getBranchCompanyId())), Saler.class);
-			if(saler!=null){
-				merchant.setSaler(saler);
-			}
-		}*/
 		if (list.size() == 0) {
 			mongoTemplate.insert(merchant);
 			initMerchant(merchant);
@@ -157,7 +149,7 @@ public class MerchantService extends BaseService {
 	}
 
 	public void updateInfo(Merchant merchant) {
-		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds", "merchantTagNodes","saler");
+		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds", "merchantTagNodes","salerId");
 	}
 
 	public void UpdateQuota(String id, int countInt) {

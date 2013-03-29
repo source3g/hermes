@@ -45,7 +45,7 @@
 		<div class="control-group">
 			<label class="control-label" for="tag"> 商户所属销售： </label>
 			<div class="controls">
-				<span id="salerName">${merchant.saler.name}</span>
+				<span id="salerName">${saler.name}</span>
 			</div>
 		</div>
 		
