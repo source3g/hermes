@@ -15,8 +15,7 @@ public class Device extends AbstractEntity {
 	private String sn;
 	@DBRef
 	private Sim sim;
-	
-	private String saler;
+
 	private GpsPoint gpsPoint;
 
 	public GpsPoint getGpsPoint() {
@@ -25,14 +24,6 @@ public class Device extends AbstractEntity {
 
 	public void setGpsPoint(GpsPoint gpsPoint) {
 		this.gpsPoint = gpsPoint;
-	}
-
-	public String getSaler() {
-		return saler;
-	}
-
-	public void setSaler(String saler) {
-		this.saler = saler;
 	}
 
 	public String getSn() {

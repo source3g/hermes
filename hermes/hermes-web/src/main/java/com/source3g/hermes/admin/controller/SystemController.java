@@ -56,4 +56,5 @@ public class SystemController {
 		redirectAttributes.addFlashAttribute("result", result);
 		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
 	}
+
 }

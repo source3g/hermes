@@ -136,4 +136,9 @@ public class DeviceService extends BaseService {
 		return result;
 	}
 
+	public List<Device> findDeviceDistribution() {
+
+		return null;
+	}
+
 }

@@ -408,7 +408,6 @@ public class CustomerService extends BaseService {
 	}
 
 	public void callIn(String deviceSn, String phone, String time, Integer duration, Integer callStatus) throws Exception {// ,CallStatus
-																															// status
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);
 		if (device == null) {
 			throw new Exception("盒子编号不存在");

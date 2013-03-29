@@ -66,7 +66,7 @@ public class CbipMesssageService {
 	public void send(String msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
 		if (isTest) {
 			System.out.println("摸拟向" + phoneNumber + "发送了内容：" + content);
-			return ;
+			return;
 		}
 		if (client == null) {
 			init();

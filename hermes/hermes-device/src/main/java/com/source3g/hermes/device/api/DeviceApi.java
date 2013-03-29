@@ -100,6 +100,11 @@ public class DeviceApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "devices")
+	public List<Device> findDeviceDistribution() {
+		return deviceService.findDeviceDistribution();
+	}
+
 	@RequestMapping(value = "/sync/status/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<DeviceStatusDto> syncStatus(@PathVariable String merchantId) {

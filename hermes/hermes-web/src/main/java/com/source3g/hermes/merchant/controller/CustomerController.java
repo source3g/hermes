@@ -251,6 +251,10 @@ public class CustomerController {
 	public ModelAndView importCustomer(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
 		Map<String, Object> map = new HashMap<String, Object>();
+		if (file.getSize() > 1024 * 1024 * 10L) {
+			map.put("result", "上传文件最大10M，请分开多个文件上传");
+			return new ModelAndView("/merchant/customer/uploadResult", map);
+		}
 		try {
 			Merchant merchant = LoginUtils.getLoginMerchant(req);
 			String uri = ConfigParams.getBaseUrl() + "customer/import/" + merchant.getId() + "/";

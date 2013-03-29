@@ -72,14 +72,10 @@ public class CustomerApi {
 	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
-
 		String downLoadPath = customerService.getExportDir() + year + "/" + month + "/" + day + "/" + merchantId + "/" + fileName;
-
 		long fileLength = new File(downLoadPath).length();
-
 		response.setHeader("Content-disposition", "attachment; filename=" + fileName);
 		response.setHeader("Content-Length", String.valueOf(fileLength));
-
 		bis = new BufferedInputStream(new FileInputStream(downLoadPath));
 		bos = new BufferedOutputStream(response.getOutputStream());
 		byte[] buff = new byte[2048];

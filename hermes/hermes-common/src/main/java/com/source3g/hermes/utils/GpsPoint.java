@@ -14,6 +14,9 @@ public class GpsPoint {
 		this.reportTime = new Date();
 	}
 
+	public GpsPoint() {
+	}
+
 	public Double getX() {
 		return x;
 	}
