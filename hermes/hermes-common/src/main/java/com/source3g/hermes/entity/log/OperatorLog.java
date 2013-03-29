@@ -1,6 +1,7 @@
 package com.source3g.hermes.entity.log;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,11 +14,17 @@ public class OperatorLog extends AbstractEntity {
 	private String className;
 	private String methodName;
 	private List<Object> args;
+	private Date operateTime;
 
 	public OperatorLog(String className, String methodName, Object[] args) {
 		this.className = className;
 		this.methodName = methodName;
 		this.args = Arrays.asList(args);
+		this.operateTime=new Date();
+	}
+
+	public OperatorLog() {
+		super();
 	}
 
 	public String getClassName() {
@@ -62,6 +69,14 @@ public class OperatorLog extends AbstractEntity {
 			result += "none";
 		}
 		return result;
+	}
+
+	public Date getOperateTime() {
+		return operateTime;
+	}
+
+	public void setOperateTime(Date operateTime) {
+		this.operateTime = operateTime;
 	}
 
 }

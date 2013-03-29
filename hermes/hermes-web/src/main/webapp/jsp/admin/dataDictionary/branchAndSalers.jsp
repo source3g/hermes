@@ -18,7 +18,7 @@
 		<c:forEach items="${branchCompanys}" var="branchCompany">
 			<tbody>
 				<tr id="${branchCompany.id}">
-					<td><span style="font-size:15px">${branchCompany.name}</span><a href="javascript:void();" onclick="showSalers('${branchCompany.id}')">展开 </a><a href="javascript:void();" onclick="add(this);">增加销售</a><a href="javascript:void();" onclick="deleteBranch('${branchCompany.id}');"> 删除</a></td>
+					<td><span style="font-size:16px">${branchCompany.name}</span><a href="javascript:void();" onclick="showSalers('${branchCompany.id}')">展开 </a><a href="javascript:void();" onclick="add(this);">增加销售</a><a href="javascript:void();" onclick="deleteBranch('${branchCompany.id}');"> 删除</a></td>
 				</tr>
 			</tbody>
 		</c:forEach>
@@ -43,7 +43,7 @@
 			$.get("${pageContext.request.contextPath}/admin/dictionary/addBranchCompany/"+ branchCompanyName + "/",branchCompanyInfo);
 			function branchCompanyInfo(data){
 				$(el).parents('tbody').remove();
-				var branchCompany="<tbody><tr id=\""+data.id+"\"> <td class='info'><span style=\"font-size:15px\">"+data.name+"</span><a href=\"javascript:void();\" onclick=\"showSalers('"+data.id+"')\">展开 </a><a href=\"javascript:void();\" onclick=\"add(this);\">增加销售</a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\"> 删除</a></td></tr></tbody>";
+				var branchCompany="<tbody><tr id=\""+data.id+"\"> <td class='info'><span style=\"font-size:16px\">"+data.name+"</span><a href=\"javascript:void();\" onclick=\"showSalers('"+data.id+"')\">展开 </a><a href=\"javascript:void();\" onclick=\"add(this);\">增加销售</a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\"> 删除</a></td></tr></tbody>";
 				$('table').append(branchCompany);
 			}
 		}
@@ -75,10 +75,10 @@
 				return;
 			}
 			$("span[style='font-size:15px']").each(function (){
-				if(salerName==$(this).text()){
+			 	if(salerName==$(this).text()&&branchCompanyId==$(this).parents('tr').attr('id')){
 					alert("销售名已存在");
 					return;
-				}
+				} 
 			});
 	 	 	$.get("${pageContext.request.contextPath}/admin/dictionary/addSaler/"+ salerName + "/" + branchCompanyId + "/",salerInfo);
 			function salerInfo(data){
@@ -86,7 +86,7 @@
 					$(el).parents('tr').remove();
 					return;
 				}else{
-					var saler = "<tr id=\""+data.id+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+$(el).prev().val()+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data.id+"')\"> 删除</a></td></tr>";
+					var saler = "<tr id=\""+branchCompanyId+"\"><td class='info'><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+$(el).prev().val()+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data.id+"')\"> 删除</a></td></tr>";
 					$(el).parents('tr').first().after(saler);
 					$(el).parents('tr').remove();
 				}
@@ -101,7 +101,7 @@
 					$.get("${pageContext.request.contextPath}/admin/dictionary/showSalers/"+ id + "/", showSaler);
 					function showSaler(data) {
 				  		for(var i=0;i<data.length;i++){
-							var str="<tr id="+data[i].id+"><td><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+data[i].name+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data[i].id+"')\"> 删除</a></td></tr>";
+							var str="<tr id="+id+"><td><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+data[i].name+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data[i].id+"')\"> 删除</a></td></tr>";
 							$("#"+id).after(str);
 						}  
 					} 
