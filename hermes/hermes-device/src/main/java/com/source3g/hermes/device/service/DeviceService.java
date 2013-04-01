@@ -22,8 +22,10 @@ import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
-import com.source3g.hermes.vo.DeviceDistributeVo;
+import com.source3g.hermes.vo.DeviceDistributionVo;
 import com.source3g.hermes.vo.DeviceVo;
+import com.sourse3g.hermes.branch.BranchCompany;
+import com.sourse3g.hermes.branch.Saler;
 
 @Service
 public class DeviceService extends BaseService {
@@ -137,8 +139,23 @@ public class DeviceService extends BaseService {
 		return result;
 	}
 
-	public List<DeviceDistributeVo> findDeviceDistribution() {
-		return new ArrayList<DeviceDistributeVo>();
+	public List<DeviceDistributionVo> findDeviceDistribution() {
+		List<DeviceDistributionVo> result = new ArrayList<DeviceDistributionVo>();
+		List<Device> devices = mongoTemplate.find(new Query(Criteria.where("gpsPoint").ne(null)), Device.class);
+		for (Device device : devices) {
+			DeviceDistributionVo deviceDistributionVo = new DeviceDistributionVo();
+			deviceDistributionVo.setDevice(device);
+			try {
+				Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+				Saler saler = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchant.getSalerId())), Saler.class);
+				deviceDistributionVo.setSalerName(saler.getName());
+				BranchCompany branchCompany = mongoTemplate.findOne(new Query(Criteria.where("_id").is(saler.getBranchCompanyId())), BranchCompany.class);
+				deviceDistributionVo.setBranchCompanyName(branchCompany.getName());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			result.add(deviceDistributionVo);
+		}
+		return result;
 	}
-
 }

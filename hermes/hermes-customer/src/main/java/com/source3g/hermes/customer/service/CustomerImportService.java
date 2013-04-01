@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
@@ -79,14 +79,16 @@ public class CustomerImportService extends BaseService {
 	public void importCustomer(List<CustomerImportItem> customerImportItems, String merchantId, String customerImportLogId) {
 		CustomerImportLog customerImportLog = mongoTemplate.findOne(new Query(Criteria.where("_id").is(new ObjectId(customerImportLogId))), CustomerImportLog.class);
 		List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), CustomerGroup.class);
-		customerImportLog.setTotalCount(customerImportItems.size());
+		Collection<CustomerImportItem> itemsNoRepeat = filterImportItems(customerImportItems);
+		customerImportLog.setTotalCount(itemsNoRepeat.size());
 		customerImportLog.setStatus(ImportStatus.导入中.toString());
 		customerImportLog.setFailedCount(0);
 		mongoTemplate.save(customerImportLog);
 		Map<String, SimpleCustomer> phoneMap = findPhoneMap(new ObjectId(merchantId));
 		List<Customer> customerList = new ArrayList<Customer>();
 		logger.error("开始导入");
-		for (CustomerImportItem customerImportItem : customerImportItems) {
+		List<CustomerImportItem> failedImortItems = new ArrayList<CustomerImportItem>();
+		for (CustomerImportItem customerImportItem : itemsNoRepeat) {
 			try {
 				checkItem(customerImportItem);
 				Customer customer = new Customer();
@@ -115,15 +117,31 @@ public class CustomerImportService extends BaseService {
 				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
 				customerImportItem.setFailedReason(e.getMessage());
 				customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
-				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(customerImportItem.getId())), new Update().set("importStatus", ImportStatus.导入失败.toString()).set("failedReason", e.getMessage()), CustomerImportItem.class);// (customerImportItem);
+				failedImortItems.add(customerImportItem);
+				// mongoTemplate.insert(customerImportItem);
+				// mongoTemplate.updateFirst(new
+				// Query(Criteria.where("_id").is(customerImportItem.getId())),
+				// new Update().set("importStatus",
+				// ImportStatus.导入失败.toString()).set("failedReason",
+				// e.getMessage()), CustomerImportItem.class);//
+				// (customerImportItem);
 			} finally {
 
 			}
 		}
 		mongoTemplate.insertAll(customerList);
+		mongoTemplate.insertAll(failedImortItems);
 		logger.error("导入完成 ");
 		customerImportLog.setStatus(ImportStatus.导入完成.toString());
 		mongoTemplate.save(customerImportLog);
+	}
+
+	private Collection<CustomerImportItem> filterImportItems(List<CustomerImportItem> customerImportItems) {
+		Map<String, CustomerImportItem> map = new HashMap<String, CustomerImportItem>();
+		for (CustomerImportItem customerImportItem : customerImportItems) {
+			map.put(customerImportItem.getPhone(), customerImportItem);
+		}
+		return map.values();
 	}
 
 	private Map<String, SimpleCustomer> findPhoneMap(ObjectId merchantId) {
@@ -168,7 +186,7 @@ public class CustomerImportService extends BaseService {
 		return null;
 	}
 
-	public List<CustomerImportItem> readFromExcelToDb(Resource resource, String merchantId, String customerImportLogId) throws InvalidFormatException, IOException {
+	public List<CustomerImportItem> readFromExcel(Resource resource, String merchantId, String customerImportLogId) throws InvalidFormatException, IOException {
 		List<CustomerImportItem> result = new ArrayList<CustomerImportItem>();
 		// 创建文件输入流对象
 		InputStream is = resource.getInputStream();
@@ -281,7 +299,8 @@ public class CustomerImportService extends BaseService {
 			// mongoTemplate.insert(customerImportItem);
 			result.add(customerImportItem);
 		}
-		mongoTemplate.insertAll(result);
+		// 不入库
+		// mongoTemplate.insertAll(result);
 		return result;
 	}
 

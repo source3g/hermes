@@ -40,8 +40,8 @@ public class LogService {
 	public void doBefore(JoinPoint jp) {
 		Object[] args = jp.getArgs();
 		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
-		// System.out.println("log: " + operatorLog);
-		mongoTemplate.insert(operatorLog);
+		System.out.println("log: " + operatorLog);
+		// mongoTemplate.insert(operatorLog);
 	}
 
 	// 有参无返回值的方法

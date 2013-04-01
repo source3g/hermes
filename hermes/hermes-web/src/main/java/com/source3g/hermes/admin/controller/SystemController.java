@@ -76,4 +76,5 @@ public class SystemController {
 		model.put("endTime", endTime);
 		return new ModelAndView("/admin/system/operateLogList", model);
 	}
+	
 }
