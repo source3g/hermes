@@ -79,11 +79,11 @@ public class TaskService extends CommonBaseService {
 			deviceStatus.setDeviceSn(sn);
 		}
 		if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
-			taskPackage = findAllPackage(merchant.getId(),deviceStatus.getLastTaskId());
-			//拿着了就变为增量，没拿着接着下次再拿初始化包
-			//if (taskPackage != null) {
-			//	deviceStatus.setStatus(TaskConstants.INCREMENT);
-			//}
+			taskPackage = findAllPackage(merchant.getId(), deviceStatus.getLastTaskId());
+			// 拿着了就变为增量，没拿着接着下次再拿初始化包
+			// if (taskPackage != null) {
+			// deviceStatus.setStatus(TaskConstants.INCREMENT);
+			// }
 		} else if (deviceStatus.getLastTaskId() == null) {
 			taskPackage = findFirstPackage(merchant.getId());
 		} else {
@@ -140,7 +140,7 @@ public class TaskService extends CommonBaseService {
 			taskLog.setDeviceSn(deviceStatus.getDeviceSn());
 			taskLog.setReportTime(new Date());
 			taskLog.setTaskStatus(TaskStatus.成功);
-			if(TaskConstants.INIT.equals(deviceStatus.getStatus())){
+			if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
 				deviceStatus.setStatus(TaskConstants.INCREMENT);
 			}
 			mongoTemplate.save(taskLog);
@@ -164,14 +164,14 @@ public class TaskService extends CommonBaseService {
 	 * 拿全包
 	 * 
 	 * @param merchantId
-	 * @param lastTaskId 
+	 * @param lastTaskId
 	 * @return
 	 */
 	public TaskPackage findAllPackage(ObjectId merchantId, Long lastTaskId) {
 		// 找到最新的全包
 		Query findLastAllPackage = new Query();
-		Criteria criteria=Criteria.where("merchantId").is(merchantId).and("type").is(TaskConstants.ALL_PACKAGE);
-		if(lastTaskId!=null){
+		Criteria criteria = Criteria.where("merchantId").is(merchantId).and("type").is(TaskConstants.ALL_PACKAGE);
+		if (lastTaskId != null) {
 			criteria.and("taskId").gt(lastTaskId);
 		}
 		findLastAllPackage.addCriteria(criteria);
@@ -263,30 +263,31 @@ public class TaskService extends CommonBaseService {
 
 	public void packageIncrement(Merchant merchant) throws IOException {
 		Date date = findLastPackageTime(merchant);
+		Date createTime = new Date(); // 先记本次
 		List<Customer> addOrUpdateList = findAddOrUpdateList(merchant.getId(), date);
-
 		List<Customer> deleteList = findDeleteList(merchant.getId(), date);
 		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {
 			return;
 		}
-		packageTask(merchant.getId(), addOrUpdateList, deleteList, TaskConstants.INCREMENT_PACKAGE);
+		packageTask(merchant.getId(), addOrUpdateList, deleteList, TaskConstants.INCREMENT_PACKAGE, createTime);
 	}
 
 	public void packageAll(ObjectId merchantId) throws IOException {
+		Date createTime = new Date(); // 先记本次
 		List<Customer> addOrUpdateList = findAddOrUpdateList(merchantId);
 		List<Customer> deleteList = findDeleteList(merchantId);
 		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {
 			return;
 		}
-		packageTask(merchantId, addOrUpdateList, deleteList, TaskConstants.ALL_PACKAGE);
+		packageTask(merchantId, addOrUpdateList, deleteList, TaskConstants.ALL_PACKAGE, createTime);
 	}
 
 	private List<Customer> findDeleteList(ObjectId id) {
 		return new ArrayList<Customer>();
 	}
 
-	private TaskPackage packageTask(ObjectId merchantId, List<Customer> addOrUpdateList, List<Customer> deleteList, String type) throws IOException {
-		Date createTime = new Date();
+	private TaskPackage packageTask(ObjectId merchantId, List<Customer> addOrUpdateList, List<Customer> deleteList, String type, Date createTime) throws IOException {
+		// Date createTime = new Date();
 		TaskPackage taskPackage = new TaskPackage();
 		taskPackage.setCreateTime(createTime);
 		taskPackage.setTaskId(createTime.getTime());

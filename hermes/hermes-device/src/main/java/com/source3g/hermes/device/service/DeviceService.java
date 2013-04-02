@@ -147,6 +147,7 @@ public class DeviceService extends BaseService {
 			deviceDistributionVo.setDevice(device);
 			try {
 				Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+				deviceDistributionVo.setMerchantName(merchant.getName());
 				Saler saler = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchant.getSalerId())), Saler.class);
 				deviceDistributionVo.setSalerName(saler.getName());
 				BranchCompany branchCompany = mongoTemplate.findOne(new Query(Criteria.where("_id").is(saler.getBranchCompanyId())), BranchCompany.class);

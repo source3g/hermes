@@ -262,9 +262,10 @@ public class CustomerController {
 			Resource resource = new FileSystemResource(fileToCopy);
 			MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 			formData.add("file", resource);
-			formData.add("oldName", new String(file.getOriginalFilename()));
+			formData.add("oldName", new String(file.getOriginalFilename()));// 可能要修改下边的header.getBytes("iso-8859-1")
 			HttpHeaders requestHeaders = new HttpHeaders();
 			requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+			requestHeaders.set("charset", "UTF-8");
 			HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
 			String result = restTemplate.postForObject(uri, requestEntity, String.class);
 			System.out.println(result);

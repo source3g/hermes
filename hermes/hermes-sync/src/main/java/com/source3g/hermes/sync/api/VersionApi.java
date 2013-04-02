@@ -65,7 +65,7 @@ public class VersionApi {
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
-		ApkVersion apkVersion = new ApkVersion(version, suffxPath,new Date());
+		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date());
 		versionService.addVersion(apkVersion);
 		return ReturnConstants.SUCCESS;
 	}
@@ -76,6 +76,7 @@ public class VersionApi {
 		ApkVersion apkVersion = versionService.getLastVersion();
 		if (apkVersion != null) {
 			processUrl(apkVersion);
+			return apkVersion;
 		}
 		return null;
 	}
@@ -83,12 +84,12 @@ public class VersionApi {
 	private void processUrl(ApkVersion apkVersion) {
 		apkVersion.setUrl(versionService.getLocalUrl() + apkVersion.getUrl());
 	};
-	
+
 	@RequestMapping(value = "/versionList")
 	@ResponseBody
 	public Page versionList(String pageNo) throws IOException {
-		int pageNoInt=Integer.parseInt(pageNo);
-		//int pageNoInt = Integer.valueOf(pageNo);
+		int pageNoInt = Integer.parseInt(pageNo);
+		// int pageNoInt = Integer.valueOf(pageNo);
 		return versionService.versionList(pageNoInt);
 	}
 }

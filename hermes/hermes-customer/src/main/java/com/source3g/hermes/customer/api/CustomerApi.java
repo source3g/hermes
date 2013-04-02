@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -186,7 +186,7 @@ public class CustomerApi {
 		try {
 			// CallStatus status=CallStatus.valueOf(callStatus);
 			Integer durationInt = Integer.parseInt(duration);
-			durationInt = durationInt == 0 ? 1 : durationInt;
+			durationInt = durationInt == 0 ? 6 : durationInt;
 			customerService.callIn(deviceSn, phone, time, durationInt, 0);// ,status
 		} catch (Exception e) {
 			return e.getMessage();
@@ -237,8 +237,14 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/import/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String importCustomer(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @PathVariable String merchantId) {// MultipartFile
+	public String importCustomer(MultipartFile file, String oldName, @PathVariable String merchantId) {// MultipartFile@RequestParam("oldName")
+																										// @RequestParam("file")
 		String dir = customerService.getTempDir() + file.getOriginalFilename();
+		try {
+			oldName = new String(oldName.getBytes("iso-8859-1"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 		File fileToCopy = new File(dir);
 		try {
 			FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
@@ -249,7 +255,7 @@ public class CustomerApi {
 			Date importTime = new Date();
 			importLog.setImportTime(importTime);
 			importLog.setMerchant(merchant);
-			importLog.setName(oldName);
+			importLog.setName(new String(oldName.getBytes("utf-8")));
 			importLog.setNewName(file.getOriginalFilename());
 			importLog.setStatus(ImportStatus.已接收准备导入.toString());
 			importLog.setFilePath(fileToCopy.getAbsolutePath());

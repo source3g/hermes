@@ -41,19 +41,27 @@
 				for ( var i = 0; i < data.length; i++) {
 					var sn = data[i].device.sn;
 					var salerName = '无';
-					var branchCompanyName = '无';
+					var merchantName = '无';
 					if (data[i].salerName) {
 						salerName = data[i].salerName;
 					}
-					if (data[i].branchCompanyName) {
-						branchCompanyName = data[i].branchCompanyName;
+					if (data[i].merchantName) {
+						merchantName = data[i].merchantName;
 					}
 					var gpsMkr = new BMap.Marker(new BMap.Point(/*GPS坐标*/data[i].device.gpsPoint.x, data[i].device.gpsPoint.y));//116.397428, 39.75923 + 0.01
-					gpsMkr.addEventListener("click", function() {
+					//gpsMkr.addEventListener("click", function() {
 						//var strXY = this.getPosition().lng.toFixed(3) + ", " + this.getPosition().lat.toFixed(3);
-						var infoWin = new BMap.InfoWindow("编号:" + sn + " " + "销售:" + salerName + "分公司:" + branchCompanyName);
-						this.openInfoWindow(infoWin);
-					});
+					//	var infoWin = new BMap.InfoWindow("编号:" + sn + ": " + merchantName + " " + "销售:" + salerName);
+					//	this.openInfoWindow(infoWin);
+					//});
+					
+					(function(i){
+						gpsMkr.addEventListener("click", function(){
+			               // var strXY = this.getPosition().lng.toFixed(3) + ", " + this.getPosition().lat.toFixed(3);
+			                var infoWin = new BMap.InfoWindow("编号:" + data[i].device.sn + " 店名:" + data[i].merchantName + " 销售:" + data[i].salerName);
+			                this.openInfoWindow(infoWin);
+			            });
+			        })(i);
 					mapWforGPS.addOverlay(gpsMkr);
 				}
 
