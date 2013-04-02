@@ -66,6 +66,7 @@ public class CbipMesssageService {
 	public void send(String msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
 		if (isTest) {
 			System.out.println("摸拟向" + phoneNumber + "发送了内容：" + content);
+			logger.debug("摸拟向" + phoneNumber + "发送了内容：" + content);
 			return;
 		}
 		if (client == null) {
@@ -73,6 +74,7 @@ public class CbipMesssageService {
 		}
 		// CbipSubmitMms mmsSubmit = GetData.getMmsSubmit();
 		System.out.println("主动发送短信" + phoneNumber);
+		logger.debug("主动发送短信" + phoneNumber);
 		// System.out.println(mmsSubmit);
 		CbipSubmit smsSubmit = new CbipSubmit();
 		smsSubmit.setClientSeq(Standard_SeqNum.computeSeqNoErr(1));
@@ -90,6 +92,7 @@ public class CbipMesssageService {
 		smsSubmit.setContentString(content);
 		smsSubmit.setSendTime(System.currentTimeMillis());
 		System.out.println("client.isConnected()" + client.isConnected());
+		logger.debug("client.isConnected()" + client.isConnected());
 		activeSubmitSender.sendSubmit(smsSubmit);
 	}
 

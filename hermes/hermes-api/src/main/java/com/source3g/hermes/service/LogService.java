@@ -1,8 +1,5 @@
 package com.source3g.hermes.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.source3g.hermes.entity.log.OperatorLog;
 
@@ -44,20 +40,23 @@ public class LogService {
 	public void doBefore(JoinPoint jp) {
 		Object[] args = jp.getArgs();
 		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
+		System.out.println("log: " + operatorLog);
+		// mongoTemplate.insert(operatorLog);
 		// System.out.println("log: " + operatorLog);
-		List<Object> list=new ArrayList<Object>();
-		for(int i=0;i<args.length;i++){
-			if(args[i] instanceof CommonsMultipartFile){
-			CommonsMultipartFile c=(CommonsMultipartFile)args[i];
-				list.add(c.getFileItem().getFieldName());
-				list.add(c.getFileItem().getName());
-			}else{
-				list.add(args[i]);
-			}
-		}
-		operatorLog.setArgs(list);
-		mongoTemplate.insert(operatorLog);
-		
+
+		// List<Object> list=new ArrayList<Object>();
+		// for(int i=0;i<args.length;i++){
+		// if(args[i] instanceof CommonsMultipartFile){
+		// CommonsMultipartFile c=(CommonsMultipartFile)args[i];
+		// list.add(c.getFileItem().getFieldName());
+		// list.add(c.getFileItem().getName());
+		// }else{
+		// list.add(args[i]);
+		// }
+		//
+		// }
+		// operatorLog.setArgs(list);
+		 mongoTemplate.insert(operatorLog);
 	}
 
 	// 有参无返回值的方法

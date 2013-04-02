@@ -35,7 +35,7 @@ public class CustomerImportMessageListener implements MessageListener {
 				if (obj instanceof CustomerImportLog) {
 					importLog = (CustomerImportLog) obj;
 					Resource resource=new FileSystemResource(new File(importLog.getFilePath()));
-					List<CustomerImportItem> importItems=customerImportService.readFromExcelToDb(resource, importLog.getMerchant().getId().toString(), importLog.getId().toString());
+					List<CustomerImportItem> importItems=customerImportService.readFromExcel(resource, importLog.getMerchant().getId().toString(), importLog.getId().toString());
 					customerImportService.importCustomer(importItems, importLog.getMerchant().getId().toString(), importLog.getId().toString());
 				}
 			} catch (JMSException e) {

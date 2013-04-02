@@ -2,7 +2,7 @@ package com.source3g.hermes.vo;
 
 import com.source3g.hermes.entity.Device;
 
-public class DeviceDistributeVo {
+public class DeviceDistributionVo {
 	private Device device;
 	// private Merchant merchant;
 	// private Saler saler;

@@ -437,8 +437,7 @@ public class CustomerService extends BaseService {
 		}
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).set("operateTime", new Date()).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
-
-		if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() > 0 && record.getCallDuration() > 0 && CallStatus.CALL_IN.equals(record.getCallStatus())) {
+		if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() >= 6 && record.getCallDuration() > 0 && CallStatus.CALL_IN.equals(record.getCallStatus())) {
 			CallInMessage callInMessage = new CallInMessage();
 			callInMessage.setDeviceSn(deviceSn);
 			callInMessage.setDuration(duration);
