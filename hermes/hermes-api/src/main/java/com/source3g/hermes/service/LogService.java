@@ -47,7 +47,6 @@ public class LogService {
 		System.out.println("log: " + operatorLog);
 		// mongoTemplate.insert(operatorLog);
 		// System.out.println("log: " + operatorLog);
-
 		 List<Object> list=new ArrayList<Object>();
 		 for(int i=0;i<args.length;i++){
 		 if(args[i] instanceof CommonsMultipartFile){
