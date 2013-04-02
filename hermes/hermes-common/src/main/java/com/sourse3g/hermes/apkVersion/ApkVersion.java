@@ -1,11 +1,15 @@
-package com.source3g.hermes.sync.entity;
+package com.sourse3g.hermes.apkVersion;
 
 import java.util.Date;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.source3g.hermes.entity.AbstractEntity;
+
 @Document
-public class ApkVersion {
+public class ApkVersion extends AbstractEntity  {
+	private static final long serialVersionUID = 2875299185557066342L;
+
 	public ApkVersion(String apkVersion, String url,Date uploadTime) {
 		super();
 		this.apkVersion = apkVersion;
@@ -16,6 +20,11 @@ public class ApkVersion {
 	private String apkVersion;
 	private String url;
 	private Date uploadTime;
+
+	
+	public ApkVersion() {
+		super();
+	}
 
 	public String getApkVersion() {
 		return apkVersion;

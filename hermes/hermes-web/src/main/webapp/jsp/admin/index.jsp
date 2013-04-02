@@ -169,6 +169,7 @@ body {
 									<li><a href="#" id="failedMessageList">失败短信列表</a></li>
 									<!-- <li><a href="javascript:void();" id="operateLog">操作日志</a></li> -->
 									<li><a href="#" id="versionUpdate">版本更新</a></li>
+									<li><a href="#" id="versionList">版本列表</a></li>
 									<li><a href="#" id="logList">日志列表</a></li>
 								</ul>
 							<!-- </div> -->
@@ -289,6 +290,11 @@ body {
 		});
 		$("#versionUpdate").click(function() {
 			loadPage("${pageContext.request.contextPath}/admin/version/toVersion/");
+			return false;
+		});
+		
+		$("#versionList").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/version/versionList/");
 			return false;
 		});
 		/*

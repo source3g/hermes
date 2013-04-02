@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.service.VersionService;
-import com.source3g.hermes.sync.entity.ApkVersion;
+import com.sourse3g.hermes.apkVersion.ApkVersion;
 
 @Controller
 @RequestMapping("/version")
@@ -57,13 +59,13 @@ public class VersionApi {
 
 	@RequestMapping(value = "/upload")
 	@ResponseBody
-	public String upload(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version) throws IOException {
+	public String upload(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version) throws IOException, ParseException {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
 		String suffxPath = dateFormat.format(new Date()) + oldName;
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
-		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date());
+		ApkVersion apkVersion = new ApkVersion(version, suffxPath,new Date());
 		versionService.addVersion(apkVersion);
 		return ReturnConstants.SUCCESS;
 	}
@@ -81,4 +83,10 @@ public class VersionApi {
 	private void processUrl(ApkVersion apkVersion) {
 		apkVersion.setUrl(versionService.getLocalUrl() + apkVersion.getUrl());
 	};
+	
+	@RequestMapping(value = "/versionList")
+	@ResponseBody
+	public List<ApkVersion> versionList() throws IOException {
+		return versionService.versionList();
+	}
 }

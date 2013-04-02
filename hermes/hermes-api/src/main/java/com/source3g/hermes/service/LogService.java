@@ -54,7 +54,6 @@ public class LogService {
 			}else{
 				list.add(args[i]);
 			}
-			
 		}
 		operatorLog.setArgs(list);
 		mongoTemplate.insert(operatorLog);

@@ -3,6 +3,8 @@ package com.source3g.hermes.admin.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -25,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.utils.ConfigParams;
-
+import com.sourse3g.hermes.apkVersion.ApkVersion;
 @Controller
 @RequestMapping("/admin/version")
 @RequiresRoles("admin")
@@ -58,5 +60,13 @@ public class VersionController {
 		}
 		return result;
 	}
-
+	
+	@RequestMapping(value = "versionList", method = RequestMethod.GET)
+	public ModelAndView versionList() {
+		String uri = ConfigParams.getBaseUrl() + "version/versionList";
+		ApkVersion[] versions=restTemplate.getForObject(uri, ApkVersion[].class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("versions", versions);
+		return new ModelAndView("admin/system/versionList",model);
+	}
 }

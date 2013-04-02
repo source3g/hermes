@@ -1,5 +1,7 @@
 package com.source3g.hermes.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -8,7 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.sync.entity.ApkVersion;
+import com.sourse3g.hermes.apkVersion.ApkVersion;
 
 @Service
 public class VersionService {
@@ -42,6 +44,13 @@ public class VersionService {
 
 	public void setLocalUrl(String localUrl) {
 		this.localUrl = localUrl;
+	}
+
+	public List<ApkVersion> versionList() {
+		Query query=new Query();
+		query.with(new Sort(Direction.DESC, "_id"));
+		 List<ApkVersion> list= mongoTemplate.find(query, ApkVersion.class);
+		return list;
 	}
 
 }
