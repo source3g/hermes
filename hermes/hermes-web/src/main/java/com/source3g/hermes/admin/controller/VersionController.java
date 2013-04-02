@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -27,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.utils.ConfigParams;
-import com.sourse3g.hermes.apkVersion.ApkVersion;
+import com.source3g.hermes.utils.Page;
 @Controller
 @RequestMapping("/admin/version")
 @RequiresRoles("admin")
@@ -62,11 +63,14 @@ public class VersionController {
 	}
 	
 	@RequestMapping(value = "versionList", method = RequestMethod.GET)
-	public ModelAndView versionList() {
-		String uri = ConfigParams.getBaseUrl() + "version/versionList";
-		ApkVersion[] versions=restTemplate.getForObject(uri, ApkVersion[].class);
+	public ModelAndView versionList(String pageNo) {
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		String uri = ConfigParams.getBaseUrl() + "version/versionList/?pageNo="+pageNo;
+		Page page=restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("versions", versions);
+		model.put("page", page);
 		return new ModelAndView("admin/system/versionList",model);
 	}
 }

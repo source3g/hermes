@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.apkVersion.ApkVersion;
 
 @Service
@@ -46,11 +47,16 @@ public class VersionService {
 		this.localUrl = localUrl;
 	}
 
-	public List<ApkVersion> versionList() {
+	public Page versionList(int pageNoInt) {
 		Query query=new Query();
 		query.with(new Sort(Direction.DESC, "_id"));
-		 List<ApkVersion> list= mongoTemplate.find(query, ApkVersion.class);
-		return list;
+		Page page=new Page();
+		Long totalCount = mongoTemplate.count(query, ApkVersion.class);
+		page.setTotalRecords(totalCount);
+		page.gotoPage(pageNoInt);
+		 List<ApkVersion> list= mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), ApkVersion.class);
+		 page.setData(list);
+		return page;
 	}
 
 }

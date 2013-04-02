@@ -9,7 +9,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.service.VersionService;
+import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.apkVersion.ApkVersion;
 
 @Controller
@@ -86,7 +86,9 @@ public class VersionApi {
 	
 	@RequestMapping(value = "/versionList")
 	@ResponseBody
-	public List<ApkVersion> versionList() throws IOException {
-		return versionService.versionList();
+	public Page versionList(String pageNo) throws IOException {
+		int pageNoInt=Integer.parseInt(pageNo);
+		//int pageNoInt = Integer.valueOf(pageNo);
+		return versionService.versionList(pageNoInt);
 	}
 }
