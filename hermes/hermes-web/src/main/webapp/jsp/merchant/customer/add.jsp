@@ -144,7 +144,6 @@
 						},
 			 			phone:{
 							required : true,
-			 				rangelength:[11,11],
 							number:true,
 							digits:true ,
 							remote:{
@@ -180,7 +179,6 @@
 						},
 				 		phone:{
 				 			required : "电话号码不能为空",
-				 			rangelength:"输入长度必须为11位的有效数字",
 							number:"请输入合法的数字",
 							digits:"请输入整数",
 							remote:"该电话号码已存在"
