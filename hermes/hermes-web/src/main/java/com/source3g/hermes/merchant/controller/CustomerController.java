@@ -309,7 +309,6 @@ public class CustomerController {
 		}
 		Map<String, Object> model = new HashMap<String, Object>();
 		String uri = ConfigParams.getBaseUrl() + "customer/importLog/items/" + id + "/?pageNo=" + pageNo;
-
 		Page page = restTemplate.getForObject(uri, Page.class);
 		model.put("page", page);
 		model.put("logId", id);

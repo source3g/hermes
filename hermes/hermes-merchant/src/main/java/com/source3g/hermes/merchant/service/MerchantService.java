@@ -263,14 +263,16 @@ public class MerchantService extends BaseService {
 		mongoTemplate.save(merchant);
 	}
 
-	public Merchant updateMerchantResource(String suffix, String prefix, ObjectId merchantId) {
+	public Merchant updateMerchantResource(String messageContent, ObjectId merchantId) {
+		if(messageContent.equals("null")){
+			messageContent="";
+		}
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		MerchantResource merchantResource = merchant.getMerchantResource();
 		if (merchantResource == null) {
 			merchant.setMerchantResource(new MerchantResource());
 		}
-		merchant.getMerchantResource().setPrefix(prefix);
-		merchant.getMerchantResource().setSuffix(suffix);
+		merchant.getMerchantResource().setMessageContent(messageContent);
 		mongoTemplate.save(merchant);
 		return merchant;
 	}
