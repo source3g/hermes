@@ -38,6 +38,7 @@
 				onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/');"
 				class="btn btn-primary" value="返回" />
 		</div>
+		<p style="color:red;">提示:请不要在旺财宝使用高峰期导入大量顾客信息,否则将影响旺财宝的正常使用.<p>
 	</form>
 	<script type="text/javascript">
 		$("#importForm").submit(function() {

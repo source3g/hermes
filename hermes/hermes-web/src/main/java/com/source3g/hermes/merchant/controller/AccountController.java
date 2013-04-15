@@ -199,15 +199,9 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/updateMerchantResource", method = RequestMethod.GET)
-	public ModelAndView updateMerchantResource(String suffix, String prefix) throws Exception {
+	public ModelAndView updateMerchantResource(String messageContent) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant();
-		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/?1=1";
-		if (StringUtils.isNotEmpty(suffix)) {
-			uri += "&suffix=" + suffix;
-		}
-		if (StringUtils.isNotEmpty(prefix)) {
-			uri += "&prefix=" + prefix;
-		}
+		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/?messageContent="+messageContent;
 		Merchant result = restTemplate.getForObject(uri, Merchant.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("Merchant", result);

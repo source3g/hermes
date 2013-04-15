@@ -229,8 +229,8 @@ public class MerchantApi {
 	
 	@RequestMapping(value = "/updateMerchantResource/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Merchant updateMerchantResource(String suffix , String prefix,@PathVariable ObjectId merchantId) {
-		return 	merchantService.updateMerchantResource(suffix,prefix,merchantId);
+	public Merchant updateMerchantResource(String messageContent,@PathVariable ObjectId merchantId) {
+		return 	merchantService.updateMerchantResource(messageContent,merchantId);
 	}
 	
 	@RequestMapping(value = "/merchantResource/{merchantId}", method = RequestMethod.GET)

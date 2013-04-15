@@ -6,25 +6,10 @@ import java.util.List;
 public class MerchantResource implements Serializable {
 
 	private static final long serialVersionUID = 4076472085155596973L;
-	private String prefix;
-	private String suffix;
+	private String messageContent;
 	private List<String> list;
 
-	public String getPrefix() {
-		return prefix;
-	}
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-	public String getSuffix() {
-		return suffix;
-	}
-
-	public void setSuffix(String suffix) {
-		this.suffix = suffix;
-	}
 
 	public List<String> getList() {
 		return list;
@@ -32,6 +17,14 @@ public class MerchantResource implements Serializable {
 
 	public void setList(List<String> list) {
 		this.list = list;
+	}
+
+	public String getMessageContent() {
+		return messageContent;
+	}
+
+	public void setMessageContent(String messageContent) {
+		this.messageContent = messageContent;
 	}
 
 }

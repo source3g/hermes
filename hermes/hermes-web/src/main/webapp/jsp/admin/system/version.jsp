@@ -63,10 +63,11 @@
 					percent.html(percentVal);
 				},
 				complete : function(xhr) {
-					alert(xhr.responseText);
 					if ("\"success\"" == xhr.responseText) {
+						alert("上传成功");
 						percent.html("上传成功");
 					} else {
+						alert("上传失败");
 						percent.html("上传失败");
 					}
 				}
