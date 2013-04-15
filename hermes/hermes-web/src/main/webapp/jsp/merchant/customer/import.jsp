@@ -21,7 +21,6 @@
 
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/swfupload/swfupload.js"></script>
-
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/swfupload/handlers.js"></script>
 
@@ -74,7 +73,6 @@
 			swfu.startUpload();
 		}
 	</script>
-
 	<script type="text/javascript">
 		$("#importForm").submit(function() {
 			$("#loader").css("display", "");

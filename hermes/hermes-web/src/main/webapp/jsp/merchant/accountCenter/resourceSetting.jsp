@@ -9,25 +9,30 @@
 <title>资源设置</title>
 </head>
 <body>
-	<h3>资源操作</h3>
-
+	<h3>操作说明</h3>
+	<p>1.{}里填写的内容表示旺财宝电话在编辑短信时所被替换的内容.<br>2.{时间}和{资源}分别表示旺财宝编辑短信时需要选择的时间和资源.<br>3.{}里所填写的内容可以在编辑短信内容里任意变更位置.</p>
+	<h4>例1</h4>
+	<p>资源操作填写的内容：您于{时间}预定了{资源}房间.</p>
+	<p>实际发送效果：尊敬的xxx先生:您于2012-04-12预定了101房间.</p>
+	<h4>例2</h4>
+	<p>资源操作填写的内容：{时间}您在XXX酒楼预定了{资源}包间</p>
+	<p>实际发送效果：尊敬的xxx先生:2013-04-12您在XXX酒店预定了101包间.</p>
+	<br>
+	
 	<form id="addMerchantResourceForm1" class="form-inline">
-		<label class="control-label" for="prefix">前缀：</label> <input
-			type="text" class="input-xlarge" placeholder="请输入短信前缀..." id="prefix"
-			name="prefix" value="${merchant.merchantResource.prefix }"> <label class="control-label" for="suffix">后缀：</label>
-		<input type="text" class="input-xlarge" placeholder="请输入短信后缀..."
-			id="suffix" name="suffix" value="${merchant.merchantResource.suffix }">
+		<h3>编辑短信内容</h3>
+		 <textarea rows="8" class="span6"  id="messageContent" name="messageContent" ></textarea><br>
 		<input type="submit" class="btn btn-primary"  value="保存">
 	</form>
-
+	
+	<h3>资源操作</h3>
 	<form id="addMerchantResourceForm">
-		<label class="control-label" for="name">资源名称：</label> <input
+		<label class="control-label" for="name">资源名称：</label> <input 
 			type="text" class="input-xlarge" placeholder="请输入资源名称..." id="name"
 			name="name"> <span class="help-inline"><font
 			color="red">*</font></span> <input type="submit" id="addMerchantResource"
 			data-loading-text="增加中..." class="btn btn-primary" value="增加">
 	</form>
-
 	<h3>资源列表</h3>
 
 	<table class="table table-bordered" id="resourceTab">
@@ -51,10 +56,8 @@
 		  			var str="<tr><td>"+data.list[i]+"</td><td><input type='button' value='删除' class='btn btn-danger' onclick=\"deletemerchantResource('"+data.list[i]+"')\"></td></tr>";
 		  			$("#resourceTab").append(str);
 		 		} 
-		  		var prefix=data.prefix;
-		  		var suffix=data.suffix;
-		  		$("#prefix").attr("value",prefix);
-		  		$("#suffix").attr("value",suffix);
+		  		var messageContent=data.messageContent;
+		  		$("#messageContent").attr("value",messageContent);
 			}  
  		 	
  			$('#addMerchantResourceForm').validate({

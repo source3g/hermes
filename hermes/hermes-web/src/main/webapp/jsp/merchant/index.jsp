@@ -36,7 +36,7 @@ body {
 						class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="#" onclick="loadPage('${pageContext.request.contextPath}/merchant/account/toPasswordChange/');">修改密码</a></li>
+						<li><a href="#" id="changePwd">修改密码</a></li><%-- onclick="loadPage('${pageContext.request.contextPath}/merchant/account/toPasswordChange/');" --%>
 						<li class="divider"></li>
 						<li><a href="${pageContext.request.contextPath}/logout/">退出</a></li>
 					</ul>
@@ -267,6 +267,10 @@ body {
 			return false;
 		});
 		$("#passwordChange").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
+			return false;
+		});
+		$("#changePwd").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
 			return false;
 		});
