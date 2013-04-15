@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
@@ -22,7 +21,7 @@ public class OperatorLog extends AbstractEntity {
 		this.methodName = methodName;
 		if (args != null && args.length > 0) {
 			for (int i = 0; i < args.length; i++) {
-				if (args[i] != null && args[i] instanceof CommonsMultipartFile) {
+				if (args[i] != null && args[i] instanceof Object) {
 					args[i] = args[i].toString();
 				}
 			}

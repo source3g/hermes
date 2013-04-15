@@ -12,19 +12,26 @@ import com.source3g.hermes.entity.AbstractEntity;
 public class TaskPackage extends AbstractEntity {
 	private static final long serialVersionUID = 3751253185117836302L;
 	private long taskId;
-	@JsonIgnore
+
 	private Date createTime;
+	/*
+	 * @JsonIgnore private ObjectId cursor;
+	 */
+
 	private String remoteUrl;
+
 	private String md5;
 	@JsonIgnore
 	private ObjectId merchantId;
 	@JsonIgnore
 	private String type;
 
+	@JsonIgnore
 	public Date getCreateTime() {
 		return createTime;
 	}
 
+	@JsonIgnore
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
@@ -68,4 +75,5 @@ public class TaskPackage extends AbstractEntity {
 	public void setRemoteUrl(String remoteUrl) {
 		this.remoteUrl = remoteUrl;
 	}
+
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
@@ -19,12 +20,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.customer.CustomerRemindDto;
+import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
 import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.LoginUtils;
+import com.sourse3g.hermes.branch.Saler;
 
 @Controller
 @RequestMapping(value = "merchant/account")
@@ -214,4 +217,25 @@ public class AccountController {
 		return new ModelAndView("/merchant/accountCenter/resourceSetting/", model);
 	}
 
+	@RequestMapping(value = "/info")
+	public ModelAndView info() throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("merchant", merchant);
+		String ids = "";
+		for (ObjectId id : merchant.getDeviceIds()) {
+			ids += id;
+			ids += ",";
+		}
+		ids = ids.substring(0, ids.length() - 1);
+		String uri = ConfigParams.getBaseUrl() + "/device/" + ids + "/";
+		Device[] devices = restTemplate.getForObject(uri, Device[].class);
+		model.put("devices", devices);
+		if (merchant.getSalerId() != null) {
+			String url = ConfigParams.getBaseUrl() + "branchAndSalers/findSalerById/" + merchant.getSalerId();
+			Saler saler = restTemplate.getForObject(url, Saler.class);
+			model.put("saler", saler);
+		}
+		return new ModelAndView("/merchant/accountCenter/info", model);
+	}
 }

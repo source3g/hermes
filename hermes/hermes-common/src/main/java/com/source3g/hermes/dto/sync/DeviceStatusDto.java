@@ -6,6 +6,7 @@ public class DeviceStatusDto {
 
 	private Long lastTaskId;
 	private Date lastUpdateTime;
+	private Date lastAskTime;
 	private Long requestTaskId;
 	private String sn;
 	/**
@@ -62,6 +63,14 @@ public class DeviceStatusDto {
 
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
+	}
+
+	public Date getLastAskTime() {
+		return lastAskTime;
+	}
+
+	public void setLastAskTime(Date lastAskTime) {
+		this.lastAskTime = lastAskTime;
 	}
 
 }

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import com.source3g.hermes.constants.TaskConstants;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.Customer;
+import com.source3g.hermes.entity.customer.PackageLock;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.sync.DeviceStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;
@@ -78,6 +79,7 @@ public class TaskService extends CommonBaseService {
 			deviceStatus.setId(ObjectId.get());
 			deviceStatus.setDeviceSn(sn);
 		}
+		deviceStatus.setLastAskTime(new Date());
 		if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
 			taskPackage = findAllPackage(merchant.getId(), deviceStatus.getLastTaskId());
 			// 拿着了就变为增量，没拿着接着下次再拿初始化包
@@ -91,10 +93,10 @@ public class TaskService extends CommonBaseService {
 		}
 		if (taskPackage != null) {
 			deviceStatus.setRequestTaskId(taskPackage.getTaskId());
-			mongoTemplate.save(deviceStatus);
 			handleTaskUrl(taskPackage);
 			result.add(taskPackage);
 		}
+		mongoTemplate.save(deviceStatus);
 		return result;
 	}
 
@@ -274,6 +276,14 @@ public class TaskService extends CommonBaseService {
 
 	public void packageAll(ObjectId merchantId) throws IOException {
 		Date createTime = new Date(); // 先记本次
+		PackageLock packageLock = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), PackageLock.class);
+		while (packageLock != null && packageLock.getLocking()) {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
+			packageLock = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId)), PackageLock.class);
+		}
 		List<Customer> addOrUpdateList = findAddOrUpdateList(merchantId);
 		List<Customer> deleteList = findDeleteList(merchantId);
 		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -29,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
@@ -37,6 +39,7 @@ import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
+import com.source3g.hermes.entity.customer.PackageLock;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
@@ -47,6 +50,12 @@ import com.source3g.hermes.utils.Page;
 public class CustomerImportService extends BaseService {
 
 	private static Logger logger = LoggerFactory.getLogger(CustomerImportService.class);
+
+	@PostConstruct
+	public void initMethod() {
+		logger.debug("初始化锁");
+		mongoTemplate.updateMulti(new Query(), new Update().set("locking", Boolean.FALSE), PackageLock.class);
+	}
 
 	public void updateStatus(CustomerImportLog customerImportLog, ImportStatus status) {
 		customerImportLog.setStatus(status.toString());
@@ -88,49 +97,55 @@ public class CustomerImportService extends BaseService {
 		List<Customer> customerList = new ArrayList<Customer>();
 		logger.error("开始导入");
 		List<CustomerImportItem> failedImortItems = new ArrayList<CustomerImportItem>();
-		for (CustomerImportItem customerImportItem : itemsNoRepeat) {
-			try {
-				checkItem(customerImportItem);
-				Customer customer = new Customer();
-				customer.setAddress(customerImportItem.getAddress());
-				customer.setBirthday(customerImportItem.getBirthday());
-				ObjectId customerGroupId = findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName());
-				if (customerGroupId == null) {
-					throw new Exception("顾客组不存在");
+		// 加锁
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), new Update().set("locking", Boolean.TRUE), PackageLock.class);
+		try {
+			for (CustomerImportItem customerImportItem : itemsNoRepeat) {
+				try {
+					checkItem(customerImportItem);
+					Customer customer = new Customer();
+					customer.setAddress(customerImportItem.getAddress());
+					customer.setBirthday(customerImportItem.getBirthday());
+					ObjectId customerGroupId = findCustomerGroupIdByName(customerGroups, customerImportItem.getCustomerGroupName());
+					if (customerGroupId == null) {
+						throw new Exception("顾客组不存在");
+					}
+					customer.setCustomerGroup(new CustomerGroup(customerGroupId));
+					customer.setEmail(customerImportItem.getEmail());
+					customer.setMerchantId(customerImportItem.getMerchantId());
+					customer.setName(customerImportItem.getName());
+					customer.setNote(customerImportItem.getNote());
+					customer.setPhone(customerImportItem.getPhone());
+					customer.setQq(customerImportItem.getQq());
+					customer.setSex(customerImportItem.getSex());
+					customer.setOperateTime(new Date());
+					if (phoneMap.get(customer.getPhone()) != null) {
+						customer.setId(phoneMap.get(customer.getPhone()).getId());
+						mongoTemplate.save(customer);
+					} else {
+						customerList.add(customer);
+					}
+				} catch (Exception e) {
+					customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
+					customerImportItem.setFailedReason(e.getMessage());
+					customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
+					failedImortItems.add(customerImportItem);
+					// mongoTemplate.insert(customerImportItem);
+					// mongoTemplate.updateFirst(new
+					// Query(Criteria.where("_id").is(customerImportItem.getId())),
+					// new Update().set("importStatus",
+					// ImportStatus.导入失败.toString()).set("failedReason",
+					// e.getMessage()), CustomerImportItem.class);//
+					// (customerImportItem);
 				}
-				customer.setCustomerGroup(new CustomerGroup(customerGroupId));
-				customer.setEmail(customerImportItem.getEmail());
-				customer.setMerchantId(customerImportItem.getMerchantId());
-				customer.setName(customerImportItem.getName());
-				customer.setNote(customerImportItem.getNote());
-				customer.setPhone(customerImportItem.getPhone());
-				customer.setQq(customerImportItem.getQq());
-				customer.setSex(customerImportItem.getSex());
-				customer.setOperateTime(new Date());
-				if (phoneMap.get(customer.getPhone()) != null) {
-					customer.setId(phoneMap.get(customer.getPhone()).getId());
-					mongoTemplate.save(customer);
-				} else {
-					customerList.add(customer);
-				}
-			} catch (Exception e) {
-				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
-				customerImportItem.setFailedReason(e.getMessage());
-				customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
-				failedImortItems.add(customerImportItem);
-				// mongoTemplate.insert(customerImportItem);
-				// mongoTemplate.updateFirst(new
-				// Query(Criteria.where("_id").is(customerImportItem.getId())),
-				// new Update().set("importStatus",
-				// ImportStatus.导入失败.toString()).set("failedReason",
-				// e.getMessage()), CustomerImportItem.class);//
-				// (customerImportItem);
-			} finally {
-
 			}
+			mongoTemplate.insertAll(customerList);
+			mongoTemplate.insertAll(failedImortItems);
+		} catch (Exception e) {
+
+		} finally {
+			mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), new Update().set("locking", Boolean.FALSE), PackageLock.class);
 		}
-		mongoTemplate.insertAll(customerList);
-		mongoTemplate.insertAll(failedImortItems);
 		logger.error("导入完成 ");
 		customerImportLog.setStatus(ImportStatus.导入完成.toString());
 		mongoTemplate.save(customerImportLog);

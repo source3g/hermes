@@ -248,21 +248,21 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
-	public ModelAndView importCustomer(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
+	public ModelAndView importCustomer(@RequestParam("Filedata") MultipartFile Filedata, HttpServletRequest req) {
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
 		Map<String, Object> map = new HashMap<String, Object>();
-		if (file.getSize() > 1024 * 1024 * 10L) {
+		if (Filedata.getSize() > 1024 * 1024 * 10L) {
 			map.put("result", "上传文件最大10M，请分开多个文件上传");
 			return new ModelAndView("/merchant/customer/uploadResult", map);
 		}
 		try {
 			Merchant merchant = LoginUtils.getLoginMerchant(req);
 			String uri = ConfigParams.getBaseUrl() + "customer/import/" + merchant.getId() + "/";
-			FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
+			FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
 			Resource resource = new FileSystemResource(fileToCopy);
 			MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 			formData.add("file", resource);
-			formData.add("oldName", new String(file.getOriginalFilename()));// 可能要修改下边的header.getBytes("iso-8859-1")
+			formData.add("oldName", new String(Filedata.getOriginalFilename()));// 可能要修改下边的header.getBytes("iso-8859-1")
 			HttpHeaders requestHeaders = new HttpHeaders();
 			requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 			requestHeaders.set("charset", "UTF-8");

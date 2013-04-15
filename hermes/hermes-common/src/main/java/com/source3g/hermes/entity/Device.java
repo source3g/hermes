@@ -15,6 +15,8 @@ public class Device extends AbstractEntity {
 	private String sn;
 	@DBRef
 	private Sim sim;
+	
+	private String apkVersion;
 
 	private GpsPoint gpsPoint;
 
@@ -40,6 +42,14 @@ public class Device extends AbstractEntity {
 
 	public void setSim(Sim sim) {
 		this.sim = sim;
+	}
+
+	public String getApkVersion() {
+		return apkVersion;
+	}
+
+	public void setApkVersion(String apkVersion) {
+		this.apkVersion = apkVersion;
 	}
 
 

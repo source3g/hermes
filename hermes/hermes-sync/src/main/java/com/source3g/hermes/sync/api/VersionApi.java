@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.service.VersionService;
+import com.source3g.hermes.utils.MD5;
 import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.apkVersion.ApkVersion;
 
@@ -66,14 +68,22 @@ public class VersionApi {
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
 		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date());
+		apkVersion.setMd5(MD5.md5sum(fileToCopy.getAbsolutePath()));
 		versionService.addVersion(apkVersion);
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/last")
+	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
+	@ResponseBody
+	public String changeVersion(@RequestBody String version) {
+		versionService.changeVersion(version);
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/online", method = RequestMethod.GET)
 	@ResponseBody
 	public ApkVersion getLastVersion() {
-		ApkVersion apkVersion = versionService.getLastVersion();
+		ApkVersion apkVersion = versionService.getOnlineVersion();
 		if (apkVersion != null) {
 			processUrl(apkVersion);
 			return apkVersion;
@@ -81,15 +91,21 @@ public class VersionApi {
 		return null;
 	}
 
+	@RequestMapping(value = "/online/sn/{sn}", method = RequestMethod.POST)
+	@ResponseBody
+	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody String version) {
+		versionService.updateDeviceVersion(sn, version);
+		return getLastVersion();
+	}
+
 	private void processUrl(ApkVersion apkVersion) {
-		apkVersion.setUrl(versionService.getLocalUrl() + apkVersion.getUrl());
+		apkVersion.setUrl(versionService.getLocalUrl() + "version/download/" + apkVersion.getUrl() + "/");
 	};
 
 	@RequestMapping(value = "/versionList")
 	@ResponseBody
 	public Page versionList(String pageNo) throws IOException {
 		int pageNoInt = Integer.parseInt(pageNo);
-		// int pageNoInt = Integer.valueOf(pageNo);
 		return versionService.versionList(pageNoInt);
 	}
 }

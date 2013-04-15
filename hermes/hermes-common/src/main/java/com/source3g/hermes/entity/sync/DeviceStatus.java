@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
 
-
 /**
  * 设备同步状态
  * 
@@ -23,7 +22,10 @@ public class DeviceStatus extends AbstractEntity {
 	private Long lastTaskId;// 上次请求的taskId
 	private Long requestTaskId;// 本次请求的taskId
 
-	private Date lastUpdateTime;// 上次更新时间 //并没有起作用
+	private Date lastAskTime;// 上次心跳时间
+
+	private Date lastUpdateTime;// 上次更新时间 显示上次成功拿走任务的时间
+
 	private Date requestTime;// 本次请求时间 //并没有起作用
 
 	private int failedCount; // 当前请求的taskId失败次数
@@ -89,5 +91,12 @@ public class DeviceStatus extends AbstractEntity {
 		this.status = status;
 	}
 
-}
+	public Date getLastAskTime() {
+		return lastAskTime;
+	}
 
+	public void setLastAskTime(Date lastAskTime) {
+		this.lastAskTime = lastAskTime;
+	}
+
+}

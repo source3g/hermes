@@ -1,5 +1,7 @@
 package com.source3g.hermes.sync.api;
 
+import java.util.Date;
+
 import javax.jms.Destination;
 
 import org.bson.types.ObjectId;
@@ -49,7 +51,7 @@ public class TaskApi {
 			deviceStatus.setDeviceSn(sn);
 		}
 		deviceStatus.setStatus(TaskConstants.INIT);
-//		deviceStatus.setLastTaskId(null);
+		deviceStatus.setLastTaskId(new Date().getTime());
 		taskService.saveDeviceStatus(deviceStatus);
 		jmsService.sendString(syncDestination, sn, JmsConstants.TYPE, JmsConstants.PACKAGE_ALL);
 		return ReturnConstants.SUCCESS;

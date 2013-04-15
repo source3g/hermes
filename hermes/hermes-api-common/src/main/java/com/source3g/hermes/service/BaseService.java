@@ -148,17 +148,19 @@ public abstract class BaseService {
 		mongoTemplate.save(entityInDb);
 	}
 
-//	public <T extends AbstractEntity> List<T> findByBasicDBObject(Class<T> c, BasicDBObject params, ObjectMapper<T> mapper) {
-//		List<T> list = new ArrayList<T>();
-//		DBCollection collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(c));
-//		DBCursor item = collection.find(params);
-//		while (item.hasNext()) {
-//			DBObject obj = item.next();
-//			list.add(mapper.mapping(obj));
-//		}
-//		item.close();
-//		return list;
-//	}
+	// public <T extends AbstractEntity> List<T> findByBasicDBObject(Class<T> c,
+	// BasicDBObject params, ObjectMapper<T> mapper) {
+	// List<T> list = new ArrayList<T>();
+	// DBCollection collection =
+	// mongoTemplate.getCollection(mongoTemplate.getCollectionName(c));
+	// DBCursor item = collection.find(params);
+	// while (item.hasNext()) {
+	// DBObject obj = item.next();
+	// list.add(mapper.mapping(obj));
+	// }
+	// item.close();
+	// return list;
+	// }
 
 	public <T extends AbstractEntity> long findCountByBasicDBObject(Class<T> c, BasicDBObject params) {
 		DBCollection collection = mongoTemplate.getCollection(mongoTemplate.getCollectionName(c));
@@ -194,4 +196,13 @@ public abstract class BaseService {
 		public T mapping(DBObject obj);
 	}
 
+	public <T extends AbstractEntity> T findOne(Query query, Class<T> entityClass) {
+		T result = null;
+		try {
+			result = mongoTemplate.findOne(query, entityClass);
+		} catch (Exception e) {
+
+		}
+		return result;
+	}
 }

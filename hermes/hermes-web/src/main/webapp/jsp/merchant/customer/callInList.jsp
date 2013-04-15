@@ -42,7 +42,9 @@
 				<td width="20%">${fn:length(customer.callRecords) }</td>
 				<td width="20%"><a class="btn btn-success"
 					href="javascript:void();"
-					onclick="showCallRecords('${customer.id}');">详情</a></td>
+					onclick="showCallRecords('${customer.id}');">详情</a> <a
+					class="btn btn-success" href="#"
+					onclick="return editCustomer('${customer.id}');">编辑</a></td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -96,6 +98,10 @@
 			initPage(${page.currentPage},${page.totalPageCount});
 		});
 		
+		function editCustomer(id){
+			loadPage("${pageContext.request.contextPath}/merchant/customer/toUpdate/"+id+"/");
+			return false;
+		}
 		function showCallRecords(id){
 			$.get("${pageContext.request.contextPath}/merchant/customer/get/"+id+"/",function callback(data){
 				$("#callInTb").html("");

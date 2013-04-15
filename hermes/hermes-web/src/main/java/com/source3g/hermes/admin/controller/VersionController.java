@@ -29,6 +29,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
+import com.sourse3g.hermes.apkVersion.ApkVersion;
+
 @Controller
 @RequestMapping("/admin/version")
 @RequiresRoles("admin")
@@ -61,16 +63,32 @@ public class VersionController {
 		}
 		return result;
 	}
-	
+
+	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
+	@ResponseBody
+	public String changeOnline(String version) {
+		String uri = ConfigParams.getBaseUrl() + "version/changeOnline";
+		HttpEntity<String> entity = new HttpEntity<String>(version);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return ReturnConstants.SUCCESS;
+		} else {
+			return result;
+		}
+	}
+
 	@RequestMapping(value = "versionList", method = RequestMethod.GET)
 	public ModelAndView versionList(String pageNo) {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		String uri = ConfigParams.getBaseUrl() + "version/versionList/?pageNo="+pageNo;
-		Page page=restTemplate.getForObject(uri, Page.class);
+		String uri = ConfigParams.getBaseUrl() + "version/versionList/?pageNo=" + pageNo;
+		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/online";
+		Page page = restTemplate.getForObject(uri, Page.class);
+		ApkVersion apkVersion = restTemplate.getForObject(onlineVersionUri, ApkVersion.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
-		return new ModelAndView("admin/system/versionList",model);
+		model.put("onlineVersion", apkVersion);
+		return new ModelAndView("admin/system/versionList", model);
 	}
 }

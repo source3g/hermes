@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.source3g.hermes.constants.TaskConstants;
 import com.source3g.hermes.dto.sync.DeviceStatusDto;
 import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
@@ -131,7 +132,18 @@ public class DeviceService extends BaseService {
 				deviceStatusDto.setLastTaskId(deviceStatus.getLastTaskId());
 				deviceStatusDto.setLastUpdateTime(deviceStatus.getLastUpdateTime());
 				deviceStatusDto.setRequestTaskId(deviceStatus.getRequestTaskId());
-				Long restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(new ObjectId(merchantId))), TaskPackage.class);
+				deviceStatusDto.setLastAskTime(deviceStatus.getLastAskTime());
+				Long restTaskCount = 0L;
+				if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
+					TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(new ObjectId(merchantId)).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
+					if (lastAllPackage != null) {
+						restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(new ObjectId(merchantId))), TaskPackage.class);
+					} else {
+						restTaskCount = 0L;
+					}
+				} else {
+					restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(new ObjectId(merchantId)).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
+				}
 				deviceStatusDto.setRestTaskCount(restTaskCount);
 			}
 			result.add(deviceStatusDto);

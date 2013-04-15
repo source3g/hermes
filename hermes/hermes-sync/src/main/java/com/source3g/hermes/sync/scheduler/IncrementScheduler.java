@@ -7,8 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import com.source3g.hermes.entity.customer.PackageLock;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.service.TaskService;
 
@@ -24,6 +27,10 @@ public class IncrementScheduler {
 		logger.debug("开始增量任务Log");
 		List<Merchant> merchantList = mongoTemplate.findAll(Merchant.class);
 		for (Merchant merchant : merchantList) {
+			PackageLock packageLock = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())), PackageLock.class);
+			if (packageLock!=null&&packageLock.getLocking()) {
+				continue;
+			}
 			packageIncrement(merchant);
 		}
 		logger.debug("增量任务完成");

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -14,8 +14,7 @@
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
 				<input type="text" readonly="readonly" class="input-xlarge"
-					placeholder="请输入商户名称..." id="name" name="name"
-					value="${merchant.name}">
+					id="name" name="name" value="${merchant.name}">
 			</div>
 		</div>
 
@@ -23,8 +22,8 @@
 			<label class="control-label" for="addr">地址：</label>
 			<div class="controls">
 				<input type="text" readonly="readonly" class="input-xlarge"
-					placeholder="请输入商户地址..." id="addr" name="addr"
-					value="${merchant.addr}"> <span class="help-inline"></span>
+					id="addr" name="addr" value="${merchant.addr}"> <span
+					class="help-inline"></span>
 			</div>
 		</div>
 
@@ -48,7 +47,7 @@
 				<span id="salerName">${saler.name}</span>
 			</div>
 		</div>
-		
+
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
 			<div class="controls">
@@ -80,10 +79,11 @@
 			id="deviceTable">
 			<thead>
 				<tr>
-					<th width="25%">盒子SN编码</th>
-					<th width="25%">上次成功获取任务时间</th>
-					<th width="25%">上次成功获取的任务ID</th>
-					<th width="25%">任务堆积数量</th>
+					<th width="20%">盒子SN编码</th>
+					<th width="20%">上次取任务时间</th>
+					<th width="20%">上次成功获取任务时间</th>
+					<th width="20%">上次成功获取的任务ID</th>
+					<th width="20%">任务堆积数量</th>
 				</tr>
 
 			</thead>
@@ -91,8 +91,18 @@
 				<tr>
 					<td class='deviceSnTd'>${deviceStatusDto.sn}</td>
 					<c:choose>
+						<c:when test="${not empty deviceStatusDto.lastAskTime}">
+							<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
+									value="${deviceStatusDto.lastAskTime}" /></td>
+						</c:when>
+						<c:otherwise>
+							<td>无</td>
+						</c:otherwise>
+					</c:choose>
+					<c:choose>
 						<c:when test="${not empty deviceStatusDto.lastUpdateTime}">
-							<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${deviceStatusDto.lastUpdateTime}"/></td>
+							<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
+									value="${deviceStatusDto.lastUpdateTime}" /></td>
 						</c:when>
 						<c:otherwise>
 							<td>无</td>

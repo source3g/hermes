@@ -146,6 +146,7 @@ body {
 								<li><a href="#" id="merchantRemind">提醒</a></li>
 								<li><a href="#" id="merchantRemindSetting">提醒设置</a></li>
 								<li><a href="#" id="merchantResourceSetting">资源设置</a></li>
+								<li><a href="#" id="info">商户信息</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -273,8 +274,9 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 			return false;
 		});
-		$("#aa").click(function() {
-			loadPage("${pageContext.request.contextPath}/jsp/merchant/accountCenter/a.jsp");
+		$("#info").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/account/info/");
+			return false;
 		});
 	});
 
