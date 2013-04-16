@@ -57,15 +57,13 @@ public class MerchantApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
-	
+
 	@RequestMapping(value = "/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
 	public Merchant getBySn(@PathVariable String sn) throws Exception {
 		return commonBaseService.findMerchantByDeviceSn(sn);
 	}
-	
-	
+
 	@RequestMapping(value = "/accountValidate/{account}", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean accountValidate(@PathVariable String account) {
@@ -95,7 +93,7 @@ public class MerchantApi {
 		merchantService.cancel(new ObjectId(id));
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/recover/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public String recover(@PathVariable String id) {
@@ -139,7 +137,7 @@ public class MerchantApi {
 	@ResponseBody
 	public Page msgLogList(String pageNo, String merchantId) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return merchantService.msgLogList(new ObjectId(merchantId),pageNoInt);
+		return merchantService.msgLogList(new ObjectId(merchantId), pageNoInt);
 	}
 
 	@RequestMapping(value = "/UpdateQuota/{id}", method = RequestMethod.POST)
@@ -155,12 +153,10 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/switch/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String saveSwitch(@PathVariable String  merchantId, @RequestBody Setting setting) {
-		merchantService.saveSwitch(new ObjectId(merchantId),setting);
+	public String saveSwitch(@PathVariable String merchantId, @RequestBody Setting setting) {
+		merchantService.saveSwitch(new ObjectId(merchantId), setting);
 		return ReturnConstants.SUCCESS;
 	}
-	
-	
 
 	@RequestMapping(value = "/remindAdd/{merchantId}/{templateId}", method = RequestMethod.GET)
 	@ResponseBody
@@ -174,11 +170,11 @@ public class MerchantApi {
 	public List<MerchantRemindTemplate> merchantRemindList(@PathVariable String merchantId) {
 		return merchantService.merchantRemindList(new ObjectId(merchantId));
 	}
-	
+
 	@RequestMapping(value = "/merchantRemindTemplateList/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<MerchantRemindTemplate> merchantRemindTemplateListBySn(@PathVariable String sn) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		return merchantService.merchantRemindList(merchant.getId());
 	}
 
@@ -201,71 +197,69 @@ public class MerchantApi {
 		merchantService.remindDelete(new ObjectId(merchantId), new ObjectId(templateId));
 		return merchantService.merchantRemindList(new ObjectId(merchantId));
 	}
-	
+
 	@RequestMapping(value = "/passwordChange/{password}/{newPassword}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String passwordChange(@PathVariable String password, @PathVariable String newPassword,@PathVariable String merchantId) {
+	public String passwordChange(@PathVariable String password, @PathVariable String newPassword, @PathVariable String merchantId) {
 		try {
-			merchantService.passwordChange(password, newPassword,new ObjectId(merchantId));
+			merchantService.passwordChange(password, newPassword, new ObjectId(merchantId));
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/addMerchantResource/{merchantId}/{name}", method = RequestMethod.GET)
 	@ResponseBody
-	public String addMerchantResource(@PathVariable ObjectId merchantId,@PathVariable String name) throws Exception {
-		merchantService.addMerchantResource(merchantId,name);
+	public String addMerchantResource(@PathVariable ObjectId merchantId, @PathVariable String name) throws Exception {
+		merchantService.addMerchantResource(merchantId, name);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/deletemerchantResource/{merchantId}/{name}", method = RequestMethod.GET)
 	@ResponseBody
-	public String deletemerchantResource(@PathVariable ObjectId merchantId,@PathVariable String name) {
-		merchantService.deletemerchantResource(merchantId,name);
+	public String deletemerchantResource(@PathVariable ObjectId merchantId, @PathVariable String name) {
+		merchantService.deletemerchantResource(merchantId, name);
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/updateMerchantResource/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Merchant updateMerchantResource(String messageContent,@PathVariable ObjectId merchantId) {
-		return 	merchantService.updateMerchantResource(messageContent,merchantId);
+	public Merchant updateMerchantResource(String messageContent, @PathVariable ObjectId merchantId) {
+		return merchantService.updateMerchantResource(messageContent, merchantId);
 	}
-	
+
 	@RequestMapping(value = "/merchantResource/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public MerchantResource getMerchantResource(@PathVariable ObjectId merchantId) {
-		return 	merchantService.getMerchantResource(merchantId);
+		return merchantService.getMerchantResource(merchantId);
 	}
-	
+
 	@RequestMapping(value = "/merchantResource/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
 	public MerchantResource getMerchantResource(@PathVariable String sn) throws Exception {
-		Merchant merchant=commonBaseService.findMerchantByDeviceSn(sn);
-		MerchantResource merchantResource=merchantService.getMerchantResource(merchant.getId());
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
+		MerchantResource merchantResource = merchantService.getMerchantResource(merchant.getId());
 		Collections.sort(merchantResource.getList());
-		return 	merchantResource;
+		return merchantResource;
 	}
-	
-	
-	private void handleMerchantTags(Merchant merchant){
-		if(merchant==null||merchant.getMerchantTagNodes()==null){
+
+	private void handleMerchantTags(Merchant merchant) {
+		if (merchant == null || merchant.getMerchantTagNodes() == null) {
 			return;
 		}
-		List<MerchantTagNode> merchantTagNodes=merchant.getMerchantTagNodes();
-		//去掉空的id
-		for (int i=merchantTagNodes.size()-1;i>=0;i--){
-			if(merchantTagNodes.get(i).getId()==null){
+		List<MerchantTagNode> merchantTagNodes = merchant.getMerchantTagNodes();
+		// 去掉空的id
+		for (int i = merchantTagNodes.size() - 1; i >= 0; i--) {
+			if (merchantTagNodes.get(i).getId() == null) {
 				merchantTagNodes.remove(i);
 			}
 		}
-		//取重复
-		Set<MerchantTagNode> set=new HashSet<MerchantTagNode>(merchantTagNodes);
-		merchantTagNodes=new ArrayList<MerchantTagNode>();
+		// 取重复
+		Set<MerchantTagNode> set = new HashSet<MerchantTagNode>(merchantTagNodes);
+		merchantTagNodes = new ArrayList<MerchantTagNode>();
 		merchantTagNodes.addAll(set);
 		merchant.setMerchantTagNodes(merchantTagNodes);
 	}
-	
-	
+
 }
