@@ -18,7 +18,9 @@
 			style="border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-top: 8px;">
 		</table>
 	</div>
-
+	<br>
+	<br>
+<p style="color:red">提示:请不要在旺财宝使用高峰期导入大量顾客信息,这样会影响旺财宝的正常使用</p>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/swfupload/swfupload.js"></script>
 	<script type="text/javascript"

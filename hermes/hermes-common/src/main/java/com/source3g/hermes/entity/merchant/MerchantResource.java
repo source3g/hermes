@@ -7,16 +7,16 @@ public class MerchantResource implements Serializable {
 
 	private static final long serialVersionUID = 4076472085155596973L;
 	private String messageContent;
-	private List<String> list;
+	private List<String> resourceList;
 
 
 
-	public List<String> getList() {
-		return list;
+	public List<String> getResourceList() {
+		return resourceList;
 	}
 
-	public void setList(List<String> list) {
-		this.list = list;
+	public void setResourceList(List<String> resourceList) {
+		this.resourceList = resourceList;
 	}
 
 	public String getMessageContent() {

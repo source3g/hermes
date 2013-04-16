@@ -245,20 +245,20 @@ public class MerchantService extends BaseService {
 		if (merchantResource == null) {
 			merchant.setMerchantResource(new MerchantResource());
 		}
-		List<String> list = merchant.getMerchantResource().getList();
+		List<String> list = merchant.getMerchantResource().getResourceList();
 		if (list == null) {
-			merchant.getMerchantResource().setList(new ArrayList<String>());
+			merchant.getMerchantResource().setResourceList(new ArrayList<String>());
 		}
-		if (merchant.getMerchantResource().getList().contains(name)) {
+		if (merchant.getMerchantResource().getResourceList().contains(name)) {
 			throw new Exception("资源名称重复 ");
 		}
-		merchant.getMerchantResource().getList().add(name);
+		merchant.getMerchantResource().getResourceList().add(name);
 		mongoTemplate.save(merchant);
 	}
 
 	public void deletemerchantResource(ObjectId merchantId, String name) {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		List<String> list = merchant.getMerchantResource().getList();
+		List<String> list = merchant.getMerchantResource().getResourceList();
 		list.remove(name);
 		mongoTemplate.save(merchant);
 	}
