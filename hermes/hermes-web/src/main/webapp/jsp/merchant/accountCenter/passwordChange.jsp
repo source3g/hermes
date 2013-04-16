@@ -47,6 +47,9 @@
 	</form>
 	<script type="text/javascript">
 	$(document).ready(function() {
+		if(${not empty error}){
+			alert('${error}');
+		}
 		var validateOptions = {
 				rules : { 
 					password:{

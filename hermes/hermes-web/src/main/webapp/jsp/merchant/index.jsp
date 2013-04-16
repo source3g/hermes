@@ -36,7 +36,7 @@ body {
 						class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="#" id="changePwd">修改密码</a></li><%-- onclick="loadPage('${pageContext.request.contextPath}/merchant/account/toPasswordChange/');" --%>
+						<li><a href="javascript:void(0)"  onclick="toPasswordChange()">修改密码</a></li>
 						<li class="divider"></li>
 						<li><a href="${pageContext.request.contextPath}/logout/">退出</a></li>
 					</ul>
@@ -190,7 +190,6 @@ body {
 			return false;
 		});
 		
-		
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 			return false;
@@ -270,10 +269,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
 			return false;
 		});
-		$("#changePwd").click(function() {
-			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
-			return false;
-		});
+	 	
 		$("#merchantResourceSetting").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 			return false;
@@ -284,7 +280,9 @@ body {
 		});
 	});
 
-
+	function toPasswordChange(){
+ 		$.get("${pageContext.request.contextPath}/merchant/account/toPasswordChange/",showContentInfo);
+ 	}
 	function aabb(){
 		loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 		return false;

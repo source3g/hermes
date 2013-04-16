@@ -114,7 +114,7 @@ public class AccountController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/passwordChange/" + password + "/" + newPassword + "/" + merchant.getId() + "/";
 		String result = restTemplate.getForObject(uri, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("merchant/accountCenter/passwordChange");
+			return new ModelAndView("merchant/login");
 		}
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("error", result);
