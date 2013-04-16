@@ -34,10 +34,10 @@
 		var swfu;
 		var version;
 	$(document).ready(function() { 
- 		$('#version').blur(function(){
+ 		//$('#version').blur(function(){
  			version=$('#version').val(); 
 			swfu = new SWFUpload({
-				upload_url : "${pageContext.request.contextPath}/admin/version/upload/?version="+version,
+				upload_url : "${pageContext.request.contextPath}/admin/version/upload/",
 
 				// File Upload Settings
 				file_size_limit : "10MB", // 1000 MB
@@ -75,7 +75,7 @@
 				debug : false
 			//是否显示调试窗口
 			});
-		 }); 
+		// }); 
 	});
 		//window.onload =
 		function startUploadFile() {
