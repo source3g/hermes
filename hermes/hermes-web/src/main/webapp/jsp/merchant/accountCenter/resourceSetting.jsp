@@ -10,18 +10,20 @@
 </head>
 <body>
 	<h3>操作说明</h3>
-	<p>1.{}里填写的内容表示旺财宝电话在编辑短信时所被替换的内容.<br>2.{时间}和{资源}分别表示旺财宝编辑短信时需要选择的时间和资源.<br>3.{}里所填写的内容可以在编辑短信内容里任意变更位置.</p>
+	<p>1.{}里填写的内容为旺财宝编辑短信时所被替换的内容.<br>2.{时间}和{资源}分别表示旺财宝编辑短信时需要选择的时间和资源.<br>3.{}里的内容可以在页面编辑短信时变更位置.</p>
 	<h4>例1</h4>
-	<p>资源操作填写的内容：您于{时间}预定了{资源}房间.</p>
-	<p>实际发送效果：尊敬的xxx先生:您于2012-04-12预定了101房间.</p>
-	<h4>例2</h4>
-	<p>资源操作填写的内容：{时间}您在XXX酒楼预定了{资源}包间</p>
-	<p>实际发送效果：尊敬的xxx先生:2013-04-12您在XXX酒店预定了101包间.</p>
+	<p>页面上编辑的短信内容：您于{时间}预定了{资源}房间.</p>
+	<p>旺财宝编辑短信时将{时间}设置为2012-04-12，{资源}设置为101</p>
+	<p>发送短信实际效果：您于2012-04-12预定了101房间.</p>
+	<h4>例2(和例1比较不同之处在于将{时间}移动到最左边，突出操作说明第3点内容.)</h4>
+	<p>编辑短信内容：{时间}您在XXX酒楼预定了{资源}包间</p>
+	<p>在旺财宝上设置{时间}为2012-04-12，{资源}为101</p>
+	<p>发送短信实际效果：2013-04-12您在XXX酒店预定了101包间.</p>
 	<br>
 	
 	<form id="addMerchantResourceForm1" class="form-inline">
 		<h3>编辑短信内容</h3>
-		 <textarea rows="8" class="span6"  id="messageContent" name="messageContent" ></textarea><br>
+		 <textarea rows="8" class="span6"  id="messageContent" name="messageContent"></textarea><br>
 		<input type="submit" class="btn btn-primary"  value="保存">
 	</form>
 	
@@ -42,7 +44,7 @@
 				<th>操作</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody id="tbody">
 		</tbody>
 	</table>
 	<script type="text/javascript">
@@ -50,11 +52,14 @@
 		  if(${not empty error}){
 			  alert("${error}");		 
 			  }
+		  if(${not empty success}){
+			  alert("${success}");		 
+			  }
 			$.get("${pageContext.request.contextPath}/merchant/account/merchantResource",drawTable);
  		 	function drawTable (data){
-		  		for(var i=0;i<data.list.length;i++){
-		  			var str="<tr><td>"+data.list[i]+"</td><td><input type='button' value='删除' class='btn btn-danger' onclick=\"deletemerchantResource('"+data.list[i]+"')\"></td></tr>";
-		  			$("#resourceTab").append(str);
+		  		for(var i=0;i<data.resourceList.length;i++){
+		  			var str="<tr><td>"+data.resourceList[i]+"</td><td><input type='button' value='删除' class='btn btn-danger' onclick=\"deletemerchantResource('"+data.resourceList[i]+"')\"></td></tr>";
+		  			$("#tbody").append(str);
 		 		} 
 		  		var messageContent=data.messageContent;
 		  		$("#messageContent").attr("value",messageContent);

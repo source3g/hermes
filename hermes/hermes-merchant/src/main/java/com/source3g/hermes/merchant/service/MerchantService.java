@@ -263,7 +263,7 @@ public class MerchantService extends BaseService {
 		mongoTemplate.save(merchant);
 	}
 
-	public Merchant updateMerchantResource(String messageContent, ObjectId merchantId) {
+	public void updateMerchantResource(String messageContent, ObjectId merchantId) {
 		if(messageContent.equals("null")){
 			messageContent="";
 		}
@@ -274,7 +274,6 @@ public class MerchantService extends BaseService {
 		}
 		merchant.getMerchantResource().setMessageContent(messageContent);
 		mongoTemplate.save(merchant);
-		return merchant;
 	}
 
 	public MerchantResource getMerchantResource(ObjectId merchantId) {

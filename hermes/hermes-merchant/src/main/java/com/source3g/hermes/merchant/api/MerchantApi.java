@@ -223,10 +223,11 @@ public class MerchantApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "/updateMerchantResource/{merchantId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/updateMerchantResource/{merchantId}/{messageContent}", method = RequestMethod.GET)
 	@ResponseBody
-	public Merchant updateMerchantResource(String messageContent, @PathVariable ObjectId merchantId) {
-		return merchantService.updateMerchantResource(messageContent, merchantId);
+	public String updateMerchantResource(@PathVariable String messageContent, @PathVariable ObjectId merchantId) {
+		 merchantService.updateMerchantResource(messageContent, merchantId);
+		 return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/merchantResource/{merchantId}", method = RequestMethod.GET)

@@ -73,6 +73,12 @@ public class VersionApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/versionValidate/{version}", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean versionValidate( @PathVariable String version) {
+		return  versionService.versionValidate(version);
+	}
+	
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
 	public String changeVersion(@RequestBody String version) {

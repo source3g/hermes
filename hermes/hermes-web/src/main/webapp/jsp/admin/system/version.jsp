@@ -8,6 +8,7 @@
 <title>版本更新</title>
 </head>
 <body>
+<form id="addVersionForm">
 	<div class="control-group">
 		<label class="control-label" for="fileUpload">请先输入版本号：</label>
 		<div class="controls">
@@ -25,9 +26,10 @@
 	</div>
 	<br>
 	<br>
-	<button id="uploadVersion" onclick="uploadVersion();"
-		class="btn  btn-primary">上传</button>
+	<button id="uploadVersion" 
+		class="btn  btn-primary">上传</button><!--onclick="uploadVersion();"  -->
 	<br>
+	</form>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/swfupload/swfupload.js"></script>
 	<script type="text/javascript"
@@ -71,9 +73,6 @@
 			debug : false
 		//是否显示调试窗口
 		});
-		$(document).ready(function() {
-			
-		});
 		//window.onload =
 		/* function startUploadFile() {
 			swfu.startUpload();
@@ -83,15 +82,42 @@
 		}
 		function apkSelDialogComplete(numFilesSelected, numFilesQueued) {
 		}
-		function uploadVersion() {
-			var version = $("#version").val();
-			if (version == null || version == "") {
-				alert("版本号不能为空");
-				return;
-			}
-			swfu.addPostParam("version",version);
-			swfu.startUpload();
-		}
+	/* 	function uploadVersion() {
+			
+		} */
+		$(document).ready(function(){
+			$('#addVersionForm').validate({
+				rules : {
+					version : {
+						required : true,
+						remote:{
+							type: "get",
+							url:"${pageContext.request.contextPath}/admin/version/versionValidate",
+							data:{"version": function(){
+												return $('#version').val();
+											} 
+								}
+						}
+					}
+				},
+				messages : {
+					version : {
+						required : "请填写版本号",
+						remote:"版本号不能重复"
+					}
+				}
+			}); 
+			 $("#uploadVersion").click(function (){
+				$('#addVersionForm').validate(validateOptions); 
+				var version = $("#version").val();
+				if (version == null || version == "") {
+					alert("版本号不能为空");
+					return;
+				}
+				swfu.addPostParam("version",version);
+				swfu.startUpload();
+			}); 
+		});
 	</script>
 </body>
 </html>

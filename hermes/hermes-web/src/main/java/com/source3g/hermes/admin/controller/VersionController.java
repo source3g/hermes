@@ -67,6 +67,15 @@ public class VersionController {
 		return "上传失败";
 	}
 
+	//验证版本号是否存在
+	@RequestMapping(value = "versionValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean versionValidate(String version) {
+		String uri=ConfigParams.getBaseUrl() + "version/versionValidate/"+version+"/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		return result;
+	}
+	
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
 	public String changeOnline(String version) {
