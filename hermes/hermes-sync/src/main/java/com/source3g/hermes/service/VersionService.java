@@ -62,7 +62,7 @@ public class VersionService extends BaseService {
 	}
 
 	public void changeVersion(String version) {
-		mongoTemplate.updateFirst(new Query(), new Update().set("apkVersion", version), OnlineVersion.class);
+		mongoTemplate.upsert(new Query(), new Update().set("apkVersion", version), OnlineVersion.class);
 	}
 
 	public void updateDeviceVersion(String sn, String version) {
