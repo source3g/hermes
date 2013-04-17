@@ -3,9 +3,7 @@ function getBrowserType() {
 	var browser = {};
 	var userAgent = navigator.userAgent.toLowerCase();
 	var s;
-	(s = userAgent.match(/msie ([\d.]+)/)) ? browser.ie = s[1] : (s = userAgent.match(/firefox\/([\d.]+)/)) ? browser.firefox = s[1]
-			: (s = userAgent.match(/chrome\/([\d.]+)/)) ? browser.chrome = s[1] : (s = userAgent.match(/opera.([\d.]+)/)) ? browser.opera = s[1] : (s = userAgent
-					.match(/version\/([\d.]+).*safari/)) ? browser.safari = s[1] : 0;
+	( s = userAgent.match(/msie ([\d.]+)/)) ? browser.ie = s[1] : ( s = userAgent.match(/firefox\/([\d.]+)/)) ? browser.firefox = s[1] : ( s = userAgent.match(/chrome\/([\d.]+)/)) ? browser.chrome = s[1] : ( s = userAgent.match(/opera.([\d.]+)/)) ? browser.opera = s[1] : ( s = userAgent.match(/version\/([\d.]+).*safari/)) ? browser.safari = s[1] : 0;
 	var oType = "";
 	if (browser.ie) {
 		oType = "ie";
@@ -37,17 +35,17 @@ function fileQueueError(file, errorCode, message) {
 		}
 
 		switch (errorCode) {
-		case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
-			imageName = "<font color='red'>文件大小为0</font>";
-			break;
-		case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
-			imageName = "<font color='red'>文件大小超过限制,请分开多次上传</font>";
-			break;
-		case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
-		case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
-		default:
-			alert(message);
-			break;
+			case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
+				imageName = "<font color='red'>文件大小为0</font>";
+				break;
+			case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
+				imageName = "<font color='red'>文件大小超过限制,请分开多次上传</font>";
+				break;
+			case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
+			case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
+			default:
+				alert(message);
+				break;
 		}
 		addReadyFileInfo(file.id, file.name, imageName, "无法上传");
 
@@ -58,7 +56,7 @@ function fileQueueError(file, errorCode, message) {
 
 /**
  * 当文件选择对话框关闭消失时，如果选择的文件成功加入上传队列， 那么针对每个成功加入的文件都会触发一次该事件（N个文件成功加入队列，就触发N次此事件）。
- * 
+ *
  * @param {}
  *            file id : string, // SWFUpload控制的文件的id,通过指定该id可启动此文件的上传、退出上传等
  *            index : number, // 文件在选定文件队列（包括出错、退出、排队的文件）中的索引，getFile可使用此索引 name :
@@ -72,6 +70,7 @@ function fileQueued(file) {
 	swfu.addPostParam("version",version);
 	swfu.startUpload();
 }
+
 function fileDialogComplete(numFilesSelected, numFilesQueued) {
 	try {
 		if (numFilesQueued > 0) {
@@ -91,7 +90,8 @@ function uploadProgress(file, bytesLoaded) {
 		var progress = new FileProgress(file, this.customSettings.upload_target);
 		progress.setProgress(percent);
 		if (percent === 100) {
-			progress.setStatus("");// 正在创建缩略图...
+			progress.setStatus("");
+			// 正在创建缩略图...
 			progress.toggleCancel(false, this);
 		} else {
 			progress.setStatus("正在上传..." + percent + "%");
@@ -124,62 +124,20 @@ function addFileInfo(fileId, message) {
 	var row = document.getElementById(fileId);
 	row.cells[2].innerHTML = "<font color='green'>" + message + "</font>";
 }
+
 function addReadyFileInfo(fileid, fileName, message, status) {
 	// 用表格显示
-	var infoTable = document.getElementById("infoTable");
 	$("#thumbnails").css("display", "block");
 	// 获取浏览器的类型
-	var oType = getBrowserType();
-	var row;
-	var col1;
-	var col2;
-	var col3;
-	var col4;
-	var col5;
-	switch (oType) {
-	case "ie":
-		row = infoTable.insertRow();
-		row.id = fileid;
-		col1 = row.insertCell();
-		col2 = row.insertCell();
-		col3 = row.insertCell();
-		col4 = row.insertCell();
-		col5 = row.insertCell();
-		break;
-	case "firefox":
-		row = infoTable.insertRow(-1);
-		row.id = fileid;
-		col1 = row.insertCell(-1);
-		col2 = row.insertCell(-1);
-		col3 = row.insertCell(-1);
-		col4 = row.insertCell(-1);
-		col5 = row.insertCell(-1);
-		break;
-	default:
-		row = infoTable.insertRow();
-		row.id = fileid;
-		col1 = row.insertCell();
-		col2 = row.insertCell();
-		col3 = row.insertCell();
-		col4 = row.insertCell();
-		col5 = row.insertCell();
-		break;
+	if ($("#infoTable tr").length > 0) {
+		$("#infoTable tr").each(function() {
+			$(this).remove();
+		});
 	}
-	col4.align = "right";
-	col1.innerHTML = message + " : ";
-	col2.innerHTML = fileName;
-	if (status != null && status != "") {
-		col3.innerHTML = "<font color='red'>" + status + "</font>";
-	} else {
-		col3.innerHTML = "";
+	if (status == null) {
+		status = "";
 	}
-	// col4.innerHTML = "<a
-	// href='javascript:deleteFile(\""+fileid+"\")'>删除</a>";
-	col1.style.width = "150";
-	col2.style.width = "150";
-	col3.style.width = "80";
-	col4.style.width = "50";
-	col5.style.display = "none";
+	$("#infoTable").append("<tr id='" + fileid + "'><td>" + fileName + "</td><td>" + status + "</td><td>" + message + "</td><td></td><td></td></tr>");
 }
 
 function cancelUpload() {
@@ -190,10 +148,10 @@ function cancelUpload() {
 	if (rows == null) {
 		return false;
 	}
-	for ( var i = 0; i < rows.length; i++) {
+	for (var i = 0; i < rows.length; i++) {
 		ids[i] = rows[i].id;
 	}
-	for ( var i = 0; i < ids.length; i++) {
+	for (var i = 0; i < ids.length; i++) {
 		deleteFile(ids[i]);
 	}
 }
@@ -208,7 +166,7 @@ function deleteFile(fileId) {
 		type : 'post',
 		url : "DeleteFileServlet",
 		data : 'filePath=' + filePath,
-		success : function(data) { // 判断是否成功
+		success : function(data) {// 判断是否成功
 			// 处理被删除的节点
 			infoTable.deleteRow(row.rowIndex);
 			swfu.cancelUpload(fileId, false);
@@ -244,31 +202,31 @@ function uploadError(file, errorCode, message) {
 	var progress;
 	try {
 		switch (errorCode) {
-		case SWFUpload.UPLOAD_ERROR.FILE_CANCELLED:
-			try {
-				progress = new FileProgress(file, this.customSettings.upload_target);
-				progress.setCancelled();
-				progress.setStatus("<font color='red'>取消上传!</font>");
-				progress.toggleCancel(false);
-			} catch (ex1) {
-				this.debug(ex1);
-			}
-			break;
-		case SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED:
-			try {
-				progress = new FileProgress(file, this.customSettings.upload_target);
-				progress.setCancelled();
-				progress.setStatus("<font color='red'>停止上传!</font>");
-				progress.toggleCancel(true);
-			} catch (ex2) {
-				this.debug(ex2);
-			}
-		case SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED:
-			imageName = "<font color='red'>文件大小超过限制!请分开多次上传</font>";
-			break;
-		default:
-			alert(message);
-			break;
+			case SWFUpload.UPLOAD_ERROR.FILE_CANCELLED:
+				try {
+					progress = new FileProgress(file, this.customSettings.upload_target);
+					progress.setCancelled();
+					progress.setStatus("<font color='red'>取消上传!</font>");
+					progress.toggleCancel(false);
+				} catch (ex1) {
+					this.debug(ex1);
+				}
+				break;
+			case SWFUpload.UPLOAD_ERROR.UPLOAD_STOPPED:
+				try {
+					progress = new FileProgress(file, this.customSettings.upload_target);
+					progress.setCancelled();
+					progress.setStatus("<font color='red'>停止上传!</font>");
+					progress.toggleCancel(true);
+				} catch (ex2) {
+					this.debug(ex2);
+				}
+			case SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED:
+				imageName = "<font color='red'>文件大小超过限制!请分开多次上传</font>";
+				break;
+			default:
+				alert(message);
+				break;
 		}
 		addFileInfo(file.id, imageName);
 	} catch (ex3) {
@@ -302,7 +260,8 @@ function addImage(src) {
 
 function fadeIn(element, opacity) {
 	var reduceOpacityBy = 5;
-	var rate = 30; // 15 fps
+	var rate = 30;
+	// 15 fps
 
 	if (opacity < 100) {
 		opacity += reduceOpacityBy;
@@ -384,6 +343,7 @@ function FileProgress(file, targetID) {
 	this.height = this.fileProgressWrapper.offsetHeight;
 
 }
+
 FileProgress.prototype.setProgress = function(percentage) {
 	this.fileProgressElement.className = "progressContainer green";
 	this.fileProgressElement.childNodes[3].className = "progressBarInProgress";

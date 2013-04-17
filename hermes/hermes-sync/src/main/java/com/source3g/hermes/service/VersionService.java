@@ -68,4 +68,14 @@ public class VersionService extends BaseService {
 	public void updateDeviceVersion(String sn, String version) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("sn").is(sn)), new Update().set("apkVersion", version), Device.class);
 	}
+
+	public Boolean versionValidate(String version) {
+		Boolean result=true;
+		List<ApkVersion> list=mongoTemplate.find(new Query(Criteria.where("apkVersion").is(version)), ApkVersion.class);
+		if(list.size()>0){
+			result=false;
+			return result;
+		}
+		return result;
+	}
 }

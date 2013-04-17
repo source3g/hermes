@@ -6,6 +6,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -114,6 +116,8 @@ public class AccountController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/passwordChange/" + password + "/" + newPassword + "/" + merchant.getId() + "/";
 		String result = restTemplate.getForObject(uri, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
+			Subject currentUser = SecurityUtils.getSubject();
+			currentUser.logout();
 			return new ModelAndView("merchant/login");
 		}
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -202,13 +206,17 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/updateMerchantResource", method = RequestMethod.GET)
-	public ModelAndView updateMerchantResource(String messageContent) throws Exception {
+	public ModelAndView updateMerchantResource(String messageContent, RedirectAttributes redirectAttributes) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant();
-		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/?messageContent="+messageContent;
-		Merchant result = restTemplate.getForObject(uri, Merchant.class);
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("Merchant", result);
-		return new ModelAndView("/merchant/accountCenter/resourceSetting/", model);
+		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/"+messageContent+"/";
+		String result = restTemplate.getForObject(uri, String.class);
+	if(ReturnConstants.SUCCESS.equals(result)){
+		redirectAttributes.addFlashAttribute("success","保存成功");
+		return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
+	}else{
+		redirectAttributes.addFlashAttribute("error","保存失败");
+		return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
+	}
 	}
 
 	@RequestMapping(value = "/info")

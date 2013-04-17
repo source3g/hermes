@@ -4,6 +4,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,10 +30,10 @@ public class CallInListener implements MessageListener {
 		try {
 			CallInMessage callInMessage = JmsUtils.getObject(message, CallInMessage.class);
 			AutoSendMessageTemplate messagecontent = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(callInMessage.getMerchantId())), AutoSendMessageTemplate.class);
-			Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(callInMessage.getPhone()).and("merchantId").is(callInMessage.getMerchantId()).and("name").ne(null)), Customer.class);
+			Customer customer = mongoTemplate.findOne(new Query(Criteria.where("phone").is(callInMessage.getPhone()).and("merchantId").is(callInMessage.getMerchantId())), Customer.class);
 			String content = "";
 			if (messagecontent != null) {
-				if (customer != null) {
+				if (StringUtils.isNotEmpty(customer.getName())) {
 					content = messagecontent.getOldMessageCotent();
 				} else {
 					content = messagecontent.getNewMessageCotent();

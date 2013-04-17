@@ -90,12 +90,15 @@
 			 var options = {
 					 url:"${pageContext.request.contextPath}/merchant/account/passwordChange/"+password+"/"+newPassword+"/",
 					 type:"get",
-				success : showContentInfo
+				success : toLogin
 			}; 
 			$(this).ajaxSubmit(options);
 			return false;
 		});
 	});
+	function toLogin(data){
+		 window.location.href=data
+	}
 	</script>
 </body>
 </html>
