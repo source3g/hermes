@@ -205,18 +205,16 @@ public class AccountController {
 		return new ModelAndView("/merchant/accountCenter/resourceSetting/");
 	}
 
-	@RequestMapping(value = "/updateMerchantResource", method = RequestMethod.GET)
+	@RequestMapping(value = "/updateMerchantResource", method = RequestMethod.POST)
 	public ModelAndView updateMerchantResource(String messageContent, RedirectAttributes redirectAttributes) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant();
-		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/"+messageContent+"/";
-		String result = restTemplate.getForObject(uri, String.class);
-	if(ReturnConstants.SUCCESS.equals(result)){
-		redirectAttributes.addFlashAttribute("success","保存成功");
+		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/";
+		HttpEntity<String> entity = new HttpEntity<String>(messageContent);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			redirectAttributes.addFlashAttribute(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+		}
 		return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
-	}else{
-		redirectAttributes.addFlashAttribute("error","保存失败");
-		return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
-	}
 	}
 
 	@RequestMapping(value = "/info")

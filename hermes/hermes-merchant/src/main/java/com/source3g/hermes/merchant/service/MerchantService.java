@@ -121,7 +121,7 @@ public class MerchantService extends BaseService {
 			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(new ObjectId(id))), update, Merchant.class);
 		} else {
 			return;
-		}	
+		}
 		MessageChargeLog msgLog = new MessageChargeLog();
 		msgLog.setMerchantId(new ObjectId(id));
 		msgLog.setCount(count);
@@ -149,7 +149,7 @@ public class MerchantService extends BaseService {
 	}
 
 	public void updateInfo(Merchant merchant) {
-		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds", "merchantTagNodes","salerId");
+		super.updateIncludeProperties(merchant, "name", "addr", "account", "password", "merchantGroupId", "deviceIds", "merchantTagNodes", "salerId");
 	}
 
 	public void UpdateQuota(String id, int countInt) {
@@ -264,10 +264,7 @@ public class MerchantService extends BaseService {
 	}
 
 	public void updateMerchantResource(String messageContent, ObjectId merchantId) {
-		if(messageContent.equals("null")){
-			messageContent="";
-		}
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		Merchant merchant = super.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		MerchantResource merchantResource = merchant.getMerchantResource();
 		if (merchantResource == null) {
 			merchant.setMerchantResource(new MerchantResource());
