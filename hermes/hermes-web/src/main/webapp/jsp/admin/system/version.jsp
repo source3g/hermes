@@ -26,8 +26,7 @@
 	</div>
 	<br>
 	<br>
-	<button id="uploadVersion"
-		class="btn  btn-primary">上传</button><!-- onclick="uploadVersion();"  id="uploadVersion" onclick="swfu.startUpload();"-->
+	<input  class="btn btn-primary" onclick="swfu.startUpload();" value="上传" style="width:40px;height:20px"/><!-- onclick="uploadVersion();"  id="uploadVersion"-->
 	<br>
 	</form>
 	<script type="text/javascript"
@@ -80,9 +79,9 @@
 		}
 		function apkSelDialogComplete(numFilesSelected, numFilesQueued) {
 		}
-	/*    	function uploadVersion() {
-	   		
-		}   */
+	   	function uploadVersion() {
+	   		swfu.startUpload();
+		}  
 		$(document).ready(function(){
 			$('#addVersionForm').validate({
 				rules : {
@@ -105,14 +104,10 @@
 					}
 				}
 			}); 
-		 $("#uploadVersion").click(function(){
-			 	 var version = $("#version").val();
-				if (version == null || version == "") {
-					alert("版本号不能为空");
-					return;
-				}  
-				swfu.startUpload();
-			}); 
+		  	 $("#version").blur(function(){
+		  		 var version = $("#version").val();
+				swfu.addPostParam("version",version);
+			 });   
 		});
 	</script>
 </body>
