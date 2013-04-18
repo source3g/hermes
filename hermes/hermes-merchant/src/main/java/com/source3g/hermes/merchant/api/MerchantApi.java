@@ -241,7 +241,9 @@ public class MerchantApi {
 	public MerchantResource getMerchantResource(@PathVariable String sn) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		MerchantResource merchantResource = merchantService.getMerchantResource(merchant.getId());
-		Collections.sort(merchantResource.getResourceList());
+		if(merchantResource.getResourceList()!=null){
+			Collections.sort(merchantResource.getResourceList());
+		}
 		return merchantResource;
 	}
 

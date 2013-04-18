@@ -7,7 +7,7 @@ public class DeliverReceiver implements IReceiver<CbipDeliver> {
 
 	@Override
 	public void receive(CbipDeliver deliver) {
-		System.out.println("收到deliver:" + deliver);
+		System.out.println("cbipMessage:收到deliver:" + deliver);
 	}
 
 }
