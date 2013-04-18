@@ -8,27 +8,25 @@
 <title>版本更新</title>
 </head>
 <body>
-<form id="addVersionForm">
-	<div class="control-group">
-		<label class="control-label" for="fileUpload">请先输入版本号：</label>
-		<div class="controls">
-			<input type="text" name="version" id="version"></input>
+	<form id="addVersionForm">
+		<div class="control-group">
+			<label class="control-label" for="fileUpload">请先输入版本号：</label>
+			<div class="controls">
+				<input type="text" name="version" id="version"></input>
+			</div>
 		</div>
-	</div>
 
-	<span id="spanButtonPlaceholder"></span>
-	<span>(每个文件最大10M)</span>
-	<div id="divFileProgressContainer" style="width: 200; display: none;"></div> 
-	<div id="thumbnails">
-		<table id="infoTable" border="0" width="50%"
-			style="border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-top: 8px;">
-		</table>
-	</div>
-	<br>
-	<br>
-	<button id="uploadVersion"
-		class="btn  btn-primary">上传</button><!-- onclick="uploadVersion();"  id="uploadVersion" onclick="swfu.startUpload();"-->
-	<br>
+		<span id="spanButtonPlaceholder"></span> <span>(每个文件最大10M)</span>
+		<div id="divFileProgressContainer" style="width: 200; display: none;"></div>
+		<div id="thumbnails">
+			<table id="infoTable" border="0" width="50%"
+				style="border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-top: 8px;">
+			</table>
+		</div>
+		<br> <br> <input class="btn btn-primary" value="上传"
+			id="uploadVersion" type="button" />
+		<!-- onclick="uploadVersion();" -->
+		<br>
 	</form>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/swfupload/swfupload.js"></script>
@@ -75,45 +73,46 @@
 		/* function startUploadFile() {
 			swfu.startUpload();
 		} */
-		function apkQueued(file,version) {
+		function apkQueued(file, version) {
 			addReadyFileInfo(file.id, file.name, "准备上传");
 		}
 		function apkSelDialogComplete(numFilesSelected, numFilesQueued) {
 		}
-	/*    	function uploadVersion() {
-	   		
-		}   */
-		$(document).ready(function(){
+
+		$(document).ready(function() {
 			$('#addVersionForm').validate({
 				rules : {
 					version : {
 						required : true,
-						remote:{
-							type: "get",
-							url:"${pageContext.request.contextPath}/admin/version/versionValidate",
-							data:{"version": function(){
-												return $('#version').val();
-											} 
+						remote : {
+							type : "get",
+							url : "${pageContext.request.contextPath}/admin/version/versionValidate",
+							data : {
+								"version" : function() {
+									return $('#version').val();
 								}
+							}
 						}
 					}
 				},
 				messages : {
 					version : {
 						required : "请填写版本号",
-						remote:"版本号不能重复"
+						remote : "版本号不能重复"
 					}
 				}
-			}); 
-		 $("#uploadVersion").click(function(){
-			 	 var version = $("#version").val();
+			});
+
+			$("#uploadVersion").click(function() {
+				var version = $("#version").val();
 				if (version == null || version == "") {
 					alert("版本号不能为空");
 					return;
 				}
-				swfu.addParameter("version",version);
+				swfu.addPostParam("version", version);
 				swfu.startUpload();
-			}); 
+				return false;
+			});
 		});
 	</script>
 </body>
