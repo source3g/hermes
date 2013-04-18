@@ -8,6 +8,6 @@ public class ReportReceiver implements IReceiver<CbipReport> {
 	@Override
 	public void receive(CbipReport report) {
 		System.out.println("cbipMessage:收到report:" + report);
-//		report.getTotalLength()
+		// report.getTotalLength()
 	}
 }

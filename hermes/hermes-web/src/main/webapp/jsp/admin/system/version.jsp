@@ -110,7 +110,8 @@
 				if (version == null || version == "") {
 					alert("版本号不能为空");
 					return;
-				}  
+				}
+				swfu.addParameter("version",version);
 				swfu.startUpload();
 			}); 
 		});
