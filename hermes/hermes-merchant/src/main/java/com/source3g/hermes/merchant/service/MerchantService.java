@@ -236,6 +236,16 @@ public class MerchantService extends BaseService {
 		}
 	}
 
+	public Boolean passwordValidate(String password,ObjectId merchantId) {
+		Boolean passwordValidate=true;
+		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("password").is(password).and("_id").is(merchantId)), Merchant.class);
+		if(merchant == null){
+			passwordValidate=false;
+			return passwordValidate;
+		}
+		return passwordValidate;
+	}
+	
 	public void addMerchantResource(ObjectId merchantId, String name) throws Exception {
 		if (name == null || name.equals("")) {
 			throw new Exception("名称不能为空 ");
@@ -280,4 +290,6 @@ public class MerchantService extends BaseService {
 		}
 		return null;
 	}
+
+
 }

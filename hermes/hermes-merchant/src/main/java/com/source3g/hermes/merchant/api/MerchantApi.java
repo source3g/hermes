@@ -209,6 +209,13 @@ public class MerchantApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/passwordValidate/{password}/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean passwordValidate( @PathVariable String password,@PathVariable String merchantId) {
+		ObjectId obj=new ObjectId(merchantId);
+		return	merchantService.passwordValidate(password,obj);
+	}
+	
 	@RequestMapping(value = "/addMerchantResource/{merchantId}/{name}", method = RequestMethod.GET)
 	@ResponseBody
 	public String addMerchantResource(@PathVariable ObjectId merchantId, @PathVariable String name) throws Exception {

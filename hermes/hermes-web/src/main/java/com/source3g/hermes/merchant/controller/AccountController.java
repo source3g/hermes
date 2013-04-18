@@ -124,6 +124,15 @@ public class AccountController {
 		model.put("error", result);
 		return new ModelAndView("merchant/accountCenter/passwordChange", model);
 	}
+	//验证密码
+	@RequestMapping(value = "passwordValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean passwordValidate(String password,HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "merchant/passwordValidate/" +password+"/"+merchant.getId()+"/";
+		Boolean result= restTemplate.getForObject(uri, Boolean.class);
+		return result;
+	}
 
 	@RequestMapping(value = "remind/toList", method = RequestMethod.GET)
 	public ModelAndView toRemindList() throws Exception {
@@ -212,7 +221,7 @@ public class AccountController {
 		HttpEntity<String> entity = new HttpEntity<String>(messageContent);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			redirectAttributes.addFlashAttribute(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
+			redirectAttributes.addFlashAttribute("success","success");
 		}
 		return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
 	}

@@ -49,11 +49,19 @@
 	$(document).ready(function() {
 		if(${not empty error}){
 			alert('${error}');
-		}
+		} 
 		var validateOptions = {
 				rules : { 
 					password:{
-						 required : true
+						 required : true,
+							remote:{
+								type: "get",
+								url:"${pageContext.request.contextPath}/merchant/account/passwordValidate",
+								data:{"password": function(){
+													return $('#password').val();
+												} 
+									}
+							}
 					},
 					newPassword:{
 						required : true,
@@ -67,7 +75,8 @@
 				},
 				messages : {
 					password : {
-						required : "请填写账号"
+						required : "请填写账号",
+						remote:"密码填写错误"
 					},
 					newPassword : {
 						required : "请填写新密码",
@@ -97,8 +106,9 @@
 		});
 	});
 	function toLogin(data){
-		 window.location.href=data
+	 window.location.href=data
 	}
+
 	</script>
 </body>
 </html>
