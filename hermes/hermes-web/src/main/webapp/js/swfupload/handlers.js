@@ -83,10 +83,8 @@ function fileDialogComplete(numFilesSelected, numFilesQueued) {
 }
 
 function uploadProgress(file, bytesLoaded) {
-
 	try {
 		var percent = Math.ceil((bytesLoaded / file.size) * 100);
-
 		var progress = new FileProgress(file, this.customSettings.upload_target);
 		progress.setProgress(percent);
 		if (percent === 100) {

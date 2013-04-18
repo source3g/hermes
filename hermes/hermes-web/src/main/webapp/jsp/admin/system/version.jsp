@@ -18,7 +18,7 @@
 
 	<span id="spanButtonPlaceholder"></span>
 	<span>(每个文件最大10M)</span>
-	<div id="divFileProgressContainer" style="width: 200; display: none;"></div>
+	<div id="divFileProgressContainer" style="width: 200; display: none;"></div> 
 	<div id="thumbnails">
 		<table id="infoTable" border="0" width="50%"
 			style="border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-top: 8px;">
@@ -26,8 +26,8 @@
 	</div>
 	<br>
 	<br>
-	<button id="uploadVersion" 
-		class="btn  btn-primary">上传</button><!--onclick="uploadVersion();"  -->
+	<button id="uploadVersion"
+		class="btn  btn-primary">上传</button><!-- onclick="uploadVersion();"  id="uploadVersion" onclick="swfu.startUpload();"-->
 	<br>
 	</form>
 	<script type="text/javascript"
@@ -44,7 +44,6 @@
 			file_types : "*.apk",//设置可上传的类型
 			file_types_description : "apk文件",
 			//file_upload_limit : "1",
-
 			file_queue_error_handler : fileQueueError,//选择文件后出错
 			file_dialog_complete_handler : apkSelDialogComplete,//选择好文件后提交
 			file_queued_handler : apkQueued,
@@ -52,7 +51,6 @@
 			upload_error_handler : uploadError,
 			upload_success_handler : uploadSuccess,
 			upload_complete_handler : uploadComplete,
-
 			// Button Settings
 			button_image_url : "${pageContext.request.contextPath}/images/SmallSpyGlassWithTransperancy_17x18.png",
 			button_placeholder_id : "spanButtonPlaceholder",
@@ -77,14 +75,14 @@
 		/* function startUploadFile() {
 			swfu.startUpload();
 		} */
-		function apkQueued(file) {
+		function apkQueued(file,version) {
 			addReadyFileInfo(file.id, file.name, "准备上传");
 		}
 		function apkSelDialogComplete(numFilesSelected, numFilesQueued) {
 		}
-	/* 	function uploadVersion() {
-			
-		} */
+	/*    	function uploadVersion() {
+	   		
+		}   */
 		$(document).ready(function(){
 			$('#addVersionForm').validate({
 				rules : {
@@ -107,14 +105,12 @@
 					}
 				}
 			}); 
-			 $("#uploadVersion").click(function (){
-				$('#addVersionForm').validate(validateOptions); 
-				var version = $("#version").val();
+		 $("#uploadVersion").click(function(){
+			 	 var version = $("#version").val();
 				if (version == null || version == "") {
 					alert("版本号不能为空");
 					return;
-				}
-				swfu.addPostParam("version",version);
+				}  
 				swfu.startUpload();
 			}); 
 		});

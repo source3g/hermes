@@ -28,7 +28,7 @@
 		<textarea rows="8" class="span6" id="messageContent"
 			name="messageContent"></textarea>
 		<br> <input type="submit" class="btn btn-primary" value="保存">
-		<label><c:if test="${not empty success }">保存成功</c:if> </label>
+		<%-- <label><c:if test="${not empty success }">保存成功</c:if> </label> --%>
 	</form>
 
 	<h3>资源操作</h3>
@@ -52,8 +52,11 @@
 		</tbody>
 	</table>
 	<script type="text/javascript">
-		$(document).ready(
-				function() {
+		$(document).ready(function() {
+			if(${not empty success}){
+				alert("保存成功");
+			}
+			
 					$.get("${pageContext.request.contextPath}/merchant/account/merchantResource", drawTable);
 					function drawTable(data) {
 						for ( var i = 0; i < data.resourceList.length; i++) {
