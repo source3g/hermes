@@ -12,11 +12,11 @@
 		<div class="control-group">
 			<label class="control-label" for="fileUpload">请先输入版本号：</label>
 			<div class="controls">
-				<input type="text" name="version" id="version"></input>
+				<input type="text" name="version" id="version"></input><span id="versionValidateMsg" style="color:red"></span>
 			</div>
 		</div>
 
-		<span id="spanButtonPlaceholder"></span> <span>(每个文件最大10M)</span>
+		<span id="spanButtonPlaceholder"></span><input type="text" name="uploadFile" style="border:none;width:3px;"><span>&nbsp;&nbsp;&nbsp;(每个文件最大10M)</span><span id="fileValidateMsg" style="color:red"></span>
 		<div id="divFileProgressContainer" style="width: 200; display: none;"></div>
 		<div id="thumbnails">
 			<table id="infoTable" border="0" width="50%"
@@ -54,7 +54,7 @@
 			button_placeholder_id : "spanButtonPlaceholder",
 			button_width : 150,
 			button_height : 18,
-			button_text : '<span class="button">点我选择apk文件</span>',
+			button_text :  '<span class="button">点我选择apk文件</span>', 
 			button_text_style : '.button { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; } .buttonSmall { font-size: 10pt; }',
 			button_text_top_padding : 0,
 			button_text_left_padding : 18,
@@ -93,31 +93,45 @@
 								}
 							}
 						}
-					}
+					
+					},
+				 	uploadFile:{
+						validateFile : true
+					} 
+			
 				},
 				messages : {
 					version : {
 						required : "请填写版本号",
 						remote : "版本号不能重复"
-					}
+					
+					},
+					
+					uploadFile:{
+						validateFile : "请选择上传文件"
+					} 
 				}
 			});
 
-			$("#uploadVersion").click(function() {
+			$.validator.addMethod(
+					"validateFile",
+					function(value, element, params) {
+						if(swfu.getStats().files_queued==0){
+							return false;
+						} else{
+							return true;
+						}
+					}, "输入数字有误");
+			
+ 			$("#uploadVersion").click(function() {
+				if (!$("#addVersionForm").valid()) {
+			 		return false;
+				 } 
 				var version = $("#version").val();
-				if (version == null || version == "") {
-					alert("版本号不能为空");
-					return;
-				}
 				swfu.addPostParam("version", version);
-				//alert(swfu.getStats().files_queued);
-			 	if(swfu.getStats().files_queued==0){
-					alert("请选择上传文件");
-					return;
-				} 
 				swfu.startUpload();
 				return false;
-			});
+				});
 		});
 	</script>
 </body>
