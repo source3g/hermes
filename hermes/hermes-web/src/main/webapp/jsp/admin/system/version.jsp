@@ -110,6 +110,11 @@
 					return;
 				}
 				swfu.addPostParam("version", version);
+				//alert(swfu.getStats().files_queued);
+			 	if(swfu.getStats().files_queued==0){
+					alert("请选择上传文件");
+					return;
+				} 
 				swfu.startUpload();
 				return false;
 			});
