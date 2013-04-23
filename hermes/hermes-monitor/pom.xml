@@ -23,5 +23,10 @@
 		<artifactId>hermes-api-common</artifactId>
 		<version>${project.version}</version>
 	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-email</artifactId>
+		<version>1.3.1</version>
+	</dependency>
 	</dependencies>
 </project>

@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import com.lxt2.protocol.common.Standard_SeqNum;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
@@ -345,8 +346,8 @@ public class MessageService extends BaseService {
 	}
 
 	public MessageStatus send(ShortMessage message) {
+		message.setMsgId(Standard_SeqNum.computeSeqNoErr(1));
 		MessageStatus status = sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
-		System.out.println("submit");
 		message.setStatus(status);
 		message.setSendTime(new Date());
 		save(message);
@@ -355,16 +356,16 @@ public class MessageService extends BaseService {
 
 	@Deprecated
 	public MessageStatus send(String msgId, String phoneNumber, String content) {
-		return sendByOperator(msgId, phoneNumber, content, PhoneUtils.getOperatior(phoneNumber));
+		return sendByOperator(Long.parseLong(msgId), phoneNumber, content, PhoneUtils.getOperatior(phoneNumber));
 	}
 
-	private MessageStatus sendByOperator(String msgId, String phoneNumber, String content, PhoneOperator operator) {
+	private MessageStatus sendByOperator(Long msgId, String phoneNumber, String content, PhoneOperator operator) {
 		logger.debug("通过" + operator.toString() + "向" + phoneNumber + "发送" + content + "msgId:" + msgId);
 		try {
 			if (channel == 1) {
 				cbipMesssageService.send(msgId, phoneNumber, content, operator);
 			} else {
-				tcpCommandService.send(msgId, phoneNumber, content, operator);
+				tcpCommandService.send(String.valueOf(msgId), phoneNumber, content, operator);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

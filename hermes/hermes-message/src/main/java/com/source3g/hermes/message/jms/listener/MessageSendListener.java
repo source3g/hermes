@@ -3,6 +3,8 @@ package com.source3g.hermes.message.jms.listener;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -17,11 +19,11 @@ import com.source3g.hermes.entity.message.ShortMessage;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.message.service.MessageService;
-import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.JmsUtils;
 
 @Component
 public class MessageSendListener implements MessageListener {
+	private Logger logger = LoggerFactory.getLogger(MessageSendListener.class);
 
 	@Autowired
 	private MessageService messageService;
@@ -45,8 +47,9 @@ public class MessageSendListener implements MessageListener {
 					messageService.send(shortMessage);
 					return;
 				}
-				shortMessage.setMsgId(DateFormateUtils.getTimeStampStr());
+				// shortMessage.setMsgId(DateFormateUtils.getTimeStampStr());
 				MessageStatus status = messageService.send(shortMessage);
+				logger.debug("发送消息:" + shortMessage.getContent() + " 电话:" + shortMessage.getPhone() + " 类型:" + shortMessage.getMessageType());
 				if (MessageStatus.已发送.equals(status)) {
 					Update updateSurplus = new Update();
 					updateSurplus.inc("messageBalance.surplusMsgCount", -1).inc("messageBalance.totalCount", -1).inc("messageBalance.sentCount", 1);

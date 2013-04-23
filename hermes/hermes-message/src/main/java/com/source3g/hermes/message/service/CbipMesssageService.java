@@ -9,7 +9,6 @@ import com.lxt2.javaapi.ActiveSubmitSender;
 import com.lxt2.javaapi.ClientEngine;
 import com.lxt2.javaapi.util.MsgConstant;
 import com.lxt2.protocol.cbip20.CbipSubmit;
-import com.lxt2.protocol.common.Standard_SeqNum;
 import com.source3g.hermes.enums.PhoneOperator;
 import com.source3g.hermes.message.utils.DeliverReceiver;
 import com.source3g.hermes.message.utils.ReportReceiver;
@@ -63,11 +62,12 @@ public class CbipMesssageService {
 		activeSubmitSender = new ActiveSubmitSender();
 	}
 
-	public void send(String msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
+	public long send(Long msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
+		// long clientSeq = Standard_SeqNum.computeSeqNoErr(1);
 		if (isTest) {
 			System.out.println("摸拟向" + phoneNumber + "发送了内容：" + content);
 			logger.debug("摸拟向" + phoneNumber + "发送了内容：" + content);
-			return;
+			return msgId;
 		}
 		if (client == null) {
 			init();
@@ -77,7 +77,7 @@ public class CbipMesssageService {
 		logger.debug("主动发送短信" + phoneNumber);
 		// System.out.println(mmsSubmit);
 		CbipSubmit smsSubmit = new CbipSubmit();
-		smsSubmit.setClientSeq(Standard_SeqNum.computeSeqNoErr(1));
+		smsSubmit.setClientSeq(msgId);
 		smsSubmit.setSrcNumber("");
 		smsSubmit.setMessagePriority((byte) 1);
 		smsSubmit.setReportType((short) 1);
@@ -94,6 +94,7 @@ public class CbipMesssageService {
 		System.out.println("client.isConnected()" + client.isConnected());
 		logger.debug("client.isConnected()" + client.isConnected());
 		activeSubmitSender.sendSubmit(smsSubmit);
+		return msgId;
 	}
 
 	public String getLoginName() {

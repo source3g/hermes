@@ -8,26 +8,27 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
+
 /**
  * 新增
+ * 
  * @author Administrator
- *
+ * 
  */
 @Document
-public class ShortMessage extends AbstractEntity{
+public class ShortMessage extends AbstractEntity {
 	private static final long serialVersionUID = -6695767113817154193L;
 
-	private String msgId;
+	private Long msgId;
 	private String phone;
 	private String content;
 	private MessageType messageType;
 	private ObjectId merchantId;
-	private ObjectId sendId;//短信对应的发送记录ID，群发ID或单发ID
+	private ObjectId sendId;// 短信对应的发送记录ID，群发ID或单发ID
 	private Date sendTime;
-	
+
 	private MessageStatus status;
 
-	
 	public Date getSendTime() {
 		return sendTime;
 	}
@@ -36,11 +37,11 @@ public class ShortMessage extends AbstractEntity{
 		this.sendTime = sendTime;
 	}
 
-	public String getMsgId() {
+	public Long getMsgId() {
 		return msgId;
 	}
 
-	public void setMsgId(String msgId) {
+	public void setMsgId(Long msgId) {
 		this.msgId = msgId;
 	}
 

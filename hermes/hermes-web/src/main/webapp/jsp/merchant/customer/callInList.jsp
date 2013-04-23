@@ -44,7 +44,9 @@
 					href="javascript:void();"
 					onclick="showCallRecords('${customer.id}');">详情</a> <a
 					class="btn btn-success" href="#"
-					onclick="return editCustomer('${customer.id}');">编辑</a></td>
+					onclick="return editCustomer('${customer.id}');">编辑</a> <a
+					class="btn btn-success" href="#"
+					onclick="return sendMessage('${customer.id}');">发短信</a></td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -61,6 +63,13 @@
 				id="pageOk" class="btn" value="确定"></input>
 			</li>
 		</ul>
+	</div>
+
+	<div id="sendMessageModal" class="modal hide fade">
+		<div>短信内容:</div>
+		<div>
+			<textarea name="messageContent"></textarea>
+		</div>
 	</div>
 
 	<div id="myModal" class="modal hide fade">
@@ -139,6 +148,9 @@
 		
 		function closeModal(){
 			$("#myModal").modal("hide");
+		}
+		function sendMessage(id){
+			
 		}
 	</script>
 </body>
