@@ -112,6 +112,11 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(customer.getPhone())) {
 			uriBuffer.append("&phone=" + customer.getPhone());
 		}
+		if(customer.getCustomerGroup()!=null){
+			if(customer.getCustomerGroup().getName()!=null){
+				uriBuffer.append("&customerGroupName=" + customer.getCustomerGroup().getName());
+			}
+		}
 		if (StringUtils.isNotEmpty(sortType)) {
 			uriBuffer.append("&sortType=" + sortType);
 		}
@@ -145,7 +150,7 @@ public class CustomerController {
 
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody
-	public String export(Customer customer, HttpServletRequest req) throws Exception {
+	public String export(Customer customer, String type, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		StringBuffer uriBuffer = new StringBuffer();
 		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/export/");//
@@ -158,6 +163,15 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(customer.getPhone())) {
 			uriBuffer.append("&phone=" + customer.getPhone());
 		}
+		if(customer.getCustomerGroup()!=null){
+			if(customer.getCustomerGroup().getName()!=null){
+				uriBuffer.append("&customerGroupName="+customer.getCustomerGroup().getName());
+			}
+		}
+		if(StringUtils.isEmpty(type)){
+			type=CustomerType.allCustomer.toString();
+		}
+		uriBuffer.append("&customerType="+type);
 		String result = restTemplate.getForObject(uriBuffer.toString(), String.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("result", result);
