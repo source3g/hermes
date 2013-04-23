@@ -122,13 +122,16 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name, String phone, String property, String sortType, String phoneSortType, CustomerType type, @PathVariable String merchantId) {
+	public Page list(String pageNo, String name, String phone,String customerGroupName, String property, String sortType, String phoneSortType, CustomerType type, @PathVariable String merchantId) {
 		logger.debug("list customer....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Customer customer = new Customer();
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
+		CustomerGroup customerGroup=new CustomerGroup();
+		customerGroup.setName(customerGroupName);
+		customer.setCustomerGroup(customerGroup);
 		Direction direction = Direction.DESC;
 		if ("asc".equalsIgnoreCase(sortType) || "asc".equalsIgnoreCase(phoneSortType)) {
 			direction = Direction.ASC;
@@ -141,14 +144,17 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String export(String name, String phone, @PathVariable String merchantId) {
+	public String export(String name, String phone,CustomerType customerType, String customerGroupName,@PathVariable String merchantId) {
 		Customer customer = new Customer();
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
+		CustomerGroup customerGroup=new CustomerGroup();
+		customerGroup.setName(customerGroupName);
+		customer.setCustomerGroup(customerGroup);
 		String result = "";
 		try {
-			result = customerService.export(customer);
+			result = customerService.export(customer,customerType);
 		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
 			e.printStackTrace();
 		}

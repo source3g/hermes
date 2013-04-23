@@ -9,36 +9,36 @@
 </head>
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
-		<label class="control-label" for="name">姓名：</label> <input type="text"
-			name="name" class="input-medium" value="${customer.name}"
-			placeholder="请输入顾客名称..."> <label class="control-label"
-			for="phone">电话：</label> <input type="text" name="phone"
-			class="input-medium" value="${customer.phone}"
-			placeholder="请输入顾客电话..."> <input id="pageNo" name="pageNo"
-			type="hidden"> <input id="sortType" name="sortType"
-			value="${sortType }" type="hidden"> <input id="phoneSortType"
-			name="phoneSortType" value="${phoneSortType }" type="hidden">
-		<input id="property" name="property" value="${property }"
-			type="hidden"> <select name="type" class="input-small">
+		<label class="control-label" for="name">姓名：</label> <input type="text" name="name" class="input-medium" value="${customer.name}"
+			placeholder="请输入顾客名称..."> 
+			<label class="control-label" for="phone">电话：</label> <input type="text" name="phone" class="input-medium" value="${customer.phone}"
+			placeholder="请输入顾客电话..."> 
+			<label class="control-label" for="phone">顾客组名称：</label><input type="text" name="customerGroup.name" class="input-medium" value="${customer.customerGroup.name}"
+			placeholder="请输入顾客组名称...">
+			<input id="pageNo" name="pageNo" type="hidden"> 
+			<input id="sortType" name="sortType" value="${sortType }" type="hidden"> 
+			<input id="phoneSortType" name="phoneSortType" value="${phoneSortType }" type="hidden">
+		<input id="property" name="property" value="${property }" type="hidden"> 
+		<select name="type" class="input-small">
 			<option value="newCustomer"
 				<c:if test="${type eq 'newCustomer' }"> selected="selected"</c:if>>未编辑</option>
 			<option value="oldCustomer"
 				<c:if test="${type eq 'oldCustomer' }"> selected="selected"</c:if>>已编辑</option>
 			<option value="allCustomer"
 				<c:if test="${type eq 'allCustomer' }"> selected="selected"</c:if>>全部</option>
-		</select> <input type="submit" class="btn btn-primary" value="查询"> <input
-			type="button" class="btn btn-primary" value="新增"
+		</select> 
+		<input type="submit" class="btn btn-primary" value="查询">
+		<input type="button" onclick="exportCustomer();" class="btn btn-primary" value="导出" data-loading-text="导出中..."
+			id="exportCustomerBtn"> 
+			 <input type="button" class="btn btn-primary" value="新增"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/add/');">
-		<span><input type="button" onclick="exportCustomer();"
-			class="btn btn-primary" value="导出" data-loading-text="导出中..."
-			id="exportCustomerBtn"> <input class="btn btn-primary"
-			type="button"
+			<input class="btn btn-primary" type="button"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');"
-			value="导入"> <input class="btn btn-primary" type="button"
+			value="导入"> <div style="margin-top:10px"><input class="btn btn-primary" type="button"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');"
 			value="查看导入日志"> <input class="btn btn-primary" type="button"
 			onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');"
-			value="导入日志模板下载"></span>
+			value="导入日志模板下载"></div>
 	</form>
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">

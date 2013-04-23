@@ -168,6 +168,14 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
 			}
+			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
+						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if(customerGroups!=null){
+					criteria.and("customerGroup").in(customerGroups);
+				}
+			}
 			break;
 		case allCustomer:
 			if (StringUtils.isNotEmpty(customer.getName())) {
@@ -177,6 +185,14 @@ public class CustomerService extends BaseService {
 			if (StringUtils.isNotEmpty(customer.getPhone())) {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
+			}
+			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
+						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if(customerGroups!=null){
+					criteria.and("customerGroup").in(customerGroups);
+				}
 			}
 			break;
 		}
@@ -278,27 +294,60 @@ public class CustomerService extends BaseService {
 		return list(pageNo, customer, CustomerType.allCustomer, Direction.DESC, "name");
 	}
 
-	public List<Customer> list(Customer customer) {
+	public List<Customer> list(Customer customer,CustomerType customerType) {
 		Query query = new Query();
 		if (customer.getMerchantId() == null) {
 			return null;
 		} else {
 			query.addCriteria(Criteria.where("merchantId").is(customer.getMerchantId()));
 		}
-		if (StringUtils.isNotEmpty(customer.getName())) {
-			Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
-			query.addCriteria(Criteria.where("name").is(pattern));
-		}
-		if (StringUtils.isNotEmpty(customer.getPhone())) {
-			Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
-			query.addCriteria(Criteria.where("phone").is(pattern));
+		switch(customerType){
+		case newCustomer:
+			query.addCriteria(Criteria.where("name").is(null));
+			break;
+		case oldCustomer:
+			if (StringUtils.isNotEmpty(customer.getName())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				query.addCriteria(Criteria.where("name").is(pattern));
+			}
+			if (StringUtils.isNotEmpty(customer.getPhone())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
+				query.addCriteria(Criteria.where("phone").is(pattern));
+			}
+			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
+						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if(customerGroups!=null){
+					query.addCriteria(Criteria.where("customerGroup").in(customerGroups));
+				}
+			}
+			break;
+		case allCustomer:
+			if (StringUtils.isNotEmpty(customer.getName())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				query.addCriteria(Criteria.where("name").is(pattern));
+			}
+			if (StringUtils.isNotEmpty(customer.getPhone())) {
+				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
+				query.addCriteria(Criteria.where("phone").is(pattern));
+			}
+			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
+				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
+						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if(customerGroups!=null){
+					query.addCriteria(Criteria.where("customerGroup").in(customerGroups));
+				}
+			}
+			break;
 		}
 		List<Customer> list = mongoTemplate.find(query, Customer.class);
 		return list;
 	}
 
-	public String export(Customer customer) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		List<Customer> list = list(customer);
+	public String export(Customer customer,CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		List<Customer> list = list(customer,customerType);
 		Date createTime = new Date();
 		// 文件名
 		DateFormat dateFormatExport = new SimpleDateFormat("yyyy-MM-dd");
