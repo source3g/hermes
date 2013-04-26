@@ -19,7 +19,7 @@ import com.source3g.hermes.enums.MessageType;
 public class ShortMessage extends AbstractEntity {
 	private static final long serialVersionUID = -6695767113817154193L;
 
-	private Long msgId;
+	private String msgId;
 	private String phone;
 	private String content;
 	private MessageType messageType;
@@ -37,11 +37,11 @@ public class ShortMessage extends AbstractEntity {
 		this.sendTime = sendTime;
 	}
 
-	public Long getMsgId() {
+	public String getMsgId() {
 		return msgId;
 	}
 
-	public void setMsgId(Long msgId) {
+	public void setMsgId(String msgId) {
 		this.msgId = msgId;
 	}
 

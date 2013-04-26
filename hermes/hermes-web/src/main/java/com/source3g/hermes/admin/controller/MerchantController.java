@@ -26,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.sync.DeviceStatusDto;
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;

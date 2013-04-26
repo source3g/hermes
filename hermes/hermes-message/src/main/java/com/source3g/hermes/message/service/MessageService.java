@@ -346,7 +346,7 @@ public class MessageService extends BaseService {
 	}
 
 	public MessageStatus send(ShortMessage message) {
-		message.setMsgId(Standard_SeqNum.computeSeqNoErr(1));
+		message.setMsgId(String.valueOf(Standard_SeqNum.computeSeqNoErr(1)));
 		MessageStatus status = sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
 		message.setStatus(status);
 		message.setSendTime(new Date());
@@ -354,18 +354,20 @@ public class MessageService extends BaseService {
 		return status;
 	}
 
-	@Deprecated
-	public MessageStatus send(String msgId, String phoneNumber, String content) {
-		return sendByOperator(Long.parseLong(msgId), phoneNumber, content, PhoneUtils.getOperatior(phoneNumber));
-	}
+	// @Deprecated
+	// public MessageStatus send(String msgId, String phoneNumber, String
+	// content) {
+	// return sendByOperator(Long.parseLong(msgId), phoneNumber, content,
+	// PhoneUtils.getOperatior(phoneNumber));
+	// }
 
-	private MessageStatus sendByOperator(Long msgId, String phoneNumber, String content, PhoneOperator operator) {
+	private MessageStatus sendByOperator(String msgId, String phoneNumber, String content, PhoneOperator operator) {
 		logger.debug("通过" + operator.toString() + "向" + phoneNumber + "发送" + content + "msgId:" + msgId);
 		try {
 			if (channel == 1) {
 				cbipMesssageService.send(msgId, phoneNumber, content, operator);
 			} else {
-				tcpCommandService.send(String.valueOf(msgId), phoneNumber, content, operator);
+				tcpCommandService.send(msgId, phoneNumber, content, operator);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -523,10 +525,13 @@ public class MessageService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)), update, ShortMessage.class);
 	}
 
-	public Page failedMessagelist(int pageNoInt) {
+	public Page failedMessagelist(int pageNoInt, Date startTime) {
 		Query query = new Query();
 		query.with(new Sort(Direction.DESC, "_id"));
-		query.addCriteria(Criteria.where("status").is(MessageStatus.提交失败));
+		if (startTime != null) {
+			query.addCriteria(Criteria.where("sendTime").gte(startTime));
+		}
+		// query.addCriteria(Criteria.where("status").is(MessageStatus.提交失败));
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, ShortMessage.class);
 		page.setTotalRecords(totalCount);

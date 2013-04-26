@@ -1,6 +1,6 @@
 package com.source3g.hermes.vo;
 
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.device.Device;
 
 public class DeviceDistributionVo {
 	private Device device;

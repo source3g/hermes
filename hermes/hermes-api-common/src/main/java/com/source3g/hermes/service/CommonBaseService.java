@@ -3,7 +3,7 @@ package com.source3g.hermes.service;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 
 public class CommonBaseService extends BaseService {

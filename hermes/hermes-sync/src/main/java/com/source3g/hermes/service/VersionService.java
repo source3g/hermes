@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.apkVersion.ApkVersion;
 import com.sourse3g.hermes.apkVersion.OnlineVersion;

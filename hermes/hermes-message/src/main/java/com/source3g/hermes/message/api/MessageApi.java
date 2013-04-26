@@ -201,7 +201,7 @@ public class MessageApi {
 	@ResponseBody
 	public Page failedMessagelist(String pageNo) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return	messageService.failedMessagelist(pageNoInt);
+		return	messageService.failedMessagelist(pageNoInt,null);
 	}
 	
 	@RequestMapping(value = "/failed/resend/{id}", method = RequestMethod.GET)

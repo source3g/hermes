@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.device.service.DeviceService;
 import com.source3g.hermes.dto.sync.DeviceStatusDto;
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.device.Device;
+import com.source3g.hermes.entity.device.PublicKey;
 import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.DeviceDistributionVo;
@@ -111,6 +112,13 @@ public class DeviceApi {
 	@ResponseBody
 	public List<DeviceStatusDto> syncStatus(@PathVariable String merchantId) {
 		return deviceService.findDeviceStatusByMerchantId(merchantId);
+	}
+
+	@RequestMapping(value = "/publicKey")
+	@ResponseBody
+	public String getPublicKey() {
+		PublicKey publicKey = deviceService.getPublicKey();
+		return publicKey.getPublickey();
 	}
 
 }

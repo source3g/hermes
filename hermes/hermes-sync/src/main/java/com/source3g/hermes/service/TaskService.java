@@ -22,9 +22,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.TaskConstants;
-import com.source3g.hermes.entity.Device;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.PackageLock;
+import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.sync.DeviceStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;

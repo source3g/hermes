@@ -1,9 +1,11 @@
-package com.source3g.hermes.entity;
+package com.source3g.hermes.entity.device;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.entity.Sim;
 import com.source3g.hermes.utils.GpsPoint;
 
 

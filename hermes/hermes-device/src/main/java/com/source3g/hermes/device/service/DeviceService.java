@@ -16,12 +16,14 @@ import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.constants.TaskConstants;
 import com.source3g.hermes.dto.sync.DeviceStatusDto;
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.device.Device;
+import com.source3g.hermes.entity.device.PublicKey;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.sync.DeviceStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.GpsPoint;
+import com.source3g.hermes.utils.MD5;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.DeviceDistributionVo;
 import com.source3g.hermes.vo.DeviceVo;
@@ -171,4 +173,57 @@ public class DeviceService extends BaseService {
 		}
 		return result;
 	}
+
+	public PublicKey getPublicKey() {
+		return super.findOne(new Query(), PublicKey.class);
+	}
+
+	public Boolean validateSecret(String sn, String secret) {
+		PublicKey publicKey = getPublicKey();
+		String secretResult = MD5.md5(getSecret(sn, publicKey.getPublickey()));
+		if (secretResult.equals(secret)) {
+			return true;
+		}
+		return false;
+	}
+
+	private static String getSecret(String sn, String publicKey) {
+		char[] snBytes = sn.toCharArray();
+		for (int i = 0; i < snBytes.length; i++) {
+			char a = snBytes[i];
+			a = (char) (a + 10);
+			snBytes[i] = a;
+		}
+		char[] keyBytes = publicKey.toCharArray();
+		for (int i = 0; i < keyBytes.length; i++) {
+			char b = keyBytes[i];
+			b = (char) (b - 10);
+			keyBytes[i] = b;
+		}
+		return new String(snBytes) + new String(keyBytes);
+	}
+
+	@SuppressWarnings("unused")
+	private static String getSecret1(String sn, String publicKey) {
+		char[] snBytes = sn.toCharArray();
+		for (int i = 0; i < snBytes.length; i++) {
+			char a = snBytes[i];
+			a = (char) (a - 10);
+			snBytes[i] = a;
+		}
+		char[] keyBytes = publicKey.toCharArray();
+		for (int i = 0; i < keyBytes.length; i++) {
+			char b = keyBytes[i];
+			b = (char) (b + 10);
+			keyBytes[i] = b;
+		}
+		return new String(snBytes) + new String(keyBytes);
+	}
+
+	public static void main(String[] args) {
+		String s = getSecret("abc-dbc-ff", "aabb1112222-333");
+		System.out.println(s);
+		// System.out.println(getSecret1(s.split("\\|")[0], s.split("\\|")[1]));
+	}
+
 }

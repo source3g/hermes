@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.customer.CustomerRemindDto;
-import com.source3g.hermes.entity.Device;
+import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;

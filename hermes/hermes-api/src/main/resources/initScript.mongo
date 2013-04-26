@@ -1,0 +1,13 @@
+db.onlineVersion.insert(
+{ "_class" : "com.sourse3g.hermes.apkVersion.OnlineVersion",
+"apkVersion" : "1"
+}
+);
+
+db.publicKey.insert(
+{
+        "_id" : ObjectId("51778cabdf1177a81a2d8deb"),
+        "_class" : "com.source3g.hermes.entity.device.PublicKey",
+        "publickey" : "233e2315-2b5d-4131-9b72-923231416d18"
+}
+);

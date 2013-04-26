@@ -62,8 +62,9 @@ public class CbipMesssageService {
 		activeSubmitSender = new ActiveSubmitSender();
 	}
 
-	public long send(Long msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
+	public String send(String msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
 		// long clientSeq = Standard_SeqNum.computeSeqNoErr(1);
+		Long msgIdL=Long.parseLong(msgId);
 		if (isTest) {
 			System.out.println("摸拟向" + phoneNumber + "发送了内容：" + content);
 			logger.debug("摸拟向" + phoneNumber + "发送了内容：" + content);
@@ -77,7 +78,7 @@ public class CbipMesssageService {
 		logger.debug("主动发送短信" + phoneNumber);
 		// System.out.println(mmsSubmit);
 		CbipSubmit smsSubmit = new CbipSubmit();
-		smsSubmit.setClientSeq(msgId);
+		smsSubmit.setClientSeq(msgIdL);
 		smsSubmit.setSrcNumber("");
 		smsSubmit.setMessagePriority((byte) 1);
 		smsSubmit.setReportType((short) 1);
