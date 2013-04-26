@@ -26,7 +26,9 @@
 		<c:forEach items="${page.data}" var="ShortMessageRecord">
 		<tr>
 			<td>${ShortMessageRecord.phone}</td>
-			<td>${ShortMessageRecord.content}</td>
+			<td  title="${ShortMessageRecord.content }">
+			<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${ShortMessageRecord.content }</div>
+			</td>
 			<td>${ShortMessageRecord.messageType}</td>
 			<td>${ShortMessageRecord.status}</td>
 			<td>${ShortMessageRecord.sendTime}</td>

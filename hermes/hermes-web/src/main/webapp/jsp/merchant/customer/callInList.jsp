@@ -40,12 +40,12 @@
 				<td width="20%">${customer.phone }</td>
 				<td width="20%">${customer.lastCallInTime }</td>
 				<td width="20%">${fn:length(customer.callRecords) }</td>
-				<td width="20%"><a class="btn btn-success"
+				<td width="20%" id="${customer.phone}"><a class="btn btn-success"
 					href="javascript:void();"
 					onclick="showCallRecords('${customer.id}');">详情</a> <a
 					class="btn btn-success" href="#"
-					onclick="return editCustomer('${customer.id}');">编辑</a> <a
-					class="btn btn-success" href="#" onclick="return showSendModal();">发短信</a></td>
+					onclick="return editCustomer('${customer.id}');">编辑</a> <a 
+					class="btn btn-success" href="javascript:void();" onclick="return showSendModal('${customer.phone}');">发短信</a></td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -100,6 +100,9 @@
 
 	<script type="text/javascript">
 		$(document).ready(function (){
+			if(${not empty success}){
+				alert("${success}");
+			}
 			$('#queryForm').submit(function(){
 	    		goToPage(1);
 	    		return false;
@@ -150,17 +153,23 @@
 			$("#myModal").modal("hide");
 		}
 		
-		function sendMessage(){
+		function sendMessage(phone){
 			//增加参数
-			alert("发短信");
-			return false;
+			var textarea=$("#textarea").val();
+			$.get("${pageContext.request.contextPath}/merchant/customer/quicklySend/"+textarea+"/"+phone+"/",showContentInfo);
+			//return false;
 		}
-		function showSendModal()
-		{
-			$("#sendMessageModal").modal();
-			return false;
+		function showSendModal(phone){
+			if($("#"+phone).children().length==4){
+				return;
+			}
+		 	var text="<div><textarea name='messageContent'style='margin-top:10px;height:80px' id='textarea'></textarea>"+
+		 	"<a class='btn btn-success' href='javascript:void();' onclick='sendMessage(\""+phone+"\");'>发送</a><input type='button' class='btn btn-success' value='取消' onclick='cancle(this)'></div>";
+			 $("#"+phone).append(text);  
+		} 
+		function cancle(el){
+			$(el).parent().remove();
 		}
-		
 	</script>
 </body>
 </html>

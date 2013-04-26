@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.customer.Customer;
@@ -354,6 +355,18 @@ public class CustomerController {
 		return new ModelAndView("/merchant/customer/callInList", model);
 	}
 
+	@RequestMapping(value = "/quicklySend/{textarea}/{phone}", method = RequestMethod.GET)
+	public ModelAndView quicklySend(HttpServletRequest req,@PathVariable String textarea,@PathVariable String phone,RedirectAttributes redirectAttributes) throws Exception {
+		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/quicklySend/?merchantId=" + merchant.getId() +"&content="+textarea+"&phone="+phone;
+		String result = restTemplate.getForObject(uri, String.class);
+		if(ReturnConstants.SUCCESS.equals(result)){
+			redirectAttributes.addFlashAttribute("success","短信已提交后台,请在短信列表查看");
+			return new ModelAndView("redirect:/merchant/customer/callInList/");
+		}
+		return new ModelAndView("redirect:/merchant/customer/callInList/");
+	}
+	
 	@RequestMapping(value = "/callInStatistics", method = RequestMethod.GET)
 	public ModelAndView callInStatistics(HttpServletRequest req, String startTime, String endTime) throws Exception {
 		CallInStatistics result = findCallInStatistics(req, startTime, endTime);

@@ -189,6 +189,7 @@
 					dataType:'json',
 					success:function (data){
 						window.open(data);
+						$('#exportCustomerBtn').button('reset');
 					},
 					error:showError
 			};

@@ -54,7 +54,6 @@ import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
 import com.source3g.hermes.vo.CallInStatisticsCount;
-
 @Controller
 @RequestMapping("/customer")
 public class CustomerApi {
@@ -67,7 +66,7 @@ public class CustomerApi {
 	private CustomerImportService customerImportService;
 	@Autowired
 	private CommonBaseService commonBaseService;
-
+	
 	@RequestMapping(value = "/export/download/{year}/{month}/{day}/{merchantId}/{fileName}", method = RequestMethod.GET)
 	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		BufferedInputStream bis = null;
@@ -234,6 +233,7 @@ public class CustomerApi {
 		return customerService.callInList(pageNoInt, customer, customerType);
 	}
 
+	
 	@RequestMapping(value = "/importLog/merchant/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Page importLog(@PathVariable String merchantId, String pageNo, Date startTime, Date endTime) {

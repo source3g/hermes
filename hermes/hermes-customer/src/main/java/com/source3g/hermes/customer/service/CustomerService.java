@@ -83,6 +83,7 @@ public class CustomerService extends BaseService {
 	@Autowired
 	private JmsService jmsService;
 
+
 	public void add(Customer customer) throws Exception {
 		customer.setId(ObjectId.get());
 		customer.setOperateTime(new Date());
@@ -787,5 +788,6 @@ public class CustomerService extends BaseService {
 			super.updateIncludeProperties(c, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "customerGroup", "favorite", "operateTime");
 		}
 	}
+
 
 }
