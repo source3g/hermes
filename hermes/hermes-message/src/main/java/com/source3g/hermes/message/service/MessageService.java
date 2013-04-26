@@ -311,9 +311,8 @@ public class MessageService extends BaseService {
 		}
 
 		if (StringUtils.isNotEmpty(customerGroupName)) {
-			Pattern pattern1 = Pattern.compile("^.*" + customerGroupName + ".*$", Pattern.CASE_INSENSITIVE);
-			// query.addCriteria(Criteria.where("customerGroupName").is(pattern1));
-			criteria.and("customerGroupName").is(pattern1);
+			CustomerGroup customerGroup=mongoTemplate.findOne(new Query(Criteria.where("name").is(customerGroupName).and("merchantId").is(merchantId)), CustomerGroup.class);
+			criteria.and("customerGroup").is(customerGroup);
 		}
 
 		if (startTime != null && endTime != null) {
@@ -448,7 +447,13 @@ public class MessageService extends BaseService {
 		String[] suffix = { "先生", "女士", "小姐" };
 		assert (merchant != null);
 		boolean isHasSuffix = false;
-		String customerName = customer.getName();
+		String customerName ;
+		if(customer.getName()==null){
+			customerName=customer.getPhone();
+		}else{
+			customerName=customer.getName();
+		}
+		
 		if (merchant.getSetting().isNameMatch() == true && customer != null) {
 			for (String s : suffix) {
 				if (customer.getName() == null) {

@@ -36,6 +36,9 @@ public class MessageSendListener implements MessageListener {
 		ShortMessage shortMessage = null;
 		try {
 			shortMessage = JmsUtils.getObject(msg, ShortMessage.class);
+			String phone=shortMessage.getPhone();
+			if(phone.length()==11&&!phone.substring(0, 1).equals("0")){
+			
 			Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(shortMessage.getMerchantId())), Merchant.class);
 			if (merchant == null) {
 				throw new Exception("商户不存在");
@@ -65,6 +68,9 @@ public class MessageSendListener implements MessageListener {
 					}
 				}
 			}
+			}else{
+				throw new Exception("无效手机号码");
+			}
 		} catch (Exception e) {
 			if (shortMessage != null) {
 				MessageStatus status;
@@ -73,6 +79,9 @@ public class MessageSendListener implements MessageListener {
 				} catch (Exception e2) {
 					status = MessageStatus.发送失败;
 				}
+				Update update=new Update();
+				update.set("status", status);
+				mongoTemplate.upsert(new Query(Criteria.where("_id").is(shortMessage.getSendId())), update, MessageSendLog.class);
 				shortMessage.setStatus(status);
 				mongoTemplate.save(shortMessage);
 			}

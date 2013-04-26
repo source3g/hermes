@@ -140,7 +140,19 @@ public class MessageApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
-
+	
+	@RequestMapping(value = "/quicklySend", method = RequestMethod.GET)
+	@ResponseBody
+	public String quicklySend(String merchantId,String content, String phone) throws Exception {
+		ObjectId obj=new ObjectId(merchantId);
+		try {
+			messageService.singleSend(obj,phone, content,MessageType.快捷发送);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+	
 	@RequestMapping(value = "/groupSendLogList/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<GroupSendLog> groupSendLogList(@PathVariable String merchantId) {

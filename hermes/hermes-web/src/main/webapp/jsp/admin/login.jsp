@@ -9,9 +9,6 @@
 <%@include file="../include/footer.jsp"%>
 </head>
 <style type="text/css">
-body{
-    background:url("${pageContext.request.contextPath}/img/wcb.jpg/");
-}
 li{
 list-style:none;
 }
@@ -21,8 +18,7 @@ list-style:none;
 		<div class="row-fluid">
 			<div class="row-fluid">
 				<div class="span12"style="height:70px;">
-					 <%-- <h2 style="margin-top:10px;margin-left:220px "><img alt="旺财宝" src="${pageContext.request.contextPath}/img/logo.png"/></h2> 
-						<h2 style="margin-top:10px;margin-left:290px;font-size:25px;font-family:宋体">客户来电和情感管理系统</h2>  --%>
+			 	<h2 style="margin-left:210px ">	<img alt="旺财宝" src="${pageContext.request.contextPath}/img/top.jpg"/> </h2> 
 						
 					<!-- <hr> -->
 				</div>
@@ -33,32 +29,37 @@ list-style:none;
 			<div class="row-fluid" style="height:400px;">
 				<div class=" span2 center login-box"></div>
 				<div class=" span4 center login-box" >  <!-- style="background-color:#FAFAD2 " -->
-					<ul style="margin-top:30px">
-						<li style="color:black;margin-top:40px">
+					<ul style="margin-left:-30px">
+						<li style="color:black;margin-top:40px;">
+						<div><img alt="数据图标" src="${pageContext.request.contextPath}/img/dianhua.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">来电信息同步</strong>
-						<p style="font-size:13px;">提高店员服务效率，增加顾客的尊贵感、贴心感和忠诚度。</p>
+						<p style="font-size:13px;margin-left:70px;margin-top:-20px">提高店员服务效率，增加顾客的尊贵感、贴心感和忠诚度。</p></div>
 						</li>
 						<!-- <li style="margin-bottom:8px;color:black"></li> -->
-						<li style="color:black;margin-top:25px">
+						<li style="color:black;">
+						<div><img alt="数据图标" src="${pageContext.request.contextPath}/img/duanxin.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">挂机短信发布</strong>
-						<p style="font-size:13px;">顾客来电后，旺财宝会发出短信，便于顾客预留或转发。</p>
+						<p style="font-size:13px;margin-left:70px;margin-top:-20px">顾客来电后，旺财宝会发出短信，便于顾客预留或转发。</p></div>
 						</li>
-						<li style="color:black;margin-top:25px">
+						<li style="color:black;">
+						<div><img alt="数据图标" src="${pageContext.request.contextPath}/img/qinggan.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">情感短信维护</strong>
-						<p style="font-size:13px;">节庆日贴心的情感短信，增进顾客的亲切感和忠诚度。</p>
+						<p style="font-size:13px;margin-left:70px;margin-top:-20px">节庆日贴心的情感短信，增进顾客的亲切感和忠诚度。</p></div>
 						</li>
-						<li style="color:black;margin-top:20px">
+						<li style="color:black;">
+						<div><img alt="数据图标" src="${pageContext.request.contextPath}/img/kehu.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">客户资料存储</strong>
-						<p style="font-size:13px;">顾客信息是商家的宝贵资源，旺财宝帮您分享权限存储与管理。</p>
+						<p style="font-size:13px;margin-left:70px;margin-top:-20px">顾客信息是商家的宝贵资源，旺财宝帮您分享权限存储与管理。</p></div>
 						</li>
-						<li style="color:black;margin-top:25px">
+						<li style="color:black;">
+						<div><img alt="数据图标" src="${pageContext.request.contextPath}/img/shuju.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">数据分析管理</strong>
-						<p style="font-size:13px;">为老板和管理人员提供顾客消费行为和情感指数分析工具。</p>
+						<p style="font-size:13px;margin-left:70px;margin-top:-20px">为老板和管理人员提供顾客消费行为和情感指数分析工具。</p></div>
 						</li>
 					</ul>
 
 				</div>
-				<div class="span3 center login-box" style="height:330px;margin-top:20px;background-color:white;border:1px solid #CFCFCF;">
+				<div class="span4 center login-box" style="height:330px;width:350px;margin-left:100px;margin-top:60px;background-color:white;border:1px solid #CFCFCF;">
 					 <!-- <div class="alert alert-info">请输入帐号密码</div>  -->
 					<form class="form-horizontal" action="${pageContext.request.contextPath}/adminLogin/login" method="post">
 						<fieldset><!-- <i class="icon-user"></i> -->
@@ -91,8 +92,10 @@ list-style:none;
 						</fieldset>
 					</form>
 				</div>
-				<div class=" span2 center login-box"></div>
+					<br>
 				
+				<div class=" span1 center login-box"></div>
+			
 			</div>
 			<!--/row-->
 		
@@ -100,6 +103,11 @@ list-style:none;
 		<!--/fluid-row-->
 
 	</div>
+	<br>
+				<br>
+				<br>
+				<br>
+				<br>
 	<!--/.fluid-container-->
 	<%@include file="../include/copyright.jsp"%>
 </body>
