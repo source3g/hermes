@@ -211,9 +211,9 @@ public class MessageApi {
 	}
 	@RequestMapping(value = "/failedMessagelist", method = RequestMethod.GET)
 	@ResponseBody
-	public Page failedMessagelist(String pageNo) {
+	public Page failedMessagelist(String pageNo,Date startTime,Date endTime,String status) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return	messageService.failedMessagelist(pageNoInt,null);
+		return	messageService.failedMessagelist(pageNoInt,startTime, endTime, status);
 	}
 	
 	@RequestMapping(value = "/failed/resend/{id}", method = RequestMethod.GET)
@@ -223,10 +223,10 @@ public class MessageApi {
 		return	ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value = "/failed/resendAll", method = RequestMethod.GET)
+	@RequestMapping(value = "/failed/resendAll/{startTime}/{endTime}", method = RequestMethod.GET)
 	@ResponseBody
-	public String allFailedMessagesSendAgain() {
-		messageService.allFailedMessagesResend();
+	public String allFailedMessagesSendAgain( @PathVariable Date startTime,@PathVariable Date endTime, String status) {
+		messageService.allFailedMessagesResend(startTime,endTime,status);
 		return	ReturnConstants.SUCCESS;
 	}
 	

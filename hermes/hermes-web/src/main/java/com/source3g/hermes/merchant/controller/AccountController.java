@@ -43,7 +43,8 @@ public class AccountController {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("merchant", merchant);
-		return new ModelAndView("merchant/accountCenter/switch", model);
+	//	return new ModelAndView("merchant/accountCenter/switch", model);
+		return new ModelAndView("merchant/login");
 	}
 
 	@RequestMapping(value = "/switch", method = RequestMethod.POST)

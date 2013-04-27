@@ -530,13 +530,22 @@ public class MessageService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)), update, ShortMessage.class);
 	}
 
-	public Page failedMessagelist(int pageNoInt, Date startTime) {
+	public Page failedMessagelist(int pageNoInt, Date startTime,Date endTime,String status) {
 		Query query = new Query();
-		query.with(new Sort(Direction.DESC, "_id"));
-		if (startTime != null) {
-			query.addCriteria(Criteria.where("sendTime").gte(startTime));
+		query.with(new Sort(Direction.DESC, "sendTime"));
+		Criteria criteria=new Criteria();
+		if(startTime!= null&&endTime!=null){
+			criteria.and("sendTime").gte(startTime).lte(endTime);
+		}else if (startTime!= null) {
+			criteria.and("sendTime").gte(startTime);
+		}else if(endTime!=null){
+			criteria.and("sendTime").lte(endTime);
+		}
+		if(StringUtils.isNotEmpty(status)){
+				criteria.and("status").is(status);
 		}
 		// query.addCriteria(Criteria.where("status").is(MessageStatus.提交失败));
+		query.addCriteria(criteria);
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, ShortMessage.class);
 		page.setTotalRecords(totalCount);
@@ -556,8 +565,21 @@ public class MessageService extends BaseService {
 		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
 	}
 
-	public void allFailedMessagesResend() {
-		List<ShortMessage> list = mongoTemplate.find(new Query(Criteria.where("status").is(MessageStatus.提交失败)), ShortMessage.class);
+	public void allFailedMessagesResend( Date startTime, Date endTime, String status) {
+		Query query=new Query();
+		Criteria criteria=new Criteria();
+		if(startTime!=null&&endTime!=null){
+			criteria.and("sendTime").gte(startTime).lte(endTime);
+		}else if(startTime!=null){
+			criteria.and("sendTime").gte(startTime);
+		}else if(endTime!=null){
+			criteria.and("endTime").lte(endTime);
+		}
+		if(status!=null){
+			criteria.and("status").is(status);
+		}
+		query.addCriteria(criteria);
+		List<ShortMessage> list =mongoTemplate.find(query, ShortMessage.class);
 		for (ShortMessage shortMessage : list) {
 			failedMessageResend(shortMessage);
 		}
