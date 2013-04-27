@@ -80,9 +80,9 @@ public class MessageService extends BaseService {
 	public void groupSend(ObjectId merchantId, String[] ids, String customerPhones, String content) throws Exception {
 		String customerPhoneArray[] = {};
 		if (customerPhones != null) {
-			customerPhoneArray = isNumeric(customerPhones);
+			customerPhoneArray = getMobilePhone(customerPhones);
 		}
-		Long count = findCustomerCountByGroupIds(ids);
+		Long count = findCustomerHasMobileCountByGroupIds(ids);
 		count += customerPhoneArray.length;
 		checkSurplus(merchantId, count);
 		// 生成群发记录
@@ -91,13 +91,13 @@ public class MessageService extends BaseService {
 		jmsService.sendObject(messageDestination, groupSendMsg, JmsConstants.TYPE, JmsConstants.GROUP_SEND_MESSAGE);
 	}
 
-	public String[] isNumeric(String customerPhones) {
-		Pattern pattern = Pattern.compile("\\d{11}");
+	public String[] getMobilePhone(String customerPhones) {
+		// Pattern pattern = Pattern.compile("\\d{11}");
 		// Matcher isNum =null;
 		String customerPhoneArray[] = customerPhones.split(";");
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < customerPhoneArray.length; i++) {
-			if (pattern.matcher(customerPhoneArray[i]).matches()) {
+			if (PhoneUtils.isMobile(customerPhoneArray[i])) {
 				list.add(customerPhoneArray[i]);
 			}
 		}
@@ -105,7 +105,7 @@ public class MessageService extends BaseService {
 		return list.toArray(length);
 	}
 
-	private long findCustomerCountByGroupIds(String[] ids) {
+	private long findCustomerHasMobileCountByGroupIds(String[] ids) {
 		if (ids == null || ids.length == 0) {
 			return 0L;
 		}
@@ -219,14 +219,16 @@ public class MessageService extends BaseService {
 	 * @param logId
 	 */
 	private void sendByPhone(ObjectId merchantId, String phone, String content, MessageType messageType, ObjectId logId) {
-		ShortMessage shortMessage = new ShortMessage();
-		shortMessage.setContent(content);
-		shortMessage.setMessageType(messageType);
-		shortMessage.setId(ObjectId.get());
-		shortMessage.setMerchantId(merchantId);
-		shortMessage.setPhone(phone);
-		shortMessage.setSendId(logId);
-		jmsService.sendObject(messageDestination, shortMessage, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+		if (PhoneUtils.isMobile(phone)) {
+			ShortMessage shortMessage = new ShortMessage();
+			shortMessage.setContent(content);
+			shortMessage.setMessageType(messageType);
+			shortMessage.setId(ObjectId.get());
+			shortMessage.setMerchantId(merchantId);
+			shortMessage.setPhone(phone);
+			shortMessage.setSendId(logId);
+			jmsService.sendObject(messageDestination, shortMessage, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+		}
 	}
 
 	/**
@@ -250,20 +252,22 @@ public class MessageService extends BaseService {
 	 * @throws Exception
 	 */
 	private void sendMessageWithProceedContent(Customer c, String proceedContent, MessageType messageType, ObjectId logId) {
-		ShortMessage shortMessage = new ShortMessage();
-		shortMessage.setContent(proceedContent);
-		shortMessage.setMessageType(messageType);
-		shortMessage.setId(ObjectId.get());
-		shortMessage.setMerchantId(c.getMerchantId());
-		shortMessage.setPhone(c.getPhone());
-		shortMessage.setSendId(logId);
-		jmsService.sendObject(messageDestination, shortMessage, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+		if (PhoneUtils.isMobile(c.getPhone())) {
+			ShortMessage shortMessage = new ShortMessage();
+			shortMessage.setContent(proceedContent);
+			shortMessage.setMessageType(messageType);
+			shortMessage.setId(ObjectId.get());
+			shortMessage.setMerchantId(c.getMerchantId());
+			shortMessage.setPhone(c.getPhone());
+			shortMessage.setSendId(logId);
+			jmsService.sendObject(messageDestination, shortMessage, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+		}
 	}
 
 	public void singleSend(Customer c, String content, MessageType type) {
 		String proceedContent = processContent(c.getMerchantId(), c, content);
 		MessageSendLog messageSendLog = genMessageSendLog(c, 1, proceedContent, type, MessageStatus.发送中);
-		sendMessageWithProceedContent(c, proceedContent, MessageType.提醒短信, messageSendLog.getId());
+		sendMessageWithProceedContent(c, proceedContent, type, messageSendLog.getId());
 	}
 
 	public void singleSend(ObjectId merchantId, String customerPhone, String content, MessageType messageType) {
@@ -311,7 +315,7 @@ public class MessageService extends BaseService {
 		}
 
 		if (StringUtils.isNotEmpty(customerGroupName)) {
-			CustomerGroup customerGroup=mongoTemplate.findOne(new Query(Criteria.where("name").is(customerGroupName).and("merchantId").is(merchantId)), CustomerGroup.class);
+			CustomerGroup customerGroup = mongoTemplate.findOne(new Query(Criteria.where("name").is(customerGroupName).and("merchantId").is(merchantId)), CustomerGroup.class);
 			criteria.and("customerGroup").is(customerGroup);
 		}
 
@@ -449,13 +453,13 @@ public class MessageService extends BaseService {
 		String[] suffix = { "先生", "女士", "小姐" };
 		assert (merchant != null);
 		boolean isHasSuffix = false;
-		String customerName ;
-		if(customer.getName()==null){
-			customerName=customer.getPhone();
-		}else{
-			customerName=customer.getName();
+		String customerName;
+		if (customer.getName() == null) {
+			customerName = customer.getPhone();
+		} else {
+			customerName = customer.getName();
 		}
-		
+
 		if (merchant.getSetting().isNameMatch() == true && customer != null) {
 			for (String s : suffix) {
 				if (customer.getName() == null) {

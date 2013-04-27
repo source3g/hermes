@@ -41,7 +41,7 @@ public class LogService {
 		Object[] args = jp.getArgs();
 		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
 		System.out.println("log: " + operatorLog);
-		logger.info(operatorLog.toString());
+		logger.debug("log:"+operatorLog.toString());
 		// mongoTemplate.insert(operatorLog);
 	}
 

@@ -1,5 +1,7 @@
 package com.source3g.hermes.utils;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.source3g.hermes.enums.PhoneOperator;
@@ -24,5 +26,15 @@ public class PhoneUtils {
 			operator = PhoneOperator.其它;
 		}
 		return operator;
+	}
+
+	public static boolean isMobile(String phone) {
+		if (StringUtils.isNotEmpty(phone)) {
+			Pattern pattern = Pattern.compile("\\d{11}");
+			if (phone.length() == 11 && (!phone.startsWith("0")) && pattern.matcher(phone).matches()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -65,6 +65,7 @@ import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.DateFormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.utils.PhoneUtils;
 import com.source3g.hermes.vo.CallInStatisticsCount;
 
 @Service
@@ -82,7 +83,6 @@ public class CustomerService extends BaseService {
 
 	@Autowired
 	private JmsService jmsService;
-
 
 	public void add(Customer customer) throws Exception {
 		customer.setId(ObjectId.get());
@@ -169,11 +169,10 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
 			}
-			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
-						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
-				if(customerGroups!=null){
+				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if (customerGroups != null) {
 					criteria.and("customerGroup").in(customerGroups);
 				}
 			}
@@ -187,11 +186,10 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				criteria.and("phone").is(pattern);
 			}
-			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
-						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
-				if(customerGroups!=null){
+				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if (customerGroups != null) {
 					criteria.and("customerGroup").in(customerGroups);
 				}
 			}
@@ -295,14 +293,14 @@ public class CustomerService extends BaseService {
 		return list(pageNo, customer, CustomerType.allCustomer, Direction.DESC, "name");
 	}
 
-	public List<Customer> list(Customer customer,CustomerType customerType) {
+	public List<Customer> list(Customer customer, CustomerType customerType) {
 		Query query = new Query();
 		if (customer.getMerchantId() == null) {
 			return null;
 		} else {
 			query.addCriteria(Criteria.where("merchantId").is(customer.getMerchantId()));
 		}
-		switch(customerType){
+		switch (customerType) {
 		case newCustomer:
 			query.addCriteria(Criteria.where("name").is(null));
 			break;
@@ -315,11 +313,10 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				query.addCriteria(Criteria.where("phone").is(pattern));
 			}
-			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
-						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
-				if(customerGroups!=null){
+				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if (customerGroups != null) {
 					query.addCriteria(Criteria.where("customerGroup").in(customerGroups));
 				}
 			}
@@ -333,11 +330,10 @@ public class CustomerService extends BaseService {
 				Pattern pattern = Pattern.compile("^.*" + customer.getPhone() + ".*$", Pattern.CASE_INSENSITIVE);
 				query.addCriteria(Criteria.where("phone").is(pattern));
 			}
-			if(StringUtils.isNotEmpty(customer.getCustomerGroup().getName())){
+			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups=mongoTemplate.find(new Query(Criteria.where("name")
-						.is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
-				if(customerGroups!=null){
+				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				if (customerGroups != null) {
 					query.addCriteria(Criteria.where("customerGroup").in(customerGroups));
 				}
 			}
@@ -347,8 +343,8 @@ public class CustomerService extends BaseService {
 		return list;
 	}
 
-	public String export(Customer customer,CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		List<Customer> list = list(customer,customerType);
+	public String export(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		List<Customer> list = list(customer, customerType);
 		Date createTime = new Date();
 		// 文件名
 		DateFormat dateFormatExport = new SimpleDateFormat("yyyy-MM-dd");
@@ -487,14 +483,16 @@ public class CustomerService extends BaseService {
 		}
 		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).set("operateTime", new Date()).addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
-		if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() > 0 && record.getCallDuration() >= 6 && CallStatus.CALL_IN.equals(record.getCallStatus())) {
-			CallInMessage callInMessage = new CallInMessage();
-			callInMessage.setDeviceSn(deviceSn);
-			callInMessage.setDuration(duration);
-			callInMessage.setMerchantId(merchant.getId());
-			callInMessage.setPhone(phone);
-			callInMessage.setTime(time);
-			jmsService.sendObject(customerDestination, callInMessage, JmsConstants.TYPE, JmsConstants.CALL_IN);
+		if (PhoneUtils.isMobile(phone)) {
+			if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() > 0 && record.getCallDuration() >= 6 && CallStatus.CALL_IN.equals(record.getCallStatus())) {
+				CallInMessage callInMessage = new CallInMessage();
+				callInMessage.setDeviceSn(deviceSn);
+				callInMessage.setDuration(duration);
+				callInMessage.setMerchantId(merchant.getId());
+				callInMessage.setPhone(phone);
+				callInMessage.setTime(time);
+				jmsService.sendObject(customerDestination, callInMessage, JmsConstants.TYPE, JmsConstants.CALL_IN);
+			}
 		}
 	}
 
@@ -788,6 +786,5 @@ public class CustomerService extends BaseService {
 			super.updateIncludeProperties(c, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "customerGroup", "favorite", "operateTime");
 		}
 	}
-
 
 }

@@ -5,7 +5,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>登录</title>
-<%@include file="../include/header.jsp"%>
 <script type='text/javascript'
 	src='${pageContext.request.contextPath}/js/jquery/jquery.js'></script>
 <script type='text/javascript'
@@ -96,6 +95,17 @@
 			$.ajaxSetup({
 				cache : false
 			});
+			addCssOrJs('${pageContext.request.contextPath}/css/bootstrap/bootstrap-cerulean.css');
+			function addCssOrJs(file) {
+				if ($("link[href$=" + file + "]").length == 0) {
+					var css_href = file;
+					var styleTag = document.createElement("link");
+					styleTag.setAttribute('type', 'text/css');
+					styleTag.setAttribute('rel', 'stylesheet');
+					styleTag.setAttribute('href', css_href);
+					$("head")[0].appendChild(styleTag);
+				}
+			}
 		});
 	</script>
 </body>
