@@ -52,7 +52,7 @@ body {
 
 	<div class="container-fluid">
 		<div class="row-fluid">
-			<div class="span2" style="width:193px">
+			<div class="span2">
 				<div class="accordion" id="accordion2">
 					<div class="accordion-group">
 						<div class="accordion-heading" style="background-color: #EEE;">

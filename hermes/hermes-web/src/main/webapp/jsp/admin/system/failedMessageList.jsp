@@ -19,6 +19,12 @@
 				<c:if test="${status eq '已发送' }"> selected="selected"</c:if>>已发送</option>
 				<option value="提交失败"
 				<c:if test="${status eq '提交失败' }"> selected="selected"</c:if>>提交失败</option>
+				<option value="发送失败"
+				<c:if test="${status eq '发送失败' }"> selected="selected"</c:if>>发送失败</option>
+				<option value="商户不存在"
+				<c:if test="${status eq '商户不存在' }"> selected="selected"</c:if>>商户不存在</option>
+				<option value="余额不足发送失败"
+				<c:if test="${status eq '余额不足发送失败' }"> selected="selected"</c:if>>余额不足发送失败</option>
 			</select>
 		<input id="pageNo" name="pageNo" type="hidden"/> 
 		<input type="submit" class="btn btn-primary" value="查询"/>

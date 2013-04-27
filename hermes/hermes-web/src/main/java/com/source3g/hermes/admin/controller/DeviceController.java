@@ -41,7 +41,7 @@ public class DeviceController {
 
 	@RequestMapping(value = "add", method = RequestMethod.GET)
 	public ModelAndView toAdd() {
-		return new ModelAndView("admin/login");
+		return new ModelAndView("admin/device/add");
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
