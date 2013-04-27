@@ -21,35 +21,50 @@ import com.source3g.hermes.utils.Page;
 @RequestMapping("/admin/message")
 @RequiresRoles("admin")
 public class MessageAdminController {
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
-	
-	@RequestMapping(value="/failed/list")
-	public ModelAndView toFailedList(Merchant merchant, String pageNo){
+
+	@RequestMapping(value = "/failed/list")
+	public ModelAndView toFailedList(Merchant merchant, String pageNo, String startTime, String endTime, String status) {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/failedMessagelist/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(startTime)) {
+			uri += "&startTime=" + startTime;
+		}
+		if (StringUtils.isNotEmpty(endTime)) {
+			uri += "&endTime=" + endTime;
+		}
+		if (StringUtils.isNotEmpty(status)) {
+			uri += "&status=" + status;
+		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("startTime", startTime);
+		model.put("endTime", endTime);
+		model.put("status", status);
 		model.put("page", page);
-		return new ModelAndView("/admin/system/failedMessageList",model);
+		return new ModelAndView("/admin/system/failedMessageList", model);
 	}
 
-	@RequestMapping(value="/failed/resend/{id}")
-	public ModelAndView failedMessageSendAgain(@PathVariable String id){
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/failed/resend/" + id+"/";
-		String result=restTemplate.getForObject(uri, String.class);
-		if(ReturnConstants.SUCCESS.equals(result)){
+	@RequestMapping(value = "/failed/resend/{id}")
+	public ModelAndView failedMessageSendAgain(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/failed/resend/" + id + "/";
+		String result = restTemplate.getForObject(uri, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
 			return new ModelAndView("redirect:/admin/message/failed/list");
 		}
 		return new ModelAndView("admin/error");
 	}
-	
+
 	@RequestMapping(value="/failed/resendAll")
-	public ModelAndView allFailedMessagesSendAgain(){
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/failed/resendAll/";
+	public ModelAndView allFailedMessagesSendAgain( String startTime, String endTime, String status){
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/failed/resendAll/"+startTime+"/"+endTime+"/?a=1";
+		if(status!=null){
+			uri+="&status="+status;
+		}
 		String result=restTemplate.getForObject(uri, String.class);
 		if(ReturnConstants.SUCCESS.equals(result)){
 			return new ModelAndView("redirect:/admin/message/failed/list");

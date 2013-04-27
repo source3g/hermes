@@ -1,5 +1,7 @@
 package com.source3g.hermes.message.jms.listener;
 
+import java.util.Date;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
@@ -77,6 +79,7 @@ public class MessageSendListener implements MessageListener {
 				Update update = new Update();
 				update.set("status", status);
 				mongoTemplate.upsert(new Query(Criteria.where("_id").is(shortMessage.getSendId())), update, MessageSendLog.class);
+				shortMessage.setSendTime(new Date());
 				shortMessage.setStatus(status);
 				mongoTemplate.save(shortMessage);
 			}

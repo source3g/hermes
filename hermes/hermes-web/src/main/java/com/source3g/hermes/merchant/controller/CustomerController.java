@@ -355,8 +355,8 @@ public class CustomerController {
 		return new ModelAndView("/merchant/customer/callInList", model);
 	}
 
-	@RequestMapping(value = "/quicklySend/{textarea}/{phone}", method = RequestMethod.GET)
-	public ModelAndView quicklySend(HttpServletRequest req,@PathVariable String textarea,@PathVariable String phone,RedirectAttributes redirectAttributes) throws Exception {
+	@RequestMapping(value = "/quicklySend", method = RequestMethod.POST)
+	public ModelAndView quicklySend(HttpServletRequest req, String textarea, String phone,RedirectAttributes redirectAttributes) throws Exception {
 		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/quicklySend/?merchantId=" + merchant.getId() +"&content="+textarea+"&phone="+phone;
 		String result = restTemplate.getForObject(uri, String.class);

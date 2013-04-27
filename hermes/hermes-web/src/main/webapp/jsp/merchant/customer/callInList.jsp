@@ -156,8 +156,12 @@
 		function sendMessage(phone){
 			//增加参数
 			var textarea=$("#textarea").val();
-			$.get("${pageContext.request.contextPath}/merchant/customer/quicklySend/"+textarea+"/"+phone+"/",showContentInfo);
-			//return false;
+			$.ajax({
+				  type: 'POST',
+				  url: "${pageContext.request.contextPath}/merchant/customer/quicklySend/",
+				  data: {"textarea":textarea,"phone":phone},
+				  success: showContentInfo
+				});
 		}
 		function showSendModal(phone){
 			if($("#"+phone).children().length==4){
