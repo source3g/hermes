@@ -141,7 +141,7 @@ public class MessageApi {
 		return ReturnConstants.SUCCESS;
 	}
 	
-	@RequestMapping(value = "/quicklySend", method = RequestMethod.GET)
+	@RequestMapping(value = "/quicklySend", method = RequestMethod.POST)
 	@ResponseBody
 	public String quicklySend(String merchantId,String content, String phone) throws Exception {
 		ObjectId obj=new ObjectId(merchantId);

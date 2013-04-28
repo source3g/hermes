@@ -41,11 +41,12 @@
 				<td width="20%">${customer.lastCallInTime }</td>
 				<td width="20%">${fn:length(customer.callRecords) }</td>
 				<td width="20%" id="${customer.phone}"><a class="btn btn-success"
-					href="javascript:void();"
+					href="#"
 					onclick="showCallRecords('${customer.id}');">详情</a> <a
 					class="btn btn-success" href="#"
 					onclick="return editCustomer('${customer.id}');">编辑</a> <a 
-					class="btn btn-success" href="javascript:void();" onclick="return showSendModal('${customer.phone}');">发短信</a></td>
+					class="btn btn-success" href="#" onclick="return showSendModal('${customer.phone}');">发短信</a> 
+					</td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -100,6 +101,9 @@
 
 	<script type="text/javascript">
 		$(document).ready(function (){
+			if(${not empty error}){
+				alert("${error}");
+			}
 			if(${not empty success}){
 				alert("${success}");
 			}
@@ -155,21 +159,27 @@
 		
 		function sendMessage(phone){
 			//增加参数
-			var textarea=$("#textarea").val();
+			var textarea=$("#"+phone).children('div').children('textarea').val();
+	 		 if(textarea.length==0){
+				alert("请输入短信内容");
+				return false;
+			}  
 			$.ajax({
 				  type: 'POST',
 				  url: "${pageContext.request.contextPath}/merchant/customer/quicklySend/",
 				  data: {"textarea":textarea,"phone":phone},
 				  success: showContentInfo
 				});
+			return false;
 		}
 		function showSendModal(phone){
 			if($("#"+phone).children().length==4){
-				return;
-			}
+				return false;
+			} 
 		 	var text="<div><textarea name='messageContent'style='margin-top:10px;height:80px' id='textarea'></textarea>"+
-		 	"<a class='btn btn-success' href='javascript:void();' onclick='sendMessage(\""+phone+"\");'>发送</a><input type='button' class='btn btn-success' value='取消' onclick='cancle(this)'></div>";
+		 	"<a class='btn btn-success' href='#' onclick='return sendMessage(\""+phone+"\");'>发送</a><input type='button' class='btn btn-success' value='取消' onclick='cancle(this)'></div>";
 			 $("#"+phone).append(text);  
+			 return false;
 		} 
 		function cancle(el){
 			$(el).parent().remove();

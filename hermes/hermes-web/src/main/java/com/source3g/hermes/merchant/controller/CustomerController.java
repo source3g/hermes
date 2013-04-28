@@ -358,8 +358,22 @@ public class CustomerController {
 	@RequestMapping(value = "/quicklySend", method = RequestMethod.POST)
 	public ModelAndView quicklySend(HttpServletRequest req, String textarea, String phone,RedirectAttributes redirectAttributes) throws Exception {
 		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/quicklySend/?merchantId=" + merchant.getId() +"&content="+textarea+"&phone="+phone;
-		String result = restTemplate.getForObject(uri, String.class);
+		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+		if(textarea!=null){
+			formData.add("content", textarea);
+		}else{
+			redirectAttributes.addFlashAttribute("error","短信内容不能为空");
+			return new ModelAndView("redirect:/merchant/customer/callInList/");
+		}
+		if(phone!=null){
+			formData.add("phone", phone);
+		}
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		httpHeaders.set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, httpHeaders);
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/quicklySend/?merchantId="+merchant.getId();
+		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if(ReturnConstants.SUCCESS.equals(result)){
 			redirectAttributes.addFlashAttribute("success","短信已提交后台,请在短信列表查看");
 			return new ModelAndView("redirect:/merchant/customer/callInList/");
