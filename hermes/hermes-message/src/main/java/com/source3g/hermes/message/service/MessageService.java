@@ -271,6 +271,9 @@ public class MessageService extends BaseService {
 	}
 
 	public void singleSend(ObjectId merchantId, String customerPhone, String content, MessageType messageType) {
+		if(!PhoneUtils.isMobile(customerPhone)){
+			return;
+		}
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(customerPhone)), Customer.class);
 		if (c == null) {
 			MessageSendLog messageSendLog = genMessageSendLog(c, 1, content, messageType, MessageStatus.发送中);
