@@ -580,7 +580,7 @@ public class MessageService extends BaseService {
 		}else if(startTime!=null){
 			criteria.and("sendTime").gte(startTime);
 		}else if(endTime!=null){
-			criteria.and("endTime").lte(endTime);
+			criteria.and("sendTime").lte(endTime);
 		}
 		if(status!=null){
 			criteria.and("status").is(status);
