@@ -113,8 +113,8 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(customer.getPhone())) {
 			uriBuffer.append("&phone=" + customer.getPhone());
 		}
-		if(customer.getCustomerGroup()!=null){
-			if(customer.getCustomerGroup().getName()!=null){
+		if (customer.getCustomerGroup() != null) {
+			if (customer.getCustomerGroup().getName() != null) {
 				uriBuffer.append("&customerGroupName=" + customer.getCustomerGroup().getName());
 			}
 		}
@@ -164,15 +164,15 @@ public class CustomerController {
 		if (StringUtils.isNotEmpty(customer.getPhone())) {
 			uriBuffer.append("&phone=" + customer.getPhone());
 		}
-		if(customer.getCustomerGroup()!=null){
-			if(customer.getCustomerGroup().getName()!=null){
-				uriBuffer.append("&customerGroupName="+customer.getCustomerGroup().getName());
+		if (customer.getCustomerGroup() != null) {
+			if (customer.getCustomerGroup().getName() != null) {
+				uriBuffer.append("&customerGroupName=" + customer.getCustomerGroup().getName());
 			}
 		}
-		if(StringUtils.isEmpty(type)){
-			type=CustomerType.allCustomer.toString();
+		if (StringUtils.isEmpty(type)) {
+			type = CustomerType.allCustomer.toString();
 		}
-		uriBuffer.append("&customerType="+type);
+		uriBuffer.append("&customerType=" + type);
 		String result = restTemplate.getForObject(uriBuffer.toString(), String.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("result", result);
@@ -356,17 +356,17 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/quicklySend", method = RequestMethod.POST)
-	public ModelAndView quicklySend(HttpServletRequest req, String textarea, String phone,RedirectAttributes redirectAttributes) throws Exception {
+	public ModelAndView quicklySend(HttpServletRequest req, String textarea, String phone, RedirectAttributes redirectAttributes) throws Exception {
 		Merchant merchant = (Merchant) LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/quicklySend/?merchantId=" + merchant.getId() +"&content="+textarea+"&phone="+phone;
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/quicklySend/?merchantId=" + merchant.getId() + "&content=" + textarea + "&phone=" + phone;
 		String result = restTemplate.getForObject(uri, String.class);
-		if(ReturnConstants.SUCCESS.equals(result)){
-			redirectAttributes.addFlashAttribute("success","短信已提交后台,请在短信列表查看");
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			redirectAttributes.addFlashAttribute("success", "短信已提交后台,请在短信列表查看");
 			return new ModelAndView("redirect:/merchant/customer/callInList/");
 		}
 		return new ModelAndView("redirect:/merchant/customer/callInList/");
 	}
-	
+
 	@RequestMapping(value = "/callInStatistics", method = RequestMethod.GET)
 	public ModelAndView callInStatistics(HttpServletRequest req, String startTime, String endTime) throws Exception {
 		CallInStatistics result = findCallInStatistics(req, startTime, endTime);
