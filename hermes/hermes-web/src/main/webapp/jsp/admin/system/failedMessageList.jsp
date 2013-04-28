@@ -10,8 +10,8 @@
 <body>
 <form id="queryForm" class="well form-inline " method="get">
 			<label class="control-label" for="name">日期：</label>
-			<input type="text" class="input-medium" name="startTime"placeholder="起始日期..." onclick="WdatePicker();" value="${startTime}"/> 
-			<input type="text" class="input-medium" name="endTime"placeholder="结束日期..." onclick="WdatePicker();" value="${endTime}"/>
+			<input type="text" class="input-medium" name="startTime"placeholder="起始日期..." onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="${startTime}"/> 
+			<input type="text" class="input-medium" name="endTime"placeholder="结束日期..." onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="${endTime}"/>
 			<label class="control-label" for="name">发送状态：</label>
 			<select id="status" name="status" class="input-medium">
 				<option value="">请选择</option>
