@@ -217,16 +217,14 @@ public class MessageApi {
 
 	@RequestMapping(value = "/failed/resend/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public String failedMessageSendAgain(@PathVariable String id) {
-		messageService.failedMessageResend(id);
-		return ReturnConstants.SUCCESS;
+	public Boolean failedMessageSendAgain(@PathVariable String id) {
+		return	messageService.failedMessageResend(id);
 	}
 
 	@RequestMapping(value = "/failed/resendAll/{startTime}/{endTime}", method = RequestMethod.GET)
 	@ResponseBody
-	public String allFailedMessagesSendAgain(@PathVariable Date startTime, @PathVariable Date endTime, String status) {
-		messageService.allFailedMessagesResend(startTime, endTime, status);
-		return ReturnConstants.SUCCESS;
+	public Boolean allFailedMessagesSendAgain( @PathVariable Date startTime,@PathVariable Date endTime, String status) {
+		return	messageService.allFailedMessagesResend(startTime,endTime,status);
 	}
 
 

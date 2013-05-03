@@ -50,7 +50,7 @@
 			<td>${ShortMessageRecord.messageType}</td>
 			<td>${ShortMessageRecord.status}</td>
 			<td>${ShortMessageRecord.sendTime}</td>
-			<td><input type="button" value="重新发送" class="btn btn-primary"  onclick="failedMessageSendAgain('${ShortMessageRecord.id}')"></td>
+			<td><input type="button" value="重新发送" class="btn btn-primary" id="${ShortMessageRecord.id}" data-loading-text="发送中..." onclick="failedMessageSendAgain('${ShortMessageRecord.id}')"></td>
 		</tr>
 		</c:forEach>
 	</table>
@@ -63,7 +63,7 @@
 			<li>当前第${page.currentPage}/${page.totalPageCount}页共${page.totalRecords }条 转到第<input
 				type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input
 				type="button" id="pageOk" class="btn" value="确定"></input>
-				<input type="button" class="btn btn-primary" value="一键发送" onclick='oneKeyAllSend()'></li>
+				<input type="button" class="btn btn-primary" id="oneKeyAllSend" data-loading-text="发送中..." value="一键发送" onclick='oneKeyAllSend()'></li>
 		</ul>
 	</div>
 	<script type="text/javascript">
@@ -88,15 +88,31 @@
 		$("#errorModal").modal();
 	}
 	function failedMessageSendAgain(id){
-		$.get("${pageContext.request.contextPath}/admin/message/failed/resend/"+id+"/",showContentInfo);
+		 $('#'+id).button('loading')
+		$.get("${pageContext.request.contextPath}/admin/message/failed/resend/"+id+"/",showInfo);
+	 function showInfo(data){
+		  if(data!=null){
+			 alert(data);
+		 } 
+		  $.get("${pageContext.request.contextPath}/admin/message/failed/list",showContentInfo);
+	 }
+	
 	}
 	function oneKeyAllSend(){
+		 $('#oneKeyAllSend').button('loading')
 		var options={
 			    url:"${pageContext.request.contextPath}/admin/message/failed/resendAll/",
-				success:showContentInfo,
+				success:showAllInfo,
 				error:showError
 		};
 		$('#queryForm').ajaxSubmit(options);
+		
+		 function showAllInfo(data){
+			  if(data!=null){
+				 alert(data);
+			 } 
+			  $.get("${pageContext.request.contextPath}/admin/message/failed/list",showContentInfo);
+		 }
 	}
 	</script>
 </body>

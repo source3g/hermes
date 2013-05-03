@@ -562,17 +562,24 @@ public class MessageService extends BaseService {
 		return page;
 	}
 
-	public void failedMessageResend(String id) {
+	public Boolean failedMessageResend(String id) {
+		Boolean result=true;
 		ShortMessage message = mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), ShortMessage.class);
-		failedMessageResend(message);
+		MessageStatus status= failedMessageResend(message);
+		if(MessageStatus.已发送.equals(status)){
+			return result;
+		}
+		return false;
 	}
 
-	public void failedMessageResend(ShortMessage message) {
-		message.setStatus(MessageStatus.重新发送);
-		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+	public MessageStatus failedMessageResend(ShortMessage message) {
+			message.setStatus(MessageStatus.重新发送);
+			jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+			return message.getStatus();
 	}
 
-	public void allFailedMessagesResend( Date startTime, Date endTime, String status) {
+	public Boolean allFailedMessagesResend( Date startTime, Date endTime, String status) {
+		Boolean result=true;
 		Query query=new Query();
 		Criteria criteria=new Criteria();
 		if(startTime!=null&&endTime!=null){
@@ -590,6 +597,7 @@ public class MessageService extends BaseService {
 		for (ShortMessage shortMessage : list) {
 			failedMessageResend(shortMessage);
 		}
+		return result;
 	}
 
 	public int getChannel() {
