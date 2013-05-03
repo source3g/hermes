@@ -50,17 +50,23 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
-		if(${result eq 'true'}){
+/* 		if(${result eq 'true'}){
 			alert("发送成功");
 		}	
 		if(${result eq 'false'}){
 			alert("发送失败");
-		}
+		} */
 		initPage(${page.currentPage},${page.totalPageCount});
 });
 	function groupResend(){
 		 $('#allSendBtn').button('loading')
-		$.get("${pageContext.request.contextPath}/admin/system/failedJms/groupResend/",showContentInfo);
+		$.get("${pageContext.request.contextPath}/admin/system/failedJms/groupResend/",showAllInfo);
+		 function showAllInfo(data){
+			  if(data!=null){
+					 alert(data);
+				 } 
+				$.get("${pageContext.request.contextPath}/admin/system/monitor/failedJms/",showContentInfo);
+		 }
 	}
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
@@ -75,7 +81,14 @@
 	function sendAgain(id){
 		 $('#sendBtn'+id).button('loading')
 		var url="${pageContext.request.contextPath}/admin/system/failedJms/resend/"+id+"/";
-		$.get(url,showContentInfo);
+		$.get(url,showInfo);
+		function showInfo(data){
+			if(data!=null){
+				 alert(data);
+			 } 
+			$.get("${pageContext.request.contextPath}/admin/system/monitor/failedJms/",showContentInfo);
+			
+		}
 	}
 	</script>
 </body>

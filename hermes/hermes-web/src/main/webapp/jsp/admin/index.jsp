@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>旺财宝精准营销管理系统-首页</title>
 <%@include file="../include/header.jsp"%>
-<%@include file="../include/footer.jsp"%>
+<%@include file="../include/footer.jsp"%> 
 <style type="text/css">
 body {
 	padding-bottom: 40px;
@@ -307,8 +307,8 @@ body {
 		});
 	});
 
-	function loadPage(url) {
+ 	function loadPage(url) {
 		$("#pageContentFrame").load(url);
-	}
+	} 
 </script>
 </html>

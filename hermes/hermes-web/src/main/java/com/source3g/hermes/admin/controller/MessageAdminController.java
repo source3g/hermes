@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
@@ -26,7 +26,7 @@ public class MessageAdminController {
 	private RestTemplate restTemplate;
 
 	@RequestMapping(value = "/failed/list")
-	public ModelAndView toFailedList(Merchant merchant, String pageNo, String startTime, String endTime, String status) {
+	public ModelAndView FailedList(Merchant merchant, String pageNo, String startTime, String endTime, String status) {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
@@ -50,25 +50,33 @@ public class MessageAdminController {
 	}
 
 	@RequestMapping(value = "/failed/resend/{id}")
-	public ModelAndView failedMessageSendAgain(@PathVariable String id) {
+	@ResponseBody
+	public String failedMessageSendAgain(@PathVariable String id ) {
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/failed/resend/" + id + "/";
-		String result = restTemplate.getForObject(uri, String.class);
-		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("redirect:/admin/message/failed/list");
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		String str;
+		if(result==true){
+			 str="发送成功";
+		}else{
+			 str="短信已提交后台,请稍后查看";
 		}
-		return new ModelAndView("admin/error");
+		return str;
 	}
 
 	@RequestMapping(value="/failed/resendAll")
-	public ModelAndView allFailedMessagesSendAgain( String startTime, String endTime, String status){
+	@ResponseBody
+	public String allFailedMessagesSendAgain( String startTime, String endTime, String status ){
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/failed/resendAll/"+startTime+"/"+endTime+"/?a=1";
 		if(status!=null){
 			uri+="&status="+status;
 		}
-		String result=restTemplate.getForObject(uri, String.class);
-		if(ReturnConstants.SUCCESS.equals(result)){
-			return new ModelAndView("redirect:/admin/message/failed/list");
+		Boolean result=restTemplate.getForObject(uri, Boolean.class);
+		String str;
+		if(result==true){
+			 str="短信已提交后台,请稍后查看";
+		}else{
+			str="发送失败";
 		}
-		return new ModelAndView("admin/error");
+		return str;
 	}
 }

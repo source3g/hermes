@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -42,19 +43,31 @@ public class SystemController {
 	}
 
 	@RequestMapping(value = "/failedJms/resend/{id}", method = RequestMethod.GET)
-	public ModelAndView resendfailedJms(@PathVariable String id, RedirectAttributes redirectAttributes) {
+	@ResponseBody
+	public String resendfailedJms(@PathVariable String id) {
 		String uri = ConfigParams.getBaseUrl() + "monitor/failedJms/resend/" + id + "/";
-		String result = restTemplate.getForObject(uri, String.class);
-		redirectAttributes.addFlashAttribute("result", result);
-		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		String str;
+		if(result==true){
+			 str="发送成功";
+		}else{
+			 str="发送失败";
+		}
+		return str;
 	}
 
 	@RequestMapping(value = "/failedJms/groupResend", method = RequestMethod.GET)
-	public ModelAndView groupResendfailedJms(RedirectAttributes redirectAttributes) {
+	@ResponseBody
+	public String groupResendfailedJms(RedirectAttributes redirectAttributes) {
 		String uri = ConfigParams.getBaseUrl() + "monitor/failedJms/gorupResend/";
-		String result = restTemplate.getForObject(uri, String.class);
-		redirectAttributes.addFlashAttribute("result", result);
-		return new ModelAndView("redirect:/admin/system/monitor/failedJms");
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		String str;
+		if(result==true){
+			 str="发送成功";
+		}else{
+			 str="发送失败";
+		}
+		return str;
 	}
 
 	@RequestMapping(value = "/toLogList", method = RequestMethod.GET)

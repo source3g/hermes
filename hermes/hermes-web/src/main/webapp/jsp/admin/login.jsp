@@ -31,11 +31,9 @@ li {
 						<img alt="旺财宝"
 							src="${pageContext.request.contextPath}/img/top.jpg" />
 					</h2>
-
 					<!-- <hr> -->
 				</div>
 				<!--/span-->
-
 			</div>
 			<!--/row-->
 			<div class="row-fluid" style="height: 500px;">
@@ -69,7 +67,6 @@ li {
 						<p style="font-size:13px;margin-left:70px;margin-top:-20px">为老板和管理人员提供顾客消费行为和情感指数分析工具。</p></div>
 						</li>
 					</ul>
-
 				</div>
 				<div class="span4 center login-box"
 					style="height: 330px; width: 350px; margin-left: 100px; margin-top: 60px; background-color: white; border: 1px solid #CFCFCF;">
@@ -115,20 +112,14 @@ li {
 					</form>
 				</div>
 				<br>
-
 				<div class=" span1 center login-box"></div>
-
 			</div>
 			<!--/row-->
-
 		</div>
 		<!--/fluid-row-->
-
 	</div>
-
 	<!--/.fluid-container-->
 	<%@include file="../include/copyright.jsp"%>
-
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$.ajaxSetup({

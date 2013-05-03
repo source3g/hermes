@@ -41,8 +41,8 @@
 				<td width="20%">${customer.lastCallInTime }</td>
 				<td width="20%">${fn:length(customer.callRecords) }</td>
 				<td width="20%" id="${customer.phone}"><a class="btn btn-success"
-					href="#"
-					onclick="showCallRecords('${customer.id}');">详情</a> <a
+					href="javascript:void();"
+					onclick="return showCallRecords('${customer.id}');">详情</a> <a
 					class="btn btn-success" href="#"
 					onclick="return editCustomer('${customer.id}');">编辑</a> <a 
 					class="btn btn-success" href="#" onclick="return showSendModal('${customer.phone}');">发短信</a> 
@@ -143,6 +143,7 @@
 				}
 				$("#myModal").modal();
 			});
+			return false;
 		}
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
