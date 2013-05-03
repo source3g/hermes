@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bson.types.ObjectId;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,7 +24,35 @@ import com.mongodb.DBObject;
 import com.source3g.hermes.entity.AbstractEntity;
 
 @Component
-public abstract class BaseService {
+public abstract class BaseService  implements ApplicationContextAware{
+	
+	private static ApplicationContext applicationContext;
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+
+		BaseService.applicationContext = applicationContext;
+	}
+
+	public static ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
+
+	public static Object getBean(String beanName) {
+		if (applicationContext == null) {
+			return null;
+		}
+		return applicationContext.getBean(beanName);
+	}
+
+	public static <T> T getBean(String beanName, Class<T> clazz) {
+		if (applicationContext == null) {
+			return null;
+		}
+		return applicationContext.getBean(beanName, clazz);
+	}
+
+	
 
 	@Autowired
 	protected MongoTemplate mongoTemplate;

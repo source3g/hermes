@@ -392,53 +392,57 @@ public class CustomerService extends BaseService {
 			index++;
 			row = sheet.createRow(index);
 			for (int i = 0; i < headers.length; i++) {
-				String fieldName = headerFieldMap.get(headers[i]);
-				Object value = null;
-				if ("customerGroupName".equals(fieldName)) {
-					HSSFCell cell = row.createCell(i);
-					if (c.getCustomerGroup() != null) {
-						HSSFRichTextString richString = new HSSFRichTextString(c.getCustomerGroup().getName());
-						cell.setCellValue(richString);
-					} else {
-						cell.setCellValue("");
-					}
-				} else {
-					String firstLetter = fieldName.substring(0, 1).toUpperCase();
-					Field field = c.getClass().getDeclaredField(fieldName);
-					// 获得和属性对应的getXXX()方法的名字
-					String getMethodName;
-					if (field.getType() == boolean.class) {
-						getMethodName = "is" + firstLetter + fieldName.substring(1);
-					} else {
-						getMethodName = "get" + firstLetter + fieldName.substring(1);
-					}
-					Method getMethod = c.getClass().getMethod(getMethodName, new Class[] {});
-					if ("sex".equals(fieldName)) {
-						if (Sex.FEMALE.equals(value)) {
-							value = "女";
+				try {
+					String fieldName = headerFieldMap.get(headers[i]);
+					Object value = null;
+					if ("customerGroupName".equals(fieldName)) {
+						HSSFCell cell = row.createCell(i);
+						if (c.getCustomerGroup() != null) {
+							HSSFRichTextString richString = new HSSFRichTextString(c.getCustomerGroup().getName());
+							cell.setCellValue(richString);
 						} else {
-							value = "男";
-						}
-						HSSFCell cell = row.createCell(i);
-						if (value != null) {
-							HSSFRichTextString richString = new HSSFRichTextString(value.toString());
-							cell.setCellValue(richString);
-						}
-					} else if ("phone".equals(fieldName) || "qq".equals(fieldName)) {
-						value = getMethod.invoke(c, new Object[] {});
-						HSSFCell cell = row.createCell(i);
-						if (value != null) {
-							double val = Double.parseDouble(value.toString());
-							cell.setCellValue(val);
+							cell.setCellValue("");
 						}
 					} else {
-						value = getMethod.invoke(c, new Object[] {});
-						HSSFCell cell = row.createCell(i);
-						if (value != null) {
-							HSSFRichTextString richString = new HSSFRichTextString(value.toString());
-							cell.setCellValue(richString);
+						String firstLetter = fieldName.substring(0, 1).toUpperCase();
+						Field field = c.getClass().getDeclaredField(fieldName);
+						// 获得和属性对应的getXXX()方法的名字
+						String getMethodName;
+						if (field.getType() == boolean.class) {
+							getMethodName = "is" + firstLetter + fieldName.substring(1);
+						} else {
+							getMethodName = "get" + firstLetter + fieldName.substring(1);
+						}
+						Method getMethod = c.getClass().getMethod(getMethodName, new Class[] {});
+						if ("sex".equals(fieldName)) {
+							if (Sex.FEMALE.equals(value)) {
+								value = "女";
+							} else {
+								value = "男";
+							}
+							HSSFCell cell = row.createCell(i);
+							if (value != null) {
+								HSSFRichTextString richString = new HSSFRichTextString(value.toString());
+								cell.setCellValue(richString);
+							}
+						} else if ("phone".equals(fieldName) || "qq".equals(fieldName)) {
+							value = getMethod.invoke(c, new Object[] {});
+							HSSFCell cell = row.createCell(i);
+							if (value != null) {
+								double val = Double.parseDouble(value.toString());
+								cell.setCellValue(val);
+							}
+						} else {
+							value = getMethod.invoke(c, new Object[] {});
+							HSSFCell cell = row.createCell(i);
+							if (value != null) {
+								HSSFRichTextString richString = new HSSFRichTextString(value.toString());
+								cell.setCellValue(richString);
+							}
 						}
 					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 
 			}
