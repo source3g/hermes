@@ -67,7 +67,6 @@ function fileQueueError(file, errorCode, message) {
  */
 function fileQueued(file) {
 	addReadyFileInfo(file.id, file.name, "成功加载到上传队列");
-	swfu.addPostParam("version",version);
 	swfu.startUpload();
 }
 

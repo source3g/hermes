@@ -61,13 +61,13 @@ public class VersionApi {
 
 	@RequestMapping(value = "/upload")
 	@ResponseBody
-	public String upload(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version) throws IOException, ParseException {
+	public String upload(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version,@RequestParam("describe") String describe) throws IOException, ParseException {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
 		String suffxPath = dateFormat.format(new Date()) + oldName;
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
-		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date());
+		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date(), describe);
 		apkVersion.setMd5(MD5.md5sum(fileToCopy.getAbsolutePath()));
 		versionService.addVersion(apkVersion);
 		return ReturnConstants.SUCCESS;

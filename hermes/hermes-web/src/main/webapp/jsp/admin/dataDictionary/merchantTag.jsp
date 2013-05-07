@@ -64,7 +64,21 @@
 		function deleteSelf(del) {
 			//alert($("#"+node.id+"[class='subNode']").length);
 			//$("#"+node.id+"[class='subNode']").remove();
-			$(del).parents("tr").remove();
+			var ischilder=true;
+			var tbodylength=$('tbody').length;
+ 			$("tbody").each(function(index){
+		 		for(var i=0;i<$(this).children().length;i++){
+				 	  if($(this).children()[i].id==""&&index!=tbodylength-1){
+						alert("请先提交");
+						ischilder=false;
+						return ;
+					}		
+				}  
+			}); 
+ 			if(ischilder==false){
+ 				return;
+ 			}
+ 			$(del).parents("tr").remove(); 
 		}
 
 		function initTag(node) {

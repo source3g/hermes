@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -46,9 +48,12 @@ public class VersionController {
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String importNewVersion(@RequestParam("version") String version,@RequestParam("Filedata") MultipartFile Filedata) throws IOException {
+	public String importNewVersion(@RequestParam("version") String version,@RequestParam("describe") String describe,@RequestParam("Filedata") MultipartFile Filedata,HttpServletRequest req) throws IOException {
 		if(version==null){
 			return "版本号不能为空";
+		}
+		if(describe==null){
+			return "描述不能为空";
 		}
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
@@ -57,6 +62,7 @@ public class VersionController {
 		formData.add("file", resource);
 		formData.add("oldName", new String(Filedata.getOriginalFilename()));
 		formData.add("version", version);
+		formData.add("describe", describe);
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);

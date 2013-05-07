@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -16,10 +15,11 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="25%">版本号</th>
-				<th width="25%">版本文件地址</th>
-				<th width="25%">版本上传时间</th>
-				<th width="25%">md5</th>
+				<th width="20%">版本号</th>
+				<th width="20%">版本文件地址</th>
+				<th width="20%">版本上传时间</th>
+				<th width="20%">md5</th>
+				<th width="20%">版本描述</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -31,6 +31,8 @@
 					<td>${version.url}</td>
 					<td>${version.uploadTime}</td>
 					<td>${version.md5}</td>
+					<td title="${version.describe}">
+					<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${version.describe}</div></td>
 					<%--  <td><fmt:formatDate value="${version.uploadTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td> --%>
 				</tr>
 			</c:forEach>

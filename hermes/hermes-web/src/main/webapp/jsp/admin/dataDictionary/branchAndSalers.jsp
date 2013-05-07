@@ -101,7 +101,7 @@
 					$.get("${pageContext.request.contextPath}/admin/dictionary/showSalers/"+ id + "/", showSaler);
 					function showSaler(data) {
 				  		for(var i=0;i<data.length;i++){
-							var str="<tr id="+id+"><td><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+data[i].name+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data[i].id+"')\"> 删除</a></td></tr>";
+							var str="<tr id=\""+data[i].id+"\"><td><image class=\"subNode\" src=\"${pageContext.request.contextPath}/img/subNode.gif\"></image><span style=\"font-size:15px\">"+data[i].name+"</span><a href=\"javascript:void();\" onclick=\"deleteSaler('"+data[i].id+"')\"> 删除</a></td></tr>";
 							$("#"+id).after(str);
 						}  
 					} 

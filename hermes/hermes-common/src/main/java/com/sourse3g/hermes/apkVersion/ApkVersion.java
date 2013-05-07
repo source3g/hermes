@@ -13,12 +13,14 @@ public class ApkVersion extends AbstractEntity {
 	private String url;
 	private Date uploadTime;
 	private String md5;
+	private String describe;
 
-	public ApkVersion(String apkVersion, String url, Date uploadTime) {
+	public ApkVersion(String apkVersion, String url, Date uploadTime,String describe) {
 		super();
 		this.apkVersion = apkVersion;
 		this.url = url;
 		this.uploadTime = uploadTime;
+		this.describe= describe;
 	}
 
 	public ApkVersion() {
@@ -55,6 +57,14 @@ public class ApkVersion extends AbstractEntity {
 
 	public void setMd5(String md5) {
 		this.md5 = md5;
+	}
+
+	public String getDescribe() {
+		return describe;
+	}
+
+	public void setDescribe(String describe) {
+		this.describe = describe;
 	}
 
 }

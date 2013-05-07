@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ include file="../../include/import.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -16,6 +17,11 @@
 			</div>
 		</div>
 
+		<div>
+		<p style='margin-top:10px;'>apk版本描述：<p>
+		<textarea name='describe' id="describe" style='margin-top:5px;width:500px;height:120px'></textarea>
+		</div>
+		
 		<span id="spanButtonPlaceholder"></span><input type="text" name="uploadFile" style="border:none;width:3px;"><span>&nbsp;&nbsp;&nbsp;(每个文件最大10M)</span><span id="fileValidateMsg" style="color:red"></span>
 		<div id="divFileProgressContainer" style="width: 200; display: none;"></div>
 		<div id="thumbnails">
@@ -97,7 +103,10 @@
 					},
 				 	uploadFile:{
 						validateFile : true
-					} 
+					} ,
+					describe:{
+						required : true
+					}
 			
 				},
 				messages : {
@@ -109,7 +118,10 @@
 					
 					uploadFile:{
 						validateFile : "请选择上传文件"
-					} 
+					} ,
+					describe:{
+						required : "请填写版本描述内容"
+					}
 				}
 			});
 
@@ -121,14 +133,16 @@
 						} else{
 							return true;
 						}
-					}, "输入数字有误");
+					}, "请选择上传文件");
 			
  			$("#uploadVersion").click(function() {
 				if (!$("#addVersionForm").valid()) {
 			 		return false;
 				 } 
 				var version = $("#version").val();
+				var describe=$("#describe").val();
 				swfu.addPostParam("version", version);
+				swfu.addPostParam("describe", describe);
 				swfu.startUpload();
 				return false;
 				});
