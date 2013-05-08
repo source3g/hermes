@@ -31,7 +31,7 @@
 		</tbody>
 		<tfoot>
 			<tr>
-				<td><input type="button" class="btn btn-primary" value="提交"
+				<td><input type="button" class="btn btn-primary" value="批量增加"
 					onclick="commitTree();" /></td>
 			</tr>
 		</tfoot>
@@ -156,7 +156,7 @@
 		function addTag(el) {
 			var tr = "<tr> <td class='node'><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\">";
 			tr += "<input type='hidden' name='id'>";
-			tr += "<a href=\"#\" onclick=\"return addChild(this);\">增加菜品</a></td>";
+			tr += "</td>";
 			tr += "</tr>";
 			$(el).parents("tr").before(tr);
 		}

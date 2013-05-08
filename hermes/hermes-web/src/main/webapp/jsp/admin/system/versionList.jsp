@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -16,21 +15,26 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="25%">版本号</th>
-				<th width="25%">版本文件地址</th>
-				<th width="25%">版本上传时间</th>
-				<th width="25%">md5</th>
+				<th width="14%">版本号</th>
+				<th width="10%">编码号</th>
+				<th width="18%">版本文件地址</th>
+				<th width="18%">版本上传时间</th>
+				<th width="20%">md5</th>
+				<th width="20%">版本描述</th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${page.data}" var="version">
 				<tr>
 					<td><input type="radio" name="onlineVersionRadio"
-						value="${version.apkVersion }" onclick="return selOnline(this);"
+						value="${version.apkVersion }" onclick="return selOnline('${version.code}');"
 						<c:if test="${onlineVersion.apkVersion eq version.apkVersion }">checked="checked"</c:if>>${version.apkVersion}</td>
+					<td>${version.code}</td>
 					<td>${version.url}</td>
 					<td>${version.uploadTime}</td>
 					<td>${version.md5}</td>
+					<td title="${version.describe}">
+					<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${version.describe}</div></td>
 					<%--  <td><fmt:formatDate value="${version.uploadTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td> --%>
 				</tr>
 			</c:forEach>
@@ -67,11 +71,10 @@
 		$('#queryForm').ajaxSubmit(options);
 	}
     
-    function selOnline(sel){
+    function selOnline(code){
     	if(confirm("你确定更换版本?"))
     	{
-    		var version=$(sel).val();
-    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"version":version},function (data,status){
+    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"code":code},function (data,status){
     			alert("更换成功");
     		});
     		return true;

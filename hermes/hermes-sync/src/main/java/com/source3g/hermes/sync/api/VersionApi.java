@@ -59,15 +59,16 @@ public class VersionApi {
 		bos.close();
 	}
 
-	@RequestMapping(value = "/upload")
+	@RequestMapping(value = "/upload/{describe}",method = RequestMethod.POST)
 	@ResponseBody
-	public String upload(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version) throws IOException, ParseException {
+	public String upload(@PathVariable String describe,@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version,@RequestParam("code") String code) throws IOException, ParseException {
+		int codeInt=Integer.parseInt(code);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
 		String suffxPath = dateFormat.format(new Date())+ oldName;
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
-		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date());
+		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date(), describe,codeInt);
 		apkVersion.setMd5(MD5.md5sum(fileToCopy.getAbsolutePath()));
 		versionService.addVersion(apkVersion);
 		return ReturnConstants.SUCCESS;
@@ -79,10 +80,17 @@ public class VersionApi {
 		return  versionService.versionValidate(version);
 	}
 	
+	@RequestMapping(value = "/codeValidate/{code}", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean codeValidate( @PathVariable String code) {
+		int codeInt=Integer.parseInt(code);
+		return  versionService.codeValidate(codeInt);
+	}
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
-	public String changeVersion(@RequestBody String version) {
-		versionService.changeVersion(version);
+	public String changeVersion(@RequestBody String code) {
+		int codeInt=Integer.parseInt(code);
+		versionService.changeVersion(codeInt);
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -99,8 +107,8 @@ public class VersionApi {
 
 	@RequestMapping(value = "/online/sn/{sn}", method = RequestMethod.POST)
 	@ResponseBody
-	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody String version) {
-		versionService.updateDeviceVersion(sn, version);
+	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody int code) {
+		versionService.updateDeviceVersion(sn, code);
 		return getLastVersion();
 	}
 

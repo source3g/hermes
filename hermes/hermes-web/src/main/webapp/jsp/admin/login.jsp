@@ -46,10 +46,8 @@ li {
 		<div class="row-fluid">
 			<div class="row-fluid">
 				<div class="span12" style="height: 70px;">
-					<h2 style="margin-left: 210px">
 						<img alt="旺财宝"
-							src="${pageContext.request.contextPath}/img/top.jpg" />
-					</h2>
+							src="${pageContext.request.contextPath}/img/top1.jpg" />
 					<!-- <hr> -->
 				</div>
 				<!--/span-->
@@ -59,28 +57,28 @@ li {
 				<div class=" span2 center login-box"></div>
 				<div class=" span4 center login-box" >  <!-- style="background-color:#FAFAD2 " -->
 					<ul style="margin-left:-30px">
-						<li style="color:black;margin-top:40px;">
+						<li style="color:#696969 ;margin-top:40px;">
 						<div><img alt="来电信息同步" src="${pageContext.request.contextPath}/img/dianhua.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">来电信息同步</strong>
 						<p style="font-size:13px;margin-left:70px;margin-top:-20px">提高店员服务效率，增加顾客的尊贵感、贴心感和忠诚度。</p></div>
 						</li>
 						<!-- <li style="margin-bottom:8px;color:black"></li> -->
-						<li style="color:black;">
+						<li style="color:#696969 ;">
 						<div><img alt="挂机短信发布" src="${pageContext.request.contextPath}/img/duanxin.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">挂机短信发布</strong>
 						<p style="font-size:13px;margin-left:70px;margin-top:-20px">顾客来电后，旺财宝会发出短信，便于顾客预留或转发。</p></div>
 						</li>
-						<li style="color:black;">
+						<li style="color:#696969 ;">
 						<div><img alt="情感短信维护" src="${pageContext.request.contextPath}/img/qinggan.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">情感短信维护</strong>
 						<p style="font-size:13px;margin-left:70px;margin-top:-20px">节庆日贴心的情感短信，增进顾客的亲切感和忠诚度。</p></div>
 						</li>
-						<li style="color:black;">
+						<li style="color:#696969 ;">
 						<div><img alt="客户资料存储" src="${pageContext.request.contextPath}/img/kehu.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">客户资料存储</strong>
 						<p style="font-size:13px;margin-left:70px;margin-top:-20px">顾客信息是商家的宝贵资源，旺财宝帮您分享权限存储与管理。</p></div>
 						</li>
-						<li style="color:black;">
+						<li style="color:#696969 ;">
 						<div><img alt="数据分析管理" src="${pageContext.request.contextPath}/img/shuju.jpg"/ style="margin-top:10px">
 						<strong style="font-size:18px;">数据分析管理</strong>
 						<p style="font-size:13px;margin-left:70px;margin-top:-20px">为老板和管理人员提供顾客消费行为和情感指数分析工具。</p></div>
