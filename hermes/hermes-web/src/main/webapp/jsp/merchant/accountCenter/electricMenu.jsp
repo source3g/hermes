@@ -17,11 +17,25 @@
 		<tbody>
 			<c:forEach var="menu" items="${menus }">
 				<tr>
-					<td class='node'><label class="help-inline">${menu.name
-							}</label> <input type='hidden' name='id' value='${menu.id }'>
-							<a href="#" class="btn btn-primary updateA" onclick="return updateMenu(this);">修改</a> 
-						<a href="#" class="btn btn-success" onclick="return addChild(this);">增加菜品</a>
-						<a href="#" class="btn btn-danger"	onclick="return addChild(this);">删除</a></td>
+					<td class='node'><a href="#" onclick="return expand(this);"
+						class="help-inline" style="width: 150px;">${menu.name}</a> <input
+						type='hidden' name='id' value='${menu.id }'> <a href="#"
+						class="btn btn-primary updateA" onclick="return updateMenu(this);">修改</a>
+						<a href="#" class="btn btn-success"
+						onclick="return addChild(this);">增加菜品</a> <a href="#"
+						class="btn btn-danger" onclick="return addChild(this);">删除</a></td>
+				</tr>
+				<tr class="itemTr" style="display: none">
+					<td><table>
+							<%-- <c:forEach items="${menu.items }" var="item">
+								<tr>
+									<td>${item.title }</td>
+								</tr>
+							</c:forEach> --%>
+							<tr>
+									<td>fdasfafafdas</td>
+								</tr>
+						</table></td>
 				</tr>
 			</c:forEach>
 			<tr>
@@ -81,38 +95,48 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 		});
-		
-		function updateMenu(el){
-			var label=$(el).prevAll(".help-inline");
-			$(label).after("<input type='text' class='input-small' name='name' value='"+$(label).text()+"'/>");
-			$(label).css("display","none");
-			$(el).after("<input type='button' value='确定' onclick='doUpdate(this);' class='btn btn-primary updateBtn'><input type='button' value='取消' onclick='cancelUpdate(this);' class='btn btn-primary updateBtn'>");
-			$(el).css("display","none");
+
+		function expand(el) {
+
+			$(el).next(".itemTr").css("display","");
+
+			//$(el).parents("tr").after();
 			return false;
 		}
-		
-		function doUpdate(el){
-			var label=$(el).prevAll(".help-inline");
-			var input=$(el).prevAll("input[name='name']");
+
+		function updateMenu(el) {
+			var label = $(el).prevAll(".help-inline");
+			$(label).after("<input type='text' class='input-small' name='name' value='" + $(label).text() + "'/>");
+			$(label).css("display", "none");
+			$(el)
+					.after(
+							"<input type='button' value='确定' onclick='doUpdate(this);' class='btn btn-primary updateBtn'><input type='button' value='取消' onclick='cancelUpdate(this);' class='btn btn-primary updateBtn'>");
+			$(el).css("display", "none");
+			return false;
+		}
+
+		function doUpdate(el) {
+			var label = $(el).prevAll(".help-inline");
+			var input = $(el).prevAll("input[name='name']");
 			$(label).html($(input).val());
 			$(input).remove();
-			$(label).css("display","");
-			$(el).prevAll(".updateA").css("display","");
+			$(label).css("display", "");
+			$(el).prevAll(".updateA").css("display", "");
 			$(el).nextAll(".updateBtn").remove();
 			$(el).remove();
 			return false;
 		}
-		
-		function cancelUpdate(el){
-			var label=$(el).prevAll(".help-inline");
-			$(label).css("display","");
-			$(el).prevAll(".updateA").css("display","");
+
+		function cancelUpdate(el) {
+			var label = $(el).prevAll(".help-inline");
+			$(label).css("display", "");
+			$(el).prevAll(".updateA").css("display", "");
 			$(el).prevAll(".updateBtn").remove();
 			$(el).prevAll("input[name='name']").remove();
 			$(el).remove();
 			return false;
 		}
-		
+
 		function deleteSelf(del) {
 			$(del).parents("tr").remove();
 		}
