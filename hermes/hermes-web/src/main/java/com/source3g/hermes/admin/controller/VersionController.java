@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,14 +47,17 @@ public class VersionController {
 		return new ModelAndView("admin/system/version");
 	}
 
-	@RequestMapping(value = "/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/upload/{describe}", method = RequestMethod.POST)
 	@ResponseBody
-	public String importNewVersion(@RequestParam("version") String version,@RequestParam("describe") String describe,@RequestParam("Filedata") MultipartFile Filedata,HttpServletRequest req) throws IOException {
+	public String importNewVersion(@PathVariable String describe,@RequestParam("version") String version,@RequestParam("code") String code, @RequestParam("Filedata") MultipartFile Filedata,HttpServletRequest req) throws IOException {
 		if(version==null){
 			return "版本号不能为空";
 		}
 		if(describe==null){
 			return "描述不能为空";
+		}
+		if(code==null){
+			return "对比编码不能为空";
 		}
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
@@ -62,11 +66,11 @@ public class VersionController {
 		formData.add("file", resource);
 		formData.add("oldName", new String(Filedata.getOriginalFilename()));
 		formData.add("version", version);
-		formData.add("describe", describe);
+		formData.add("code", code);
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
-		String result = restTemplate.postForObject(ConfigParams.getBaseUrl() + "version/upload/", requestEntity, String.class);
+		String result = restTemplate.postForObject(ConfigParams.getBaseUrl() + "version/upload/"+describe+"/", requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return "上传成功";
 		}
@@ -81,12 +85,19 @@ public class VersionController {
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-	
+	//验证对比编码是否存在
+	@RequestMapping(value = "codeValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean codeValidate(String code) {
+		String uri=ConfigParams.getBaseUrl() + "version/codeValidate/"+code+"/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
+		return result;
+	}
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
-	public String changeOnline(String version) {
+	public String changeOnline(String code) {
 		String uri = ConfigParams.getBaseUrl() + "version/changeOnline";
-		HttpEntity<String> entity = new HttpEntity<String>(version);
+		HttpEntity<String> entity = new HttpEntity<String>(code);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return ReturnConstants.SUCCESS;

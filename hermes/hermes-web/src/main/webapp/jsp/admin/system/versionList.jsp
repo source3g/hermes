@@ -15,9 +15,10 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="20%">版本号</th>
-				<th width="20%">版本文件地址</th>
-				<th width="20%">版本上传时间</th>
+				<th width="14%">版本号</th>
+				<th width="10%">编码号</th>
+				<th width="18%">版本文件地址</th>
+				<th width="18%">版本上传时间</th>
 				<th width="20%">md5</th>
 				<th width="20%">版本描述</th>
 			</tr>
@@ -26,8 +27,9 @@
 			<c:forEach items="${page.data}" var="version">
 				<tr>
 					<td><input type="radio" name="onlineVersionRadio"
-						value="${version.apkVersion }" onclick="return selOnline(this);"
+						value="${version.apkVersion }" onclick="return selOnline('${version.code}');"
 						<c:if test="${onlineVersion.apkVersion eq version.apkVersion }">checked="checked"</c:if>>${version.apkVersion}</td>
+					<td>${version.code}</td>
 					<td>${version.url}</td>
 					<td>${version.uploadTime}</td>
 					<td>${version.md5}</td>
@@ -69,11 +71,10 @@
 		$('#queryForm').ajaxSubmit(options);
 	}
     
-    function selOnline(sel){
+    function selOnline(code){
     	if(confirm("你确定更换版本?"))
     	{
-    		var version=$(sel).val();
-    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"version":version},function (data,status){
+    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"code":code},function (data,status){
     			alert("更换成功");
     		});
     		return true;

@@ -8,14 +8,14 @@ import com.source3g.hermes.entity.AbstractEntity;
 public class OnlineVersion extends AbstractEntity {
 	private static final long serialVersionUID = 1644988623170723623L;
 
-	private String apkVersion;
+	private int code;
 
-	public String getApkVersion() {
-		return apkVersion;
+	public int getCode() {
+		return code;
 	}
 
-	public void setApkVersion(String apkVersion) {
-		this.apkVersion = apkVersion;
+	public void setCode(int code) {
+		this.code = code;
 	}
 
 }

@@ -11,7 +11,7 @@ public class InitDb {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath*:spring/applicationContext*.xml");
 		MongoTemplate mongoTemplate = (MongoTemplate) applicationContext.getBean("mongoTemplate");
 		OnlineVersion onlineVersion = new OnlineVersion();
-		onlineVersion.setApkVersion("0.0.0");
+		onlineVersion.setCode(0);
 		mongoTemplate.save(onlineVersion);
 	}
 }

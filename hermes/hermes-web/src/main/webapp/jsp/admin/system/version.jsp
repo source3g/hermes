@@ -11,12 +11,15 @@
 <body>
 	<form id="addVersionForm">
 		<div class="control-group">
+			<span>
 			<label class="control-label" for="fileUpload">请先输入版本号：</label>
-			<div class="controls">
-				<input type="text" name="version" id="version"></input><span id="versionValidateMsg" style="color:red"></span>
-			</div>
+				<input type="text" name="version" id="version"/>
+			<label class="control-label" for="fileUpload">请输入编码号：</label>
+				<input type="text" name="code" id="code"/>
+			</span>
 		</div>
 
+		
 		<div>
 		<p style='margin-top:10px;'>apk版本描述：<p>
 		<textarea name='describe' id="describe" style='margin-top:5px;width:500px;height:120px'></textarea>
@@ -106,6 +109,19 @@
 					} ,
 					describe:{
 						required : true
+					},
+					code:{
+						required : true,
+						digits:true,
+						remote:{
+							type : "get",
+							url : "${pageContext.request.contextPath}/admin/version/codeValidate",
+							data : {
+								"code" : function() {
+									return $('#code').val();
+								}
+							}
+						}
 					}
 			
 				},
@@ -121,6 +137,11 @@
 					} ,
 					describe:{
 						required : "请填写版本描述内容"
+					},
+					code:{
+						required : "请填写编码号 ",
+						digits:"请输入整数",
+						remote:"对比编码已存在"
 					}
 				}
 			});
@@ -136,13 +157,18 @@
 					}, "请选择上传文件");
 			
  			$("#uploadVersion").click(function() {
+ 				//alert(swfu.setUploadURL("${pageContext.request.contextPath}/admin/version/upload/"));/* .upload_url */
 				if (!$("#addVersionForm").valid()) {
 			 		return false;
 				 } 
 				var version = $("#version").val();
 				var describe=$("#describe").val();
+				var code=$("#code").val();
 				swfu.addPostParam("version", version);
 				swfu.addPostParam("describe", describe);
+				swfu.addPostParam("code", code);
+				url="${pageContext.request.contextPath}/admin/version/upload/"+describe;
+				swfu.setUploadURL(url)
 				swfu.startUpload();
 				return false;
 				});
