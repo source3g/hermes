@@ -46,36 +46,41 @@ public class VersionController {
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String importNewVersion(@RequestParam("version") String version,@RequestParam("Filedata") MultipartFile Filedata) throws IOException {
-		if(version==null){
+	public String importNewVersion(@RequestParam("version") String version, @RequestParam("Filedata") MultipartFile Filedata) throws IOException {
+		if (version == null) {
 			return "版本号不能为空";
 		}
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
-		Resource resource = new FileSystemResource(fileToCopy);
-		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
-		formData.add("file", resource);
-		formData.add("oldName", new String(Filedata.getOriginalFilename()));
-		formData.add("version", version);
-		HttpHeaders requestHeaders = new HttpHeaders();
-		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
-		String result = restTemplate.postForObject(ConfigParams.getBaseUrl() + "version/upload/", requestEntity, String.class);
-		if (ReturnConstants.SUCCESS.equals(result)) {
-			return "上传成功";
+		try {
+			Resource resource = new FileSystemResource(fileToCopy);
+			MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+			formData.add("file", resource);
+			formData.add("oldName", new String(Filedata.getOriginalFilename()));
+			formData.add("version", version);
+			HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+			HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
+			String result = restTemplate.postForObject(ConfigParams.getBaseUrl() + "version/upload/", requestEntity, String.class);
+			if (ReturnConstants.SUCCESS.equals(result)) {
+				return "上传成功";
+			}
+		} catch (Exception e) {
+		} finally {
+			fileToCopy.delete();
 		}
 		return "上传失败";
 	}
 
-	//验证版本号是否存在
+	// 验证版本号是否存在
 	@RequestMapping(value = "versionValidate", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean versionValidate(String version) {
-		String uri=ConfigParams.getBaseUrl() + "version/versionValidate/"+version+"/";
+		String uri = ConfigParams.getBaseUrl() + "version/versionValidate/" + version + "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
 	public String changeOnline(String version) {

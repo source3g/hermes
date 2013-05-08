@@ -16,7 +16,7 @@ public class DateFormatUtilsTest {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date start = sdf.parse("2012-05-01");
 		Date end = sdf.parse("2012-12-05");
-		List<String> result = DateFormateUtils.getDays(start, end);
+		List<String> result = FormateUtils.getDays(start, end);
 		for (String s : result) {
 			System.out.println(s);
 		}

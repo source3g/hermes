@@ -62,7 +62,7 @@ import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
-import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.utils.PhoneUtils;
@@ -572,7 +572,7 @@ public class CustomerService extends BaseService {
 		MapReduceResults<ObjectValue> results = mongoTemplate.mapReduce(query, "customer", mapResource, "classpath:mapreduce/callRecordsByDayReduce.js", ObjectValue.class);
 		List<ObjectValue> values = new ArrayList<ObjectValue>();
 		List<String> daysHasValue = new ArrayList<String>();
-		List<String> allDays = DateFormateUtils.getDays(startTime, endTime);
+		List<String> allDays = FormateUtils.getDays(startTime, endTime);
 		for (String day : allDays) {
 			boolean hasDay = false;
 			for (ObjectValue value : results) {
@@ -640,7 +640,7 @@ public class CustomerService extends BaseService {
 		Query query = new Query();
 		Date date = new Date();
 		if (startTime == null) {
-			startTime = DateFormateUtils.getStartDateOfDay(date);
+			startTime = FormateUtils.getStartDateOfDay(date);
 		}
 		if (endTime == null) {
 			endTime = date;
@@ -723,7 +723,7 @@ public class CustomerService extends BaseService {
 		Date endTime = new Date();
 		Date startTime = DateUtils.addDays(endTime, 0 - dayCount);
 		// 获取开始时间的0点0分0秒
-		startTime = DateFormateUtils.getStartDateOfDay(startTime);
+		startTime = FormateUtils.getStartDateOfDay(startTime);
 		return findCallInStatisticsByCount(merchantId, startTime, endTime);
 	}
 
@@ -751,7 +751,7 @@ public class CustomerService extends BaseService {
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			Query query = new Query();
 			Criteria criteria = Criteria.where("merchantId").is(merchantId);
-			Date endTime = DateFormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
+			Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
 			criteria.and("reminds").elemMatch(Criteria.where("remindTime").gte(startTime).lte(endTime).and("merchantRemindTemplate.$id").is(merchantRemindTemplate.getId()).and("alreadyRemind").is(false));
 			query.addCriteria(criteria);
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);

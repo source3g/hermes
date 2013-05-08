@@ -1,12 +1,23 @@
 package com.source3g.hermes.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class DateFormateUtils {
+import org.apache.commons.lang.StringUtils;
+
+public class FormateUtils {
+	
+	public static String changeEncode(String str,String fromEncode,String toEncode) throws UnsupportedEncodingException{
+		if(StringUtils.isEmpty(str)){
+			return StringUtils.EMPTY;
+		}else{
+			return new String(str.getBytes(fromEncode),toEncode);
+		}
+	}
 
 	public static Date getDate(String unformatedDate) {
 		SimpleDateFormat formatterLong = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -80,7 +91,7 @@ public class DateFormateUtils {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startTime);
 		calendar.add(Calendar.DAY_OF_MONTH, advancedDays);
-		Date endTime = DateFormateUtils.getStartDateOfDay(calendar.getTime());
+		Date endTime = FormateUtils.getStartDateOfDay(calendar.getTime());
 		return endTime;
 	}
 

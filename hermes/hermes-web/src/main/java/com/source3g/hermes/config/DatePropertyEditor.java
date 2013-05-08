@@ -3,7 +3,7 @@ package com.source3g.hermes.config;
 import java.beans.PropertyEditorSupport;
 import java.text.SimpleDateFormat;
 
-import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.FormateUtils;
 
 public class DatePropertyEditor extends PropertyEditorSupport {
 
@@ -16,7 +16,7 @@ public class DatePropertyEditor extends PropertyEditorSupport {
 
 	@Override
 	public void setAsText(String text) throws IllegalArgumentException {
-		setValue(DateFormateUtils.getDate(text));
+		setValue(FormateUtils.getDate(text));
 	}
 
 }

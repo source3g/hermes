@@ -19,7 +19,7 @@ import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.FormateUtils;
 
 @Configuration
 public class ObjectMapperConfig {
@@ -57,7 +57,7 @@ public class ObjectMapperConfig {
 		@Override
 		public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			String unformatedDate = jp.getText();
-			return DateFormateUtils.getDate(unformatedDate);
+			return FormateUtils.getDate(unformatedDate);
 		}
 	}
 

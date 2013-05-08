@@ -48,14 +48,14 @@
 				upload_complete_handler : uploadComplete,
 
 				// Button Settings
-				button_image_url : "images/SmallSpyGlassWithTransperancy_17x18.png",
-				button_placeholder_id : "spanButtonPlaceholder",
-				button_width : 100,
-				button_height : 18,
-				button_text : '<span class="button">点我上传excel</span>',
-				button_text_style : '.button { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; } .buttonSmall { font-size: 10pt; }',
-				button_text_top_padding : 0,
-				button_text_left_padding : 18,
+				button_image_url : "${pageContext.request.contextPath}/js/swfupload/XPButtonNoText_61x22.png",
+			button_placeholder_id : "spanButtonPlaceholder",
+			button_width: 61,
+			button_height: 22,
+			button_text :  '<span class="button">上传excel</span>', 
+			button_text_style : '.button { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; } .buttonSmall { font-size: 10pt; }',
+			button_text_top_padding : 0,
+			button_text_left_padding : 2,
 				button_window_mode : SWFUpload.WINDOW_MODE.TRANSPARENT,
 				button_cursor : SWFUpload.CURSOR.HAND,
 

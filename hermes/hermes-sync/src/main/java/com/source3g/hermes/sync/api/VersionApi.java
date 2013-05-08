@@ -63,7 +63,7 @@ public class VersionApi {
 	@ResponseBody
 	public String upload(@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version) throws IOException, ParseException {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
-		String suffxPath = dateFormat.format(new Date()) + oldName;
+		String suffxPath = dateFormat.format(new Date())+ oldName;
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
