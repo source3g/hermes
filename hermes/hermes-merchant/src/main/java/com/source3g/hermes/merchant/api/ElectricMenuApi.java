@@ -46,20 +46,22 @@ public class ElectricMenuApi {
 	public String addItem(@RequestParam("file") MultipartFile file, @PathVariable String menuId, String price, String title, String unit) throws IOException {
 		Date date = new Date();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
-		String suffxPath = dateFormat.format(date) + "/" + file.getOriginalFilename();
-		String suffxDestPath = dateFormat.format(date) + "/" + file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_s" + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+		String suffxPath = dateFormat.format(date) + file.getOriginalFilename();
+		String suffxDestPath = dateFormat.format(date) + file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_s" + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
 		String path = electricMenuService.getPicPath();
 		String filePath = path + suffxPath;
 		File fileToCopy = new File(filePath);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
 		if (fileToCopy.length() > 100 * 1024) {
 			Thumbnail.compressPic(filePath, filePath);
+			Thumbnail thumbnail = new Thumbnail(filePath, filePath);
+			thumbnail.resize(800, 600);
 		}
 		Thumbnail thumbnail = new Thumbnail(filePath, path + suffxDestPath);
-		thumbnail.resize(800, 600);
+		thumbnail.resize(400,300);
 		ElectricMenuItem electricMenuItem = new ElectricMenuItem();
-		electricMenuItem.setPicPath(filePath);
-		electricMenuItem.setAbstractPicPath(path + suffxDestPath);
+		electricMenuItem.setPicPath(suffxPath);
+		electricMenuItem.setAbstractPicPath(suffxDestPath);
 		electricMenuItem.setPrice(Double.parseDouble(price));
 		electricMenuItem.setTitle(title);
 		electricMenuItem.setUnit(unit);
@@ -93,8 +95,8 @@ public class ElectricMenuApi {
 	}
 
 	private ElectricMenuItem processItemPicPath(ElectricMenuItem item) {
-		item.setPicPath(electricMenuService.getLocalUrl() + "images/menu" + item.getPicPath());
-		item.setAbstractPicPath(electricMenuService.getLocalUrl() + "images/menu" + item.getPicPath());
+		item.setPicPath(electricMenuService.getLocalUrl() + "images/menu/" + item.getPicPath());
+		item.setAbstractPicPath(electricMenuService.getLocalUrl() + "images/menu/" + item.getPicPath());
 		return item;
 	}
 

@@ -58,7 +58,6 @@
 			</c:choose>
 			<input type="button" id="backToList" class="btn btn-primary"
 				value="返回" />
-
 		</div>
 	</form>
 
@@ -80,12 +79,13 @@
 				var post_params = {
 					"menuId" : $("#menuSel").val(),
 					"title" : $("#title").val(),
-					"unit" : $("#unit").val()
+					"unit" : $("#unit").val(),
 					"price" : $("#price").val()
 				};
 				swfu.setPostParams(post_params);
 				swfu.startUpload();
 			});
+
 			$("#updateElectricMenuItemBtn").click(function() {
 				alert($("#divFileProgressContainer").text());
 				return false;

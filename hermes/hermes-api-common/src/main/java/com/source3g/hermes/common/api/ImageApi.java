@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.source3g.hermes.service.BaseService;
 
 @Controller
-@RequestMapping(value = "/images/")
+@RequestMapping( "/images")
 public class ImageApi {
 
 	@Autowired
