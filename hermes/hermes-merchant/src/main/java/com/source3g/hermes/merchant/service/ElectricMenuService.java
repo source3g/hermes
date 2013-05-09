@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.entity.merchant.ElectricMenu;
@@ -33,6 +34,7 @@ public class ElectricMenuService extends BaseService{
 				electricMenuItems.remove(e);
 			}
 		}
+		
 		mongoTemplate.save(electricMenu);
 	}
 	
@@ -44,7 +46,9 @@ public class ElectricMenuService extends BaseService{
 				electricMenuItems.remove(e);
 			}
 		}
-		mongoTemplate.save(electricMenu);
+		Update update=new Update();
+		update.set("items", electricMenuItems);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
 	}
 
 	public void addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
@@ -63,7 +67,9 @@ public class ElectricMenuService extends BaseService{
 				electricMenuItems.add(electricMenuItem);
 			}
 		}
-		mongoTemplate.save(electricMenu);
+		Update update=new Update();
+		update.set("items", electricMenuItems);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
 	}
 
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {
@@ -72,7 +78,9 @@ public class ElectricMenuService extends BaseService{
 	}
 
 	public void updateMenu(ElectricMenu electricMenu) {
-		mongoTemplate.save(electricMenu);
+		Update update=new Update();
+		update.set("electricMenu", electricMenu);
+		mongoTemplate.updateFirst(new Query(), update, ElectricMenu.class);
 	}
 
 	public void deleteMenu(ObjectId objectId) {
