@@ -13,7 +13,7 @@
 		<%-- action="${pageContext.request.contextPath}/merchant/account/electricMenu/addItem/"
 		method="post" --%> class="form-horizontal">
 		<div class="control-group">
-			<label class="control-label"> 菜品类别:</label> <select name="menuId">
+			<label class="control-label"> 菜品类别:</label> <select id="menuSel" name="menuId">
 				<c:forEach var="menu" items="${electricMenus }">
 					<option value="${menu.id }">${menu.name }</option>
 				</c:forEach>
@@ -30,7 +30,7 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label"> 单位:</label><input type="text"
-				name="unit" id="unit"></input>
+				name="unit" id="unit"></input><label class="help-inline">(例如:盘,份,例,碗等)</label>
 		</div>
 		<div class="form-actions">
 			<input type="button" id="addElectricMenuBtn" class="btn btn-primary"
@@ -55,7 +55,7 @@
 				//swfu.addPostParam("title", $("#title").val());
 				//swfu.addPostParam("unit", $("#unit").val());
 				var post_params = {
-					"menuId" : "menuId",
+					"menuId" : $("#menuSel").val(),
 					"title" : $("#title").val(),
 					"unit" : $("#unit").val()
 				};
@@ -65,9 +65,9 @@
 			var swfu = new SWFUpload({
 				// Backend Settings
 				upload_url : "${pageContext.request.contextPath}/merchant/account/electricMenu/addItem/",
-				post_params : {
-					"title" : "哇哈哈"
-				},
+				//post_params : {
+				//	"title" : "哇哈哈"
+				//},
 				// File Upload Settings
 				file_size_limit : "2 MB", // 2MB
 				file_types : "*.jpg;*.png",

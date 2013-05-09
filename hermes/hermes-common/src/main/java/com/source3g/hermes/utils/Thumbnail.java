@@ -48,7 +48,21 @@ public class Thumbnail {
 	public Thumbnail(String srcFilePath) throws IOException {
 		File file = new File(srcFilePath); // 读入文件
 		String fileName = file.getName();
-		this.destFilePath = file.getParent() + "/" + fileName.substring(0, fileName.lastIndexOf(".")) + "_s.jpg";
+		this.destFilePath = file.getParent() + "/" + fileName.substring(0, fileName.lastIndexOf(".")) + "_s"+srcFilePath.substring(srcFilePath.lastIndexOf("."), srcFilePath.length());
+		this.srcFilePath = srcFilePath;
+	}
+	/**
+	 * 构造函数
+	 * 
+	 * @param srcFilePath
+	 *            String
+	 * @throws IOException
+	 */
+	public Thumbnail(String srcFilePath,String destFilePath) throws IOException {
+//		File file = new File(srcFilePath); // 读入文件
+//		String fileName = file.getName();
+//		this.destFilePath = file.getParent() + "/" + fileName.substring(0, fileName.lastIndexOf(".")) + "_s"+srcFilePath.substring(srcFilePath.lastIndexOf("."), srcFilePath.length());
+		this.destFilePath=destFilePath;
 		this.srcFilePath = srcFilePath;
 	}
 

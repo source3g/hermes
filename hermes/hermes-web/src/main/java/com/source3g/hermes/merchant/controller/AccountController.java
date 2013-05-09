@@ -266,8 +266,8 @@ public class AccountController {
 
 	@RequestMapping(value = "/electricMenu")
 	public String electricMenu(Model model) throws Exception {
-		String uri=ConfigParams.getBaseUrl()+"merchant/electricMenu/list/"+LoginUtils.getLoginMerchant().getId()+"/";
-		ElectricMenu[] electricMenus=restTemplate.getForObject(uri, ElectricMenu[].class);
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/list/" + LoginUtils.getLoginMerchant().getId() + "/";
+		ElectricMenu[] electricMenus = restTemplate.getForObject(uri, ElectricMenu[].class);
 		model.addAttribute("menus", electricMenus);
 		return "/merchant/accountCenter/electricMenu";
 	}
@@ -280,6 +280,14 @@ public class AccountController {
 		return "redirect:/merchant/account/electricMenu/";
 	}
 
+	@RequestMapping(value = "/electricMenu/update", method = RequestMethod.POST)
+	public String updateElectricMenu(ElectricMenu electricMenu, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/update/" + LoginUtils.getLoginMerchant().getId() + "/";
+		HttpEntity<ElectricMenu> entity = new HttpEntity<ElectricMenu>(electricMenu);
+		restTemplate.postForObject(uri, entity, String.class);
+		return "/merchant/accountCenter/addElectricMenu";
+	}
+
 	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.GET)
 	public String toAddElectricMenuItem(Model model) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/list/" + LoginUtils.getLoginMerchant().getId() + "/";
@@ -287,12 +295,19 @@ public class AccountController {
 		model.addAttribute("electricMenus", electricMenus);
 		return "/merchant/accountCenter/addElectricMenu";
 	}
+	
+	@RequestMapping(value = "/electricMenu/delete/{menuId}", method = RequestMethod.GET)
+	public String deleteMenu(String menuId,Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/"+menuId+"/";
+		restTemplate.getForObject(uri, String.class);
+		return "redirect:/merchant/account/electricMenu/";
+	}
 
 	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.POST)
-	public String addElectricMenuItem(String menuId, String title, String picPath, String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
+	public String addElectricMenuItem(String menuId, String title , String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
 		title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
 		unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
-		File fileToCopy = new File("/temp/file/" + new Date().getTime());
+		File fileToCopy = new File("/temp/file/" + new Date().getTime()+Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
 		Resource resource = new FileSystemResource(fileToCopy);
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();

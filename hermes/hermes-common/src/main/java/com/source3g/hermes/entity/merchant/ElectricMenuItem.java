@@ -4,6 +4,10 @@ public class ElectricMenuItem {
 	private String title;
 	private double price;
 	private String picPath;
+	/**
+	 * 缩略图位置
+	 */
+	private String abstractPicPath;
 	private String unit;
 
 	public String getTitle() {
@@ -36,6 +40,14 @@ public class ElectricMenuItem {
 
 	public void setUnit(String unit) {
 		this.unit = unit;
+	}
+
+	public String getAbstractPicPath() {
+		return abstractPicPath;
+	}
+
+	public void setAbstractPicPath(String abstractPicPath) {
+		this.abstractPicPath = abstractPicPath;
 	}
 
 }
