@@ -27,12 +27,15 @@ public class ElectricMenuService {
 		return electricMenus;
 	}
 
-	public void deleteItem(String title) {
-		mongoTemplate.remove(new Query(Criteria.where("title").is(title)),ElectricMenuItem.class);
+	public void deleteItem(String title,ObjectId menuId) {
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(menuId).and("title").is(title)),ElectricMenuItem.class);
 	}
 
-	public void addItem(ElectricMenuItem electricMenuItem) {
-		mongoTemplate.insert(electricMenuItem);
+	public void addItem(ElectricMenuItem electricMenuItem,ObjectId menuId) {
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
+		electricMenuItems.add(electricMenuItem);
+		mongoTemplate.save(electricMenuItem);
 	}
 
 	public void UpdateItemName(String electricMenuTitle) { 
@@ -42,14 +45,14 @@ public class ElectricMenuService {
 	}
 
 	public void deleteItem(ElectricMenuItem electricMenuItem) {
-		
+		mongoTemplate.remove(electricMenuItem);
 	}
 	
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {
-
+		
 	}
 	public void updateMenu(ElectricMenu electricMenu){
-		
+		mongoTemplate.save(electricMenu);
 	}
 
 	/**

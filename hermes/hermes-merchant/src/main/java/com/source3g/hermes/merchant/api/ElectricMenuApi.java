@@ -58,7 +58,7 @@ public class ElectricMenuApi {
 		electricMenuItem.setPrice(Double.parseDouble(price));
 		electricMenuItem.setTitle(title);
 		electricMenuItem.setUnit(unit);
-		electricMenuService.addItem(electricMenuItem);
+		electricMenuService.addItem(electricMenuItem,new ObjectId(menuId));
 		return ReturnConstants.SUCCESS;
 	}
 
