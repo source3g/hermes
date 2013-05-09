@@ -1,5 +1,6 @@
 package com.source3g.hermes.merchant.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -14,33 +15,32 @@ import com.source3g.hermes.entity.merchant.ElectricMenuItem;
 import com.source3g.hermes.service.BaseService;
 
 @Component
-public class ElectricMenuService extends BaseService{
+public class ElectricMenuService extends BaseService {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	
 
 	public List<ElectricMenu> findByMerchantId(ObjectId merchantId) {
 		List<ElectricMenu> electricMenus = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), ElectricMenu.class);
 		return electricMenus;
 	}
 
-	public void deleteItem(ObjectId menuId,ObjectId ItemId) {
-		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)),ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
-		for(ElectricMenuItem e:electricMenuItems){
-			if(e.getId()==ItemId){
+	public void deleteItem(ObjectId menuId, ObjectId ItemId) {
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
+		for (ElectricMenuItem e : electricMenuItems) {
+			if (e.getId() == ItemId) {
 				electricMenuItems.remove(e);
 			}
 		}
 		mongoTemplate.save(electricMenu);
 	}
-	
-	public void deleteItem(String title,ObjectId menuId) {
-		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)),ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
-		for(ElectricMenuItem e:electricMenuItems){
-			if(e.getTitle().equals(title)){
+
+	public void deleteItem(String title, ObjectId menuId) {
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
+		for (ElectricMenuItem e : electricMenuItems) {
+			if (e.getTitle().equals(title)) {
 				electricMenuItems.remove(e);
 			}
 		}
@@ -48,17 +48,21 @@ public class ElectricMenuService extends BaseService{
 	}
 
 	public void addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
+		if (electricMenuItems == null) {
+			electricMenuItems = new ArrayList<ElectricMenuItem>();
+		}
 		electricMenuItems.add(electricMenuItem);
+		electricMenu.setItems(electricMenuItems);
 		mongoTemplate.save(electricMenu);
 	}
 
 	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
-		for(ElectricMenuItem e:electricMenuItems){
-			if(e.getId()==electricMenuItem.getId()){
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
+		for (ElectricMenuItem e : electricMenuItems) {
+			if (e.getId() == electricMenuItem.getId()) {
 				electricMenuItems.remove(e);
 				electricMenuItems.add(electricMenuItem);
 			}
@@ -78,12 +82,12 @@ public class ElectricMenuService extends BaseService{
 	public void deleteMenu(ObjectId objectId) {
 		mongoTemplate.remove(new Query(Criteria.where("_id").is(objectId)));
 	}
-	
+
 	public ElectricMenuItem findItemByTitle(ObjectId menuId, String itemTitle) {
-		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
-		for(ElectricMenuItem electricMenuItem:electricMenuItems){
-			if(electricMenuItem.getTitle().equals(itemTitle)){
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
+		for (ElectricMenuItem electricMenuItem : electricMenuItems) {
+			if (electricMenuItem.getTitle().equals(itemTitle)) {
 				return electricMenuItem;
 			}
 		}
@@ -99,7 +103,5 @@ public class ElectricMenuService extends BaseService{
 			mongoTemplate.insert(electricMenu);
 		}
 	}
-
-	
 
 }

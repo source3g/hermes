@@ -341,7 +341,7 @@ public class AccountController {
 		formData.add("file", resource);
 		formData.add("title", title);
 		formData.add("unit", unit);
-		formData.add("price", price);
+		formData.add("price", String.valueOf(price));
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
