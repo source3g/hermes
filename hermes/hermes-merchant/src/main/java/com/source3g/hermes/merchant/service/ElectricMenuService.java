@@ -26,30 +26,67 @@ public class ElectricMenuService extends BaseService{
 	}
 
 	public void deleteItem(ObjectId menuId,ObjectId ItemId) {
-		
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)),ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
+		for(ElectricMenuItem e:electricMenuItems){
+			if(e.getId()==ItemId){
+				electricMenuItems.remove(e);
+			}
+		}
+		mongoTemplate.save(electricMenu);
 	}
-	public void deleteItem(String title,ObjectId ItemId) {
-		
+	
+	public void deleteItem(String title,ObjectId menuId) {
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)),ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
+		for(ElectricMenuItem e:electricMenuItems){
+			if(e.getTitle().equals(title)){
+				electricMenuItems.remove(e);
+			}
+		}
+		mongoTemplate.save(electricMenu);
 	}
 
 	public void addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-		mongoTemplate.insert(electricMenuItem);
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
+		electricMenuItems.add(electricMenuItem);
+		mongoTemplate.save(electricMenu);
 	}
 
 	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-//		mongoTemplate.insert(electricMenuItem);
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
+		for(ElectricMenuItem e:electricMenuItems){
+			if(e.getId()==electricMenuItem.getId()){
+				electricMenuItems.remove(e);
+				electricMenuItems.add(electricMenuItem);
+			}
+		}
+		mongoTemplate.save(electricMenu);
 	}
 
-
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {
-
+		electricMenu.setMerchantId(merchantId);
+		mongoTemplate.insert(electricMenu);
 	}
 
 	public void updateMenu(ElectricMenu electricMenu) {
-		
+		mongoTemplate.save(electricMenu);
 	}
 
+	public void deleteMenu(ObjectId objectId) {
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(objectId)));
+	}
+	
 	public ElectricMenuItem findItemByTitle(ObjectId menuId, String itemTitle) {
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems=electricMenu.getItems();
+		for(ElectricMenuItem electricMenuItem:electricMenuItems){
+			if(electricMenuItem.getTitle().equals(itemTitle)){
+				return electricMenuItem;
+			}
+		}
 		return null;
 	}
 
@@ -63,8 +100,6 @@ public class ElectricMenuService extends BaseService{
 		}
 	}
 
-	public void deleteMenu(ObjectId objectId) {
-
-	}
+	
 
 }
