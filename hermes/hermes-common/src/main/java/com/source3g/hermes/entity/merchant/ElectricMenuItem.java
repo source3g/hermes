@@ -1,6 +1,9 @@
 package com.source3g.hermes.entity.merchant;
 
+import org.bson.types.ObjectId;
+
 public class ElectricMenuItem {
+	private ObjectId id=new ObjectId();
 	private String title;
 	private double price;
 	private String picPath;
@@ -48,6 +51,14 @@ public class ElectricMenuItem {
 
 	public void setAbstractPicPath(String abstractPicPath) {
 		this.abstractPicPath = abstractPicPath;
+	}
+
+	public ObjectId getId() {
+		return id;
+	}
+
+	public void setId(ObjectId id) {
+		this.id = id;
 	}
 
 }

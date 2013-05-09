@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.entity.merchant.ElectricMenu;
@@ -27,29 +26,32 @@ public class ElectricMenuService {
 		return electricMenus;
 	}
 
-	public void deleteItem(String title) {
-		mongoTemplate.remove(new Query(Criteria.where("title").is(title)),ElectricMenuItem.class);
+	public void deleteItem(ObjectId menuId,ObjectId ItemId) {
+		
+	}
+	public void deleteItem(String title,ObjectId ItemId) {
+		
 	}
 
-	public void addItem(ElectricMenuItem electricMenuItem) {
+	public void addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
 		mongoTemplate.insert(electricMenuItem);
 	}
 
-	public void UpdateItemName(String electricMenuTitle) { 
-		Update update=new Update();
-		update.set("name", electricMenuTitle);
-		mongoTemplate.updateFirst(new Query(), update, ElectricMenu.class);
+	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
+//		mongoTemplate.insert(electricMenuItem);
 	}
 
-	public void deleteItem(ElectricMenuItem electricMenuItem) {
-		
-	}
-	
+
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {
 
 	}
-	public void updateMenu(ElectricMenu electricMenu){
-		
+
+	public void updateMenu(ElectricMenu electricMenu) {
+
+	}
+
+	public ElectricMenuItem findItemByTitle(ObjectId menuId, String itemTitle) {
+		return null;
 	}
 
 	/**
@@ -63,7 +65,7 @@ public class ElectricMenuService {
 	}
 
 	public void deleteMenu(ObjectId objectId) {
-		
+
 	}
 
 	public String getPicPath() {

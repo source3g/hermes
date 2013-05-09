@@ -37,6 +37,7 @@ import com.source3g.hermes.dto.customer.CustomerRemindDto;
 import com.source3g.hermes.dto.merchant.ElectricMenuDto;
 import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.ElectricMenu;
+import com.source3g.hermes.entity.merchant.ElectricMenuItem;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
@@ -295,30 +296,55 @@ public class AccountController {
 		model.addAttribute("electricMenus", electricMenus);
 		return "/merchant/accountCenter/addElectricMenu";
 	}
-	
+
+	@RequestMapping(value = "/electricMenu/updateItem/{menuId}/{title}", method = RequestMethod.GET)
+	public String toUpdateElectricMenuItem(@PathVariable String menuId, @PathVariable String title, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/findItem/" + menuId + "/" + title + "/";
+		ElectricMenuItem electricMenuItem = restTemplate.getForObject(uri, ElectricMenuItem.class);
+		String menusUri = ConfigParams.getBaseUrl() + "merchant/electricMenu/list/" + LoginUtils.getLoginMerchant().getId() + "/";
+		ElectricMenu[] electricMenus = restTemplate.getForObject(menusUri, ElectricMenu[].class);
+		model.addAttribute("electricMenuItem", electricMenuItem);
+		model.addAttribute("electricMenus", electricMenus);
+		model.addAttribute("menuId", menuId);
+		model.addAttribute("update", true);
+		return "/merchant/accountCenter/addElectricMenu";
+	}
+
+	@RequestMapping(value = "/electricMenu/updateItem/{menuId}", method = RequestMethod.POST)
+	public String updateElectricMenuItem(@PathVariable String menuId, String title, String unit, MultipartFile Filedata, Model model) throws Exception {
+		
+		return "/merchant/accountCenter/addElectricMenu";
+	}
+
+	@RequestMapping(value = "/electricMenu/deleteItem/{menuId}/{title}", method = RequestMethod.GET)
+	public String deleteElectricMenuItem(@PathVariable String menuId, @PathVariable String title, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/findItem/" + menuId + "/" + title + "/";
+		restTemplate.getForObject(uri, ElectricMenuItem.class);
+		return "/merchant/accountCenter/addElectricMenu";
+	}
+
 	@RequestMapping(value = "/electricMenu/delete/{menuId}", method = RequestMethod.GET)
-	public String deleteMenu(String menuId,Model model) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/"+menuId+"/";
+	public String deleteMenu(String menuId, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/" + menuId + "/";
 		restTemplate.getForObject(uri, String.class);
 		return "redirect:/merchant/account/electricMenu/";
 	}
 
 	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.POST)
-	public String addElectricMenuItem(String menuId, String title , String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
+	public String addElectricMenuItem(String menuId, String title, String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
 		title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
 		unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
-		File fileToCopy = new File("/temp/file/" + new Date().getTime()+Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
+		File fileToCopy = new File("/temp/file/" + new Date().getTime() + Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
 		Resource resource = new FileSystemResource(fileToCopy);
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 		formData.add("file", resource);
-		formData.add("menuId", menuId);
 		formData.add("title", title);
 		formData.add("unit", unit);
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/addItem/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/addItem/" + menuId + "/";
 		restTemplate.postForObject(uri, requestEntity, String.class);
 		return "redirect:/merchant/account/electricMenu/";
 	}
