@@ -114,10 +114,11 @@ public class ElectricMenuApi {
 		return ReturnConstants.SUCCESS;
 	}
 
-	@RequestMapping(value = "delete/{menuId}", method = RequestMethod.POST)
+	@RequestMapping(value = "delete/{menuId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String deleteMenu(String menuId) {
-		electricMenuService.deleteMenu(new ObjectId(menuId));
+	public String deleteMenu(@PathVariable ObjectId menuId) {
+		//ObjectId obj=new ObjectId(menuId);
+		electricMenuService.deleteMenu(menuId);
 		return ReturnConstants.SUCCESS;
 	}
 

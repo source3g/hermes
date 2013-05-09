@@ -34,8 +34,9 @@ public class ElectricMenuService extends BaseService {
 				electricMenuItems.remove(e);
 			}
 		}
-		
-		mongoTemplate.save(electricMenu);
+		Update update=new Update();
+		update.set("items", electricMenuItems);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
 	}
 
 	public void deleteItem(String title, ObjectId menuId) {
@@ -87,8 +88,8 @@ public class ElectricMenuService extends BaseService {
 		mongoTemplate.updateFirst(new Query(), update, ElectricMenu.class);
 	}
 
-	public void deleteMenu(ObjectId objectId) {
-		mongoTemplate.remove(new Query(Criteria.where("_id").is(objectId)));
+	public void deleteMenu(ObjectId menuId) {
+		mongoTemplate.remove(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
 	}
 
 	public ElectricMenuItem findItemByTitle(ObjectId menuId, String itemTitle) {

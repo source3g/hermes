@@ -28,16 +28,16 @@
 					<c:if test="${status.index%3 eq 0 }">
 						<tr class="itemTr" style="display: none">
 							<td>
-					</c:if>
+					</c:if>  
 					<span class="span4" style="background-color: #eee;"><img
-						alt="" src="${item.picPath }" width="400" height="300"></img><br> <label>${item.title
+						alt="" src="${item.picPath }" width="400px" height="300px"></img><br> <label>${item.title
 							}&nbsp;单位${item.unit} &nbsp;(${item.price }元) <a href="#"
 							class="btn btn-primary"
 							onclick="menuDetail('${item.title}','${menu.id }');">详情</a><a
 							href="#" class="btn btn-danger"
 							onclick="deleteItem('${item.title}','${menu.id }');">删除</a>
 					</label></span>
-					<c:if test="${status.index%3 eq 0 }">
+			 		 <c:if test="${status.index%3 eq 0 }">
 						</td>
 						</tr>
 					</c:if>
@@ -45,7 +45,7 @@
 					<c:if test="${status.index%3 ne 0 and status.last }">
 						</td>
 						</tr>
-					</c:if>
+					</c:if>  
 				</c:forEach>
 			</c:forEach>
 			<tr>

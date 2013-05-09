@@ -324,9 +324,9 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/delete/{menuId}", method = RequestMethod.GET)
-	public String deleteMenu(String menuId, Model model) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/" + menuId + "/";
-		restTemplate.getForObject(uri, String.class);
+	public String deleteMenu(@PathVariable String  menuId, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/"+menuId+"/";
+		restTemplate.getForObject(uri,String.class);
 		return "redirect:/merchant/account/electricMenu/";
 	}
 
