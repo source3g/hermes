@@ -30,7 +30,7 @@
 						<td>
 					</c:if>
 							 <span class="span3" style="background-color: #eee;"><img
-								alt="" src="" width="120" height="120"></img><br> <label>${item.title }&nbsp;单位${item.unit} &nbsp;(${item.price }元) <a href="#" class="btn btn-primary">详情</a><a href="#" class="btn btn-danger">删除</a></label></span>
+								alt="" src="" width="120" height="120"></img><br> <label>${item.title }&nbsp;单位${item.unit} &nbsp;(${item.price }元) <a href="#" class="btn btn-primary" onclick="menuDetail('${item.name}','${menu.id }');">详情</a><a href="#" class="btn btn-danger" onclick="deleteItem('${item.name}','${menu.id }');">删除</a></label></span>
 					<c:if test="${status.index%4 eq 0 }">
 							</td>
 						</tr>
@@ -65,6 +65,15 @@
 		function expand(el) {
 			$(el).parents("tr").next(".itemTr").toggle("slow");
 			return false;
+		}
+		
+		function deleteItem(name,id){
+			if(confirm("是否确定要删除:"+name+"?")){
+				
+			}
+		}
+		function menuDetail(name,id){
+			$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+name+"/",showContentInfo);
 		}
 		
 		function deleteMenu(el){
