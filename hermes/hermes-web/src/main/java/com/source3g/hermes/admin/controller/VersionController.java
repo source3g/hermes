@@ -20,7 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,10 +46,10 @@ public class VersionController {
 		return new ModelAndView("admin/system/version");
 	}
 
-	@RequestMapping(value = "/upload/{describe}", method = RequestMethod.POST)
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String importNewVersion(@PathVariable String describe, @RequestParam("version") String version, @RequestParam("code") String code, @RequestParam("Filedata") MultipartFile Filedata, HttpServletRequest req) throws IOException {
-		if (version == null) {
+	public String importNewVersion(@RequestParam("describe") String describe,@RequestParam("version") String version,@RequestParam("code") String code, @RequestParam("Filedata") MultipartFile Filedata,HttpServletRequest req) throws IOException {
+		if(version==null){
 			return "版本号不能为空";
 		}
 		if (describe == null) {
@@ -67,10 +66,11 @@ public class VersionController {
 		formData.add("oldName", new String(Filedata.getOriginalFilename()));
 		formData.add("version", version);
 		formData.add("code", code);
+		formData.add("describe",describe);
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
-		String result = restTemplate.postForObject(ConfigParams.getBaseUrl() + "version/upload/" + describe + "/", requestEntity, String.class);
+		String result = restTemplate.postForObject(ConfigParams.getBaseUrl() + "version/upload/", requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return "上传成功";
 		}

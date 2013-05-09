@@ -167,8 +167,8 @@
 				swfu.addPostParam("version", version);
 				swfu.addPostParam("describe", describe);
 				swfu.addPostParam("code", code);
-				url="${pageContext.request.contextPath}/admin/version/upload/"+describe;
-				swfu.setUploadURL(url)
+				//url="${pageContext.request.contextPath}/admin/version/upload/"+describe;
+				//swfu.setUploadURL(url)
 				swfu.startUpload();
 				return false;
 				});

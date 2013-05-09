@@ -6,6 +6,9 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.entity.merchant.ElectricMenu;
@@ -20,20 +23,22 @@ public class ElectricMenuService {
 	private String picPath;
 
 	public List<ElectricMenu> findByMerchantId(ObjectId merchantId) {
-		List<ElectricMenu> electricMenus = mongoTemplate.findAll(ElectricMenu.class);
+		List<ElectricMenu> electricMenus = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), ElectricMenu.class);
 		return electricMenus;
 	}
 
 	public void deleteItem(String title) {
-
+		mongoTemplate.remove(new Query(Criteria.where("title").is(title)),ElectricMenuItem.class);
 	}
 
 	public void addItem(ElectricMenuItem electricMenuItem) {
-
+		mongoTemplate.insert(electricMenuItem);
 	}
 
-	public void UpdateItemName(String electricMenuTitle) {
-
+	public void UpdateItemName(String electricMenuTitle) { 
+		Update update=new Update();
+		update.set("name", electricMenuTitle);
+		mongoTemplate.updateFirst(new Query(), update, ElectricMenu.class);
 	}
 
 	public void deleteItem(ElectricMenuItem electricMenuItem) {

@@ -59,9 +59,9 @@ public class VersionApi {
 		bos.close();
 	}
 
-	@RequestMapping(value = "/upload/{describe}",method = RequestMethod.POST)
+	@RequestMapping(value = "/upload",method = RequestMethod.POST)
 	@ResponseBody
-	public String upload(@PathVariable String describe,@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version,@RequestParam("code") String code) throws IOException, ParseException {
+	public String upload(@RequestParam("describe") String describe,@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version,@RequestParam("code") String code) throws IOException, ParseException {
 		int codeInt=Integer.parseInt(code);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
 		String suffxPath = dateFormat.format(new Date())+ oldName;
