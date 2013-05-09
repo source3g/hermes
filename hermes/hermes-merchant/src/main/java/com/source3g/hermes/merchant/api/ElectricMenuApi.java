@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,13 @@ public class ElectricMenuApi {
 	@RequestMapping(value = "/list/{merchantId}")
 	@ResponseBody
 	public List<ElectricMenu> list(@PathVariable String merchantId) {
-		return electricMenuService.findByMerchantId(new ObjectId(merchantId));
+		List<ElectricMenu> list = electricMenuService.findByMerchantId(new ObjectId(merchantId));
+		return processItemPicPath(list);
 	}
 
 	@RequestMapping(value = "/addItem/{menuId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String addItem(@RequestParam("file") MultipartFile file,@PathVariable String menuId, String price, String title, String unit) throws IOException {
+	public String addItem(@RequestParam("file") MultipartFile file, @PathVariable String menuId, String price, String title, String unit) throws IOException {
 		Date date = new Date();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
 		String suffxPath = dateFormat.format(date) + "/" + file.getOriginalFilename();
@@ -50,8 +52,11 @@ public class ElectricMenuApi {
 		String filePath = path + suffxPath;
 		File fileToCopy = new File(filePath);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
+		if (fileToCopy.length() > 100 * 1024) {
+			Thumbnail.compressPic(filePath, filePath);
+		}
 		Thumbnail thumbnail = new Thumbnail(filePath, path + suffxDestPath);
-		thumbnail.resize(300, 200);
+		thumbnail.resize(800, 600);
 		ElectricMenuItem electricMenuItem = new ElectricMenuItem();
 		electricMenuItem.setPicPath(filePath);
 		electricMenuItem.setAbstractPicPath(path + suffxDestPath);
@@ -64,13 +69,38 @@ public class ElectricMenuApi {
 
 	@RequestMapping(value = "findItem/{menuId}/{title}", method = RequestMethod.GET)
 	@ResponseBody
-	public ElectricMenuItem findItem(@PathVariable String menuId,@PathVariable  String title) {
-		return electricMenuService.findItemByTitle(new ObjectId(menuId), title);
+	public ElectricMenuItem findItem(@PathVariable String menuId, @PathVariable String title) {
+		ElectricMenuItem item = electricMenuService.findItemByTitle(new ObjectId(menuId), title);
+		return processItemPicPath(item);
+	}
+
+	private List<ElectricMenu> processItemPicPath(List<ElectricMenu> electricMenuList) {
+		if (CollectionUtils.isNotEmpty(electricMenuList)) {
+			for (ElectricMenu electricMenu : electricMenuList) {
+				processItemPicPath(electricMenu);
+			}
+		}
+		return electricMenuList;
+	}
+
+	private ElectricMenu processItemPicPath(ElectricMenu electricMenu) {
+		if (CollectionUtils.isNotEmpty(electricMenu.getItems())) {
+			for (ElectricMenuItem electricMenuItem : electricMenu.getItems()) {
+				processItemPicPath(electricMenuItem);
+			}
+		}
+		return electricMenu;
+	}
+
+	private ElectricMenuItem processItemPicPath(ElectricMenuItem item) {
+		item.setPicPath(electricMenuService.getLocalUrl() + "images/menu" + item.getPicPath());
+		item.setAbstractPicPath(electricMenuService.getLocalUrl() + "images/menu" + item.getPicPath());
+		return item;
 	}
 
 	@RequestMapping(value = "deleteItem/{menuId}/{title}", method = RequestMethod.GET)
 	@ResponseBody
-	public String deleteItem( @PathVariable  String menuId, @PathVariable  String title) {
+	public String deleteItem(@PathVariable String menuId, @PathVariable String title) {
 		electricMenuService.deleteItem(title, new ObjectId(menuId));
 		return ReturnConstants.SUCCESS;
 	}

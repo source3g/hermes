@@ -20,8 +20,7 @@ public class VersionService extends BaseService {
 
 	@Value(value = "${version.upload.dir}")
 	private String uploadDir;
-	@Value(value = "${local.url}")
-	private String localUrl;
+
 
 	public String getUploadDir() {
 		return uploadDir;
@@ -39,14 +38,6 @@ public class VersionService extends BaseService {
 		OnlineVersion onlineVersion = super.findOne(new Query(), OnlineVersion.class);
 		ApkVersion apkVersion = super.findOne(new Query(Criteria.where("code").is(onlineVersion.getCode())), ApkVersion.class);
 		return apkVersion;
-	}
-
-	public String getLocalUrl() {
-		return localUrl;
-	}
-
-	public void setLocalUrl(String localUrl) {
-		this.localUrl = localUrl;
 	}
 
 	public Page versionList(int pageNoInt) {

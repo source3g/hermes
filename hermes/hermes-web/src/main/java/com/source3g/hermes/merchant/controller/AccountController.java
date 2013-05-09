@@ -310,10 +310,10 @@ public class AccountController {
 		return "/merchant/accountCenter/addElectricMenu";
 	}
 
-	@RequestMapping(value = "/electricMenu/updateItem/{menuId}", method = RequestMethod.POST)
-	public String updateElectricMenuItem(@PathVariable String menuId, String title, String unit, MultipartFile Filedata, Model model) throws Exception {
+	@RequestMapping(value = "/electricMenu/updateItem/{menuId}/{itemId}", method = RequestMethod.POST)
+	public String updateElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId,String title, String unit, MultipartFile Filedata, Model model) throws Exception {
 		
-		return "/merchant/accountCenter/addElectricMenu";
+		return "redirect:/merchant/account/electricMenu/";
 	}
 
 	@RequestMapping(value = "/electricMenu/deleteItem/{menuId}/{title}", method = RequestMethod.GET)
@@ -331,7 +331,7 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.POST)
-	public String addElectricMenuItem(String menuId, String title, String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
+	public String addElectricMenuItem(String menuId, String title, double price,String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
 		title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
 		unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
 		File fileToCopy = new File("/temp/file/" + new Date().getTime() + Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
@@ -341,6 +341,7 @@ public class AccountController {
 		formData.add("file", resource);
 		formData.add("title", title);
 		formData.add("unit", unit);
+		formData.add("price", price);
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);

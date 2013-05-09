@@ -13,29 +13,52 @@
 		<%-- action="${pageContext.request.contextPath}/merchant/account/electricMenu/addItem/"
 		method="post" --%> class="form-horizontal">
 		<div class="control-group">
-			<label class="control-label"> 菜品类别:</label> <select id="menuSel" name="menuId">
+			<label class="control-label"> 菜品类别:</label> <select id="menuSel"
+				name="menuId">
 				<c:forEach var="menu" items="${electricMenus }">
-					<option value="${menu.id }">${menu.name }</option>
+					<option value="${menu.id }"
+						<c:if test="${menu.id eq menuId }"> selected</c:if>>
+						${menu.name }</option>
 				</c:forEach>
 			</select>
 		</div>
 		<div class="control-group">
 			<label class="control-label"> 名称: </label><input type="text"
-				name="title" id="title"></input>
+				name="title" id="title" value="${electricMenuItem.title }"></input>
 		</div>
 		<div class="control-group">
 			<label class="control-label"> 图片:</label> <span
 				id="spanButtonPlaceholder"></span><span>&nbsp;&nbsp;&nbsp;(每个文件最大10M)</span>
 			<div id="divFileProgressContainer" style="width: 200;"></div>
+			<c:if test="${ not empty update }">
+				<img alt="" src="${electricMenuItem.picPath }" width="800"
+					height="600">
+			</c:if>
+		</div>
+		<div class="control-group">
+			<label class="control-label">价格:</label><input type="text"
+				name="price" id="price" value="${electricMenuItem.price}"></input><label
+				class="help-inline">(单位:元)</label>
 		</div>
 		<div class="control-group">
 			<label class="control-label"> 单位:</label><input type="text"
-				name="unit" id="unit"></input><label class="help-inline">(例如:盘,份,例,碗等)</label>
+				name="unit" id="unit" value="${electricMenuItem.unit}"></input><label
+				class="help-inline">(例如:盘,份,例,碗等)</label>
 		</div>
 		<div class="form-actions">
-			<input type="button" id="addElectricMenuBtn" class="btn btn-primary"
-				value="增加" /> <input type="button" id="backToList"
-				class="btn btn-primary" value="返回" />
+			<c:choose>
+				<c:when test="${ empty update }">
+					<input type="button" id="addElectricMenuItemBtn"
+						class="btn btn-primary" value="增加" />
+				</c:when>
+				<c:otherwise>
+					<input type="button" id="updateElectricMenuItemBtn"
+						class="btn btn-primary" value="修改" />
+				</c:otherwise>
+			</c:choose>
+			<input type="button" id="backToList" class="btn btn-primary"
+				value="返回" />
+
 		</div>
 	</form>
 
@@ -50,7 +73,7 @@
 			$("#backToList").click(function() {
 				loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/");
 			});
-			$("#addElectricMenuBtn").click(function() {
+			$("#addElectricMenuItemBtn").click(function() {
 				//	swfu.addPostParam("menuId", "menuId");
 				//swfu.addPostParam("title", $("#title").val());
 				//swfu.addPostParam("unit", $("#unit").val());
@@ -58,10 +81,16 @@
 					"menuId" : $("#menuSel").val(),
 					"title" : $("#title").val(),
 					"unit" : $("#unit").val()
+					"price" : $("#price").val()
 				};
 				swfu.setPostParams(post_params);
 				swfu.startUpload();
 			});
+			$("#updateElectricMenuItemBtn").click(function() {
+				alert($("#divFileProgressContainer").text());
+				return false;
+			});
+
 			var swfu = new SWFUpload({
 				// Backend Settings
 				upload_url : "${pageContext.request.contextPath}/merchant/account/electricMenu/addItem/",

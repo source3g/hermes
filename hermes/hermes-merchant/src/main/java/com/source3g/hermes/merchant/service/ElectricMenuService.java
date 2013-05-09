@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -12,14 +11,14 @@ import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.entity.merchant.ElectricMenu;
 import com.source3g.hermes.entity.merchant.ElectricMenuItem;
+import com.source3g.hermes.service.BaseService;
 
 @Component
-public class ElectricMenuService {
+public class ElectricMenuService extends BaseService{
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	@Value(value = "${image.menu.dir}")
-	private String picPath;
+	
 
 	public List<ElectricMenu> findByMerchantId(ObjectId merchantId) {
 		List<ElectricMenu> electricMenus = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), ElectricMenu.class);
@@ -47,7 +46,7 @@ public class ElectricMenuService {
 	}
 
 	public void updateMenu(ElectricMenu electricMenu) {
-
+		
 	}
 
 	public ElectricMenuItem findItemByTitle(ObjectId menuId, String itemTitle) {
@@ -66,14 +65,6 @@ public class ElectricMenuService {
 
 	public void deleteMenu(ObjectId objectId) {
 
-	}
-
-	public String getPicPath() {
-		return picPath;
-	}
-
-	public void setPicPath(String picPath) {
-		this.picPath = picPath;
 	}
 
 }

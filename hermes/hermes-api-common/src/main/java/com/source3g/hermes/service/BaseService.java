@@ -10,6 +10,7 @@ import java.util.List;
 import org.bson.types.ObjectId;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,9 +25,15 @@ import com.mongodb.DBObject;
 import com.source3g.hermes.entity.AbstractEntity;
 
 @Component
-public abstract class BaseService  implements ApplicationContextAware{
+public class BaseService  implements ApplicationContextAware{
 	
 	private static ApplicationContext applicationContext;
+	
+	@Value(value = "${image.menu.dir}")
+	private String picPath;
+	
+	@Value(value = "${local.url}")
+	private String localUrl;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -235,5 +242,21 @@ public abstract class BaseService  implements ApplicationContextAware{
 
 		}
 		return result;
+	}
+
+	public String getPicPath() {
+		return picPath;
+	}
+
+	public void setPicPath(String picPath) {
+		this.picPath = picPath;
+	}
+
+	public String getLocalUrl() {
+		return localUrl;
+	}
+
+	public void setLocalUrl(String localUrl) {
+		this.localUrl = localUrl;
 	}
 }
