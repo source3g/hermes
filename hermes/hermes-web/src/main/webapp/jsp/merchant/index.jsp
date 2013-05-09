@@ -12,7 +12,6 @@
 body {
 	padding-bottom: 40px;
 }
-
 </style>
 
 </head>
@@ -28,7 +27,9 @@ body {
 				</a> <a class="brand" target="_self"
 					href="${pageContext.request.contextPath}/index/"> <img
 					alt="旺财宝" src="${pageContext.request.contextPath}/img/logo.png" /></a>
-					 <span class="brand"  style="padding-top:25px;" > <span style="font-size:30px; color:#eee;">${loginUser.name } </span> <span>客户来电和情感管理系统</span> </span>
+				<span class="brand" style="padding-top: 25px;"> <span
+					style="font-size: 30px; color: #eee;">${loginUser.name } </span> <span>客户来电和情感管理系统</span>
+				</span>
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right">
 					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -36,7 +37,7 @@ body {
 						class="caret"></span>
 					</a>
 					<ul class="dropdown-menu">
-						<li><a href="javascript:void(0)"  onclick="toPasswordChange()">修改密码</a></li>
+						<li><a href="javascript:void(0)" onclick="toPasswordChange()">修改密码</a></li>
 						<li class="divider"></li>
 						<li><a href="${pageContext.request.contextPath}/logout/">退出</a></li>
 					</ul>
@@ -130,7 +131,7 @@ body {
 							</div>
 						</div>
 					</div>
-					
+
 
 					<div class="accordion-group">
 						<div class="accordion-heading" style="background-color: #EEE;">
@@ -147,6 +148,7 @@ body {
 								<li><a href="#" id="merchantRemindSetting">提醒设置</a></li>
 								<li><a href="#" id="merchantResourceSetting">资源设置</a></li>
 								<li><a href="#" id="info">商户信息</a></li>
+								<li><a href="#" id="electricMenu">电子菜单</a></li>
 							</ul>
 							<!-- </div> -->
 						</div>
@@ -171,8 +173,9 @@ body {
 			<div class="span10" id="pageContentFrame"></div>
 		</div>
 		<div id="remindTipAlert" class="alert alert-error"
-			style="width: 200px; height: 20px; position: fixed; bottom: 5px; right: 5px; display:none;">
-			<a class="close" data-dismiss="alert">×</a><strong id="remindTipContent" style="cursor:pointer;"> 提醒！</strong>
+			style="width: 200px; height: 20px; position: fixed; bottom: 5px; right: 5px; display: none;">
+			<a class="close" data-dismiss="alert">×</a><strong
+				id="remindTipContent" style="cursor: pointer;"> 提醒！</strong>
 		</div>
 		<%@include file="../include/copyright.jsp"%>
 		<!-- row  -->
@@ -185,11 +188,11 @@ body {
 	$(document).ready(function() {
 		loadPage("${pageContext.request.contextPath}/merchant/main/");
 		initRemind();
-		$("#remindTipContent").click(function(){
+		$("#remindTipContent").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/remind/toList");
 			return false;
 		});
-		
+
 		$("#customerList").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 			return false;
@@ -198,7 +201,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/customer/add/");
 			return false;
 		});
-		
+
 		$("#customerGroup").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/customerGroup/");
 			return false;
@@ -269,7 +272,7 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
 			return false;
 		});
-	 	
+
 		$("#merchantResourceSetting").click(function() {
 			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 			return false;
@@ -278,29 +281,33 @@ body {
 			loadPage("${pageContext.request.contextPath}/merchant/account/info/");
 			return false;
 		});
+		$("#electricMenu").click(function() {
+			loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/");
+			return false;
+		});
 	});
 
-	function toPasswordChange(){
- 		$.get("${pageContext.request.contextPath}/merchant/account/toPasswordChange/",showContentInfo);
- 	}
-	function aabb(){
+	function toPasswordChange() {
+		$.get("${pageContext.request.contextPath}/merchant/account/toPasswordChange/", showContentInfo);
+	}
+	function aabb() {
 		loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 		return false;
 	}
-	function initRemind(){
-		$.get("${pageContext.request.contextPath}/merchant/account/remind/list",function callback(data){
-			var remindCount=data.length;
-			if(remindCount==0||typeof(data)=="string"){
+	function initRemind() {
+		$.get("${pageContext.request.contextPath}/merchant/account/remind/list", function callback(data) {
+			var remindCount = data.length;
+			if (remindCount == 0 || typeof (data) == "string") {
 				$("#merchantRemind").html("提醒");
-				$("#merchantRemind").css("color","");
-				$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");
-				$("#remindTipAlert").css("display","none");
+				$("#merchantRemind").css("color", "");
+				$("#remindTipContent").html("有" + remindCount + "个提醒 点击查看");
+				$("#remindTipAlert").css("display", "none");
 				return;
-			}else{
-				$("#remindTipContent").html("有"+remindCount+"个提醒 点击查看");
-				$("#remindTipAlert").css("display","");
-				$("#merchantRemind").html("提醒"+"("+remindCount+")");
-				$("#merchantRemind").css("color","red");
+			} else {
+				$("#remindTipContent").html("有" + remindCount + "个提醒 点击查看");
+				$("#remindTipAlert").css("display", "");
+				$("#merchantRemind").html("提醒" + "(" + remindCount + ")");
+				$("#merchantRemind").css("color", "red");
 			}
 		});
 	}

@@ -15,7 +15,7 @@ import com.source3g.hermes.message.utils.ReportReceiver;
 import com.source3g.hermes.message.utils.RespReceiver;
 
 @Service
-public class CbipMesssageService {
+public class CbipMesssageService  {
 	private Logger logger = LoggerFactory.getLogger(CbipMesssageService.class);
 	private ActiveSubmitSender activeSubmitSender;
 	private ClientEngine client;
@@ -66,17 +66,13 @@ public class CbipMesssageService {
 		// long clientSeq = Standard_SeqNum.computeSeqNoErr(1);
 		Long msgIdL=Long.parseLong(msgId);
 		if (isTest) {
-			System.out.println("摸拟向" + phoneNumber + "发送了内容：" + content);
 			logger.debug("摸拟向" + phoneNumber + "发送了内容：" + content);
 			return msgId;
 		}
 		if (client == null) {
 			init();
 		}
-		// CbipSubmitMms mmsSubmit = GetData.getMmsSubmit();
-		System.out.println("主动发送短信" + phoneNumber);
 		logger.debug("主动发送短信" + phoneNumber);
-		// System.out.println(mmsSubmit);
 		CbipSubmit smsSubmit = new CbipSubmit();
 		smsSubmit.setClientSeq(msgIdL);
 		smsSubmit.setSrcNumber("");

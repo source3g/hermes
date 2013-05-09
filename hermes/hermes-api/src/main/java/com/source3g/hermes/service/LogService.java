@@ -40,8 +40,7 @@ public class LogService {
 	public void doBefore(JoinPoint jp) {
 		Object[] args = jp.getArgs();
 		OperatorLog operatorLog = new OperatorLog(jp.getTarget().getClass().getName(), jp.getSignature().getName(), args);
-		System.out.println("log: " + operatorLog);
-		logger.debug("log:"+operatorLog.toString());
+		logger.debug("log:" + operatorLog.toString());
 		// mongoTemplate.insert(operatorLog);
 	}
 

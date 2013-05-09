@@ -50,7 +50,7 @@ import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.service.CommonBaseService;
-import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
 import com.source3g.hermes.vo.CallInStatisticsCount;
@@ -327,8 +327,8 @@ public class CustomerApi {
 		if (startTime == null) {
 			startTime = DateUtils.addDays(endTime, -30);
 		}
-		startTime = DateFormateUtils.getStartDateOfDay(startTime);
-		endTime = DateFormateUtils.getEndDateOfDay(endTime);
+		startTime = FormateUtils.getStartDateOfDay(startTime);
+		endTime = FormateUtils.getEndDateOfDay(endTime);
 		CallInStatistics callInStatistics = new CallInStatistics();
 		callInStatistics.setAllList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 0));
 		callInStatistics.setNewList(customerService.findCallInCountByDay(merchantId, startTime, endTime, 1));
@@ -340,7 +340,7 @@ public class CustomerApi {
 	@ResponseBody
 	public List<CallRecordDto> listCallRecord(@PathVariable String sn, Date startTime, Date endTime) {
 		if (startTime == null) {
-			startTime = DateFormateUtils.getStartDateOfDay(new Date());
+			startTime = FormateUtils.getStartDateOfDay(new Date());
 		}
 		if (endTime == null) {
 			endTime = new Date();
@@ -356,7 +356,7 @@ public class CustomerApi {
 	@ResponseBody
 	public long newCustomerCount(@PathVariable String sn, Date startTime) {
 		if (startTime == null) {
-			startTime = DateFormateUtils.getStartDateOfDay(new Date());
+			startTime = FormateUtils.getStartDateOfDay(new Date());
 		}
 		return customerService.findNewCustomerCount(sn, startTime);
 	}
@@ -365,7 +365,7 @@ public class CustomerApi {
 	@ResponseBody
 	public List<NewCustomerDto> newCustomerList(@PathVariable String sn, Date startTime) {
 		if (startTime == null) {
-			startTime = DateFormateUtils.getStartDateOfDay(new Date());
+			startTime = FormateUtils.getStartDateOfDay(new Date());
 		}
 		List<Customer> customers = customerService.findNewCustomers(sn, startTime);
 		List<NewCustomerDto> customerDtos = new ArrayList<NewCustomerDto>();

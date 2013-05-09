@@ -50,7 +50,7 @@ import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.message.GroupSendMsg;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
-import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.utils.PhoneUtils;
 
@@ -422,7 +422,7 @@ public class MessageService extends BaseService {
 		Date endTime = new Date();
 		Date startTime = DateUtils.addDays(endTime, 0 - dayCount);
 		// 获取开始时间的0点0分0秒
-		startTime = DateFormateUtils.getStartDateOfDay(startTime);
+		startTime = FormateUtils.getStartDateOfDay(startTime);
 		return findMessageSentCount(merchantId, messageType, startTime, endTime);
 	}
 
@@ -431,7 +431,7 @@ public class MessageService extends BaseService {
 		Criteria criteria = Criteria.where("merchantId").is(merchantId).and("status").is(MessageStatus.已发送);
 		Date date = new Date();
 		if (startTime == null) {
-			startTime = DateFormateUtils.getStartDateOfDay(date);
+			startTime = FormateUtils.getStartDateOfDay(date);
 		}
 		if (endTime == null) {
 			endTime = date;
@@ -514,7 +514,7 @@ public class MessageService extends BaseService {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("merchantId").is(merchantId);
 		Date startTime = new Date();
-		Date endTime = DateFormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
+		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
 		criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
 		criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
 		query.addCriteria(criteria);

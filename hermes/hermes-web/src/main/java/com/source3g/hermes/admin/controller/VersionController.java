@@ -53,10 +53,10 @@ public class VersionController {
 		if(version==null){
 			return "版本号不能为空";
 		}
-		if(describe==null){
+		if (describe == null) {
 			return "描述不能为空";
 		}
-		if(code==null){
+		if (code == null) {
 			return "对比编码不能为空";
 		}
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
@@ -78,22 +78,24 @@ public class VersionController {
 		return "上传失败";
 	}
 
-	//验证版本号是否存在
+	// 验证版本号是否存在
 	@RequestMapping(value = "versionValidate", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean versionValidate(String version) {
-		String uri=ConfigParams.getBaseUrl() + "version/versionValidate/"+version+"/";
+		String uri = ConfigParams.getBaseUrl() + "version/versionValidate/" + version + "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-	//验证对比编码是否存在
+
+	// 验证对比编码是否存在
 	@RequestMapping(value = "codeValidate", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean codeValidate(String code) {
-		String uri=ConfigParams.getBaseUrl() + "version/codeValidate/"+code+"/";
+		String uri = ConfigParams.getBaseUrl() + "version/codeValidate/" + code + "/";
 		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
+
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
 	public String changeOnline(String code) {

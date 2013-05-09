@@ -1,33 +1,48 @@
 package com.source3g.hermes.merchant.controller;
 
+import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.customer.CustomerRemindDto;
+import com.source3g.hermes.dto.merchant.ElectricMenuDto;
 import com.source3g.hermes.entity.device.Device;
+import com.source3g.hermes.entity.merchant.ElectricMenu;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
 import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.utils.ConfigParams;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.LoginUtils;
 import com.sourse3g.hermes.branch.Saler;
 
@@ -124,13 +139,14 @@ public class AccountController {
 		model.put("error", result);
 		return new ModelAndView("merchant/accountCenter/passwordChange", model);
 	}
-	//验证密码
+
+	// 验证密码
 	@RequestMapping(value = "passwordValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean passwordValidate(String password,HttpServletRequest req) throws Exception {
+	public Boolean passwordValidate(String password, HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "merchant/passwordValidate/" +password+"/"+merchant.getId()+"/";
-		Boolean result= restTemplate.getForObject(uri, Boolean.class);
+		String uri = ConfigParams.getBaseUrl() + "merchant/passwordValidate/" + password + "/" + merchant.getId() + "/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
 
@@ -221,7 +237,7 @@ public class AccountController {
 		HttpEntity<String> entity = new HttpEntity<String>(messageContent);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			redirectAttributes.addFlashAttribute("success","success");
+			redirectAttributes.addFlashAttribute("success", "success");
 		}
 		return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
 	}
@@ -246,5 +262,49 @@ public class AccountController {
 			model.put("saler", saler);
 		}
 		return new ModelAndView("/merchant/accountCenter/info", model);
+	}
+
+	@RequestMapping(value = "/electricMenu")
+	public String electricMenu(Model model) throws Exception {
+		String uri=ConfigParams.getBaseUrl()+"merchant/electricMenu/list/"+LoginUtils.getLoginMerchant().getId()+"/";
+		ElectricMenu[] electricMenus=restTemplate.getForObject(uri, ElectricMenu[].class);
+		model.addAttribute("menus", electricMenus);
+		return "/merchant/accountCenter/electricMenu";
+	}
+
+	@RequestMapping(value = "/electricMenu/add", method = RequestMethod.POST)
+	public String electricMenuSubmit(ElectricMenuDto electricMenuDto, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/add/" + LoginUtils.getLoginMerchant().getId() + "/";
+		HttpEntity<ElectricMenuDto> entity = new HttpEntity<ElectricMenuDto>(electricMenuDto);
+		restTemplate.postForObject(uri, entity, String.class);
+		return "redirect:/merchant/account/electricMenu/";
+	}
+
+	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.GET)
+	public String toAddElectricMenuItem(Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/list/" + LoginUtils.getLoginMerchant().getId() + "/";
+		ElectricMenu[] electricMenus = restTemplate.getForObject(uri, ElectricMenu[].class);
+		model.addAttribute("electricMenus", electricMenus);
+		return "/merchant/accountCenter/addElectricMenu";
+	}
+
+	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.POST)
+	public String addElectricMenuItem(String menuId, String title, String picPath, String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
+		title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
+		unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
+		File fileToCopy = new File("/temp/file/" + new Date().getTime());
+		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
+		Resource resource = new FileSystemResource(fileToCopy);
+		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+		formData.add("file", resource);
+		formData.add("menuId", menuId);
+		formData.add("title", title);
+		formData.add("unit", unit);
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/addItem/";
+		restTemplate.postForObject(uri, requestEntity, String.class);
+		return "redirect:/merchant/account/electricMenu/";
 	}
 }

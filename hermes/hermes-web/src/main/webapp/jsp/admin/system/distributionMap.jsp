@@ -16,7 +16,6 @@
 	</div>
 	<div id="divMap"
 		style="width: 1000px; height: 600px; border: solid 1px gray"></div>
-
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var myMap = new BMap.Map("divMap");
@@ -68,9 +67,6 @@
 			});
 
 		});
-	</script>
-	<script type="text/javascript">
-		
 	</script>
 </body>
 </html>

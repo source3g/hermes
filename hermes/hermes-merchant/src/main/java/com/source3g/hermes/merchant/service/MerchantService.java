@@ -251,7 +251,8 @@ public class MerchantService extends BaseService {
 			throw new Exception("名称不能为空 ");
 		}
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		MerchantResource merchantResource = merchant.getMerchantResource();
+		MerchantResource merchantResource
+		= merchant.getMerchantResource();
 		if (merchantResource == null) {
 			merchant.setMerchantResource(new MerchantResource());
 		}

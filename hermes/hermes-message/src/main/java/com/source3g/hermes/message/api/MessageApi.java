@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.lxt2.protocol.cbip20.CbipReport;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
@@ -20,6 +21,7 @@ import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.message.service.MessageService;
+import com.source3g.hermes.message.utils.ReportReceiver;
 import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.Page;
 
@@ -72,7 +74,6 @@ public class MessageApi {
 		return messageService.findMessageStastics(merchant.getId());
 	}
 
-	
 	/**
 	 * 短信群发
 	 * 
@@ -97,8 +98,7 @@ public class MessageApi {
 	// }
 	// return ReturnConstants.SUCCESS;
 	// }
-	
-	
+
 	/**
 	 * 短信群发
 	 * 
@@ -118,8 +118,6 @@ public class MessageApi {
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
-	
 
 	/**
 	 * 短信单发
@@ -134,25 +132,25 @@ public class MessageApi {
 	public String messageSendBySn(@PathVariable String sn, @RequestBody CustomerMessageDto customerMessageDto) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		try {
-			messageService.singleSend(merchant.getId(), customerMessageDto.getCustomerPhone(), customerMessageDto.getContent(),MessageType.短信发送);
+			messageService.singleSend(merchant.getId(), customerMessageDto.getCustomerPhone(), customerMessageDto.getContent(), MessageType.短信发送);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/quicklySend", method = RequestMethod.POST)
 	@ResponseBody
-	public String quicklySend(String merchantId,String content, String phone) throws Exception {
-		ObjectId obj=new ObjectId(merchantId);
+	public String quicklySend(String merchantId, String content, String phone) throws Exception {
+		ObjectId obj = new ObjectId(merchantId);
 		try {
-			messageService.singleSend(obj,phone, content,MessageType.快捷发送);
+			messageService.singleSend(obj, phone, content, MessageType.快捷发送);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return ReturnConstants.SUCCESS;
 	}
-	
+
 	@RequestMapping(value = "/groupSendLogList/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<GroupSendLog> groupSendLogList(@PathVariable String merchantId) {
@@ -209,25 +207,40 @@ public class MessageApi {
 		messageService.ignoreSendMessages(title, merchantId);
 		return ReturnConstants.SUCCESS;
 	}
+
 	@RequestMapping(value = "/failedMessagelist", method = RequestMethod.GET)
 	@ResponseBody
-	public Page failedMessagelist(String pageNo,Date startTime,Date endTime,String status) {
+	public Page failedMessagelist(String pageNo, Date startTime, Date endTime, String status) {
 		int pageNoInt = Integer.valueOf(pageNo);
-		return	messageService.failedMessagelist(pageNoInt,startTime, endTime, status);
+		return messageService.failedMessagelist(pageNoInt, startTime, endTime, status);
 	}
-	
+
 	@RequestMapping(value = "/failed/resend/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean failedMessageSendAgain(@PathVariable String id) {
 		return	messageService.failedMessageResend(id);
 	}
-	
+
 	@RequestMapping(value = "/failed/resendAll/{startTime}/{endTime}", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean allFailedMessagesSendAgain( @PathVariable Date startTime,@PathVariable Date endTime, String status) {
 		return	messageService.allFailedMessagesResend(startTime,endTime,status);
 	}
-	
+
+
+
+	@RequestMapping(value = "/reportReceiverTest", method = RequestMethod.GET)
+	@ResponseBody
+	public String reportReceiverTest() {
+		CbipReport cbipReport = new CbipReport();
+		cbipReport.setClientSeq(1305021229440002L);
+		cbipReport.setStatus(0);
+		cbipReport.setErrorCode("0");
+		ReportReceiver reportReceiver=new ReportReceiver();
+		reportReceiver.receive(cbipReport);
+		return ReturnConstants.SUCCESS;
+	}
+
 	public static class CustomerMessageDto {
 		private String customerPhone;
 		private String content;
@@ -248,5 +261,5 @@ public class MessageApi {
 			this.content = content;
 		}
 	}
-	
+
 }

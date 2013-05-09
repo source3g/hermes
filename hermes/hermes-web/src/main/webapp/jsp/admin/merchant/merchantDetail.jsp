@@ -73,7 +73,7 @@
 					readonly="readonly"> <span class="help-inline"></span>
 			</div>
 		</div>
-		<h2>盒子SN列表</h2>
+		<h2>盒子SN列表<input class="btn btn-success" type="button" onclick="refreshInfo();" value="刷新"/></h2>
 		<table
 			class="table table-striped table-bordered bootstrap-datatable datatable"
 			id="deviceTable">
@@ -136,7 +136,9 @@
 			//查出标签分类信息
 			$.get("${pageContext.request.contextPath}/admin/dictionary/tag/list", drawmerchantTagNodeList);
 		});
-
+		function refreshInfo(){
+			$.get("${pageContext.request.contextPath}/admin/merchant/detail/${merchant.id}/",showContentInfo);
+		}
 		function drawmerchantTagNodeList(data) {
 			for ( var i = 0; i < data.length; i++) {
 				var str = "<ul class=\"tagUl\"><li  id='li"+data[i].id+"' ><input name='tagName' type='hidden' value='"+data[i].id+"'><input type='hidden' value='"+data[i].parentId+"'><input type=\"checkbox\"  class=\"tag\" value="+data[i].name+">"

@@ -166,7 +166,7 @@ body {
 									class="nav nav-list nav-tabs  nav-stacked  main-menu">
 									<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
 									<li><a href="#" id="failedJms">失败消息</a></li>
-									<li><a href="#" id="failedMessageList">失败短信列表</a></li>
+									<li><a href="#" id="failedMessageList">短信列表</a></li>
 									<!-- <li><a href="javascript:void();" id="operateLog">操作日志</a></li> -->
 									<li><a href="#" id="versionUpdate">版本更新</a></li>
 									<li><a href="#" id="versionList">版本列表</a></li>

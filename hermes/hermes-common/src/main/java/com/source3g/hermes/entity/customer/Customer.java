@@ -31,7 +31,7 @@ import com.source3g.hermes.constants.Constants;
 import com.source3g.hermes.dto.customer.CustomerDto;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.enums.Sex;
-import com.source3g.hermes.utils.DateFormateUtils;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
 
 @Document
@@ -268,7 +268,7 @@ public class Customer extends AbstractEntity {
 		@Override
 		public Date deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			String unformatedDate = jp.getText();
-			return DateFormateUtils.getDate(unformatedDate);
+			return FormateUtils.getDate(unformatedDate);
 		}
 	}
 

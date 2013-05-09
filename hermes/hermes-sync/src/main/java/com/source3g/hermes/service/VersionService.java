@@ -70,10 +70,10 @@ public class VersionService extends BaseService {
 	}
 
 	public Boolean versionValidate(String version) {
-		Boolean result=true;
-		List<ApkVersion> list=mongoTemplate.find(new Query(Criteria.where("apkVersion").is(version)), ApkVersion.class);
-		if(list.size()>0){
-			result=false;
+		Boolean result = true;
+		List<ApkVersion> list = mongoTemplate.find(new Query(Criteria.where("apkVersion").is(version)), ApkVersion.class);
+		if (list.size() > 0) {
+			result = false;
 			return result;
 		}
 		return result;

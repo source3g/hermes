@@ -157,7 +157,6 @@ public class CustomerController {
 		uriBuffer.append(ConfigParams.getBaseUrl() + "customer/export/");//
 		uriBuffer.append(merchant.getId());
 		uriBuffer.append("/?pageNo=1");
-
 		if (StringUtils.isNotEmpty(customer.getName())) {
 			uriBuffer.append("&name=" + customer.getName());
 		}
