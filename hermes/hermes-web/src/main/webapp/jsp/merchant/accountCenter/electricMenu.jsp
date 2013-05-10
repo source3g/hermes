@@ -76,9 +76,9 @@
 		function deleteItem(title,itemId,menuId,el){
 			if(confirm("是否确定要删除:"+title+"?")){
 				var url="${pageContext.request.contextPath}/merchant/account/electricMenu/deleteItem/"+menuId+"/"+itemId+"/";
-				alert(url);
+				/* alert(url); */
 				$.get(url,function (data){
-					alert(data);
+					/* alert(data); */
 					$(el).parents("span").remove();
 				});
 				return false;
