@@ -274,6 +274,9 @@ public class AccountController {
 
 	@RequestMapping(value = "/electricMenu/add", method = RequestMethod.POST)
 	public String electricMenuSubmit(ElectricMenuDto electricMenuDto, Model model) throws Exception {
+		if(electricMenuDto.getMenus()==null){
+			return "redirect:/merchant/account/electricMenu/";
+		}
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/add/" + LoginUtils.getLoginMerchant().getId() + "/";
 		HttpEntity<ElectricMenuDto> entity = new HttpEntity<ElectricMenuDto>(electricMenuDto);
 		restTemplate.postForObject(uri, entity, String.class);
@@ -310,16 +313,45 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/updateItem/{menuId}/{itemId}", method = RequestMethod.POST)
-	public String updateElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId, String title, String unit, MultipartFile Filedata, Model model) throws Exception {
-
+	public String updateElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId, String price, String title, String unit, MultipartFile Filedata, Model model) throws Exception {
+		File fileToCopy = new File("/temp/file/" + new Date().getTime() + Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
+		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
+		Resource resource = new FileSystemResource(fileToCopy);
+		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+		formData.add("file", resource);
+		formData.add("title", title);
+		formData.add("unit", unit);
+		formData.add("price", String.valueOf(price));
+		HttpHeaders requestHeaders = new HttpHeaders();
+		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/updateItem/" + menuId + "/" + itemId + "/";
+		restTemplate.postForObject(uri, requestEntity, String.class);
 		return "redirect:/merchant/account/electricMenu/";
 	}
 
-	@RequestMapping(value = "/electricMenu/deleteItem/{menuId}/{title}", method = RequestMethod.GET)
-	public String deleteElectricMenuItem(@PathVariable String menuId, @PathVariable String title, Model model) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/deleteItem/" + menuId + "/" + title + "/";
-		restTemplate.getForObject(uri, ElectricMenuItem.class);
-		return "/merchant/accountCenter/addElectricMenu";
+	@RequestMapping(value = "/electricMenu/updateItemNoPic/{menuId}/{itemId}", method = RequestMethod.POST)
+	public String updateElectricMenuItemWidthoutPic(@PathVariable String menuId, @PathVariable String itemId, String price, String title, String unit, Model model) throws Exception {
+//		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+//		formData.add("title", title);
+//		formData.add("unit", unit);
+//		formData.add("price", String.valueOf(price));
+//		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("title", title);
+		map.put("unit", unit);
+		map.put("price", String.valueOf(price));
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/updateItemNoPic/" + menuId + "/" + itemId + "/?title={title}&unit={unit}&price={price}";
+		restTemplate.postForObject(uri, null, String.class,map);
+		return "redirect:/merchant/account/electricMenu/";
+	}
+
+	@RequestMapping(value = "/electricMenu/deleteItem/{itemId}/{menuId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String deleteElectricMenuItem(@PathVariable String itemId, @PathVariable String menuId, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/deleteItem/" + menuId + "/" + itemId + "/";
+		String result = restTemplate.getForObject(uri, String.class);
+		return result;
 	}
 
 	@RequestMapping(value = "/electricMenu/delete/{menuId}", method = RequestMethod.GET)
@@ -345,5 +377,16 @@ public class AccountController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/addItem/" + menuId + "/";
 		restTemplate.postForObject(uri, requestEntity, String.class);
 		return "redirect:/merchant/account/electricMenu/";
+	}
+	
+	@RequestMapping(value = "/titleValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean titleValidate(String title,String oldTitle,String menuId)  {	
+		if(StringUtils.isNotEmpty(title)&&title.equals(oldTitle)){
+			return true;
+		}
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/titleValidate/" + menuId +"/"+title +"/";
+		Boolean result=restTemplate.getForObject(uri, Boolean.class);
+		return result;
 	}
 }

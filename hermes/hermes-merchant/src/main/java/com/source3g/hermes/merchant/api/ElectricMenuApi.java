@@ -41,13 +41,25 @@ public class ElectricMenuApi {
 		return processItemPicPath(list);
 	}
 
-	@RequestMapping(value = "/addItem/{menuId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateItemNoPic/{menuId}/{itemId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String addItem(@RequestParam("file") MultipartFile file, @PathVariable String menuId, String price, String title, String unit) throws IOException {
- 		//title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
- 		//unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
-		title=new String(title.getBytes("iso-8859-1"));
-		unit=new String(unit.getBytes("iso-8859-1"));
+	public String updateItemNoPic(@PathVariable String itemId, @PathVariable String menuId, String price, String title, String unit) throws IOException {
+		ElectricMenuItem electricMenuItem = new ElectricMenuItem();
+		electricMenuItem.setPrice(Double.parseDouble(price));
+		electricMenuItem.setTitle(title);
+		electricMenuItem.setUnit(unit);
+		electricMenuItem.setId(new ObjectId(itemId));
+		electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/updateItem/{menuId}/{itemId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateItem(@PathVariable String itemId, @RequestParam("file") MultipartFile file, @PathVariable String menuId, String price, String title, String unit) throws IOException {
+		// title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
+		// unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
+		title = new String(title.getBytes("iso-8859-1"));
+		unit = new String(unit.getBytes("iso-8859-1"));
 		Date date = new Date();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
 		String suffxPath = dateFormat.format(date) + file.getOriginalFilename();
@@ -62,7 +74,40 @@ public class ElectricMenuApi {
 			thumbnail.resize(800, 600);
 		}
 		Thumbnail thumbnail = new Thumbnail(filePath, path + suffxDestPath);
-		thumbnail.resize(400,300);
+		thumbnail.resize(400, 300);
+		ElectricMenuItem electricMenuItem = new ElectricMenuItem();
+		electricMenuItem.setPicPath(suffxPath);
+		electricMenuItem.setAbstractPicPath(suffxDestPath);
+		electricMenuItem.setPrice(Double.parseDouble(price));
+		electricMenuItem.setTitle(title);
+		electricMenuItem.setUnit(unit);
+		electricMenuItem.setId(new ObjectId(itemId));
+		electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/addItem/{menuId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String addItem(@RequestParam("file") MultipartFile file, @PathVariable String menuId, String price, String title, String unit) throws IOException {
+		// title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
+		// unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
+		title = new String(title.getBytes("iso-8859-1"));
+		unit = new String(unit.getBytes("iso-8859-1"));
+		Date date = new Date();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
+		String suffxPath = dateFormat.format(date) + file.getOriginalFilename();
+		String suffxDestPath = dateFormat.format(date) + file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_s" + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+		String path = electricMenuService.getPicPath();
+		String filePath = path + suffxPath;
+		File fileToCopy = new File(filePath);
+		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
+		if (fileToCopy.length() > 100 * 1024) {
+			Thumbnail.compressPic(filePath, filePath);
+			Thumbnail thumbnail = new Thumbnail(filePath, filePath);
+			thumbnail.resize(800, 600);
+		}
+		Thumbnail thumbnail = new Thumbnail(filePath, path + suffxDestPath);
+		thumbnail.resize(400, 300);
 		ElectricMenuItem electricMenuItem = new ElectricMenuItem();
 		electricMenuItem.setPicPath(suffxPath);
 		electricMenuItem.setAbstractPicPath(suffxDestPath);
@@ -99,15 +144,15 @@ public class ElectricMenuApi {
 	}
 
 	private ElectricMenuItem processItemPicPath(ElectricMenuItem item) {
-		item.setPicPath(electricMenuService.getLocalUrl() + "menu/images/" + item.getPicPath()+"/");
-		item.setAbstractPicPath(electricMenuService.getLocalUrl() + "menu/images/" + item.getPicPath()+"/");
+		item.setPicPath(electricMenuService.getLocalUrl() + "menu/images/" + item.getPicPath() + "/");
+		item.setAbstractPicPath(electricMenuService.getLocalUrl() + "menu/images/" + item.getPicPath() + "/");
 		return item;
 	}
 
-	@RequestMapping(value = "deleteItem/{menuId}/{title}", method = RequestMethod.GET)
+	@RequestMapping(value = "deleteItem/{menuId}/{itemId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String deleteItem(@PathVariable String menuId, @PathVariable String title) {
-		electricMenuService.deleteItem(title, new ObjectId(menuId));
+	public String deleteItem(@PathVariable String menuId, @PathVariable String itemId) {
+		electricMenuService.deleteItem(new ObjectId(itemId), new ObjectId(menuId));
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -132,4 +177,9 @@ public class ElectricMenuApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/titleValidate/{menuId}/{title}", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean titleValidate(@PathVariable  ObjectId menuId, @PathVariable String  title) {
+		return electricMenuService.titleValidate(menuId,title);
+	}
 }

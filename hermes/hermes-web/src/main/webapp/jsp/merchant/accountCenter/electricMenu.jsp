@@ -8,7 +8,7 @@
 <title>电子菜单</title>
 </head>
 <body>
-	<table >
+	<table width="100%">
 		<thead>
 			<tr>
 				<td>设置</td>
@@ -27,9 +27,9 @@
 				
 				<tr class="itemTr" style="display: none">
 					<td>
-					<table >
+					<table  width="100%">
 						<tr>
-							<td style="padding:10px;">
+							<td >
 							<c:forEach items="${menu.items }" var="item" varStatus="status">
 							<c:if test="${status.count%4 eq 0 }">
 							</td>
@@ -38,7 +38,7 @@
 								<td>
 							</c:if>
 								 <span class="span4" style="background-color: #eee;"><img
-									alt="" src="${item.picPath }" width="400" height="300"></img><br> <label style="text-align: center ;">菜名:<span style="font-size: 20px;  font-weight:bold; color:  red;">${item.title }</span>&nbsp;单位:<span style="font-size: 20px; font-weight:bold; color: red;">${item.unit}</span> &nbsp;(${item.price }元) <a href="#"  onclick="menuDetail('${item.title}','${menu.id }');">详情</a>&nbsp;&nbsp;<a href="#"  onclick="deleteItem('${item.title}','${menu.id }');">删除</a></label></span>
+									alt="" src="${item.picPath }" width="400" height="300"></img><br> <label style="text-align: center ;">菜名:<span style="font-size: 20px;  font-weight:bold; color:  red;">${item.title }</span>&nbsp;单位:<span style="font-size: 20px; font-weight:bold; color: red;">${item.unit}</span> &nbsp;(${item.price }元) <a href="#"  onclick="return menuDetail('${item.title}','${menu.id }');">详情</a>&nbsp;&nbsp;<a href="#"  onclick="return deleteItem('${item.title }','${item.id}','${menu.id }',this);">删除</a></label></span>
 										<c:if test="${status.count%4 ne 0 and status.last }">
 									</td>
 								</tr>
@@ -59,7 +59,7 @@
 		<tfoot>
 			<tr>
 				<td><input type="button" class="btn btn-primary" value="批量增加"
-					onclick="commitTree();" /></td>
+					onclick="return commitTree();" /></td>
 			</tr>
 		</tfoot>
 	</table>
@@ -73,23 +73,31 @@
 			return false;
 		}
 		
-		function deleteItem(title,id){
+		function deleteItem(title,itemId,menuId,el){
 			if(confirm("是否确定要删除:"+title+"?")){
-				
+				var url="${pageContext.request.contextPath}/merchant/account/electricMenu/deleteItem/"+itemId+"/"+menuId+"/";
+				/* alert(url); */
+				$.get(url,function (data){
+					/* alert(data); */
+					$(el).parents("span").remove();
+				});
+				return false;
 			}
+			return false;
 		}
 		function menuDetail(title,id){
 			var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+title+"/";
-			alert(url);
+			//alert(url);
 			$.get(url,showContentInfo);
+			return false;
 		}
 		
 		function deleteMenu(el){
 			var label = $(el).prevAll(".help-inline");
 			var name=label.text();
-			if(confirm("是否要删除:"+name+"?")){
+			if(confirm("注意!删除后该类别下的所有菜品将被删除!是否要删除菜单:"+name+"?")){
 				var idInput=$(el).prevAll("input[name='id']");
-				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/delete/"+$(idInput).val()+"/");
+				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/delete/"+$(idInput).val()+"/",showContentInfo);
 			}
 			return false;
 		}
@@ -139,6 +147,12 @@
 				if (!id) {
 					var electricMenu = new Object();
 					electricMenu.name = $(this).children("input[name='name']").val();
+					if(electricMenu.name==""){
+					 	/* var error="<span>名称不能为空</span>";
+						$(this).children("input[name='name']").after(error); */
+						alert("名称不能为空");
+						return  false; 
+					}
 					menus.push(electricMenu);
 				}
 			});
