@@ -38,7 +38,7 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label"> 图片:</label> <span
-				id="spanButtonPlaceholder"></span><span>&nbsp;&nbsp;&nbsp;(每个文件最大10M)</span>
+				id="spanButtonPlaceholder"></span><input type="text" name="uploadFile" style="border:none;width:3px;"><span>&nbsp;&nbsp;&nbsp;(每个文件最大10M)</span>
 			<div id="divFileProgressContainer" style="width: 200;"></div>
 			<c:if test="${ not empty update }">
 				<input type="hidden" id="id" name="id" value="${electricMenuItem.id }" />
@@ -72,10 +72,92 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			if(${empty update}){
+				$("#menuSel").change(function (){
+					$('#title').attr("value","");
+				});	
+			}
+				var validateOptions={
+						rules : {
+							title : {
+								required : true,
+							remote : {
+									type : "get",
+									url : "${pageContext.request.contextPath}/merchant/account/titleValidate",
+									data : {
+										"title" : function() {
+											return $('#title').val();
+										},
+									"menuId":function() {
+										return $('#menuSel').val();
+									}
+									}
+								} 
+							},
+							uploadFile:{
+								validateFile : true
+							},
+							price:{
+								required : true,
+								number :true
+							},
+							unit:{
+								required : true
+							}
+					
+						},
+						messages : {
+							title : {
+								required : "请填写有效菜名",
+								remote : "菜单名称不能重复"
+							},
+							uploadFile:{
+								validateFile : "请选择上传文件"
+							},
+							price:{
+								required : "请填写有效价格 ",
+								number :"请输入有效数字"
+							},
+							unit:{
+								required : "请填写有效数量"
+							}
+						
+						}
+					};
+						
+				if(${not empty update}){
+					validateOptions.rules.title.remote.data={
+							"title" : function() {
+								return $('#title').val();
+							},
+							"menuId":function() {
+								return $('#menuSel').val();
+							},
+							"oldTitle":"${electricMenuItem.title}"
+					};
+				}
+					$.validator.addMethod(
+							"validateFile",
+							function(value, element, params) {
+								if(${not empty update}){
+									return true;
+								}
+								if(swfu.getStats().files_queued==0){
+									return false;
+								} else{
+									return true;
+								}
+							}, "请选择上传文件");
+			
+					$('#addElectricMenuItemForm').validate(validateOptions);
+
 			$("#backToList").click(function() {
 				loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/");
 			});
 			$("#addElectricMenuItemBtn").click(function() {
+				if (!$("#addElectricMenuItemForm").valid()) {
+			 		return false;
+				 } 
 				//	swfu.addPostParam("menuId", "menuId");
 				//swfu.addPostParam("title", $("#title").val());
 				//swfu.addPostParam("unit", $("#unit").val());
@@ -90,6 +172,9 @@
 			});
 
 			$("#updateElectricMenuItemBtn").click(function() {
+				if (!$("#addElectricMenuItemForm").valid()) {
+			 		return false;
+				 } 
 				var newFileName = $("#divFileProgressContainer").text();
 				var post_params = {
 					"title" : $("#title").val(),

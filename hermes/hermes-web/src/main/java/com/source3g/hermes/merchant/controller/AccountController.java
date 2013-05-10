@@ -274,6 +274,9 @@ public class AccountController {
 
 	@RequestMapping(value = "/electricMenu/add", method = RequestMethod.POST)
 	public String electricMenuSubmit(ElectricMenuDto electricMenuDto, Model model) throws Exception {
+		if(electricMenuDto.getMenus()==null){
+			return "redirect:/merchant/account/electricMenu/";
+		}
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/add/" + LoginUtils.getLoginMerchant().getId() + "/";
 		HttpEntity<ElectricMenuDto> entity = new HttpEntity<ElectricMenuDto>(electricMenuDto);
 		restTemplate.postForObject(uri, entity, String.class);
@@ -347,9 +350,9 @@ public class AccountController {
 		return "redirect:/merchant/account/electricMenu/";
 	}
 
-	@RequestMapping(value = "/electricMenu/deleteItem/{menuId}/{itemId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/electricMenu/deleteItem/{itemId}/{menuId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String deleteElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId, Model model) throws Exception {
+	public String deleteElectricMenuItem(@PathVariable String itemId, @PathVariable String menuId, Model model) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/deleteItem/" + menuId + "/" + itemId + "/";
 		String result = restTemplate.getForObject(uri, String.class);
 		return result;
@@ -382,5 +385,16 @@ public class AccountController {
 		ElectricMenu[] electricMenus = restTemplate.getForObject(menuUri, ElectricMenu[].class);
 		model.addAttribute("menus", electricMenus);
 		return "/merchant/accountCenter/electricMenu";
+	}
+	
+	@RequestMapping(value = "/titleValidate", method = RequestMethod.GET)
+	@ResponseBody
+	public Boolean titleValidate(String title,String oldTitle,String menuId)  {	
+		if(StringUtils.isNotEmpty(title)&&title.equals(oldTitle)){
+			return true;
+		}
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/titleValidate/" + menuId +"/"+title +"/";
+		Boolean result=restTemplate.getForObject(uri, Boolean.class);
+		return result;
 	}
 }

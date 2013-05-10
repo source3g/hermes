@@ -27,25 +27,12 @@ public class ElectricMenuService extends BaseService {
 		return electricMenus;
 	}
 
-	public void deleteItem(ObjectId menuId, ObjectId ItemId) {
+	public void deleteItem(ObjectId ItemId, ObjectId menuId) {
 		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
 		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
-		for (ElectricMenuItem e : electricMenuItems) {
-			if (e.getId() == ItemId) {
-				electricMenuItems.remove(e);
-			}
-		}
-		Update update=new Update();
-		update.set("items", electricMenuItems);
-		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
-	}
-
-	public void deleteItem(String title, ObjectId menuId) {
-		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
-		for (ElectricMenuItem e : electricMenuItems) {
-			if (e.getTitle().equals(title)) {
-				electricMenuItems.remove(e);
+		for (int i=0;i<electricMenuItems.size();i++) {
+			if (electricMenuItems.get(i).getId().equals(ItemId)) {
+				electricMenuItems.remove(i);
 			}
 		}
 		Update update=new Update();
@@ -81,10 +68,10 @@ public class ElectricMenuService extends BaseService {
 		mongoTemplate.insert(electricMenu);
 	}
 
-	public void updateMenu(ElectricMenu electricMenu) {
+	public void updateMenu(ElectricMenu electricMenu ,ObjectId merchantId) {
 		Update update=new Update();
-		update.set("electricMenu", electricMenu);
-		mongoTemplate.updateFirst(new Query(), update, ElectricMenu.class);
+		update.set("name", electricMenu.getName());
+		mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(merchantId).and("_id").is(electricMenu.getId())), update, ElectricMenu.class);
 	}
 
 	public void deleteMenu(ObjectId menuId) {
@@ -110,6 +97,22 @@ public class ElectricMenuService extends BaseService {
 			electricMenu.setMerchantId(merchantId);
 			mongoTemplate.insert(electricMenu);
 		}
+	}
+
+	public Boolean titleValidate(ObjectId menuId, String title) {
+		Boolean result=true;
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
+		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
+		if(electricMenuItems==null){
+			return result;
+		}
+		for (ElectricMenuItem e : electricMenuItems) {
+			if(e.getTitle().equals(title)){
+				result=false;
+				return result;
+			}
+		}
+		return result;
 	}
 
 }

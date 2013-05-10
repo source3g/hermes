@@ -59,7 +59,7 @@
 		<tfoot>
 			<tr>
 				<td><input type="button" class="btn btn-primary" value="批量增加"
-					onclick="commitTree();" /></td>
+					onclick="return commitTree();" /></td>
 			</tr>
 		</tfoot>
 	</table>
@@ -87,7 +87,7 @@
 		
 		function deleteItem(title,itemId,menuId,el){
 			if(confirm("是否确定要删除:"+title+"?")){
-				var url="${pageContext.request.contextPath}/merchant/account/electricMenu/deleteItem/"+menuId+"/"+itemId+"/";
+				var url="${pageContext.request.contextPath}/merchant/account/electricMenu/deleteItem/"+itemId+"/"+menuId+"/";
 				/* alert(url); */
 				$.get(url,function (data){
 					/* alert(data); */
@@ -168,6 +168,12 @@
 				if (!id) {
 					var electricMenu = new Object();
 					electricMenu.name = $(this).children("input[name='name']").val();
+					if(electricMenu.name==""){
+					 	/* var error="<span>名称不能为空</span>";
+						$(this).children("input[name='name']").after(error); */
+						alert("名称不能为空");
+						return  false; 
+					}
 					menus.push(electricMenu);
 				}
 			});
