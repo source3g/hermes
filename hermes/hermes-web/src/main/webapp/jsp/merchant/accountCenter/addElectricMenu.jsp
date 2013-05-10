@@ -31,6 +31,7 @@
 				id="spanButtonPlaceholder"></span><span>&nbsp;&nbsp;&nbsp;(每个文件最大10M)</span>
 			<div id="divFileProgressContainer" style="width: 200;"></div>
 			<c:if test="${ not empty update }">
+				<input type="hidden" id="id" name="id" value="${electricMenuItem.id }" />
 				<img alt="" src="${electricMenuItem.picPath }" width="800"
 					height="600">
 			</c:if>
@@ -87,17 +88,28 @@
 			});
 
 			$("#updateElectricMenuItemBtn").click(function() {
-				alert($("#divFileProgressContainer").text());
+				var newFileName = $("#divFileProgressContainer").text();
+				var post_params = {
+					"title" : $("#title").val(),
+					"unit" : $("#unit").val(),
+					"price" : $("#price").val()
+				};
+				
+				if (newFileName == null || newFileName == '') {
+					var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItemNoPic/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";
+					$.post(url, post_params, showContentInfo);
+				} else {
+					var updateUrl = "${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";
+					swfu.setUploadURL(updateUrl);
+					swfu.setPostParams(post_params);
+					swfu.startUpload();
+				}
 				return false;
 			});
 
 			var swfu = new SWFUpload({
 				// Backend Settings
 				upload_url : "${pageContext.request.contextPath}/merchant/account/electricMenu/addItem/",
-				//post_params : {
-				//	"title" : "哇哈哈"
-				//},
-				// File Upload Settings
 				file_size_limit : "2 MB", // 2MB
 				file_types : "*.jpg;*.png",
 				file_types_description : "Images",
