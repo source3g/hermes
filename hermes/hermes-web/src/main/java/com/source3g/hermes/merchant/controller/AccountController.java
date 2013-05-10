@@ -318,7 +318,7 @@ public class AccountController {
 
 	@RequestMapping(value = "/electricMenu/deleteItem/{menuId}/{title}", method = RequestMethod.GET)
 	public String deleteElectricMenuItem(@PathVariable String menuId, @PathVariable String title, Model model) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/findItem/" + menuId + "/" + title + "/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/deleteItem/" + menuId + "/" + title + "/";
 		restTemplate.getForObject(uri, ElectricMenuItem.class);
 		return "/merchant/accountCenter/addElectricMenu";
 	}

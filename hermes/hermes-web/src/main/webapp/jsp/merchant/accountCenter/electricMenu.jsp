@@ -74,7 +74,7 @@
 
 		function deleteItem(title, id) {
 			if (confirm("是否确定要删除:" + title + "?")) {
-
+				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/deleteItem/" + id + "/" + title + "/", showContentInfo);
 			}
 		}
 		function menuDetail(title, id) {

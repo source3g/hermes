@@ -82,10 +82,10 @@ public class ElectricMenuService extends BaseService {
 		mongoTemplate.insert(electricMenu);
 	}
 
-	public void updateMenu(ElectricMenu electricMenu) {
+	public void updateMenu(ElectricMenu electricMenu ,ObjectId merchantId) {
 		Update update=new Update();
-		update.set("electricMenu", electricMenu);
-		mongoTemplate.updateFirst(new Query(), update, ElectricMenu.class);
+		update.set("name", electricMenu.getName());
+		mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(merchantId)), update, ElectricMenu.class);
 	}
 
 	public void deleteMenu(ObjectId menuId) {
