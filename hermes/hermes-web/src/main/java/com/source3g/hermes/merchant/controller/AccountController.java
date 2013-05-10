@@ -43,7 +43,6 @@ import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
 import com.source3g.hermes.entity.merchant.Setting;
 import com.source3g.hermes.utils.ConfigParams;
-import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.LoginUtils;
 import com.sourse3g.hermes.branch.Saler;
 
@@ -311,8 +310,8 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/updateItem/{menuId}/{itemId}", method = RequestMethod.POST)
-	public String updateElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId,String title, String unit, MultipartFile Filedata, Model model) throws Exception {
-		
+	public String updateElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId, String title, String unit, MultipartFile Filedata, Model model) throws Exception {
+
 		return "redirect:/merchant/account/electricMenu/";
 	}
 
@@ -324,16 +323,14 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/delete/{menuId}", method = RequestMethod.GET)
-	public String deleteMenu(@PathVariable String  menuId, Model model) throws Exception {
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/"+menuId+"/";
-		restTemplate.getForObject(uri,String.class);
+	public String deleteMenu(@PathVariable String menuId, Model model) throws Exception {
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/" + menuId + "/";
+		restTemplate.getForObject(uri, String.class);
 		return "redirect:/merchant/account/electricMenu/";
 	}
 
 	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.POST)
-	public String addElectricMenuItem(String menuId, String title, double price,String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
-		title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
-		unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
+	public String addElectricMenuItem(String menuId, String title, double price, String unit, @RequestParam("Filedata") MultipartFile Filedata) throws Exception {
 		File fileToCopy = new File("/temp/file/" + new Date().getTime() + Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
 		Resource resource = new FileSystemResource(fileToCopy);

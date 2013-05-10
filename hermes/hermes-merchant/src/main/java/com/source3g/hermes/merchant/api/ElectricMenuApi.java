@@ -44,6 +44,10 @@ public class ElectricMenuApi {
 	@RequestMapping(value = "/addItem/{menuId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String addItem(@RequestParam("file") MultipartFile file, @PathVariable String menuId, String price, String title, String unit) throws IOException {
+ 		//title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
+ 		//unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
+		title=new String(title.getBytes("iso-8859-1"));
+		unit=new String(unit.getBytes("iso-8859-1"));
 		Date date = new Date();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
 		String suffxPath = dateFormat.format(date) + file.getOriginalFilename();
@@ -95,8 +99,8 @@ public class ElectricMenuApi {
 	}
 
 	private ElectricMenuItem processItemPicPath(ElectricMenuItem item) {
-		item.setPicPath(electricMenuService.getLocalUrl() + "images/menu/" + item.getPicPath());
-		item.setAbstractPicPath(electricMenuService.getLocalUrl() + "images/menu/" + item.getPicPath());
+		item.setPicPath(electricMenuService.getLocalUrl() + "menu/images/" + item.getPicPath()+"/");
+		item.setAbstractPicPath(electricMenuService.getLocalUrl() + "menu/images/" + item.getPicPath()+"/");
 		return item;
 	}
 
