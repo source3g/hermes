@@ -11,14 +11,14 @@
 	<table width="100%">
 		<thead>
 			<tr>
-				<td>设置</td>
+				<td><h1>类别列表</h1></td>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach var="menu" items="${menus }">
 				<tr>
 					<td class='node'><a href="#" onclick="return expand(this);"
-						class="help-inline" style="width: 150px;">${menu.name}</a> <input
+						 style="display:inline-block;width: 150px;font-size: 20px;font-weight: bold;">${menu.name}</a> <input
 						type='hidden' name='id' value='${menu.id }'> <a href="#"
 						class="btn btn-primary updateA" onclick="return updateMenu(this);">修改</a>
 						 <a href="#"
@@ -37,8 +37,8 @@
 							<tr>
 								<td>
 							</c:if>
-								 <span class="span4" style="background-color: #eee;"><img
-									alt="" src="${item.picPath }" width="400" height="300"></img><br> <label style="text-align: center ;">菜名:<span style="font-size: 20px;  font-weight:bold; color:  red;">${item.title }</span>&nbsp;单位:<span style="font-size: 20px; font-weight:bold; color: red;">${item.unit}</span> &nbsp;(${item.price }元) <a href="#"  onclick="return menuDetail('${item.title}','${menu.id }');">详情</a>&nbsp;&nbsp;<a href="#"  onclick="return deleteItem('${item.title }','${item.id}','${menu.id }',this);">删除</a></label></span>
+								 <span class="span4" > <a href="#"  onclick="return menuDetailDialog('${item.title}','${menu.id }');"><img style="display:inline;margin-left: 10px;margin-right: 10px;margin-top: 10px;margin-bottom: 10px;"
+									alt="" src="${item.picPath }" width="400" height="300"></img></a><br> <label style="text-align: center ;margin-left: 10px; font-size: 15px;">菜名:<span style="font-size: 20px;  font-weight:bold; color:  red;">${item.title }</span>&nbsp;单位:<span style="font-size: 20px; font-weight:bold; color: red;">${item.unit}</span> &nbsp;(${item.price }元)<br/> 操作: <a href="#"  onclick="return menuDetail('${item.title}','${menu.id }');">修改</a>&nbsp;&nbsp;<a href="#"  onclick="return deleteItem('${item.title }','${item.id}','${menu.id }',this);">删除</a></label></span>
 										<c:if test="${status.count%4 ne 0 and status.last }">
 									</td>
 								</tr>
@@ -63,6 +63,18 @@
 			</tr>
 		</tfoot>
 	</table>
+	
+	<div id="detailModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>菜品详情</h3>
+		</div>
+		<div id="detailContent" class="modal-body">
+			
+		</div>
+		<div class="modal-footer"></div>
+	</div>
+	
 
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -89,6 +101,15 @@
 			var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+title+"/";
 			//alert(url);
 			$.get(url,showContentInfo);
+			return false;
+		}
+		function menuDetailDialog(title,id){
+			var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+title+"/?detail=true";
+			//alert(url);
+			$.get(url,function(data){
+				$("#detailContent").html(data);
+				$("#detailModal").modal("show");
+			});
 			return false;
 		}
 		

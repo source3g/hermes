@@ -23,8 +23,18 @@
 			</select>
 		</div>
 		<div class="control-group">
-			<label class="control-label"> 名称: </label><input type="text"
+			<label class="control-label"> 名称: </label><input type="text" <c:if test="${detail eq true }">readonly="readonly"</c:if> 
 				name="title" id="title" value="${electricMenuItem.title }"></input>
+		</div>
+		<div class="control-group">
+			<label class="control-label">价格:</label><input type="text" <c:if test="${detail eq true }">readonly="readonly"</c:if>
+				name="price" id="price" value="${electricMenuItem.price}"></input><label
+				class="help-inline">(单位:元)</label>
+		</div>
+		<div class="control-group">
+			<label class="control-label"> 单位:</label><input type="text" <c:if test="${detail eq true }">readonly="readonly"</c:if>
+				name="unit" id="unit" value="${electricMenuItem.unit}"></input><label
+				class="help-inline">(例如:盘,份,例,碗等)</label>
 		</div>
 		<div class="control-group">
 			<label class="control-label"> 图片:</label> <span
@@ -32,20 +42,11 @@
 			<div id="divFileProgressContainer" style="width: 200;"></div>
 			<c:if test="${ not empty update }">
 				<input type="hidden" id="id" name="id" value="${electricMenuItem.id }" />
-				<img alt="" src="${electricMenuItem.picPath }" width="800"
+				<img style="display:inline;" alt="" src="${electricMenuItem.picPath }" width="800"
 					height="600">
 			</c:if>
 		</div>
-		<div class="control-group">
-			<label class="control-label">价格:</label><input type="text"
-				name="price" id="price" value="${electricMenuItem.price}"></input><label
-				class="help-inline">(单位:元)</label>
-		</div>
-		<div class="control-group">
-			<label class="control-label"> 单位:</label><input type="text"
-				name="unit" id="unit" value="${electricMenuItem.unit}"></input><label
-				class="help-inline">(例如:盘,份,例,碗等)</label>
-		</div>
+		<c:if test="${detail ne true }">
 		<div class="form-actions">
 			<c:choose>
 				<c:when test="${ empty update }">
@@ -60,6 +61,7 @@
 			<input type="button" id="backToList" class="btn btn-primary"
 				value="返回" />
 		</div>
+		</c:if>
 	</form>
 
 	<script type="text/javascript"

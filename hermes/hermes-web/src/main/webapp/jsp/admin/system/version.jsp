@@ -18,10 +18,9 @@
 				<input type="text" name="code" id="code"/>
 			</span>
 		</div>
-
 		
 		<div>
-		<p style='margin-top:10px;'>apk版本描述：<p>
+		<p style='margin-top:10px;'>版本描述：<p>
 		<textarea name='describe' id="describe" style='margin-top:5px;width:500px;height:120px'></textarea>
 		</div>
 		

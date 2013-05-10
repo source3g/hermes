@@ -20,7 +20,7 @@ function fileQueueError(file, errorCode, message) {
 		case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
 		case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
 		default:
-			alert(message);
+			alert("message"+message+"errorCode"+errorCode);
 			break;
 		}
 		showInfo(imageName);
@@ -76,12 +76,21 @@ function uploadError(file, errorCode, message) {
 	var progress;
 	try {
 		switch (errorCode) {
+		case SWFUpload.HTTP_ERROR:
+		try {
+				showInfo("上传完成");
+			}
+			catch (ex1) {
+				this.debug(ex1);
+			}
+			break;
 		case SWFUpload.UPLOAD_ERROR.FILE_CANCELLED:
 			try {
 				progress = new FileProgress(file,  this.customSettings.upload_target);
 				progress.setCancelled();
 				progress.setStatus("Cancelled");
 				progress.toggleCancel(false);
+				showInfo("出错啦" + imageName);
 			}
 			catch (ex1) {
 				this.debug(ex1);
@@ -93,19 +102,22 @@ function uploadError(file, errorCode, message) {
 				progress.setCancelled();
 				progress.setStatus("Stopped");
 				progress.toggleCancel(true);
+				showInfo("出错啦" + imageName);
 			}
 			catch (ex2) {
 				this.debug(ex2);
 			}
+			break;
 		case SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED:
 			imageName = "上传文件大小有限制";
+			showInfo("出错啦" + imageName);
 			break;
 		default:
-			alert(message);
+			
 			break;
 		}
 
-		showInfo("出错啦" + imageName);
+		
 
 	} catch (ex3) {
 		this.debug(ex3);
@@ -115,6 +127,7 @@ function uploadError(file, errorCode, message) {
 
 function fileQueued(file, version) {
 	$("#divFileProgressContainer").html(file.name+":准备上传");
+	this.setButtonDisabled(true);
 }
 
 function showInfo(text) {

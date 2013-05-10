@@ -59,16 +59,17 @@ public class VersionApi {
 		bos.close();
 	}
 
-	@RequestMapping(value = "/upload",method = RequestMethod.POST)
+	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String upload(@RequestParam("describe") String describe,@RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version,@RequestParam("code") String code) throws IOException, ParseException {
-		int codeInt=Integer.parseInt(code);
+	public String upload(@RequestParam("describe") String describe, @RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version, @RequestParam("code") String code) throws IOException, ParseException {
+		describe = new String(describe.getBytes("iso-8859-1"));
+		int codeInt = Integer.parseInt(code);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
-		String suffxPath = dateFormat.format(new Date())+ oldName;
+		String suffxPath = dateFormat.format(new Date()) + new String(oldName.getBytes("iso-8859-1"));
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
-		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date(), describe,codeInt);
+		ApkVersion apkVersion = new ApkVersion(version, suffxPath, new Date(), describe, codeInt);
 		apkVersion.setMd5(MD5.md5sum(fileToCopy.getAbsolutePath()));
 		versionService.addVersion(apkVersion);
 		return ReturnConstants.SUCCESS;
@@ -76,20 +77,21 @@ public class VersionApi {
 
 	@RequestMapping(value = "/versionValidate/{version}", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean versionValidate( @PathVariable String version) {
-		return  versionService.versionValidate(version);
+	public Boolean versionValidate(@PathVariable String version) {
+		return versionService.versionValidate(version);
 	}
-	
+
 	@RequestMapping(value = "/codeValidate/{code}", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean codeValidate( @PathVariable String code) {
-		int codeInt=Integer.parseInt(code);
-		return  versionService.codeValidate(codeInt);
+	public Boolean codeValidate(@PathVariable String code) {
+		int codeInt = Integer.parseInt(code);
+		return versionService.codeValidate(codeInt);
 	}
+
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
 	public String changeVersion(@RequestBody String code) {
-		int codeInt=Integer.parseInt(code);
+		int codeInt = Integer.parseInt(code);
 		versionService.changeVersion(codeInt);
 		return ReturnConstants.SUCCESS;
 	}

@@ -3,6 +3,7 @@ package com.source3g.hermes.merchant.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -64,17 +65,15 @@ public class ElectricMenuService extends BaseService {
 	}
 
 	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
-		for (ElectricMenuItem e : electricMenuItems) {
-			if (e.getId() == electricMenuItem.getId()) {
-				electricMenuItems.remove(e);
-				electricMenuItems.add(electricMenuItem);
-			}
+		if(StringUtils.isEmpty(electricMenuItem.getPicPath())){
+			Update update=new Update();
+			update.set("items.$.title", electricMenuItem.getTitle()).set("items.$.price", electricMenuItem.getPrice()).set("items.$.unit", electricMenuItem.getUnit());
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
+		}else{
+			Update update=new Update();
+			update.set("items.$", electricMenuItem);
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
 		}
-		Update update=new Update();
-		update.set("items", electricMenuItems);
-		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
 	}
 
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {
