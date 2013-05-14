@@ -51,16 +51,34 @@ public class ElectricMenuService extends BaseService {
 		mongoTemplate.save(electricMenu);
 	}
 
-	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-		if(StringUtils.isEmpty(electricMenuItem.getPicPath())){
-			Update update=new Update();
-			update.set("items.$.title", electricMenuItem.getTitle()).set("items.$.price", electricMenuItem.getPrice()).set("items.$.unit", electricMenuItem.getUnit());
-			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
-		}else{
-			Update update=new Update();
-			update.set("items.$", electricMenuItem);
-			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
-		}
+	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId ) {
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), ElectricMenu.class);
+			if(electricMenu==null){
+				ObjectId obj=electricMenuItem.getId();
+				ElectricMenu oldElectricMenu=mongoTemplate.findOne(new Query(Criteria.where("items.id").is(obj)),ElectricMenu.class);
+				if(electricMenuItem.getPicPath()==null){
+					List<ElectricMenuItem> electricMenuItems=oldElectricMenu.getItems();
+					for(ElectricMenuItem e:electricMenuItems){
+						if(e.getId().equals(electricMenuItem.getId())){
+							electricMenuItem.setPicPath(e.getPicPath());
+						}
+					}
+				}
+				electricMenuItem.setId(new ObjectId());
+				addItem(electricMenuItem, menuId);
+				deleteItem(obj, oldElectricMenu.getId());
+			}else{
+				if(StringUtils.isEmpty(electricMenuItem.getPicPath())){
+					Update update=new Update();
+					update.set("items.$.title", electricMenuItem.getTitle()).set("items.$.price", electricMenuItem.getPrice()).set("items.$.unit", electricMenuItem.getUnit());
+					mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
+				}else{
+					Update update=new Update();
+					update.set("items.$", electricMenuItem);
+					mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
+				}
+			}
+		
 	}
 
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {
@@ -92,11 +110,19 @@ public class ElectricMenuService extends BaseService {
 	/**
 	 * 只增加menu或者修改menu的基本属性,不修改item
 	 */
-	public void addMenu(List<ElectricMenu> menus, ObjectId merchantId) {
+	public String addMenu(List<ElectricMenu> menus, ObjectId merchantId) {
 		for (ElectricMenu electricMenu : menus) {
+			if(electricMenu.getName()==null){
+				return "类别名称不能为空";
+			}
+			List<ElectricMenu> electricMenus=mongoTemplate.find(new Query(Criteria.where("name").is(electricMenu.getName()).and("merchantId").is(merchantId)), ElectricMenu.class);
+			if(electricMenus.size()!=0){
+				return "类别名称已存在";
+			}
 			electricMenu.setMerchantId(merchantId);
 			mongoTemplate.insert(electricMenu);
 		}
+		return "添加成功";
 	}
 
 	public Boolean titleValidate(ObjectId menuId, String title) {

@@ -18,7 +18,7 @@
 			<c:forEach var="menu" items="${menus }">
 				<tr>
 					<td class='node'><a href="#" onclick="return expand(this);"
-						 style="display:inline-block;width: 150px;font-size: 20px;font-weight: bold;">${menu.name}</a> <input
+						 style="display:inline-block;width: 150px;font-size: 20px;font-weight: bold;" id="menuName">${menu.name}</a> <input
 						type='hidden' name='id' value='${menu.id }'> <a href="#"
 						class="btn btn-primary updateA" onclick="return updateMenu(this);">修改</a>
 						 <a href="#"
@@ -78,6 +78,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			
 		});
 
 		function expand(el) {
@@ -88,9 +89,7 @@
 		function deleteItem(title,itemId,menuId,el){
 			if(confirm("是否确定要删除:"+title+"?")){
 				var url="${pageContext.request.contextPath}/merchant/account/electricMenu/deleteItem/"+itemId+"/"+menuId+"/";
-				/* alert(url); */
 				$.get(url,function (data){
-					/* alert(data); */
 					$(el).parents("span").remove();
 				});
 				return false;
@@ -99,13 +98,11 @@
 		}
 		function menuDetail(title,id){
 			var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+title+"/";
-			//alert(url);
 			$.get(url,showContentInfo);
 			return false;
 		}
 		function menuDetailDialog(title,id){
 			var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+title+"/?detail=true";
-			//alert(url);
 			$.get(url,function(data){
 				$("#detailContent").html(data);
 				$("#detailModal").modal("show");
@@ -114,7 +111,7 @@
 		}
 		
 		function deleteMenu(el){
-			var label = $(el).prevAll(".help-inline");
+			var label = $(el).prevAll("#menuName");
 			var name=label.text();
 			if(confirm("注意!删除后该类别下的所有菜品将被删除!是否要删除菜单:"+name+"?")){
 				var idInput=$(el).prevAll("input[name='id']");
@@ -124,7 +121,7 @@
 		}
 
 		function updateMenu(el) {
-			var label = $(el).prevAll(".help-inline");
+			var label = $(el).prevAll("#menuName");
 			$(label).after("<input type='text' class='input-small' name='name' value='" + $(label).text() + "'/>");
 			$(label).css("display", "none");
 			$(el).after("<input type='button' value='确定' onclick='doUpdate(this);' class='btn btn-primary updateBtn'><input type='button' value='取消' onclick='cancelUpdate(this);' class='btn btn-primary updateBtn'>");
@@ -133,14 +130,14 @@
 		}
 
 		function doUpdate(el) {
-			var label = $(el).prevAll(".help-inline");
+			var label = $(el).prevAll("#menuName");
 			var input = $(el).prevAll("input[name='name']");
 			var name=$(input).val();
 			var idInput=$(el).prevAll("input[name='id']");
 			$.post("${pageContext.request.contextPath}/merchant/account/electricMenu/update",{"name":name,"id":$(idInput).val()});
 			$(label).html($(input).val());
 			$(input).remove();
-			$(label).css("display", "");
+			$(label).css("display", "inline-block");
 			$(el).prevAll(".updateA").css("display", "");
 			$(el).nextAll(".updateBtn").remove();
 			$(el).remove();
@@ -148,8 +145,8 @@
 		}
 
 		function cancelUpdate(el) {
-			var label = $(el).prevAll(".help-inline");
-			$(label).css("display", "");
+			var label = $(el).prevAll("#menuName");
+			$(label).css("display", "inline-block");
 			$(el).prevAll(".updateA").css("display", "");
 			$(el).prevAll(".updateBtn").remove();
 			$(el).prevAll("input[name='name']").remove();
@@ -169,11 +166,8 @@
 					var electricMenu = new Object();
 					electricMenu.name = $(this).children("input[name='name']").val();
 					if(electricMenu.name==""){
-					 	/* var error="<span>名称不能为空</span>";
-						$(this).children("input[name='name']").after(error); */
-						alert("名称不能为空");
-						return  false; 
-					}
+						return ;
+					} 
 					menus.push(electricMenu);
 				}
 			});
@@ -187,15 +181,16 @@
 			}
 			strJson += "}";
 			var dataJson = eval('(' + strJson + ')');
-			$.post("${pageContext.request.contextPath}/merchant/account/electricMenu/add/", dataJson, showContentInfo);
+			$.post("${pageContext.request.contextPath}/merchant/account/electricMenu/add/", dataJson, showInfo);
+			function showInfo(data){
+				if(data!=null){
+					alert(data);
+				}
+				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+			}
 		}
 
 		function addChild(el) {
-			/* var parentId = $(el).prevAll("input[name='id']").val();
-			if (parentId == null || parentId == "") {
-			 	alert("请先提交");
-			 	return;
-			 } */
 			loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/addItem");
 			return false;
 		}
