@@ -173,8 +173,7 @@ public class ElectricMenuApi {
 	@RequestMapping(value = "/add/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody ElectricMenuDto electricMenuDto, @PathVariable ObjectId merchantId) {
-		electricMenuService.addMenu(electricMenuDto.getMenus(), merchantId);
-		return ReturnConstants.SUCCESS;
+		return 	electricMenuService.addMenu(electricMenuDto.getMenus(), merchantId);
 	}
 
 	@RequestMapping(value = "/titleValidate/{menuId}/{title}", method = RequestMethod.GET)
@@ -182,4 +181,5 @@ public class ElectricMenuApi {
 	public Boolean titleValidate(@PathVariable  ObjectId menuId, @PathVariable String  title) {
 		return electricMenuService.titleValidate(menuId,title);
 	}
+	
 }

@@ -273,14 +273,15 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/add", method = RequestMethod.POST)
+	@ResponseBody
 	public String electricMenuSubmit(ElectricMenuDto electricMenuDto, Model model) throws Exception {
 		if(electricMenuDto.getMenus()==null){
-			return "redirect:/merchant/account/electricMenu/";
+			return "类别名称不能为空";
 		}
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/add/" + LoginUtils.getLoginMerchant().getId() + "/";
 		HttpEntity<ElectricMenuDto> entity = new HttpEntity<ElectricMenuDto>(electricMenuDto);
-		restTemplate.postForObject(uri, entity, String.class);
-		return "redirect:/merchant/account/electricMenu/";
+		String str=restTemplate.postForObject(uri, entity, String.class);
+		return str;
 	}
 
 	@RequestMapping(value = "/electricMenu/update", method = RequestMethod.POST)
@@ -335,7 +336,7 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/updateItemNoPic/{menuId}/{itemId}", method = RequestMethod.POST)
-	public String updateElectricMenuItemWidthoutPic(@PathVariable String menuId, @PathVariable String itemId, String price, String title, String unit, Model model) throws Exception {
+	public String updateElectricMenuItemWidthoutPic(@PathVariable String menuId, @PathVariable String itemId  ,String price, String title, String unit, Model model) throws Exception {
 //		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
 //		formData.add("title", title);
 //		formData.add("unit", unit);
@@ -397,4 +398,5 @@ public class AccountController {
 		Boolean result=restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
+	
 }
