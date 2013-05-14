@@ -20,7 +20,8 @@ public class VersionService extends BaseService {
 
 	@Value(value = "${version.upload.dir}")
 	private String uploadDir;
-
+	@Value(value = "${local.url}")
+	private String localUrl;
 
 	public String getUploadDir() {
 		return uploadDir;
@@ -36,8 +37,16 @@ public class VersionService extends BaseService {
 
 	public ApkVersion getOnlineVersion() {
 		OnlineVersion onlineVersion = super.findOne(new Query(), OnlineVersion.class);
-		ApkVersion apkVersion = super.findOne(new Query(Criteria.where("code").is(onlineVersion.getCode())), ApkVersion.class);
+		ApkVersion apkVersion = super.findOne(new Query(Criteria.where("apkVersion").is(onlineVersion.getApkVersion())), ApkVersion.class);
 		return apkVersion;
+	}
+
+	public String getLocalUrl() {
+		return localUrl;
+	}
+
+	public void setLocalUrl(String localUrl) {
+		this.localUrl = localUrl;
 	}
 
 	public Page versionList(int pageNoInt) {
@@ -52,12 +61,12 @@ public class VersionService extends BaseService {
 		return page;
 	}
 
-	public void changeVersion(int codeInt) {
-		mongoTemplate.upsert(new Query(), new Update().set("code", codeInt), OnlineVersion.class);
+	public void changeVersion(String version) {
+		mongoTemplate.upsert(new Query(), new Update().set("apkVersion", version), OnlineVersion.class);
 	}
 
-	public void updateDeviceVersion(String sn, int code) {
-		mongoTemplate.updateFirst(new Query(Criteria.where("sn").is(sn)), new Update().set("code", code), Device.class);
+	public void updateDeviceVersion(String sn, String version) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("sn").is(sn)), new Update().set("apkVersion", version), Device.class);
 	}
 
 	public Boolean versionValidate(String version) {
@@ -69,7 +78,6 @@ public class VersionService extends BaseService {
 		}
 		return result;
 	}
-
 	public Boolean codeValidate(int codeInt) {
 		Boolean result=true;
 		List<ApkVersion> list=mongoTemplate.find(new Query(Criteria.where("code").is(codeInt)), ApkVersion.class);

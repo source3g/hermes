@@ -10,11 +10,11 @@ public class CommonBaseService extends BaseService {
 	public Merchant findMerchantByDeviceSn(String sn) throws Exception {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 		if (device == null) {
-			throw new Exception("盒子编号不存在");
+			throw new Exception("盒子编号不存在sn:"+sn);
 		}
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		if (merchant == null) {
-			throw new Exception("盒子所属商户不存在");
+			throw new Exception("盒子所属商户不存在sn:"+sn);
 		}
 		return merchant;
 	}

@@ -90,9 +90,8 @@ public class VersionApi {
 
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
-	public String changeVersion(@RequestBody String code) {
-		int codeInt = Integer.parseInt(code);
-		versionService.changeVersion(codeInt);
+	public String changeVersion(@RequestBody String version) {
+		versionService.changeVersion(version);
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -109,8 +108,8 @@ public class VersionApi {
 
 	@RequestMapping(value = "/online/sn/{sn}", method = RequestMethod.POST)
 	@ResponseBody
-	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody int code) {
-		versionService.updateDeviceVersion(sn, code);
+	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody String version) {
+		versionService.updateDeviceVersion(sn, version);
 		return getLastVersion();
 	}
 
