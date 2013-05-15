@@ -184,13 +184,15 @@
 				
 				if (newFileName == null || newFileName == '') {
 					var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItemNoPic/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";
-					$.post(url, post_params, showContentInfo);
+					$.post(url, post_params);
 				} else {
 					var updateUrl = "${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";
 					swfu.setUploadURL(updateUrl);
 					swfu.setPostParams(post_params);
 					swfu.startUpload();
 				}
+				alert("!");
+				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
 				return false;
 			});
 
