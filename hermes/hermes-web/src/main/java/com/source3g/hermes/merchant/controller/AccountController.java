@@ -336,14 +336,18 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/updateItemNoPic/{menuId}/{itemId}", method = RequestMethod.POST)
-	public String updateElectricMenuItemWidthoutPic(@PathVariable String menuId, @PathVariable String itemId, String price, String title, String unit, Model model) throws Exception {
+	public void updateElectricMenuItemWidthoutPic(@PathVariable String menuId, @PathVariable String itemId  ,String price, String title, String unit, Model model) throws Exception {
+//		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+//		formData.add("title", title);
+//		formData.add("unit", unit);
+//		formData.add("price", String.valueOf(price));
+//		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("title", title);
 		map.put("unit", unit);
 		map.put("price", String.valueOf(price));
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/updateItemNoPic/" + menuId + "/" + itemId + "/?title={title}&unit={unit}&price={price}";
 		restTemplate.postForObject(uri, null, String.class,map);
-		return "redirect:/merchant/account/electricMenu/";
 	}
 
 	@RequestMapping(value = "/electricMenu/deleteItem/{itemId}/{menuId}", method = RequestMethod.GET)
@@ -355,10 +359,9 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/delete/{menuId}", method = RequestMethod.GET)
-	public String deleteMenu(@PathVariable String menuId, Model model) throws Exception {
+	public void deleteMenu(@PathVariable String menuId, Model model) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/" + menuId + "/";
 		restTemplate.getForObject(uri, String.class);
-		return "redirect:/merchant/account/electricMenu/";
 	}
 
 	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.POST)

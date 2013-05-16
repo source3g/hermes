@@ -88,6 +88,10 @@ public class ElectricMenuService extends BaseService {
 
 	public void updateMenu(ElectricMenu electricMenu ,ObjectId merchantId) {
 		Update update=new Update();
+		List<ElectricMenu> electricMenus=mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId).and("name").is(electricMenu.getName())), ElectricMenu.class);
+		if(electricMenus.size()!=0){
+			return ;
+		}
 		update.set("name", electricMenu.getName());
 		mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(merchantId).and("_id").is(electricMenu.getId())), update, ElectricMenu.class);
 	}
