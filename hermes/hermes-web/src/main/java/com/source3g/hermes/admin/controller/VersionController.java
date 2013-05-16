@@ -97,9 +97,9 @@ public class VersionController {
 
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
-	public String changeOnline(String code) {
+	public String changeOnline(String version) {
 		String uri = ConfigParams.getBaseUrl() + "version/changeOnline";
-		HttpEntity<String> entity = new HttpEntity<String>(code);
+		HttpEntity<String> entity = new HttpEntity<String>(version);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return ReturnConstants.SUCCESS;

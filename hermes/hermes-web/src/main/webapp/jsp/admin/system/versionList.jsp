@@ -27,7 +27,7 @@
 			<c:forEach items="${page.data}" var="version">
 				<tr>
 					<td><input type="radio" name="onlineVersionRadio"
-						value="${version.apkVersion }" onclick="return selOnline('${version.code}');"
+						value="${version.apkVersion }" onclick="return selOnline('${version.apkVersion}');"
 						<c:if test="${onlineVersion.apkVersion eq version.apkVersion }">checked="checked"</c:if>>${version.apkVersion}</td>
 					<td>${version.code}</td>
 					<td>${version.url}</td>
@@ -71,10 +71,10 @@
 		$('#queryForm').ajaxSubmit(options);
 	}
     
-    function selOnline(code){
+    function selOnline(version){
     	if(confirm("你确定更换版本?"))
     	{
-    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"code":code},function (data,status){
+    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"version":version},function (data,status){
     			alert("更换成功");
     		});
     		return true;
