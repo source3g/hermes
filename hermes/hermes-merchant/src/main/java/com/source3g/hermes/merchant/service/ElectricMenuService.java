@@ -50,45 +50,54 @@ public class ElectricMenuService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
 	}
 
-	public void addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
+	public String addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
 		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
 		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
 		if (electricMenuItems == null) {
 			electricMenuItems = new ArrayList<ElectricMenuItem>();
 		}
+		for(ElectricMenuItem e :electricMenuItems){
+			if(e.getTitle().equals(electricMenuItem.getTitle())){
+				return"名称已存在" ;
+			}
+		}
 		electricMenuItems.add(electricMenuItem);
 		electricMenu.setItems(electricMenuItems);
 		mongoTemplate.save(electricMenu);
+		return null;
 	}
 
-	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), ElectricMenu.class);
-		if (electricMenu == null) {
-			ObjectId obj = electricMenuItem.getId();
-			ElectricMenu oldElectricMenu = mongoTemplate.findOne(new Query(Criteria.where("items.id").is(obj)), ElectricMenu.class);
-			if (electricMenuItem.getPicPath() == null) {
-				List<ElectricMenuItem> electricMenuItems = oldElectricMenu.getItems();
-				for (ElectricMenuItem e : electricMenuItems) {
-					if (e.getId().equals(electricMenuItem.getId())) {
-						electricMenuItem.setPicPath(e.getPicPath());
+	public void  updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId ) {
+		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), ElectricMenu.class);
+			if(electricMenu==null){
+				ObjectId obj=electricMenuItem.getId();
+				ElectricMenu oldElectricMenu=mongoTemplate.findOne(new Query(Criteria.where("items.id").is(obj)),ElectricMenu.class);
+				if(electricMenuItem.getPicPath()==null){
+					List<ElectricMenuItem> electricMenuItems=oldElectricMenu.getItems();
+					for(ElectricMenuItem e:electricMenuItems){
+						if(e.getId().equals(electricMenuItem.getId())){
+							electricMenuItem.setPicPath(e.getPicPath());
+						}
 					}
 				}
+				electricMenuItem.setId(new ObjectId());
+				String result=addItem(electricMenuItem, menuId);
+				if(result!=null){
+					return ;
+				}
+				deleteItem(obj, oldElectricMenu.getId());
+			}else{
+				if(StringUtils.isEmpty(electricMenuItem.getPicPath())){
+					Update update=new Update();
+					update.set("items.$.title", electricMenuItem.getTitle()).set("items.$.price", electricMenuItem.getPrice()).set("items.$.unit", electricMenuItem.getUnit());
+					mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
+				}else{
+					Update update=new Update();
+					update.set("items.$", electricMenuItem);
+					mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
+				}
 			}
-			electricMenuItem.setId(new ObjectId());
-			addItem(electricMenuItem, menuId);
-			deleteItem(obj, oldElectricMenu.getId());
-		} else {
-			if (StringUtils.isEmpty(electricMenuItem.getPicPath())) {
-				Update update = new Update();
-				update.set("items.$.title", electricMenuItem.getTitle()).set("items.$.price", electricMenuItem.getPrice()).set("items.$.unit", electricMenuItem.getUnit());
-				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
-			} else {
-				Update update = new Update();
-				update.set("items.$", electricMenuItem);
-				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
-			}
-		}
-
+		
 	}
 
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {

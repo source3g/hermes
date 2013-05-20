@@ -98,9 +98,7 @@
 		function deleteItem(title,itemId,menuId,el){
 			if(confirm("是否确定要删除:"+title+"?")){
 				var url="${pageContext.request.contextPath}/merchant/account/electricMenu/deleteItem/"+itemId+"/"+menuId+"/";
-				/* alert(url); */
 				$.get(url,function (data){
-					/* alert(data); */
 					$(el).parents("span").remove();
 				});
 				return false;
@@ -109,13 +107,11 @@
 		}
 		function menuDetail(title,id){
 			var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+title+"/";
-			//alert(url);
 			$.get(url,showContentInfo);
 			return false;
 		}
 		function menuDetailDialog(title,id){
 			var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+id+"/"+title+"/?detail=true";
-			//alert(url);
 			$.get(url,function(data){
 				$("#detailContent").html(data);
 				$("#detailModal").modal("show");
@@ -128,12 +124,17 @@
 			var name=label.text();
 			if(confirm("注意!删除后该类别下的所有菜品将被删除!是否要删除菜单:"+name+"?")){
 				var idInput=$(el).prevAll("input[name='id']");
-				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/delete/"+$(idInput).val()+"/");
+				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/delete/"+$(idInput).val()+"/",menusList);
 			}
-			$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
 			return false;
 		}
 
+		function menusList(data){
+			if(data!=null){
+				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+			}
+		}
+		
 		function updateMenu(el) {
 			var label = $(el).prevAll("#menuName");
 			$(label).after("<input type='text' class='input-small' name='name' value='" + $(label).text() + "'/>");
@@ -198,9 +199,6 @@
 					var electricMenu = new Object();
 					electricMenu.name = $(this).children("input[name='name']").val();
 					if(electricMenu.name==""){
-					/*  	 var error="<span>名称不能为空</span>";
-						$(this).children("input[name='name']").after(error);  */
-						//alert("名称不能为空");
 						return ;
 					} 
 					menus.push(electricMenu);
@@ -243,20 +241,16 @@
 			strJson += "}";
 			var dataJson = eval('(' + strJson + ')');
 			$.post("${pageContext.request.contextPath}/merchant/account/electricMenu/add/", dataJson, showInfo);
-			function showInfo(data){
-				if(data!=null){
-					alert(data);
-				}
-				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
-			}
 		}
 
+		function showInfo(data){
+			if(data!=null){
+				alert(data);
+			}
+			$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+		}
+		
 		function addChild(el) {
-			/* var parentId = $(el).prevAll("input[name='id']").val();
-			if (parentId == null || parentId == "") {
-			 	alert("请先提交");
-			 	return;
-			 } */
 			loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/addItem");
 			return false;
 		}
