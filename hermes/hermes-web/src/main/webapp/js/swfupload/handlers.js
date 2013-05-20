@@ -105,7 +105,7 @@ function uploadSuccess(file, serverData) {
 		var progress = new FileProgress(file, this.customSettings.upload_target);
 		addFileInfo(file.id, "文件上传完成");
 		addFileId(file.id, serverData);
-		// alert(serverData);
+		 alert(serverData);
 	} catch (ex) {
 		this.debug(ex);
 	}

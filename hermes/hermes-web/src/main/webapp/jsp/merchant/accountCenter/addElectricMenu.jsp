@@ -58,8 +58,8 @@
 						class="btn btn-primary" value="修改" />
 				</c:otherwise>
 			</c:choose>
-			<input type="button" id="backToList" class="btn btn-primary"
-				value="返回" />
+			<a href="#" class="btn btn-primary"
+						onclick="return menusList();">返回</a>
 		</div>
 		</c:if>
 	</form>
@@ -151,16 +151,11 @@
 			
 					$('#addElectricMenuItemForm').validate(validateOptions);
 
-			$("#backToList").click(function() {
-				loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/");
-			});
+			
 			$("#addElectricMenuItemBtn").click(function() {
 				if (!$("#addElectricMenuItemForm").valid()) {
 			 		return false;
 				 } 
-				//	swfu.addPostParam("menuId", "menuId");
-				//swfu.addPostParam("title", $("#title").val());
-				//swfu.addPostParam("unit", $("#unit").val());
 				var post_params = {
 					"menuId" : $("#menuSel").val(),
 					"title" : $("#title").val(),
@@ -185,14 +180,16 @@
 				if (newFileName == null || newFileName == '') {
 					var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItemNoPic/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";
 					$.post(url, post_params);
+					if(swfu.getStats().files_queued==0){
+						$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+					}
 				} else {
 					var updateUrl = "${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";
 					swfu.setUploadURL(updateUrl);
 					swfu.setPostParams(post_params);
 					swfu.startUpload();
 				}
-				alert("!");
-				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+			
 				return false;
 			});
 
@@ -212,7 +209,9 @@
 				file_dialog_complete_handler : fileDialogComplete,
 				upload_progress_handler : uploadProgress,
 				upload_error_handler : uploadError,
-				upload_success_handler : uploadSuccess,
+				upload_success_handler : function (file, server_data){
+					$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+				},
 				upload_complete_handler : uploadComplete,
 
 				// Button Settings
@@ -235,6 +234,11 @@
 				debug : false
 			});
 		});
+		
+		function menusList(){
+			loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/");
+			return false;
+		}
 	</script>
 </body>
 </html>
