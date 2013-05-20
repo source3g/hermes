@@ -1,5 +1,6 @@
 package com.source3g.hermes.entity.merchant;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class ElectricMenu extends AbstractEntity {
 	
 	private static final long serialVersionUID = 5220747468343318373L;
 	private String name;
-	private List<ElectricMenuItem> items;
+	private List<ElectricMenuItem> items=new ArrayList<ElectricMenuItem>();
 	private ObjectId merchantId;
 	private Date operateTime;
 	

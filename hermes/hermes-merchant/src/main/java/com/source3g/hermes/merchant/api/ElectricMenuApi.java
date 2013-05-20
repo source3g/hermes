@@ -175,6 +175,13 @@ public class ElectricMenuApi {
 	public String add(@RequestBody ElectricMenuDto electricMenuDto, @PathVariable ObjectId merchantId) {
 		return 	electricMenuService.addMenu(electricMenuDto.getMenus(), merchantId);
 	}
+	
+	@RequestMapping(value = "/sync/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String sync(@PathVariable ObjectId merchantId) throws Exception {
+		electricMenuService.sync(merchantId);
+		return ReturnConstants.SUCCESS;
+	}
 
 	@RequestMapping(value = "/titleValidate/{menuId}/{title}", method = RequestMethod.GET)
 	@ResponseBody

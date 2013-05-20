@@ -17,4 +17,18 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 		<property name="messageSelector" value="type='packageAll'"></property>
 		<!-- <property name="clientId" value="clientId_sync_packageAll" /> -->
 	</bean>
+	
+	<bean id="packageElectricMenuListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory" />
+		<property name="destination" ref="syncDestination" />
+		<property name="pubSubDomain" value="true" />
+		<property name="sessionTransacted" value="true" />
+		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
+		<property name="messageListener" ref="packageElectricMenuListener" />
+		<property name="subscriptionDurable" value="true" />
+		<property name="durableSubscriptionName" value="sync_package_electric_menu" />
+		<property name="messageSelector" value="type='packageElectric'"></property>
+		<!-- <property name="clientId" value="clientId_sync_packageAll" /> -->
+	</bean>
 </beans>

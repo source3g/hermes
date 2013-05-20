@@ -1,5 +1,7 @@
 package com.source3g.hermes.message.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,6 +16,8 @@ import com.source3g.hermes.service.BaseService;
 
 @Component
 public class ReportReceiver implements IReceiver<CbipReport> {
+	
+	private Logger logger=LoggerFactory.getLogger(ReportReceiver.class);
 	private MongoTemplate mongoTemplate;
 
 	public ReportReceiver() {
@@ -22,10 +26,11 @@ public class ReportReceiver implements IReceiver<CbipReport> {
 
 	@Override
 	public void receive(CbipReport report) {
+		logger.debug("cbipMessage:收到report:" + report);
 		System.out.println("cbipMessage:收到report:" + report);
 		System.out.println(mongoTemplate);
 		System.out.println("seq:" + report.getClientSeq());
-		if (report.getStatus() == 0 && "0".equals(report.getErrorCode())) {
+		if (report.getStatus() == 0 && ("0".equals(report.getErrorCode())||"DELIVRD".equals(report.getErrorCode()))) {
 			mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(String.valueOf(report.getClientSeq()))), new Update().set("status", MessageStatus.发送成功), ShortMessage.class);
 		}
 		report.getStatus();// 0

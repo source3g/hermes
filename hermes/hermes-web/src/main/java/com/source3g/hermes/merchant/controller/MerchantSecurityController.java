@@ -9,6 +9,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.admin.security.ShiroDbRealm.ShiroUser;
@@ -40,7 +41,22 @@ public class MerchantSecurityController {
 			return new ModelAndView("redirect:/login");
 		}
 	}
-
+	@RequestMapping(value = "/login/json", method = RequestMethod.POST)
+	@ResponseBody
+	public String loginJson(String username, String password, boolean rememberMe) {
+		Subject currentUser = SecurityUtils.getSubject();
+		boolean result = false;
+		if (!currentUser.isAuthenticated()) {
+			result = login(currentUser, username, password, rememberMe);
+		} else {// 重复登录
+			ShiroUser shiroUser = (ShiroUser) currentUser.getPrincipal();
+			if (shiroUser.getMerchant() != null && shiroUser.getMerchant().getAccount().equalsIgnoreCase(username))// 如果登录名不同
+				currentUser.logout();
+			result = login(currentUser, username, password, rememberMe);
+		}
+		return String.valueOf(result);
+	}
+	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public ModelAndView logout() {
 		Subject currentUser = SecurityUtils.getSubject();
