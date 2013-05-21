@@ -33,7 +33,7 @@ public class ExcelHelper<T extends Object> {
 		initMapper(row);
 		int maxRowNum = sheet.getLastRowNum();
 		List<ErrorResult> reports = new ArrayList<ErrorResult>();
-		for (int i = 0; i <= maxRowNum; i++) {
+		for (int i = 1; i <= maxRowNum; i++) {
 			// 开始行
 			row = sheet.getRow(i);
 			try {

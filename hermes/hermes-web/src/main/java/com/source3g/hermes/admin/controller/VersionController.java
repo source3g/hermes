@@ -112,6 +112,7 @@ public class VersionController {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
+		
 		String uri = ConfigParams.getBaseUrl() + "version/versionList/?pageNo=" + pageNo;
 		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/online";
 		Page page = restTemplate.getForObject(uri, Page.class);
@@ -121,4 +122,6 @@ public class VersionController {
 		model.put("onlineVersion", apkVersion);
 		return new ModelAndView("admin/system/versionList", model);
 	}
+	
+	
 }

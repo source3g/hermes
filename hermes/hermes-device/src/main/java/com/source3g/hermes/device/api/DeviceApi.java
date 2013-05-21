@@ -102,6 +102,13 @@ public class DeviceApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/imsi/report/{sn}/{imsiNo}", method = RequestMethod.GET)
+	@ResponseBody
+	public String imsiReport(@PathVariable String sn, @PathVariable String imsiNo) {
+		deviceService.updateImsiNo(sn, imsiNo);
+		return ReturnConstants.SUCCESS;
+	}
+
 	@RequestMapping(value = "deviceDistribution")
 	@ResponseBody
 	public List<DeviceDistributionVo> findDeviceDistribution() {
