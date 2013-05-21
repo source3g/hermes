@@ -48,8 +48,8 @@ public class VersionController {
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String importNewVersion(@RequestParam("describe") String describe,@RequestParam("version") String version,@RequestParam("code") String code, @RequestParam("Filedata") MultipartFile Filedata,HttpServletRequest req) throws IOException {
-		if(version==null){
+	public String importNewVersion(@RequestParam("describe") String describe, @RequestParam("version") String version, @RequestParam("code") String code, @RequestParam("Filedata") MultipartFile Filedata, HttpServletRequest req) throws IOException {
+		if (version == null) {
 			return "版本号不能为空";
 		}
 		if (describe == null) {
@@ -66,7 +66,7 @@ public class VersionController {
 		formData.add("oldName", new String(Filedata.getOriginalFilename()));
 		formData.add("version", version);
 		formData.add("code", code);
-		formData.add("describe",describe);
+		formData.add("describe", describe);
 		HttpHeaders requestHeaders = new HttpHeaders();
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
@@ -113,7 +113,7 @@ public class VersionController {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		
+
 		String uri = ConfigParams.getBaseUrl() + "version/versionList/?pageNo=" + pageNo;
 		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/online";
 		Page page = restTemplate.getForObject(uri, Page.class);
@@ -123,6 +123,5 @@ public class VersionController {
 		model.put("onlineVersion", apkVersion);
 		return new ModelAndView("admin/system/versionList", model);
 	}
-	
-	
+
 }

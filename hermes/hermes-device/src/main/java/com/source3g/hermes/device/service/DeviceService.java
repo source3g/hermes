@@ -18,7 +18,9 @@ import com.source3g.hermes.constants.TaskConstants;
 import com.source3g.hermes.dto.sync.DeviceStatusDto;
 import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.device.PublicKey;
+import com.source3g.hermes.entity.device.SimChangeRecord;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.sim.SimInfo;
 import com.source3g.hermes.entity.sync.DeviceStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.service.BaseService;
@@ -227,7 +229,21 @@ public class DeviceService extends BaseService {
 	}
 
 	public void updateImsiNo(String sn, String imsiNo) {
-		
+		SimInfo newSimInfo = mongoTemplate.findOne(new Query(Criteria.where("imsiNo").is(imsiNo)), SimInfo.class);
+		if (newSimInfo == null) {
+			return;
+		}
+		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
+		SimInfo oldSimInfo = device.getSimInfo();
+		if (oldSimInfo != null) {
+			if (!oldSimInfo.getImsiNo().equals(imsiNo)) {
+				SimChangeRecord simChangeRecord = new SimChangeRecord(oldSimInfo, newSimInfo);
+				List<SimChangeRecord> records = device.getSimChangeRecords();
+				records.add(simChangeRecord);
+				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(device.getId())), new Update().set("simInfo", newSimInfo).set("simChangeRecords", records), Device.class);
+			}
+		} else {
+			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(device.getId())), new Update().set("simInfo", newSimInfo), Device.class);
+		}
 	}
-
 }

@@ -73,7 +73,7 @@ public class SimService extends BaseService {
 		ReadExcelResult result = excelHelper.readFromExcel(excelFile);
 		for (Object s : result.getResult()) {
 			SimInfo simInfo = (SimInfo) s;
-			mongoTemplate.upsert(new Query(Criteria.where("serviceNumber").is(simInfo.getServiceNumber())), genUpdate(simInfo), SimInfo.class);
+			mongoTemplate.upsert(new Query(Criteria.where("serviceNo").is(simInfo.getServiceNo())), genUpdate(simInfo), SimInfo.class);
 		}
 		SimImportRecord importRecord = new SimImportRecord();
 		importRecord.setImportCount(result.getResult().size());
@@ -86,7 +86,7 @@ public class SimService extends BaseService {
 		List<ExcelObjectMapperDO> list = new ArrayList<ExcelObjectMapperDO>();
 		ExcelObjectMapperDO serviceNumberMapperDO = new ExcelObjectMapperDO();
 		serviceNumberMapperDO.setExcelColumnName("业务号码");
-		serviceNumberMapperDO.setObjectFieldName("serviceNumber");
+		serviceNumberMapperDO.setObjectFieldName("serviceNo");
 		serviceNumberMapperDO.setObjectFieldType(Long.class);
 		list.add(serviceNumberMapperDO);
 
