@@ -50,13 +50,13 @@ public class VersionController {
 	@ResponseBody
 	public String importNewVersion(@RequestParam("describe") String describe,@RequestParam("version") String version,@RequestParam("code") String code, @RequestParam("Filedata") MultipartFile Filedata,HttpServletRequest req) throws IOException {
 		if(version==null){
-			return "版本号不能为空";
+			return "鐗堟湰鍙蜂笉鑳戒负绌�;
 		}
 		if (describe == null) {
-			return "描述不能为空";
+			return "鎻忚堪涓嶈兘涓虹┖";
 		}
 		if (code == null) {
-			return "版本对比号不能为空";
+			return "瀵规瘮缂栫爜涓嶈兘涓虹┖";
 		}
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
@@ -97,8 +97,9 @@ public class VersionController {
 
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	public String changeOnline(String code) {
-		String uri = ConfigParams.getBaseUrl() + "version/changeOnline/"+code+"/";
-		String result = restTemplate.getForObject(uri, String.class);
+		String uri = ConfigParams.getBaseUrl() + "version/changeOnline";
+		HttpEntity<String> entity = new HttpEntity<String>(version);
+		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			return "redirect:/admin/version/versionList";
 		} else {
