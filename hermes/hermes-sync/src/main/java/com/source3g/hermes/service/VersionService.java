@@ -14,6 +14,7 @@ import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.apkVersion.ApkVersion;
 import com.sourse3g.hermes.apkVersion.OnlineVersion;
+import com.sourse3g.hermes.apkVersion.OnlineVersion.VersionType;
 
 @Service
 public class VersionService extends BaseService {
@@ -36,7 +37,7 @@ public class VersionService extends BaseService {
 	}
 
 	public ApkVersion getOnlineVersion() {
-		OnlineVersion onlineVersion = super.findOne(new Query(), OnlineVersion.class);
+		OnlineVersion onlineVersion = super.findOne(new Query(Criteria.where("versionType").is(VersionType.RELEASE)), OnlineVersion.class);
 		ApkVersion apkVersion = super.findOne(new Query(Criteria.where("apkVersion").is(onlineVersion.getApkVersion())), ApkVersion.class);
 		return apkVersion;
 	}
@@ -62,7 +63,7 @@ public class VersionService extends BaseService {
 	}
 
 	public void changeVersion(String version) {
-		mongoTemplate.upsert(new Query(), new Update().set("apkVersion", version), OnlineVersion.class);
+		mongoTemplate.upsert(new Query(Criteria.where("versionType").is(VersionType.RELEASE)), new Update().set("apkVersion", version), OnlineVersion.class);
 	}
 
 	public void updateDeviceVersion(String sn, String version) {
