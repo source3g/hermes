@@ -59,7 +59,9 @@
 		<tfoot>
 			<tr>
 				<td><input type="button" class="btn btn-primary" value="批量增加"
-					onclick="return commitTree();" /></td>
+					onclick="return commitTree();" />
+					<input type="button" class="btn btn-danger" value="与旺财宝同步"
+					onclick="return sync();" /></td>
 			</tr>
 		</tfoot>
 	</table>
@@ -80,6 +82,13 @@
 		$(document).ready(function() {
 			
 		});
+		
+		function sync(){
+			$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/sync",function (data){
+			alert("同步成功，两小时后会出现在王财宝中，请耐心等候，不要频繁点击");
+			});
+			return false;
+		}
 
 		function expand(el) {
 			$(el).parents("tr").next(".itemTr").toggle("slow");
@@ -245,9 +254,11 @@
 			loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu/addItem");
 			return false;
 		}
-		
+		function removeTr(el){
+			$(el).parents("tr").remove();
+		}
 		function addTag(el) {
-			var tr = "<tr> <td class='node'><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\">";
+			var tr = "<tr> <td class='node'><input class=\"input-small\" type=\"text\" name=\"name\" value=\"默认\"> <input type='button' class='btn btn-danger' value='删除' onclick='removeTr(this)'>";
 			tr += "</td>";
 			tr += "</tr>";
 			$(el).parents("tr").before(tr);

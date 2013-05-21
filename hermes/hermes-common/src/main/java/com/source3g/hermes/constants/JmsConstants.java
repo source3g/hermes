@@ -19,5 +19,7 @@ public interface JmsConstants {
 	public String LOG_MESSAGE="logMessage";
 	
 	public String PACKAGE_ALL="packageAll";
+	
+	public String PACKAGE_ELECTRIC="packageElectric";
 
 }

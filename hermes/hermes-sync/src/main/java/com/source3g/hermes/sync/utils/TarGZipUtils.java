@@ -379,7 +379,7 @@ public abstract class TarGZipUtils {
 		return target;
 	}
 
-	public static File tarGzip(String folder) throws Exception {
+	public static File tarGzip(String folder,boolean isDeleteFolder) throws Exception {
 		File srcFolder = new File(folder);
 		// String name = srcFolder.getName();
 		String basePath = srcFolder.getAbsolutePath();
@@ -387,7 +387,12 @@ public abstract class TarGZipUtils {
 		File destFile = new File(destPath);
 		archive(new File(folder), destFile);
 		if (destFile.exists()) {
-			return gzip(destFile);
+			File result= gzip(destFile);
+			destFile.delete();
+			if(isDeleteFolder){
+				srcFolder.delete();
+			}
+			return result;
 		}
 		return null;
 	}

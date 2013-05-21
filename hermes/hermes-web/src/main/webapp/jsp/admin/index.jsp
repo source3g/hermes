@@ -98,7 +98,7 @@ body {
 							<ul id="sim-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
-								<li><a href="#" id="addSim">添加SIM</a></li>
+								<li><a href="#" id="importSim">导入SIM</a></li>
 								<li><a href="#" id="listSim">SIM卡列表</a></li>
 							</ul>
 							<!-- </div> -->
@@ -228,8 +228,8 @@ body {
 			loadPage("${pageContext.request.contextPath}/admin/device/list/");
 			return false;
 		});
-		$("#addSim").click(function() {
-			loadPage("${pageContext.request.contextPath}/admin/sim/add/");
+		$("#importSim").click(function() {
+			loadPage("${pageContext.request.contextPath}/admin/sim/import/");
 			return false;
 		});
 		$("#listSim").click(function() {

@@ -390,6 +390,13 @@ public class AccountController {
 		return "/merchant/accountCenter/electricMenu";
 	}
 	
+	@RequestMapping(value = "/electricMenu/sync", method = RequestMethod.GET)
+	public String sync() throws Exception {
+		String uri=ConfigParams.getBaseUrl()+"merchant/electricMenu/sync/"+LoginUtils.getLoginMerchant().getId()+"/";
+		restTemplate.getForObject(uri, String.class);
+		return "/merchant/accountCenter/electricMenu";
+	}
+	
 	@RequestMapping(value = "/titleValidate", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean titleValidate(String title,String oldTitle,String menuId)  {	

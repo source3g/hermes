@@ -5,9 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.service.VersionService;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.MD5;
 import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.apkVersion.ApkVersion;
@@ -64,8 +63,8 @@ public class VersionApi {
 	public String upload(@RequestParam("describe") String describe, @RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version, @RequestParam("code") String code) throws IOException, ParseException {
 		describe = new String(describe.getBytes("iso-8859-1"));
 		int codeInt = Integer.parseInt(code);
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
-		String suffxPath = dateFormat.format(new Date()) + new String(oldName.getBytes("iso-8859-1"));
+		String dirByDay = FormateUtils.getDirByDay();
+		String suffxPath = dirByDay + new String(oldName.getBytes("iso-8859-1"));
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
 		FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);

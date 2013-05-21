@@ -23,8 +23,10 @@ public class TaskPackage extends AbstractEntity {
 	private String md5;
 	@JsonIgnore
 	private ObjectId merchantId;
+	//包类型，增量包还是全包
 	@JsonIgnore
 	private String type;
+	
 
 	@JsonIgnore
 	public Date getCreateTime() {

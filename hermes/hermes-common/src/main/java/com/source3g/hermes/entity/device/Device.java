@@ -1,11 +1,9 @@
 package com.source3g.hermes.entity.device;
 
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
-import com.source3g.hermes.entity.Sim;
 import com.source3g.hermes.utils.GpsPoint;
 
 
@@ -15,8 +13,7 @@ public class Device extends AbstractEntity {
 
 	@NotEmpty(message = "{device.sn.not.null}")
 	private String sn;
-	@DBRef
-	private Sim sim;
+
 	
 	private String apkVersion;
 
@@ -36,14 +33,6 @@ public class Device extends AbstractEntity {
 
 	public void setSn(String sn) {
 		this.sn = sn;
-	}
-
-	public Sim getSim() {
-		return sim;
-	}
-
-	public void setSim(Sim sim) {
-		this.sim = sim;
 	}
 
 	public String getApkVersion() {

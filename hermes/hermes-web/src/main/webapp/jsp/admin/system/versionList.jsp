@@ -73,6 +73,7 @@
 		};
 		$('#queryForm').ajaxSubmit(options);
 	}
+    
     var test=$("input[name='onlineVersionRadio']:checked").val();
     function selOnline(el){
     	 if($(el).parent().prev().children().attr("checked")=="checked"){
@@ -84,7 +85,7 @@
     	var code=$(el).parent().next().html();
     	if(confirm("你确定更换版本?"))
     	{
-    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"code":code},function (data,status){
+    		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"version":version},function (data,status){
     			alert("更换成功");
     			showContentInfo(data);
     		});
