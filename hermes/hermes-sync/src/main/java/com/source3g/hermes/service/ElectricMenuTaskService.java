@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +31,7 @@ import com.source3g.hermes.entity.sync.ElectricMenuPackageStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.enums.ElectricMenuPackageStatusEnum;
 import com.source3g.hermes.sync.utils.TarGZipUtils;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.MD5;
 
 @Service
@@ -93,26 +92,23 @@ public class ElectricMenuTaskService {
 		// 文件名
 		String fileName = String.valueOf(createTime.getTime());
 		// 产生文件路径
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		String dirByDay = FormateUtils.getDirByDay();
 		// 商户相对目录
-		String merchantPath = dateFormat.format(createTime) + "/" + merchantId.toString() + "/";
+		String merchantPath = dirByDay + merchantId.toString() + "/";
 		// 任务文件包相对路径
 		String packagePath = merchantPath + fileName + "/";
 
 		// //任务包的绝对路径
 		String folderPath = taskPackagePath + packagePath;
-
-		// 任务文件的相对路径
-		String relativeFilePath = packagePath + fileName;
 		// 任务文件的绝对路径
-		String absoluteFilePath = taskPackagePath + relativeFilePath;
-		String txtFilePath = absoluteFilePath + ".json";
+		String txtFilePath = taskPackagePath + packagePath + "list.json";
+		;
 		File imgFolder = new File(folderPath + "img");
 		if (!imgFolder.exists()) {
 			imgFolder.mkdirs();
 		}
 		DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
-		Resource resource = defaultResourceLoader.getResource("taskfiles/customer/task.sh");// new
+		Resource resource = defaultResourceLoader.getResource("taskfiles/electricMenu/task.sh");// new
 		FileUtils.copyFileToDirectory(resource.getFile(), new File(folderPath));
 		movePicAndProcessPicFileName(menus, imgFolder);
 		File file = new File(txtFilePath);

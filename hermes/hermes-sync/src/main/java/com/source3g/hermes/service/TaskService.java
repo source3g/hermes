@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +29,7 @@ import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.enums.TaskStatus;
 import com.source3g.hermes.sync.entity.TaskLog;
 import com.source3g.hermes.sync.utils.TarGZipUtils;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.MD5;
 
 @Service
@@ -307,9 +306,9 @@ public class TaskService extends CommonBaseService {
 		// 文件名
 		String fileName = String.valueOf(createTime.getTime());
 		// 产生文件路径
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		String dirByDay = FormateUtils.getDirByDay();
 		// 所在商户的相对路径
-		String merchantPath = dateFormat.format(createTime) + "/" + merchantId.toString() + "/";
+		String merchantPath = dirByDay + merchantId.toString() + "/";
 		File gzipFile = genGzipFile(addOrUpdateList, deleteList, merchantPath, fileName);
 		String relativeGzipPath = merchantPath + gzipFile.getName();
 		taskPackage.setRemoteUrl(relativeGzipPath);

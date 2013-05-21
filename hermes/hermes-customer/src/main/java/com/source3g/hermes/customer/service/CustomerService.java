@@ -350,9 +350,8 @@ public class CustomerService extends BaseService {
 		DateFormat dateFormatExport = new SimpleDateFormat("yyyy-MM-dd");
 		String fileName = String.valueOf(dateFormatExport.format(createTime) + "顾客导出列表") + ".xls";
 		// 产生文件路径
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		// 所在商户的相对路径
-		String merchantPath = dateFormat.format(createTime) + "/" + customer.getMerchantId().toString() + "/";
+		String merchantPath = FormateUtils.getDirByDay() + customer.getMerchantId().toString() + "/";
 		String absoluteDir = exportDir + merchantPath;
 		String absoluteFile = absoluteDir + fileName;
 		String relativePath = merchantPath + fileName;

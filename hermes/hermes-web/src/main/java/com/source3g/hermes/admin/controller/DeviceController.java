@@ -24,9 +24,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.source3g.hermes.constants.ReturnConstants;
-import com.source3g.hermes.entity.Sim;
 import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.sim.SimInfo;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 
@@ -124,11 +124,12 @@ public class DeviceController {
 		if (devices == null || devices.length != 1) {
 			return new ModelAndView(("/admin/error"));
 		}
-		if (devices[0].getSim() != null) {
-			String uriSim = ConfigParams.getBaseUrl() + "sim/id/" + devices[0].getSim().getId() + "/";
-			Sim sim = restTemplate.getForObject(uriSim, Sim.class);
-			model.put("sim", sim);
-		}
+		// if (devices[0].getSim() != null) {
+		// String uriSim = ConfigParams.getBaseUrl() + "sim/id/" +
+		// devices[0].getSim().getId() + "/";
+		// SimInfo sim = restTemplate.getForObject(uriSim, SimInfo.class);
+		// model.put("sim", sim);
+		// }
 		model.put("device", devices[0]);
 		return new ModelAndView(("/admin/device/deviceInfo"), model);
 	}
@@ -141,7 +142,7 @@ public class DeviceController {
 			return new ModelAndView("admin/device/deviceInfo", model);
 		}
 		String uriSim = ConfigParams.getBaseUrl() + "sim/no/" + no + "/";
-		Sim sim = restTemplate.getForObject(uriSim, Sim.class);
+		SimInfo sim = restTemplate.getForObject(uriSim, SimInfo.class);
 		if (sim == null) {
 			errorResult.addError(new ObjectError("simIsNull", "SIM卡号不存在"));
 			model.put("errors", errorResult.getAllErrors());
@@ -154,7 +155,7 @@ public class DeviceController {
 			model.put("errors", errorResult.getAllErrors());
 			return new ModelAndView("/admin/device/deviceInfo", model);
 		}
-		device.setSim(sim);
+		/*device.setSim(sim);*/
 		String uri = ConfigParams.getBaseUrl() + "device/update/";
 		HttpEntity<Device> entity = new HttpEntity<Device>(device);
 		String result = restTemplate.postForObject(uri, entity, String.class);

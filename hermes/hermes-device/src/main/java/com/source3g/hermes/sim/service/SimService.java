@@ -1,52 +1,48 @@
 package com.source3g.hermes.sim.service;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import com.source3g.hermes.entity.Sim;
+import com.source3g.hermes.entity.sim.SimImportRecord;
+import com.source3g.hermes.entity.sim.SimInfo;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.utils.excel.ExcelHelper;
+import com.source3g.hermes.utils.excel.ExcelObjectMapperDO;
+import com.source3g.hermes.utils.excel.ReadExcelResult;
 
 @Service
 public class SimService extends BaseService {
-	public void add(Sim sim) throws Exception {
-		List<Sim> list=mongoTemplate.find(new Query(Criteria.where("no").is(sim.getNo())), Sim.class);
-		if(list.size()==0){
-			sim.setId(ObjectId.get());
-			mongoTemplate.insert(sim);
-		}else{
-			throw new Exception("电话号码已存在");
-		}
-	}
+
+	@Value(value = "${temp.import.sim.dir}")
+	private String importDir;
 
 	public boolean simValidate(String no) {
-		List<Sim> list=mongoTemplate.find(new Query(Criteria.where("no").is(no)), Sim.class);
-		if(list.size()==0){
+		List<SimInfo> list = mongoTemplate.find(new Query(Criteria.where("no").is(no)), SimInfo.class);
+		if (list.size() == 0) {
 			return true;
 		}
 		return false;
 	}
-	
-	public Page list(int pageNo, Sim sim) {
+
+	public Page list(int pageNo, SimInfo sim) {
 		Query query = new Query();
 		query.with(new Sort(Direction.DESC, "_id"));
-		if (StringUtils.isNotEmpty(sim.getNo())) {
-			Pattern pattern = Pattern.compile("^.*" + sim.getNo() + ".*$", Pattern.CASE_INSENSITIVE);
-			query.addCriteria(Criteria.where("no").is(pattern));
-		}
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, SimService.class);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
-		List<Sim> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Sim.class);
+		List<SimInfo> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), SimInfo.class);
 		page.setData(list);
 		return page;
 	}
@@ -56,11 +52,66 @@ public class SimService extends BaseService {
 		mongoTemplate.remove(new Query(Criteria.where("_id").is(objId)));
 	}
 
-	public Sim findByNo(String no) {
-		return mongoTemplate.findOne(new Query(Criteria.where("no").is(no)), Sim.class);
+	public SimInfo findByNo(String no) {
+		return mongoTemplate.findOne(new Query(Criteria.where("no").is(no)), SimInfo.class);
 	}
 
-	public Sim findById(ObjectId id) {
-		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), Sim.class);
+	public SimInfo findById(ObjectId id) {
+		return mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), SimInfo.class);
+	}
+
+	public String getImportDir() {
+		return importDir;
+	}
+
+	public void setImportDir(String importDir) {
+		this.importDir = importDir;
+	}
+
+	public void importFromExcel(File excelFile) throws Exception {
+		ExcelHelper<SimInfo> excelHelper = new ExcelHelper<>(initObjectMapper(), SimInfo.class);
+		ReadExcelResult result = excelHelper.readFromExcel(excelFile);
+		for (Object s : result.getResult()) {
+			SimInfo simInfo = (SimInfo) s;
+			mongoTemplate.upsert(new Query(Criteria.where("serviceNumber").is(simInfo.getServiceNumber())), genUpdate(simInfo), SimInfo.class);
+		}
+		SimImportRecord importRecord = new SimImportRecord();
+		importRecord.setImportCount(result.getResult().size());
+		importRecord.setReportErrors(result.getReports());
+		mongoTemplate.insert(importRecord);
+		return ;
+	}
+
+	private List<ExcelObjectMapperDO> initObjectMapper() {
+		List<ExcelObjectMapperDO> list = new ArrayList<ExcelObjectMapperDO>();
+		ExcelObjectMapperDO serviceNumberMapperDO = new ExcelObjectMapperDO();
+		serviceNumberMapperDO.setExcelColumnName("业务号码");
+		serviceNumberMapperDO.setObjectFieldName("serviceNumber");
+		serviceNumberMapperDO.setObjectFieldType(String.class);
+		list.add(serviceNumberMapperDO);
+
+		ExcelObjectMapperDO usernameMapperDO = new ExcelObjectMapperDO();
+		usernameMapperDO.setExcelColumnName("用户姓名");
+		usernameMapperDO.setObjectFieldName("username");
+		usernameMapperDO.setObjectFieldType(String.class);
+		list.add(usernameMapperDO);
+
+		ExcelObjectMapperDO simUimNoMapperDO = new ExcelObjectMapperDO();
+		simUimNoMapperDO.setExcelColumnName("SIM/UIM卡号");
+		simUimNoMapperDO.setObjectFieldName("simUimCardNo");
+		simUimNoMapperDO.setObjectFieldType(String.class);
+		list.add(simUimNoMapperDO);
+
+		ExcelObjectMapperDO imsiNoMapperDO = new ExcelObjectMapperDO();
+		imsiNoMapperDO.setExcelColumnName("IMSI号");
+		imsiNoMapperDO.setObjectFieldName("simUimCardNo");
+		imsiNoMapperDO.setObjectFieldType(String.class);
+		list.add(imsiNoMapperDO);
+		return list;
+	}
+
+	public Update genUpdate(SimInfo simInfo) {
+		Update update = new Update().set("username", simInfo.getUsername()).set("simUimCardNo", simInfo.getSimUimCardNo()).set("imsiNo", simInfo.getImsiNo());
+		return update;
 	}
 }

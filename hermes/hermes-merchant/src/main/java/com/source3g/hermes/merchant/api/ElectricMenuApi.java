@@ -2,9 +2,6 @@ package com.source3g.hermes.merchant.api;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -25,6 +22,7 @@ import com.source3g.hermes.dto.merchant.ElectricMenuDto;
 import com.source3g.hermes.entity.merchant.ElectricMenu;
 import com.source3g.hermes.entity.merchant.ElectricMenuItem;
 import com.source3g.hermes.merchant.service.ElectricMenuService;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.Thumbnail;
 
 @Controller
@@ -49,8 +47,8 @@ public class ElectricMenuApi {
 		electricMenuItem.setTitle(title);
 		electricMenuItem.setUnit(unit);
 		electricMenuItem.setId(new ObjectId(itemId));
-		 	electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
-		 	return ReturnConstants.SUCCESS;
+		electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/updateItem/{menuId}/{itemId}", method = RequestMethod.POST)
@@ -60,10 +58,9 @@ public class ElectricMenuApi {
 		// unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
 		title = new String(title.getBytes("iso-8859-1"));
 		unit = new String(unit.getBytes("iso-8859-1"));
-		Date date = new Date();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
-		String suffxPath = dateFormat.format(date) + file.getOriginalFilename();
-		String suffxDestPath = dateFormat.format(date) + file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_s" + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+		String dirByDay = FormateUtils.getDirByDay();
+		String suffxPath = dirByDay + file.getOriginalFilename();
+		String suffxDestPath = dirByDay + file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_s" + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
 		String path = electricMenuService.getPicPath();
 		String filePath = path + suffxPath;
 		File fileToCopy = new File(filePath);
@@ -82,8 +79,8 @@ public class ElectricMenuApi {
 		electricMenuItem.setTitle(title);
 		electricMenuItem.setUnit(unit);
 		electricMenuItem.setId(new ObjectId(itemId));
-		 electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
-	 	return ReturnConstants.SUCCESS;
+		electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/addItem/{menuId}", method = RequestMethod.POST)
@@ -93,10 +90,9 @@ public class ElectricMenuApi {
 		// unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
 		title = new String(title.getBytes("iso-8859-1"));
 		unit = new String(unit.getBytes("iso-8859-1"));
-		Date date = new Date();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/");
-		String suffxPath = dateFormat.format(date) + file.getOriginalFilename();
-		String suffxDestPath = dateFormat.format(date) + file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_s" + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+		String dirByDay = FormateUtils.getDirByDay();
+		String suffxPath = dirByDay + file.getOriginalFilename();
+		String suffxDestPath = dirByDay + file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")) + "_s" + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
 		String path = electricMenuService.getPicPath();
 		String filePath = path + suffxPath;
 		File fileToCopy = new File(filePath);
@@ -158,8 +154,8 @@ public class ElectricMenuApi {
 
 	@RequestMapping(value = "update/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String update(@RequestBody ElectricMenu electricMenu,@PathVariable ObjectId merchantId) {
-		electricMenuService.updateMenu(electricMenu,merchantId);
+	public String update(@RequestBody ElectricMenu electricMenu, @PathVariable ObjectId merchantId) {
+		electricMenuService.updateMenu(electricMenu, merchantId);
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -173,9 +169,9 @@ public class ElectricMenuApi {
 	@RequestMapping(value = "/add/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody ElectricMenuDto electricMenuDto, @PathVariable ObjectId merchantId) {
-		return 	electricMenuService.addMenu(electricMenuDto.getMenus(), merchantId);
+		return electricMenuService.addMenu(electricMenuDto.getMenus(), merchantId);
 	}
-	
+
 	@RequestMapping(value = "/sync/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public String sync(@PathVariable ObjectId merchantId) throws Exception {
@@ -185,8 +181,8 @@ public class ElectricMenuApi {
 
 	@RequestMapping(value = "/titleValidate/{menuId}/{title}", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean titleValidate(@PathVariable  ObjectId menuId, @PathVariable String  title) {
-		return electricMenuService.titleValidate(menuId,title);
+	public Boolean titleValidate(@PathVariable ObjectId menuId, @PathVariable String title) {
+		return electricMenuService.titleValidate(menuId, title);
 	}
-	
+
 }

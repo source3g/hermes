@@ -197,7 +197,7 @@
 				// Backend Settings
 				upload_url : "${pageContext.request.contextPath}/merchant/account/electricMenu/addItem/",
 				file_size_limit : "2 MB", // 2MB
-				file_types : "*.jpg;*.png",
+				file_types : "*.jpg;*.png;*.gif;*.bmp;*.JPEG",
 				file_types_description : "Images",
 				file_upload_limit : "1",
 

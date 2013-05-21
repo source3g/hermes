@@ -9,13 +9,15 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.source3g.hermes.constants.Constants;
+
 public class FormateUtils {
-	
-	public static String changeEncode(String str,String fromEncode,String toEncode) throws UnsupportedEncodingException{
-		if(StringUtils.isEmpty(str)){
+
+	public static String changeEncode(String str, String fromEncode, String toEncode) throws UnsupportedEncodingException {
+		if (StringUtils.isEmpty(str)) {
 			return StringUtils.EMPTY;
-		}else{
-			return new String(str.getBytes(fromEncode),toEncode);
+		} else {
+			return new String(str.getBytes(fromEncode), toEncode);
 		}
 	}
 
@@ -98,5 +100,11 @@ public class FormateUtils {
 	public static String getTimeStampStr() {
 		Date date = new Date();
 		return String.valueOf(date.getTime());
+	}
+
+	public static String getDirByDay() {
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.FILE_PATH_DATE_FORMAT);
+		String result = sdf.format(new Date());
+		return result;
 	}
 }

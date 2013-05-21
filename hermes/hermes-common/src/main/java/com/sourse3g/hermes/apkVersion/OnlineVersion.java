@@ -9,6 +9,7 @@ public class OnlineVersion extends AbstractEntity {
 	private static final long serialVersionUID = 1644988623170723623L;
 
 	private String apkVersion;
+	private VersionType versionType;
 
 	public String getApkVersion() {
 		return apkVersion;
@@ -17,5 +18,16 @@ public class OnlineVersion extends AbstractEntity {
 	public void setApkVersion(String apkVersion) {
 		this.apkVersion = apkVersion;
 	}
+	
+	public VersionType getVersionType() {
+		return versionType;
+	}
 
+	public void setVersionType(VersionType versionType) {
+		this.versionType = versionType;
+	}
+
+	public enum VersionType{
+		RELEASE,
+	}
 }
