@@ -16,7 +16,7 @@
 		<thead>
 			<tr>
 				<th width="14%">版本号(测试版)</th>
-				<th width="14%">版本号(正式版)</th>
+				<th width="14%">版本号(稳定版)</th>
 				<th width="10%">编码号</th>
 				<th width="14%">版本文件地址</th>
 				<th width="14%">版本上传时间</th>
@@ -82,7 +82,7 @@
      		$("input[value='"+test+"'][name='onlineVersionRadio']").attr("checked","checked");
      		return ;
      	}
-    	var code=$(el).parent().next().html();
+    	var version=$(el).val();
     	if(confirm("你确定更换版本?"))
     	{
     		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"version":version},function (data,status){
