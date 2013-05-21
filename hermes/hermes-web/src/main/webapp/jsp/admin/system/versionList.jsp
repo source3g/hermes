@@ -15,19 +15,22 @@
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="14%">版本号</th>
+				<th width="14%">版本号(测试版)</th>
+				<th width="14%">版本号(正式版)</th>
 				<th width="10%">编码号</th>
-				<th width="18%">版本文件地址</th>
-				<th width="18%">版本上传时间</th>
-				<th width="20%">md5</th>
-				<th width="20%">版本描述</th>
+				<th width="14%">版本文件地址</th>
+				<th width="14%">版本上传时间</th>
+				<th width="17%">md5</th>
+				<th width="17%">版本描述</th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${page.data}" var="version">
 				<tr>
+					<td><input type="radio" name="testVersionRadio"
+						value="" onclick="return seltest(this);"></td>
 					<td><input type="radio" name="onlineVersionRadio"
-						value="${version.apkVersion }" onclick="return selOnline('${version.code}');"
+						value="${version.apkVersion }" onclick="return selOnline(this);"
 						<c:if test="${onlineVersion.apkVersion eq version.apkVersion }">checked="checked"</c:if>>${version.apkVersion}</td>
 					<td>${version.code}</td>
 					<td>${version.url}</td>
@@ -70,17 +73,41 @@
 		};
 		$('#queryForm').ajaxSubmit(options);
 	}
-    
-    function selOnline(code){
+    var test=$("input[name='onlineVersionRadio']:checked").val();
+    function selOnline(el){
+    	 if($(el).parent().prev().children().attr("checked")=="checked"){
+     		alert("测试版与正式版不能共存");
+     		$(el).removeAttr("checked");
+     		$("input[value='"+test+"'][name='onlineVersionRadio']").attr("checked","checked");
+     		return ;
+     	}
+    	var code=$(el).parent().next().html();
     	if(confirm("你确定更换版本?"))
     	{
     		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"code":code},function (data,status){
     			alert("更换成功");
+    			showContentInfo(data);
     		});
     		return true;
     	}else{
     		return false;
     	}
+    }
+    
+    function seltest(el){
+    	if($(el).parent().next().children().attr("checked")=="checked"){
+     		alert("测试版与正式版不能共存");
+     		$(el).removeAttr("checked","false");
+     		return ;
+     	}
+    	  	if(confirm("你确定更换版本?"))
+        	{
+    	  		
+        	alert("更换成功");
+        		return true;
+        	}else{
+        		return false;
+        	}
     }
 	</script>
 </body>
