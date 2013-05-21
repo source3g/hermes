@@ -27,7 +27,7 @@ public class OnlineVersion extends AbstractEntity {
 		this.versionType = versionType;
 	}
 
-	public enum VersionType{
-		RELEASE,
+	public enum VersionType {
+		RELEASE, BETA
 	}
 }

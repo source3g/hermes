@@ -79,7 +79,7 @@ public class SimService extends BaseService {
 		importRecord.setImportCount(result.getResult().size());
 		importRecord.setReportErrors(result.getReports());
 		mongoTemplate.insert(importRecord);
-		return ;
+		return;
 	}
 
 	private List<ExcelObjectMapperDO> initObjectMapper() {
@@ -87,7 +87,7 @@ public class SimService extends BaseService {
 		ExcelObjectMapperDO serviceNumberMapperDO = new ExcelObjectMapperDO();
 		serviceNumberMapperDO.setExcelColumnName("业务号码");
 		serviceNumberMapperDO.setObjectFieldName("serviceNumber");
-		serviceNumberMapperDO.setObjectFieldType(String.class);
+		serviceNumberMapperDO.setObjectFieldType(Long.class);
 		list.add(serviceNumberMapperDO);
 
 		ExcelObjectMapperDO usernameMapperDO = new ExcelObjectMapperDO();
@@ -104,8 +104,8 @@ public class SimService extends BaseService {
 
 		ExcelObjectMapperDO imsiNoMapperDO = new ExcelObjectMapperDO();
 		imsiNoMapperDO.setExcelColumnName("IMSI号");
-		imsiNoMapperDO.setObjectFieldName("simUimCardNo");
-		imsiNoMapperDO.setObjectFieldType(String.class);
+		imsiNoMapperDO.setObjectFieldName("imsiNo");
+		imsiNoMapperDO.setObjectFieldType(Long.class);
 		list.add(imsiNoMapperDO);
 		return list;
 	}

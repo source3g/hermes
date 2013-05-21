@@ -226,4 +226,8 @@ public class DeviceService extends BaseService {
 		// System.out.println(getSecret1(s.split("\\|")[0], s.split("\\|")[1]));
 	}
 
+	public void updateImsiNo(String sn, String imsiNo) {
+		
+	}
+
 }
