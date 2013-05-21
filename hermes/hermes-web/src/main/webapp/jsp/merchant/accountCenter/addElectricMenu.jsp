@@ -72,16 +72,37 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			if(${empty update}){
-				$("#menuSel").change(function (){
-					$('#title').attr("value","");
-				});	
-			}
+			$("#menuSel").change(function (){
+				/* $("#title").rules("remove","number remote");  
+		 		$("#title").rules("add", {
+						  remote : {	
+							type : "get",
+							url : "${pageContext.request.contextPath}/merchant/account/titleValidate",
+							data : {
+								"title" : function() {
+									return $('#title').val();
+								},
+							"menuId":function() {
+								return $('#menuSel').val();
+							}
+							}
+						}   ,
+				   	 messages: {  
+						 remote : "菜单名称不能重复" 
+					 }    
+					}); 
+				if (!$("#title").valid()) {
+			 		return false;
+				 }  */
+				 $("#title").attr("value"," ");
+			});
+			
 				var validateOptions={
 						rules : {
 							title : {
+								number:true,
 								required : true,
-							remote : {
+							 remote : {
 									type : "get",
 									url : "${pageContext.request.contextPath}/merchant/account/titleValidate",
 									data : {
@@ -92,7 +113,7 @@
 										return $('#menuSel').val();
 									}
 									}
-								} 
+								}  
 							},
 							uploadFile:{
 								validateFile : true
@@ -108,6 +129,7 @@
 						},
 						messages : {
 							title : {
+								number:"填写数字",
 								required : "请填写有效菜名",
 								remote : "菜单名称不能重复"
 							},
@@ -156,6 +178,7 @@
 				if (!$("#addElectricMenuItemForm").valid()) {
 			 		return false;
 				 } 
+				
 				var post_params = {
 					"menuId" : $("#menuSel").val(),
 					"title" : $("#title").val(),
