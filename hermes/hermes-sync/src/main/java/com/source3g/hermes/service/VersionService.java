@@ -78,11 +78,12 @@ public class VersionService extends BaseService {
 		}
 		return result;
 	}
+
 	public Boolean codeValidate(int codeInt) {
-		Boolean result=true;
-		List<ApkVersion> list=mongoTemplate.find(new Query(Criteria.where("code").is(codeInt)), ApkVersion.class);
-		if(list.size()>0){
-			result=false;
+		Boolean result = true;
+		List<ApkVersion> list = mongoTemplate.find(new Query(Criteria.where("code").is(codeInt)), ApkVersion.class);
+		if (list.size() > 0) {
+			result = false;
 			return result;
 		}
 		return result;
