@@ -44,7 +44,7 @@ public class SimService extends BaseService {
 		Page page = new Page();
 	 if (StringUtils.isNotEmpty(serviceNumber)) {
 			Pattern pattern = Pattern.compile("^.*" + serviceNumber + ".*$", Pattern.CASE_INSENSITIVE);
-			criteria.and("serviceNumber").is(pattern);
+			criteria.and("serviceNo").is(pattern);
 		}
 		if(StringUtils.isNotEmpty(imsiNo)){
 			Pattern pattern = Pattern.compile("^.*" + imsiNo + ".*$", Pattern.CASE_INSENSITIVE);

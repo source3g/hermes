@@ -10,8 +10,8 @@
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
 	<label class="control-label" for="no">SIM卡号：</label>
-	<input type="text" name="serviceNumber" value="${serviceNumber}" placeholder="请输入SIM卡号...">
-	<input type="text" name="imsiNo" value="${imsiNo}" placeholder="请输入IMSI卡号...">
+	<input type="text" name="serviceNo" value="${sim.serviceNo}" placeholder="请输入SIM卡号...">
+	<input type="text" name="imsiNo" value="${sim.imsiNo}" placeholder="请输入IMSI卡号...">
 	<input id="pageNo" name="pageNo" type="hidden">
 	<input type="submit" class="btn btn-primary"
 			value="查询">
@@ -28,7 +28,7 @@
 		<c:forEach items="${page.data}" var="simInfo">
 			<tr>
 				<td>${simInfo.username }</td>
-				<td>${simInfo.serviceNumber }</td>
+				<td>${simInfo.serviceNo }</td>
 				<td>${simInfo.simUimCardNo }</td>
 				<td>${simInfo.imsiNo }</td>
 			</tr>

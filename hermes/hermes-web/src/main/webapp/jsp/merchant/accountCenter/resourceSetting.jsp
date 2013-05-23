@@ -56,7 +56,6 @@
 			if(${not empty success}){
 				alert("保存成功");
 			}
-			
 					$.get("${pageContext.request.contextPath}/merchant/account/merchantResource", drawTable);
 					function drawTable(data) {
 						for ( var i = 0; i < data.resourceList.length; i++) {
