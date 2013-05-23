@@ -73,34 +73,12 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#menuSel").change(function (){
-				/* $("#title").rules("remove","number remote");  
-		 		$("#title").rules("add", {
-						  remote : {	
-							type : "get",
-							url : "${pageContext.request.contextPath}/merchant/account/titleValidate",
-							data : {
-								"title" : function() {
-									return $('#title').val();
-								},
-							"menuId":function() {
-								return $('#menuSel').val();
-							}
-							}
-						}   ,
-				   	 messages: {  
-						 remote : "菜单名称不能重复" 
-					 }    
-					}); 
-				if (!$("#title").valid()) {
-			 		return false;
-				 }  */
 				 $("#title").attr("value"," ");
 			});
 			
 				var validateOptions={
 						rules : {
-							title : {
-								number:true,
+							 title : {
 								required : true,
 							 remote : {
 									type : "get",
@@ -114,13 +92,13 @@
 									}
 									}
 								}  
-							},
+							}, 
+							price:{
+									required : true,
+									number :true
+							}, 
 							uploadFile:{
 								validateFile : true
-							},
-							price:{
-								required : true,
-								number :true
 							},
 							unit:{
 								required : true
@@ -128,20 +106,19 @@
 					
 						},
 						messages : {
-							title : {
-								number:"填写数字",
+							 title : {
 								required : "请填写有效菜名",
 								remote : "菜单名称不能重复"
-							},
+							}, 
+						 	price:{
+								required : "请填写有效价格 ",
+								number : "请输入有效数字"
+							}, 
 							uploadFile:{
 								validateFile : "请选择上传文件"
 							},
-							price:{
-								required : "请填写有效价格 ",
-								number :"请输入有效数字"
-							},
 							unit:{
-								required : "请填写有效数量"
+								required : "单位不能为空"
 							}
 						
 						}

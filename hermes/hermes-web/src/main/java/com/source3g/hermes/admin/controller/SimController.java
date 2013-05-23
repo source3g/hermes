@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.source3g.hermes.entity.sim.SimInfo;
 import com.source3g.hermes.utils.ConfigParams;
+import com.source3g.hermes.utils.Page;
 
 @Controller
 @RequestMapping("/admin/sim")
@@ -66,20 +69,22 @@ public class SimController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(SimInfo sim, String pageNo) {
-		// logger.debug("list.......");
-		// if (StringUtils.isEmpty(pageNo)) {
-		// pageNo = "1";
-		// }
-		// String uri = ConfigParams.getBaseUrl() + "sim/list/?pageNo=" +
-		// pageNo;
-		// if (StringUtils.isNotEmpty(sim.getNo())) {
-		// uri += "&no=" + sim.getNo();
-		// }
-		// Page page = restTemplate.getForObject(uri, Page.class);
-		// Map<String, Object> model = new HashMap<String, Object>();
-		// model.put("page", page);
-		return new ModelAndView("admin/sim/list");
+	public String list(SimInfo sim, String pageNo,Model model) {
+		 if (StringUtils.isEmpty(pageNo)) {
+		 pageNo = "1";
+		 }
+		 String uri = ConfigParams.getBaseUrl() + "sim/list/?pageNo=" +pageNo;
+		 if (StringUtils.isNotEmpty(sim.getServiceNumber())) {
+		 uri += "&serviceNumber=" + sim.getServiceNumber();
+			model.addAttribute("serviceNumber", sim.getServiceNumber());
+		 }
+		 if (StringUtils.isNotEmpty(sim.getImsiNo())) {
+			 uri += "&imsiNo=" + sim.getImsiNo();
+			 model.addAttribute("imsiNo", sim.getImsiNo());
+			 }
+		 Page page = restTemplate.getForObject(uri, Page.class);
+		model.addAttribute("page", page);
+		return "/admin/sim/list";
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)

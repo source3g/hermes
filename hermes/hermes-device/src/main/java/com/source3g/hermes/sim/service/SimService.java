@@ -3,7 +3,9 @@ package com.source3g.hermes.sim.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -35,11 +37,21 @@ public class SimService extends BaseService {
 		return false;
 	}
 
-	public Page list(int pageNo, SimInfo sim) {
+	public Page list(int pageNo, String serviceNumber,String imsiNo) {
 		Query query = new Query();
+		Criteria criteria=new Criteria();
 		query.with(new Sort(Direction.DESC, "_id"));
 		Page page = new Page();
-		Long totalCount = mongoTemplate.count(query, SimService.class);
+	 if (StringUtils.isNotEmpty(serviceNumber)) {
+			Pattern pattern = Pattern.compile("^.*" + serviceNumber + ".*$", Pattern.CASE_INSENSITIVE);
+			criteria.and("serviceNumber").is(pattern);
+		}
+		if(StringUtils.isNotEmpty(imsiNo)){
+			Pattern pattern = Pattern.compile("^.*" + imsiNo + ".*$", Pattern.CASE_INSENSITIVE);
+			criteria.and("imsiNo").is(pattern);
+		}
+		query.addCriteria(criteria);
+		Long totalCount = mongoTemplate.count(query, SimInfo.class);
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
 		List<SimInfo> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), SimInfo.class);

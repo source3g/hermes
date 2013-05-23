@@ -10,7 +10,8 @@
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
 	<label class="control-label" for="no">SIM卡号：</label>
-	<input type="text" name="no" value="${sim.no}" placeholder="请输入SIM卡号...">
+	<input type="text" name="serviceNumber" value="${serviceNumber}" placeholder="请输入SIM卡号...">
+	<input type="text" name="imsiNo" value="${imsiNo}" placeholder="请输入IMSI卡号...">
 	<input id="pageNo" name="pageNo" type="hidden">
 	<input type="submit" class="btn btn-primary"
 			value="查询">
@@ -18,15 +19,18 @@
 	<table class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="30%">SIM卡号</th>
+				<th width="25%">用户名</th>
+				<th width="25%">SIM卡号</th>
+				<th width="25%">simUimCard号</th>
+				<th width="25%">imsi编码</th>
 			</tr>
 		</thead>
-		<c:forEach items="${page.data}" var="sim">
+		<c:forEach items="${page.data}" var="simInfo">
 			<tr>
-				<td>${sim.no }</td>
-				<td>
-				<a class="btn btn-danger" href="javascript:void();" onclick="deleteById('${sim.id}');">删除</a></td>
-				
+				<td>${simInfo.username }</td>
+				<td>${simInfo.serviceNumber }</td>
+				<td>${simInfo.simUimCardNo }</td>
+				<td>${simInfo.imsiNo }</td>
 			</tr>
 		</c:forEach>
 	</table>
@@ -52,13 +56,6 @@
 	
 	<script type="text/javascript">
 	
-		function deleteById(id) {
-		$.ajax({
-			url:"${pageContext.request.contextPath}/admin/sim/delete/"+id+"/",
-			type:"get",
-			success:showContentInfo		
-		});	
-	}
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
 			var options={
