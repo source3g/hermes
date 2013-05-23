@@ -231,15 +231,16 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/updateMerchantResource", method = RequestMethod.POST)
-	public ModelAndView updateMerchantResource(String messageContent, RedirectAttributes redirectAttributes) throws Exception {
+	@ResponseBody
+	public String updateMerchantResource( String messageContent ) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant();
 		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/";
 		HttpEntity<String> entity = new HttpEntity<String>(messageContent);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			redirectAttributes.addFlashAttribute("success", "success");
+			return result;
 		}
-		return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
+		return null;
 	}
 
 	@RequestMapping(value = "/info")

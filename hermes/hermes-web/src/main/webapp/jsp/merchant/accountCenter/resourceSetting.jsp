@@ -23,11 +23,11 @@
 	<p>发送短信实际效果：2013-04-12您在XXX酒店预定了101包间.</p>
 	<br>
 
-	<form id="addMerchantResourceForm1" method="post" class="form-inline">
+	<form id="addMerchantResourceForm1" class="form-inline">
 		<h3>编辑短信内容</h3>
 		<textarea rows="8" class="span6" id="messageContent"
 			name="messageContent"></textarea>
-		<br> <input type="submit" class="btn btn-primary" value="保存">
+		<br> <input type=submit class="btn btn-primary" id="updateMerchantResource" value="保存">
 		<%-- <label><c:if test="${not empty success }">保存成功</c:if> </label> --%>
 	</form>
 
@@ -53,10 +53,6 @@
 	</table>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			if(${not empty success}){
-				alert("保存成功");
-			}
-			
 					$.get("${pageContext.request.contextPath}/merchant/account/merchantResource", drawTable);
 					function drawTable(data) {
 						for ( var i = 0; i < data.resourceList.length; i++) {
@@ -99,15 +95,23 @@
 			$(this).ajaxSubmit(options);
 			return false;
 		});
-		$("#addMerchantResourceForm1").submit(function() {
+ 		$("#addMerchantResourceForm1").submit(function() {
 			options = {
 				url : "${pageContext.request.contextPath}/merchant/account/updateMerchantResource",
-				type : "post",
-				success : showContentInfo
+				type: "post",
+				success : showInfo
 			};
 			$(this).ajaxSubmit(options);
+			
 			return false;
-		});
+	
+		}); 
+	 	function showInfo(data){
+			  	 if(${data eq success}){
+					alert("保存成功");
+				}  
+			}
+		
 	</script>
 </body>
 </html>

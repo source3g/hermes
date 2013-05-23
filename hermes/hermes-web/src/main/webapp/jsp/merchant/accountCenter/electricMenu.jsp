@@ -204,7 +204,6 @@
 					menus.push(electricMenu);
 				}
 			});
-			
 			//验证类别名是否重复
 	 		for(var i=0;i<menus.length;i++){
 			 	for(var j=i+1;j<menus.length;j++){
@@ -229,7 +228,6 @@
 				alert("类别不能为空");
 				return false;
 			} 
-			
 			var strJson = "{";
 			for ( var tagsIndex = 0; tagsIndex < menus.length; tagsIndex++) {
 				strJson += "\"menus[" + tagsIndex + "].name\":\"";
@@ -240,6 +238,7 @@
 			}
 			strJson += "}";
 			var dataJson = eval('(' + strJson + ')');
+			alert(strJson);
 			$.post("${pageContext.request.contextPath}/merchant/account/electricMenu/add/", dataJson, showInfo);
 		}
 

@@ -367,6 +367,7 @@
 				<c:if test="${not empty update}">
 				url:"${pageContext.request.contextPath}/admin/merchant/update/",
 				</c:if>
+				 async:false,//同步执行
 				success :showContentInfo
 			}; 
 			$(this).ajaxSubmit(options);
