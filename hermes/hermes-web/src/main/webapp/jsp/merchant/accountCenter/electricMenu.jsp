@@ -210,7 +210,7 @@
 			 	for(var j=i+1;j<menus.length;j++){
 					if(menus[i].name==menus[j].name){
 						alert("类别名称重复");
-						return ;
+						return false;
 					}  
 				} 
 			} 
@@ -218,7 +218,7 @@
 	 			for(var h=0;h<validatamenus.length;h++){
 					if(menus[g].name==validatamenus[h]){
 						alert("类别名称重复");
-						return ;
+						return false;
 					} 
 				}
 	 		} 
@@ -227,7 +227,7 @@
 			var tds=$("td[class='node']").length;
 			if(itemTrs+menus.length!=tds){
 				alert("类别不能为空");
-				return ;
+				return false;
 			} 
 			
 			var strJson = "{";

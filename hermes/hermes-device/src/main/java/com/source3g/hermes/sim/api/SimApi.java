@@ -50,11 +50,10 @@ public class SimApi {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String no) {
+	public Page list(String pageNo, String serviceNumber,String imsiNo) {
 		logger.debug("list device....");
 		int pageNoInt = Integer.valueOf(pageNo);
-		SimInfo sim = new SimInfo();
-		return simService.list(pageNoInt, sim);
+		return simService.list(pageNoInt, serviceNumber, imsiNo);
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
