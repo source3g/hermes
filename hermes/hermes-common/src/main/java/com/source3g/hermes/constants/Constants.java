@@ -4,4 +4,5 @@ public interface Constants {
 	public String DATE_FORMAT_OF_DAY="yyyy-MM-dd";
 	public String DATE_FORMAT="yyyy-MM-dd HH:mm:ss";
 	public String FILE_PATH_DATE_FORMAT="yyyy/MM/dd/";
+	public String FILE_PATH_MONTH_FORMAT="yyyy/MM/";
 }

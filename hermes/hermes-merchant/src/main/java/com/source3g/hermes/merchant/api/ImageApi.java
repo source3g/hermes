@@ -21,9 +21,9 @@ public class ImageApi {
 	@Autowired
 	private BaseService baseService;
 
-	@RequestMapping(value = "/{year}/{month}/{fileName}")
-	public void writeElectricMenuImage(@PathVariable String year, @PathVariable String month, @PathVariable String fileName, HttpServletResponse response) throws IOException {
-		File file = new File(baseService.getPicPath() + year + "/" + month + "/" + fileName);
+	@RequestMapping(value = "/{year}/{month}/{day}/{fileName}")
+	public void writeElectricMenuImage(@PathVariable String year, @PathVariable String month,@PathVariable String day, @PathVariable String fileName, HttpServletResponse response) throws IOException {
+		File file = new File(baseService.getPicPath() + year + "/" + month + "/"+day+"/" + fileName);
 		FileInputStream inputStream = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
 		inputStream.read(data);

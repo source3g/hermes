@@ -73,6 +73,14 @@ public class DeviceApi {
 		String idArray[] = ids.split(",");
 		return deviceService.findByIds(Arrays.asList(idArray));
 	}
+	
+	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Device> deviceDetail(@PathVariable String ids) {
+		String idArray[] = ids.split(",");
+		return deviceService.findByIds(Arrays.asList(idArray));
+	}
+
 
 	@RequestMapping(value = "/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody

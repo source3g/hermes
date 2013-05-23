@@ -6,7 +6,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>盒子列表</title>
-
 </head>
 <body>
 
@@ -22,31 +21,30 @@
 		<thead>
 			<tr>
 				<th width="20%">名称</th>
-				<th width="20%">绑定SIM卡号</th>
-				<th width="20%">绑定状态</th>
+				<th width="20%">卡号</th>
+				<th width="20%">imsi号</th>
 				<th width="20%">软件版本</th>
 				<th width="20%">操作</th>
 			</tr>
 		</thead>
 
-		<c:forEach items="${page.data}" var="deviceVo">
+		<c:forEach items="${page.data}" var="device">
 			<tr>
-				<td>${deviceVo.device.sn}</td>
-				<td>${deviceVo.device.sim.no}</td>
-				<td><c:if test="${not empty deviceVo.merchant.name}">[已绑定商户 : ${deviceVo.merchant.name}]</c:if>
-					<c:if test="${empty deviceVo.merchant.name}">[未绑定商户]</c:if></td>
+				<td>${device.sn}</td>
+				<td>${device.simInfo.serviceNo}</td>
+				<td>${device.simInfo.imsiNo}</td>
 				<td><c:choose>
-						<c:when test="${not empty deviceVo.device.apkVersion }">
-						${deviceVo.device.apkVersion }
+						<c:when test="${not empty device.apkVersion }">
+						${device.apkVersion }
 					</c:when>
 						<c:otherwise>
 						未知
 					</c:otherwise>
 					</c:choose></td>
 				<td><a class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${deviceVo.device.id}');">删除</a> <a
+					onclick="deleteById('${device.id}');">删除</a> <a
 					class="btn btn-success" href="javascript:void();"
-					onclick="detialOfDevice('${deviceVo.device.id}');">详细信息</a></td>
+					onclick="deviceDetail('${device.id}');">详细信息</a></td>
 			</tr>
 		</c:forEach>
 
@@ -108,15 +106,12 @@
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
-		function detialOfDevice(id){
+		function deviceDetail((id){
 			$.ajax({
-				url:"${pageContext.request.contextPath}/admin/device/detialOfDevice/"+id+"/",
+				url:"${pageContext.request.contextPath}/admin/device/deviceDetail/"+id+"/",
 				type:"get",
-				success:toDeviceInformation
+				success:showContentInfo
 			});
-		}
-		function toDeviceInformation(data){
-			$("#pageContentFrame").html(data);
 		}
 	</script>
 </body>

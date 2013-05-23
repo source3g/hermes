@@ -28,7 +28,6 @@ import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.MD5;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.DeviceDistributionVo;
-import com.source3g.hermes.vo.DeviceVo;
 import com.sourse3g.hermes.branch.BranchCompany;
 import com.sourse3g.hermes.branch.Saler;
 
@@ -65,17 +64,7 @@ public class DeviceService extends BaseService {
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNo);
 		List<Device> devices = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
-		List<DeviceVo> deviceVosList = new ArrayList<DeviceVo>();
-		for (Device d : devices) {
-			DeviceVo deviceVo = new DeviceVo();
-			deviceVo.setDevice(d);
-			Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(d.getId())), Merchant.class);
-			if (merchant != null) {
-				deviceVo.setMerchant(merchant);
-			}
-			deviceVosList.add(deviceVo);
-		}
-		page.setData(deviceVosList);
+		page.setData(devices);
 		return page;
 	}
 
