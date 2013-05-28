@@ -22,6 +22,7 @@ import com.source3g.hermes.entity.device.PublicKey;
 import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.DeviceDistributionVo;
+import com.source3g.hermes.vo.DeviceVo;
 
 @Controller
 @RequestMapping("/device")
@@ -73,14 +74,12 @@ public class DeviceApi {
 		String idArray[] = ids.split(",");
 		return deviceService.findByIds(Arrays.asList(idArray));
 	}
-	
+
 	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Device> deviceDetail(@PathVariable String ids) {
-		String idArray[] = ids.split(",");
-		return deviceService.findByIds(Arrays.asList(idArray));
+	public DeviceVo deviceDetail(@PathVariable String id) {
+		return deviceService.findDetail(new ObjectId(id));
 	}
-
 
 	@RequestMapping(value = "/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
@@ -126,7 +125,7 @@ public class DeviceApi {
 	@RequestMapping(value = "/sync/status/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<DeviceStatusDto> syncStatus(@PathVariable String merchantId) {
-		return deviceService.findDeviceStatusByMerchantId(merchantId);
+		return deviceService.findDeviceStatusByMerchantId(new ObjectId(merchantId));
 	}
 
 	@RequestMapping(value = "/publicKey")

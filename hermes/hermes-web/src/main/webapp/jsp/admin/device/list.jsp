@@ -74,9 +74,6 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			if(${not empty error}==true){
-				alert('${error}');
-			} 
 			initPage(${page.currentPage},${page.totalPageCount});
 			$("#queryForm").submit(function(){
 				goToPage(1);
@@ -96,17 +93,19 @@
 		}
 
 		function deleteById(id) {
+			if(confirm("确定删除？")){
 			$.ajax({
 				url : "${pageContext.request.contextPath}/admin/device/delete/" + id + "/",
 				type : "get",
 				success : showContentInfo
 			});
+			}
 		}
 		function showError() {
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
-		function deviceDetail((id){
+		function deviceDetail(id){
 			$.ajax({
 				url:"${pageContext.request.contextPath}/admin/device/deviceDetail/"+id+"/",
 				type:"get",

@@ -28,6 +28,7 @@ import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.MD5;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.DeviceDistributionVo;
+import com.source3g.hermes.vo.DeviceVo;
 import com.sourse3g.hermes.branch.BranchCompany;
 import com.sourse3g.hermes.branch.Saler;
 
@@ -109,9 +110,9 @@ public class DeviceService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("sn").is(sn)), update, Device.class);
 	}
 
-	public List<DeviceStatusDto> findDeviceStatusByMerchantId(String merchantId) {
+	public List<DeviceStatusDto> findDeviceStatusByMerchantId(ObjectId merchantId) {
 		List<DeviceStatusDto> result = new ArrayList<DeviceStatusDto>();
-		Merchant merchant = mongoTemplate.findById(new ObjectId(merchantId), Merchant.class);
+		Merchant merchant = mongoTemplate.findById(merchantId, Merchant.class);
 		List<ObjectId> ids = merchant.getDeviceIds();
 		if (CollectionUtils.isEmpty(ids)) {
 			return null;
@@ -128,14 +129,14 @@ public class DeviceService extends BaseService {
 				deviceStatusDto.setLastAskTime(deviceStatus.getLastAskTime());
 				Long restTaskCount = 0L;
 				if (TaskConstants.INIT.equals(deviceStatus.getStatus())) {
-					TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(new ObjectId(merchantId)).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
+					TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(merchantId).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
 					if (lastAllPackage != null) {
-						restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(new ObjectId(merchantId))), TaskPackage.class);
+						restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(merchantId)), TaskPackage.class);
 					} else {
 						restTaskCount = 0L;
 					}
 				} else {
-					restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(new ObjectId(merchantId)).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
+					restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(deviceStatus.getLastTaskId()).and("merchantId").is(merchantId).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
 				}
 				deviceStatusDto.setRestTaskCount(restTaskCount);
 			}
@@ -234,5 +235,28 @@ public class DeviceService extends BaseService {
 		} else {
 			mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(device.getId())), new Update().set("simInfo", newSimInfo), Device.class);
 		}
+	}
+
+	public DeviceVo findDetail(ObjectId objectId) {
+		Device device = super.findOne(new Query(Criteria.where("_id").is(objectId)), Device.class);
+		DeviceVo deviceVo = new DeviceVo();
+		deviceVo.setDevice(device);
+		Merchant merchant = super.findOne(new Query(Criteria.where("deviceIds").is(objectId)), Merchant.class);
+		deviceVo.setMerchant(merchant);
+		DeviceStatus status = super.findOne(new Query(Criteria.where("deviceSn").is(device.getSn())), DeviceStatus.class);
+		deviceVo.setDeviceStatus(status);
+		Long restTaskCount = 0L;
+		if (TaskConstants.INIT.equals(status.getStatus())) {
+			TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
+			if (lastAllPackage != null) {
+				restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(merchant.getId())), TaskPackage.class);
+			} else {
+				restTaskCount = 0L;
+			}
+		} else {
+			restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
+		}
+		deviceVo.setRestTaskCount(restTaskCount);
+		return null;
 	}
 }

@@ -3,7 +3,6 @@ package com.source3g.hermes.entity.customer;
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -13,12 +12,13 @@ import com.source3g.hermes.enums.Sex;
 public class CustomerImportItem extends AbstractEntity {
 	private static final long serialVersionUID = -1666811215606533985L;
 
-	@DBRef
+	//@DBRef
 	private CustomerImportLog importLog;
 	
 	private String name;
 	private Sex sex;
 	private String birthday;
+	
 	@NotEmpty(message="电话号码不能为空")
 	@Length(max=11,min=11,message="{电话号码位数不对}")
 	private String phone;

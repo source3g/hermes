@@ -22,6 +22,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -62,8 +64,8 @@ import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.message.CallInMessage;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
-import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.EntityUtils;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.utils.PhoneUtils;
 import com.source3g.hermes.vo.CallInStatisticsCount;
@@ -430,6 +432,19 @@ public class CustomerService extends BaseService {
 							if (value != null) {
 								double val = Double.parseDouble(value.toString());
 								cell.setCellValue(val);
+							}
+						} else if ("birthday".equals(fieldName)) {
+							value = getMethod.invoke(c, new Object[] {});
+							HSSFCell cell = row.createCell(i);
+							if (value != null) {
+								// double val =
+								// Double.parseDouble(value.toString());
+								DateFormat df = new SimpleDateFormat("MM-dd");
+								Date date = df.parse(value.toString());
+								HSSFCellStyle cellStyle = workbook.createCellStyle();
+								cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("m月d日"));
+								cell.setCellStyle(cellStyle);
+								cell.setCellValue(date);
 							}
 						} else {
 							value = getMethod.invoke(c, new Object[] {});

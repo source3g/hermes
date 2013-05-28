@@ -99,7 +99,7 @@ public class SimService extends BaseService {
 		ExcelObjectMapperDO serviceNumberMapperDO = new ExcelObjectMapperDO();
 		serviceNumberMapperDO.setExcelColumnName("业务号码");
 		serviceNumberMapperDO.setObjectFieldName("serviceNo");
-		serviceNumberMapperDO.setObjectFieldType(Long.class);
+		serviceNumberMapperDO.setObjectFieldType(String.class);
 		list.add(serviceNumberMapperDO);
 
 		ExcelObjectMapperDO usernameMapperDO = new ExcelObjectMapperDO();
@@ -117,7 +117,7 @@ public class SimService extends BaseService {
 		ExcelObjectMapperDO imsiNoMapperDO = new ExcelObjectMapperDO();
 		imsiNoMapperDO.setExcelColumnName("IMSI号");
 		imsiNoMapperDO.setObjectFieldName("imsiNo");
-		imsiNoMapperDO.setObjectFieldType(Long.class);
+		imsiNoMapperDO.setObjectFieldType(String.class);
 		list.add(imsiNoMapperDO);
 		return list;
 	}

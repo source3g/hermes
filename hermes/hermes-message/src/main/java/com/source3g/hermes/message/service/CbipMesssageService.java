@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.lxt2.javaapi.ActiveSubmitSender;
 import com.lxt2.javaapi.ClientEngine;
 import com.lxt2.javaapi.util.MsgConstant;
 import com.lxt2.protocol.cbip20.CbipSubmit;
@@ -13,11 +12,12 @@ import com.source3g.hermes.enums.PhoneOperator;
 import com.source3g.hermes.message.utils.DeliverReceiver;
 import com.source3g.hermes.message.utils.ReportReceiver;
 import com.source3g.hermes.message.utils.RespReceiver;
+import com.source3g.hermes.message.utils.SmsPassiveSubmitSender;
 
 @Service
-public class CbipMesssageService  {
+public class CbipMesssageService {
 	private Logger logger = LoggerFactory.getLogger(CbipMesssageService.class);
-	private ActiveSubmitSender activeSubmitSender;
+	// private ActiveSubmitSender activeSubmitSender = new ActiveSubmitSender();
 	private ClientEngine client;
 
 	@Value(value = "${cbip.loginName}")
@@ -50,7 +50,7 @@ public class CbipMesssageService  {
 		MsgConstant.clearTimeOut = 1000;
 		MsgConstant.clearSleepTime = 10;
 		MsgConstant.reconnectTime = 3;
-		client = new ClientEngine(new RespReceiver(), new ReportReceiver(), new DeliverReceiver());
+		client = new ClientEngine(new RespReceiver(), new ReportReceiver(), new DeliverReceiver(), new SmsPassiveSubmitSender());
 		logger.debug("loginName" + MsgConstant.loginName);
 		System.out.println("loginName" + MsgConstant.loginName);
 		System.out.println("启动引擎");
@@ -59,12 +59,12 @@ public class CbipMesssageService  {
 		System.out.println("启动完成");
 		logger.debug("启动完成");
 		// 初始化主动发送器
-		activeSubmitSender = new ActiveSubmitSender();
+		// activeSubmitSender
 	}
 
 	public String send(String msgId, String phoneNumber, String content, PhoneOperator operator) throws Exception {
 		// long clientSeq = Standard_SeqNum.computeSeqNoErr(1);
-		Long msgIdL=Long.parseLong(msgId);
+		Long msgIdL = Long.parseLong(msgId);
 		if (isTest) {
 			logger.debug("摸拟向" + phoneNumber + "发送了内容：" + content);
 			return msgId;
@@ -72,7 +72,7 @@ public class CbipMesssageService  {
 		if (client == null) {
 			init();
 		}
-		logger.debug("主动发送短信" + phoneNumber);
+		logger.debug("被动发送短信" + phoneNumber);
 		CbipSubmit smsSubmit = new CbipSubmit();
 		smsSubmit.setClientSeq(msgIdL);
 		smsSubmit.setSrcNumber("");
@@ -90,7 +90,9 @@ public class CbipMesssageService  {
 		smsSubmit.setSendTime(System.currentTimeMillis());
 		System.out.println("client.isConnected()" + client.isConnected());
 		logger.debug("client.isConnected()" + client.isConnected());
-		activeSubmitSender.sendSubmit(smsSubmit);
+		// activeSubmitSender.sendSubmit(smsSubmit);
+		SmsPassiveSubmitSender.push(smsSubmit);
+		logger.debug("发送完成:" + phoneNumber + ":" + content);
 		return msgId;
 	}
 

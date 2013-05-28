@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.jms.Destination;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +24,7 @@ import com.source3g.hermes.service.TaskService;
 @Controller
 @RequestMapping(value = "/task")
 public class TaskApi {
+	private Logger logger = LoggerFactory.getLogger(TaskApi.class);
 	@Autowired
 	private TaskService taskService;
 
@@ -36,7 +39,7 @@ public class TaskApi {
 		try {
 			return taskService.genTasks(sn);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.debug(e.getMessage());
 			return e.getMessage();
 		}
 	}

@@ -1,6 +1,7 @@
 package com.source3g.hermes.utils.excel;
 
 import java.io.File;
+import java.text.DecimalFormat;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
@@ -68,7 +69,9 @@ public class ExcelUtils {
 			if (HSSFDateUtil.isCellDateFormatted(cell)) {
 				value = String.valueOf(cell.getDateCellValue().getTime());
 			} else {
-				value = String.valueOf(cell.getNumericCellValue());
+				DecimalFormat dd = new DecimalFormat("0");
+				String lv = dd.format(cell.getNumericCellValue());
+				value = String.valueOf(lv);
 			}
 			break;
 		case Cell.CELL_TYPE_STRING:

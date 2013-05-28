@@ -25,7 +25,7 @@ public class ApiExceptionHandler implements HandlerExceptionResolver {
 	@Override
 	public ModelAndView resolveException(HttpServletRequest req, HttpServletResponse resp, Object obj, Exception e) {
 		//e.printStackTrace();
-		System.out.println(e.getMessage());
+//		System.out.println(e.getMessage());
 		logger.debug(e.getMessage());
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("error", e.getMessage());
@@ -41,7 +41,7 @@ public class ApiExceptionHandler implements HandlerExceptionResolver {
 				writer.write(objectMapper.writeValueAsString(e.getMessage()));// e.getMessage()
 			}
 		} catch (IOException e1) {
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		} finally {
 			writer.close();
 		}
