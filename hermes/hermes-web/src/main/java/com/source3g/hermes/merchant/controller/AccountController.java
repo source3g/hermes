@@ -190,8 +190,13 @@ public class AccountController {
 
 	@RequestMapping(value = "toResourceSetting", method = RequestMethod.GET)
 	@ResponseBody
-	public ModelAndView toResourceSetting() {
-		return new ModelAndView("/merchant/accountCenter/resourceSetting");
+	public ModelAndView toResourceSetting(HttpServletRequest req) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "merchant/merchantResource/" + merchant.getId() + "/";
+		MerchantResource result = restTemplate.getForObject(uri, MerchantResource.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("merchantResource", result);
+		return new ModelAndView("/merchant/accountCenter/resourceSetting",model);
 	}
 
 	@RequestMapping(value = "/addMerchantResource", method = RequestMethod.GET)
@@ -208,15 +213,6 @@ public class AccountController {
 			redirectAttributes.addFlashAttribute("error", result);
 			return new ModelAndView("redirect:/merchant/account/toResourceSetting/");
 		}
-	}
-
-	@RequestMapping(value = "/merchantResource", method = RequestMethod.GET)
-	@ResponseBody
-	public MerchantResource getMerchantResourceList(HttpServletRequest req) throws Exception {
-		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "merchant/merchantResource/" + merchant.getId() + "/";
-		MerchantResource result = restTemplate.getForObject(uri, MerchantResource.class);
-		return result;
 	}
 
 	@RequestMapping(value = "/deletemerchantResource/{name}", method = RequestMethod.GET)

@@ -78,11 +78,12 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name) {
+	public Page list(String pageNo, String name,String account) {
 		logger.debug("list merchant....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Merchant merchant = new Merchant();
 		merchant.setName(name);
+		merchant.setAccount(account);
 		return merchantService.list(pageNoInt, merchant);
 	}
 

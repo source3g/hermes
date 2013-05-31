@@ -26,7 +26,7 @@
 	<form id="addMerchantResourceForm1" class="form-inline">
 		<h3>编辑短信内容</h3>
 		<textarea rows="8" class="span6" id="messageContent"
-			name="messageContent"></textarea>
+			name="messageContent">${merchantResource.messageContent}</textarea>
 		<br> <input type=submit class="btn btn-primary" id="updateMerchantResource" value="保存">
 		<%-- <label><c:if test="${not empty success }">保存成功</c:if> </label> --%>
 	</form>
@@ -49,21 +49,16 @@
 			</tr>
 		</thead>
 		<tbody id="tbody">
+		<c:forEach items="${merchantResource.resourceList}" var="resourceList" varStatus="status" >
+			<tr>
+				<td>${resourceList}</td>
+				<td><input type='button' value='删除' class='btn btn-danger' onclick="deletemerchantResource('${resourceList}')"></td>
+			</tr>
+			</c:forEach>
 		</tbody>
 	</table>
 	<script type="text/javascript">
 		$(document).ready(function() {
-					$.get("${pageContext.request.contextPath}/merchant/account/merchantResource", drawTable);
-					function drawTable(data) {
-						for ( var i = 0; i < data.resourceList.length; i++) {
-							var str = "<tr><td>" + data.resourceList[i] + "</td><td><input type='button' value='删除' class='btn btn-danger' onclick=\"deletemerchantResource('"
-									+ data.resourceList[i] + "')\"></td></tr>";
-							$("#tbody").append(str);
-						}
-						var messageContent = data.messageContent;
-						$("#messageContent").attr("value", messageContent);
-					}
-
 					$('#addMerchantResourceForm').validate({
 						rules : {
 							name : {
@@ -90,11 +85,15 @@
 			options = {
 				url : "${pageContext.request.contextPath}/merchant/account/addMerchantResource/",
 				type : "get",
-				success : showContentInfo
+				success : showListInfo
 			};
 			$(this).ajaxSubmit(options);
 			return false;
 		});
+		
+		function showListInfo(){
+			$.get("${pageContext.request.contextPath}/merchant/account/toResourceSetting/", showContentInfo);
+		}
  		$("#addMerchantResourceForm1").submit(function() {
 			options = {
 				url : "${pageContext.request.contextPath}/merchant/account/updateMerchantResource",

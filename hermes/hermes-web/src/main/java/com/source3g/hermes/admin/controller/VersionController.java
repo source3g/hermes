@@ -18,8 +18,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
-import com.sourse3g.hermes.apkVersion.ApkVersion;
+import com.sourse3g.hermes.apkVersion.OnlineVersion;
 
 @Controller
 @RequestMapping("/admin/version")
@@ -106,22 +108,77 @@ public class VersionController {
 			return "redirect:/admin/version/versionList";
 		}
 	}
-
+	
+	@RequestMapping(value = "/changeBetaVersion", method = RequestMethod.POST)
+	public String changeBetaVersion(String version) {
+		String uri = ConfigParams.getBaseUrl() + "version/changeBetaVersion";
+		HttpEntity<String> entity = new HttpEntity<String>(version);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			return "redirect:/admin/version/versionList";
+		} else {
+			return "redirect:/admin/version/versionList";
+		}
+	}
+	
 	@RequestMapping(value = "versionList", method = RequestMethod.GET)
 	public ModelAndView versionList(String pageNo) {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		
 		String uri = ConfigParams.getBaseUrl() + "version/versionList/?pageNo=" + pageNo;
-		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/online";
+		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/releaseVersion";
+		String betaVersionUri= ConfigParams.getBaseUrl() + "version/betaVersion";
 		Page page = restTemplate.getForObject(uri, Page.class);
-		ApkVersion apkVersion = restTemplate.getForObject(onlineVersionUri, ApkVersion.class);
+		OnlineVersion releaseVersion = restTemplate.getForObject(onlineVersionUri, OnlineVersion.class);
+		OnlineVersion betaVersion =restTemplate.getForObject(betaVersionUri, OnlineVersion.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
-		model.put("onlineVersion", apkVersion);
+		model.put("onlineVersion", releaseVersion);
+		if(betaVersion!=null){
+			model.put("betaVersion", betaVersion);
+		}
 		return new ModelAndView("admin/system/versionList", model);
 	}
 	
+	@RequestMapping(value = "/toGrayUpdateDevicesList", method = RequestMethod.GET)
+	public String toGrayUpdateDevicesList(String pageNo,Model model) {
+		if(StringUtils.isEmpty(pageNo)){
+			pageNo="1";
+		}
+		String uri=ConfigParams.getBaseUrl()+"version/GrayUpdateDevicesList/?pageNo="+pageNo;
+		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/releaseVersion";
+		String betaVersionUri= ConfigParams.getBaseUrl() + "version/betaVersion";
+		Page page=restTemplate.getForObject(uri, Page.class);
+		OnlineVersion releaseVersion = restTemplate.getForObject(onlineVersionUri, OnlineVersion.class);
+		OnlineVersion betaVersion =restTemplate.getForObject(betaVersionUri, OnlineVersion.class);
+		if(betaVersion!=null){
+			model.addAttribute("betaVersion", betaVersion);
+		}
+		model.addAttribute("page", page);
+		model.addAttribute("onlineVersion", releaseVersion);
+		return "/admin/system/GrayUpdateDevicesList";
+	}
+	@RequestMapping(value = "/snValidate")
+	@ResponseBody
+	public Boolean DeviceSnValidate(String sn) {
+		String uri = ConfigParams.getBaseUrl() + "version/snValidate/"+sn+"/";
+		Boolean result=restTemplate.getForObject(uri, Boolean.class);
+		return result;
+	}
 	
+	@RequestMapping(value = "/addToGrayUpdateDevicesList", method = RequestMethod.POST)
+	public String addToGrayUpdateDevicesList(String sn) {
+		String uri = ConfigParams.getBaseUrl() + "version/addToGrayUpdateDevicesList/";
+		HttpEntity<String> entity = new HttpEntity<String>(sn);
+		restTemplate.postForObject(uri, entity, String.class);
+		return "redirect:/admin/version/toGrayUpdateDevicesList";
+	}
+	
+	@RequestMapping(value = "/deleteGrayUpdateDevice/{id}", method = RequestMethod.GET)
+	public String deleteGrayUpdateDevice(@PathVariable String id) {
+		String uri = ConfigParams.getBaseUrl() + "version/deleteGrayUpdateDevice/"+id+"/";
+		restTemplate.getForObject(uri, String.class);
+		return "redirect:/admin/version/toGrayUpdateDevicesList";
+	}
 }

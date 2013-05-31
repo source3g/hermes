@@ -11,27 +11,33 @@
 	<form id="queryForm" method="get">
 		<input id="pageNo" name="pageNo" type="hidden">
 	</form>
+	<div class="well">
+		<input type="button" onclick="toGrayUpdateDevicesList()" class="btn btn-primary" value="灰度升级设备列表"/> 
+	</div>
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="14%">版本号(测试版)</th>
-				<th width="14%">版本号(稳定版)</th>
+				<th width="12%">(测试版)</th>
+				<th width="12%">(稳定版)</th>
+				<th width="12%">版本号</th>
 				<th width="10%">编码号</th>
-				<th width="14%">版本文件地址</th>
-				<th width="14%">版本上传时间</th>
-				<th width="17%">md5</th>
-				<th width="17%">版本描述</th>
+				<th width="12%">版本文件地址</th>
+				<th width="12%">版本上传时间</th>
+				<th width="15%">md5</th>
+				<th width="15%">版本描述</th>
 			</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${page.data}" var="version">
 				<tr>
-					<td><input type="radio" name="testVersionRadio"
-						value="" onclick="return seltest(this);"></td>
+					<td><input type="radio" name="betaVersionRadio"
+						value="${version.apkVersion}" onclick="return seltest(this);"
+						<c:if test="${betaVersion.apkVersion eq  version.apkVersion}">checked="checked"</c:if>></td><!-- && onlineVersion.versionType eq beta release -->
 					<td><input type="radio" name="onlineVersionRadio"
 						value="${version.apkVersion }" onclick="return selOnline(this);"
-						<c:if test="${onlineVersion.apkVersion eq version.apkVersion }">checked="checked"</c:if>>${version.apkVersion}</td>
+						<c:if test="${onlineVersion.apkVersion eq version.apkVersion}">checked="checked"</c:if>></td>
+					<td>${version.apkVersion}</td>
 					<td>${version.code}</td>
 					<td>${version.url}</td>
 					<td>${version.uploadTime}</td>
@@ -74,13 +80,12 @@
 		$('#queryForm').ajaxSubmit(options);
 	}
     
-    var test=$("input[name='onlineVersionRadio']:checked").val();
+    var onlineVersion=$("input[name='onlineVersionRadio']:checked").val();
     function selOnline(el){
     	 if($(el).parent().prev().children().attr("checked")=="checked"){
-     		alert("测试版与正式版不能共存");
-     		$(el).removeAttr("checked");
-     		$("input[value='"+test+"'][name='onlineVersionRadio']").attr("checked","checked");
-     		return ;
+     		//alert("测试版与正式版不能共存");
+     		$(el).parent().prev().children().removeAttr("checked");
+     		//$("input[value='"+onlineVersion+"'][name='onlineVersionRadio']").attr("checked","checked");
      	}
     	var version=$(el).val();
     	if(confirm("你确定更换版本?"))
@@ -95,20 +100,30 @@
     	}
     }
     
+    var betaVersion=$("input[name='betaVersionRadio']:checked").val();
     function seltest(el){
+    	var version=$(el).val();
     	if($(el).parent().next().children().attr("checked")=="checked"){
      		alert("测试版与正式版不能共存");
-     		$(el).removeAttr("checked","false");
+     		$(el).removeAttr("checked"); 
+     		$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
      		return ;
      	}
+    	
     	  	if(confirm("你确定更换版本?"))
         	{
-    	  		
-        	alert("更换成功");
+    	  		$.post("${pageContext.request.contextPath}/admin/version/changeBetaVersion/",{"version":version},function (data,status){
+        			alert("更换成功");
+        			showContentInfo(data);
+        		});
         		return true;
         	}else{
         		return false;
         	}
+    }
+    
+    function toGrayUpdateDevicesList(){
+    	$.get("${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/",showContentInfo);
     }
 	</script>
 </body>

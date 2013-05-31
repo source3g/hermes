@@ -21,7 +21,7 @@
 		<tbody>
 			<tr>
 			<td width="20%" ><label class="control-label">商户短信数据 :</label></td>
-			<td width="26%" >短信预存数量：${merchant.messageBalance.totalCount}</td>
+			<td width="26%" >短信可用余额总数：${merchant.messageBalance.totalCount}</td>
 			<td width="27%" >短信可用数量：${merchant.messageBalance.surplusMsgCount}</td>
 			<td width="27%" >短信已发送数量：${merchant.messageBalance.sentCount}</td>
 				

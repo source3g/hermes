@@ -73,6 +73,10 @@ public class MerchantService extends BaseService {
 			Pattern pattern = Pattern.compile("^.*" + merchant.getName() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("name").is(pattern));
 		}
+		if (StringUtils.isNotEmpty(merchant.getAccount())) {
+			Pattern pattern = Pattern.compile("^.*" + merchant.getAccount() + ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("account").is(pattern));
+		}
 
 		Page page = new Page();
 		Long totalCount = mongoTemplate.count(query, Merchant.class);

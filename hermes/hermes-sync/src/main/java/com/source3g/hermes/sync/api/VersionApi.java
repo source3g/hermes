@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.MD5;
 import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.apkVersion.ApkVersion;
+import com.sourse3g.hermes.apkVersion.OnlineVersion;
 
 @Controller
 @RequestMapping("/version")
@@ -87,16 +89,35 @@ public class VersionApi {
 		return versionService.codeValidate(codeInt);
 	}
 
+	@RequestMapping(value = "/changeBetaVersion", method = RequestMethod.POST)
+	@ResponseBody
+	public String changeBetaVersion(@RequestBody String version) {
+		versionService.changeBetaVersion(version);
+		return ReturnConstants.SUCCESS;
+	}
+	
 	@RequestMapping(value = "/changeOnline", method = RequestMethod.POST)
 	@ResponseBody
 	public String changeVersion(@RequestBody String version) {
 		versionService.changeVersion(version);
 		return ReturnConstants.SUCCESS;
 	}
-
+	
+	@RequestMapping(value = "/betaVersion", method = RequestMethod.GET)
+	@ResponseBody
+	public OnlineVersion getLastBetaVersion() {
+		return versionService.getBetaVersion();
+	}
+	
+	@RequestMapping(value = "/releaseVersion", method = RequestMethod.GET)
+	@ResponseBody
+	public OnlineVersion releaseVersion() {
+		return versionService.releaseVersion();
+	}
+	
 	@RequestMapping(value = "/online", method = RequestMethod.GET)
 	@ResponseBody
-	public ApkVersion getLastVersion() {
+	public ApkVersion returnLastVersion() {
 		ApkVersion apkVersion = versionService.getOnlineVersion();
 		if (apkVersion != null) {
 			processUrl(apkVersion);
@@ -109,7 +130,8 @@ public class VersionApi {
 	@ResponseBody
 	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody String version) {
 		versionService.updateDeviceVersion(sn, version);
-		return getLastVersion();
+		versionService.updateGrayUpdateDevices(sn, version);
+		return returnLastVersion();
 	}
 
 	private void processUrl(ApkVersion apkVersion) {
@@ -121,5 +143,31 @@ public class VersionApi {
 	public Page versionList(String pageNo) throws IOException {
 		int pageNoInt = Integer.parseInt(pageNo);
 		return versionService.versionList(pageNoInt);
+	}
+	
+	@RequestMapping(value = "/GrayUpdateDevicesList")
+	@ResponseBody
+	public Page GrayUpdateDevicesList(String pageNo) throws IOException {
+		int pageNoInt = Integer.parseInt(pageNo);
+		return versionService.GrayUpdateDevicesList(pageNoInt);
+	}
+	@RequestMapping(value = "/snValidate/{sn}")
+	@ResponseBody
+	public Boolean DeviceSnValidate(@PathVariable String sn) throws IOException {
+		return versionService.DeviceSnValidate(sn);
+	}
+	
+	@RequestMapping(value = "/addToGrayUpdateDevicesList",method = RequestMethod.POST)
+	@ResponseBody
+	public String addToGrayUpdateDevicesList(@RequestBody String sn) throws IOException {
+		 versionService.addToGrayUpdateDevicesList(sn);
+		 return ReturnConstants.SUCCESS;
+	}
+	
+	@RequestMapping(value = "/deleteGrayUpdateDevice/{id}",method = RequestMethod.GET)
+	@ResponseBody
+	public String deleteGrayUpdateDevice( @PathVariable ObjectId id) throws IOException {
+		 versionService.deleteGrayUpdateDevice(id);
+		 return ReturnConstants.SUCCESS;
 	}
 }

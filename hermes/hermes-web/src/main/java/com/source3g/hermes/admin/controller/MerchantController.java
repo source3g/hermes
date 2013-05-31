@@ -107,6 +107,9 @@ public class MerchantController {
 		if (StringUtils.isNotEmpty(merchant.getName())) {
 			uri += "&name=" + merchant.getName();
 		}
+		if(StringUtils.isNotEmpty(merchant.getAccount())){
+			uri += "&account=" + merchant.getAccount();
+		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
@@ -221,6 +224,9 @@ public class MerchantController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/list/?pageNo=" + pageNo;
 		if (StringUtils.isNotEmpty(merchant.getName())) {
 			uri += "&name=" + merchant.getName();
+		}
+		if (StringUtils.isNotEmpty(merchant.getAccount())) {
+			uri += "&account=" + merchant.getAccount();
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();

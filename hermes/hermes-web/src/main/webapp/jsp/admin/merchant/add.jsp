@@ -8,7 +8,7 @@
 <title>增加商户</title>
 </head>
 <body>
-	<form id="addMerchantForm" method="post" class="form-horizontal">
+	<form id="addMerchantForm" class="form-horizontal">
 		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
@@ -367,6 +367,7 @@
 				<c:if test="${not empty update}">
 				url:"${pageContext.request.contextPath}/admin/merchant/update/",
 				</c:if>
+				type : "post",
 				 async:false,//同步执行
 				success :showContentInfo
 			}; 

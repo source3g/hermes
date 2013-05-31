@@ -55,12 +55,12 @@
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$.ajax({
+			 $.ajax({
 				url : "${pageContext.request.contextPath}/merchant/customer/callInStatisticsJson/",
 				dataType : "json",
 				success : reDraw
 			});
-			$.get("${pageContext.request.contextPath}/merchant/customer/callInStatistics/today/",drawPieChart,"json");
+			$.get("${pageContext.request.contextPath}/merchant/customer/callInStatistics/today/",drawPieChart,"json"); 
 
 			$("#queryForm").submit(function() {
 				$("#queryForm").ajaxSubmit({
