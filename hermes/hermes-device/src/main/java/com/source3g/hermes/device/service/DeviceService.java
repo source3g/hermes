@@ -1,6 +1,10 @@
 package com.source3g.hermes.device.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -24,9 +28,12 @@ import com.source3g.hermes.entity.sim.SimInfo;
 import com.source3g.hermes.entity.sync.DeviceStatus;
 import com.source3g.hermes.entity.sync.TaskPackage;
 import com.source3g.hermes.service.BaseService;
+import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.MD5;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.utils.excel.ExcelHelper;
+import com.source3g.hermes.utils.excel.ExcelObjectMapperDO;
 import com.source3g.hermes.vo.DeviceDistributionVo;
 import com.source3g.hermes.vo.DeviceVo;
 import com.sourse3g.hermes.branch.BranchCompany;
@@ -35,6 +42,8 @@ import com.sourse3g.hermes.branch.Saler;
 @Service
 public class DeviceService extends BaseService {
 
+	public static final String EXPORT_FOLDER_NAME = "device";
+
 	public void add(Device device) throws Exception {
 		List<Device> list = mongoTemplate.find(new Query(Criteria.where("account").is(device.getSn())), Device.class);
 		if (list.size() == 0) {
@@ -42,7 +51,6 @@ public class DeviceService extends BaseService {
 		} else {
 			throw new Exception("账号已存在");
 		}
-
 	}
 
 	public boolean snValidate(String sn) {
@@ -212,10 +220,14 @@ public class DeviceService extends BaseService {
 		return new String(snBytes) + new String(keyBytes);
 	}
 
-	public static void main(String[] args) {
-		String s = getSecret("abc-dbc-ff", "aabb1112222-333");
-		System.out.println(s);
+	public static void main(String[] args) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException {
+		// String s = getSecret("abc-dbc-ff", "aabb1112222-333");
+		// System.out.println(s);
 		// System.out.println(getSecret1(s.split("\\|")[0], s.split("\\|")[1]));
+		// Device device = new Device();
+		// SimInfo simInfo = new SimInfo();
+		// simInfo.setServiceNo("123");
+		// device.setSimInfo(simInfo);
 	}
 
 	public void updateImsiNo(String sn, String imsiNo) {
@@ -228,6 +240,7 @@ public class DeviceService extends BaseService {
 		if (oldSimInfo != null) {
 			if (!oldSimInfo.getImsiNo().equals(imsiNo)) {
 				SimChangeRecord simChangeRecord = new SimChangeRecord(oldSimInfo, newSimInfo);
+				simChangeRecord.setChangeTime(new Date());
 				List<SimChangeRecord> records = device.getSimChangeRecords();
 				records.add(simChangeRecord);
 				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(device.getId())), new Update().set("simInfo", newSimInfo).set("simChangeRecords", records), Device.class);
@@ -237,26 +250,123 @@ public class DeviceService extends BaseService {
 		}
 	}
 
-	public DeviceVo findDetail(ObjectId objectId) {
-		Device device = super.findOne(new Query(Criteria.where("_id").is(objectId)), Device.class);
+	public DeviceVo findDetail(ObjectId deviceId) {
 		DeviceVo deviceVo = new DeviceVo();
+		Device device = super.findOne(new Query(Criteria.where("_id").is(deviceId)), Device.class);
 		deviceVo.setDevice(device);
-		Merchant merchant = super.findOne(new Query(Criteria.where("deviceIds").is(objectId)), Merchant.class);
+		Merchant merchant = super.findOne(new Query(Criteria.where("deviceIds").is(deviceId)), Merchant.class);
 		deviceVo.setMerchant(merchant);
 		DeviceStatus status = super.findOne(new Query(Criteria.where("deviceSn").is(device.getSn())), DeviceStatus.class);
 		deviceVo.setDeviceStatus(status);
-		Long restTaskCount = 0L;
-		if (TaskConstants.INIT.equals(status.getStatus())) {
-			TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
-			if (lastAllPackage != null) {
-				restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(merchant.getId())), TaskPackage.class);
+		if (status != null) {
+			Long restTaskCount = 0L;
+			if (TaskConstants.INIT.equals(status.getStatus())) {
+				TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
+				if (lastAllPackage != null) {
+					restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(merchant.getId())), TaskPackage.class);
+				} else {
+					restTaskCount = 0L;
+				}
 			} else {
-				restTaskCount = 0L;
+				restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
 			}
-		} else {
-			restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
+			deviceVo.setRestTaskCount(restTaskCount);
 		}
-		deviceVo.setRestTaskCount(restTaskCount);
+		return deviceVo;
+	}
+
+	public String exportDevice(String sn, String merchantName) throws IOException {
+		Query query = new Query();
+		if (StringUtils.isNotEmpty(sn)) {
+			Pattern pattern = Pattern.compile("^.*" + sn + ".*$", Pattern.CASE_INSENSITIVE);
+			query.addCriteria(Criteria.where("sn").is(pattern));
+		}
+		Merchant merchant = null;
+		Saler saler = null;
+		if (StringUtils.isNotEmpty(merchantName)) {
+			merchant = super.findOne(new Query(Criteria.where("name").is(merchantName)), Merchant.class);
+			if (merchant != null) {
+				query.addCriteria(Criteria.where("_id").in(merchant.getDeviceIds()));
+				saler = super.findOne(new Query(Criteria.where("_id").is(merchant.getSalerId())), Saler.class);
+			}
+		}
+		List<Device> devices = mongoTemplate.find(query, Device.class);
+		List<DeviceVo> deviceVoList = new ArrayList<DeviceVo>();
+		for (Device d : devices) {
+			DeviceVo deviceVo = new DeviceVo();
+			deviceVo.setDevice(d);
+			if (merchant == null) {
+				merchant = super.findOne(new Query(Criteria.where("deviceIds").is(d.getId())), Merchant.class);
+				if (merchant != null) {
+					saler = super.findOne(new Query(Criteria.where("_id").is(merchant.getSalerId())), Saler.class);
+				}
+			}
+			deviceVo.setMerchant(merchant);
+			deviceVo.setSaler(saler);
+			deviceVoList.add(deviceVo);
+		}
+		ExcelHelper<DeviceVo> excelHelper = new ExcelHelper<>(initDeviceVoMapper(), DeviceVo.class);
+		String relativePath = FormateUtils.getDirByDay() + new Date().getTime() + ".xls";
+		File file = new File(exportDir + EXPORT_FOLDER_NAME + "/" + relativePath);
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
+		excelHelper.writeToExcel(deviceVoList, file);
+		if (file.exists()) {
+			return getLocalUrl() + "device/export/" + relativePath + "/";
+		}
 		return null;
+	}
+
+	private List<ExcelObjectMapperDO> initDeviceVoMapper() {
+		List<ExcelObjectMapperDO> list = new ArrayList<ExcelObjectMapperDO>();
+		ExcelObjectMapperDO merchantNameMapperDo = new ExcelObjectMapperDO();
+		merchantNameMapperDo.setExcelColumnName("商户名");
+		merchantNameMapperDo.setObjectFieldName("merchant.name");
+		merchantNameMapperDo.setObjectFieldType(String.class);
+		list.add(merchantNameMapperDo);
+
+		ExcelObjectMapperDO salerMapperDo = new ExcelObjectMapperDO();
+		salerMapperDo.setExcelColumnName("销售代表");
+		salerMapperDo.setObjectFieldName("saler.name");
+		salerMapperDo.setObjectFieldType(String.class);
+		list.add(salerMapperDo);
+
+		ExcelObjectMapperDO snMapperDo = new ExcelObjectMapperDO();
+		snMapperDo.setExcelColumnName("设备编号");
+		snMapperDo.setObjectFieldName("device.sn");
+		snMapperDo.setObjectFieldType(String.class);
+		list.add(snMapperDo);
+
+		ExcelObjectMapperDO versionMapperDo = new ExcelObjectMapperDO();
+		versionMapperDo.setExcelColumnName("版本号");
+		versionMapperDo.setObjectFieldName("device.apkVersion");
+		versionMapperDo.setObjectFieldType(String.class);
+		list.add(versionMapperDo);
+
+		ExcelObjectMapperDO serviceNumberMapperDO = new ExcelObjectMapperDO();
+		serviceNumberMapperDO.setExcelColumnName("业务号码");
+		serviceNumberMapperDO.setObjectFieldName("device.simInfo.serviceNo");
+		serviceNumberMapperDO.setObjectFieldType(String.class);
+		list.add(serviceNumberMapperDO);
+
+		ExcelObjectMapperDO usernameMapperDO = new ExcelObjectMapperDO();
+		usernameMapperDO.setExcelColumnName("用户姓名");
+		usernameMapperDO.setObjectFieldName("device.simInfo.username");
+		usernameMapperDO.setObjectFieldType(String.class);
+		list.add(usernameMapperDO);
+
+		ExcelObjectMapperDO simUimNoMapperDO = new ExcelObjectMapperDO();
+		simUimNoMapperDO.setExcelColumnName("SIM/UIM卡号");
+		simUimNoMapperDO.setObjectFieldName("device.simInfo.simUimCardNo");
+		simUimNoMapperDO.setObjectFieldType(String.class);
+		list.add(simUimNoMapperDO);
+
+		ExcelObjectMapperDO imsiNoMapperDO = new ExcelObjectMapperDO();
+		imsiNoMapperDO.setExcelColumnName("IMSI号");
+		imsiNoMapperDO.setObjectFieldName("device.simInfo.imsiNo");
+		imsiNoMapperDO.setObjectFieldType(String.class);
+		list.add(imsiNoMapperDO);
+		return list;
 	}
 }

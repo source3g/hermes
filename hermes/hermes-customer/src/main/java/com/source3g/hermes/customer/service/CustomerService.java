@@ -75,10 +75,8 @@ public class CustomerService extends BaseService {
 
 	@Value(value = "${temp.import.log.dir}")
 	private String tempDir;
-	@Value(value = "${customer.export.temp.dir}")
-	private String exportDir;
-	@Value(value = "${local.url}")
-	private String localUrl;
+//	@Value(value = "${local.url}")
+//	private String localUrl;
 
 	@Autowired
 	private Destination customerDestination;
@@ -354,7 +352,7 @@ public class CustomerService extends BaseService {
 		// 产生文件路径
 		// 所在商户的相对路径
 		String merchantPath = FormateUtils.getDirByDay() + customer.getMerchantId().toString() + "/";
-		String absoluteDir = exportDir + merchantPath;
+		String absoluteDir = getExportDir() + merchantPath;
 		String absoluteFile = absoluteDir + fileName;
 		String relativePath = merchantPath + fileName;
 		File absoluteFolder = new File(absoluteDir);
@@ -609,21 +607,6 @@ public class CustomerService extends BaseService {
 		return values;
 	}
 
-	public String getExportDir() {
-		return exportDir;
-	}
-
-	public void setExportDir(String exportDir) {
-		this.exportDir = exportDir;
-	}
-
-	public String getLocalUrl() {
-		return localUrl;
-	}
-
-	public void setLocalUrl(String localUrl) {
-		this.localUrl = localUrl;
-	}
 
 	public List<Customer> findByCallRecords(String deviceSn, Date startTime, Date endTime) {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);

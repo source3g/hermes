@@ -28,7 +28,7 @@ public class IncrementScheduler {
 		List<Merchant> merchantList = mongoTemplate.findAll(Merchant.class);
 		for (Merchant merchant : merchantList) {
 			PackageLock packageLock = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId())), PackageLock.class);
-			if (packageLock!=null&&packageLock.getLocking()) {
+			if (packageLock != null && packageLock.getLocking()) {
 				continue;
 			}
 			packageIncrement(merchant);

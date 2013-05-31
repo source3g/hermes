@@ -211,11 +211,11 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/passwordValidate/{password}/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean passwordValidate( @PathVariable String password,@PathVariable String merchantId) {
-		ObjectId obj=new ObjectId(merchantId);
-		return	merchantService.passwordValidate(password,obj);
+	public Boolean passwordValidate(@PathVariable String password, @PathVariable String merchantId) {
+		ObjectId obj = new ObjectId(merchantId);
+		return merchantService.passwordValidate(password, obj);
 	}
-	
+
 	@RequestMapping(value = "/addMerchantResource/{merchantId}/{name}", method = RequestMethod.GET)
 	@ResponseBody
 	public String addMerchantResource(@PathVariable ObjectId merchantId, @PathVariable String name) throws Exception {
@@ -243,12 +243,24 @@ public class MerchantApi {
 		return merchantService.getMerchantResource(merchantId);
 	}
 
+	@RequestMapping(value = "/initDevice/{sn}/{username}/{password}", method = RequestMethod.GET)
+	@ResponseBody
+	public String initDevice(@PathVariable String sn, @PathVariable String username, @PathVariable String password) {
+		try {
+			merchantService.initDevice(sn, username, password);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+
 	@RequestMapping(value = "/merchantResource/sn/{sn}", method = RequestMethod.GET)
 	@ResponseBody
 	public MerchantResource getMerchantResource(@PathVariable String sn) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
 		MerchantResource merchantResource = merchantService.getMerchantResource(merchant.getId());
-		if(merchantResource.getResourceList()!=null){
+		if (merchantResource.getResourceList() != null) {
 			Collections.sort(merchantResource.getResourceList());
 		}
 		return merchantResource;

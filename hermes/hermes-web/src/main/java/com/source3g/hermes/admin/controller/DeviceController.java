@@ -28,6 +28,7 @@ import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.sim.SimInfo;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.vo.DeviceVo;
 
 @Controller
 @RequestMapping("/admin/device")
@@ -85,6 +86,20 @@ public class DeviceController {
 		return new ModelAndView("admin/device/list", model);
 	}
 
+	@RequestMapping(value = "/export", method = RequestMethod.GET)
+	@ResponseBody
+	public String export(String sn, String merchantName) {
+		String uri = ConfigParams.getBaseUrl() + "device/export/?1=1" ;
+		if(StringUtils.isNotEmpty(sn)){
+			uri+="&sn="+sn;
+		}
+		if(StringUtils.isNotEmpty(merchantName)){
+			uri+="&merchantName="+merchantName;
+		}
+		String result = restTemplate.getForObject(uri, String.class);
+		return result;
+	}
+
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public ModelAndView deleteById(@PathVariable String id, RedirectAttributes redirectAttributes) {
 		String uri = ConfigParams.getBaseUrl() + "device/delete/" + id + "/";
@@ -114,20 +129,14 @@ public class DeviceController {
 		return device;
 	}
 
-	@RequestMapping(value = "/deviceDetail/{id}", method = RequestMethod.GET)
-	public String findById(@PathVariable String id, Model model) {
-		String uri = ConfigParams.getBaseUrl() + "device/" + id + "/";
-		Device[] devices = restTemplate.getForObject(uri, Device[].class);
-		if (devices == null || devices.length != 1) {
+	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
+	public String detail(@PathVariable String id, Model model) {
+		String uri = ConfigParams.getBaseUrl() + "device/detail/" + id + "/";
+		DeviceVo deviceVo = restTemplate.getForObject(uri, DeviceVo.class);
+		if (deviceVo == null) {
 			return "/admin/error";
 		}
-		// if (devices[0].getSim() != null) {
-		// String uriSim = ConfigParams.getBaseUrl() + "sim/id/" +
-		// devices[0].getSim().getId() + "/";
-		// SimInfo sim = restTemplate.getForObject(uriSim, SimInfo.class);
-		// model.put("sim", sim);
-		// }
-		model.addAttribute("device", devices[0]);
+		model.addAttribute("device", deviceVo);
 		return "/admin/device/deviceInfo";
 	}
 

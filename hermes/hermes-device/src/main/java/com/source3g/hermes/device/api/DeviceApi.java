@@ -1,7 +1,15 @@
 package com.source3g.hermes.device.api;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -77,7 +85,7 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public DeviceVo deviceDetail(@PathVariable String id) {
+	public DeviceVo detail(@PathVariable String id) {
 		return deviceService.findDetail(new ObjectId(id));
 	}
 
@@ -126,6 +134,32 @@ public class DeviceApi {
 	@ResponseBody
 	public List<DeviceStatusDto> syncStatus(@PathVariable String merchantId) {
 		return deviceService.findDeviceStatusByMerchantId(new ObjectId(merchantId));
+	}
+
+	@RequestMapping(value = "/export", method = RequestMethod.GET)
+	@ResponseBody
+	public String export(String sn, String merchantName) throws IOException {
+		String url = deviceService.exportDevice(sn, merchantName);
+		return url;
+	}
+
+	@RequestMapping(value = "/export/{year}/{month}/{day}/{fileName}")
+	public void download(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		String downLoadPath = deviceService.getExportDir() + DeviceService.EXPORT_FOLDER_NAME + "/" + year + "/" + month + "/" + day + "/" + fileName;
+		long fileLength = new File(downLoadPath).length();
+		response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+		response.setHeader("Content-Length", String.valueOf(fileLength));
+		bis = new BufferedInputStream(new FileInputStream(downLoadPath));
+		bos = new BufferedOutputStream(response.getOutputStream());
+		byte[] buff = new byte[2048];
+		int bytesRead;
+		while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+			bos.write(buff, 0, bytesRead);
+		}
+		bis.close();
+		bos.close();
 	}
 
 	@RequestMapping(value = "/publicKey")

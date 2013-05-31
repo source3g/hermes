@@ -1,6 +1,8 @@
 package com.source3g.hermes.utils.excel;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +12,11 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -126,8 +133,34 @@ public class ExcelHelper<T extends Object> {
 		}
 	}
 
-	public void writeToExcel(List<T> data, File destFile) {
-
+	public void writeToExcel(List<T> data, File destFile) throws IOException {
+		// 声明一个工作薄
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		// 生成一个表格
+		HSSFSheet sheet = workbook.createSheet("sheet1");
+		// 产生表格标题行
+		HSSFRow row = sheet.createRow(0);
+		for (int i = 0; i < objectMappers.size(); i++) {
+			HSSFCell cell = row.createCell(i);
+			HSSFRichTextString text = new HSSFRichTextString(objectMappers.get(i).getExcelColumnName());
+			cell.setCellValue(text);
+			objectMappers.get(i).excelColumnNum = i;
+			sheet.setColumnWidth(i, 255 * 15);
+		}
+		for (int i = 1; i <= data.size(); i++) {
+			row = sheet.createRow(i);
+			for (ExcelObjectMapperDO excelObjectMapperDO : objectMappers) {
+				HSSFCell cell = row.createCell(excelObjectMapperDO.getExcelColumnNum());
+				try {
+					String value = BeanUtils.getProperty(data.get(i - 1), excelObjectMapperDO.getObjectFieldName());
+					cell.setCellValue(value);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		FileOutputStream fos = new FileOutputStream(destFile);
+		workbook.write(fos);
+		fos.close();
 	}
-
 }

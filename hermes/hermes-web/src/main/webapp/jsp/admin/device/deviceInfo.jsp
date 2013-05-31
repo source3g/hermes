@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -8,96 +9,96 @@
 <title>盒子详细信息</title>
 </head>
 <body>
-	<form id="deviceInfo" class="form-horizontal">
-		<div class="control-group">
-			<label class="control-label">盒子名称:</label>
-			<div class="controls">
-				${device.sn}<input type="hidden" name="sn" value="${device.sn}">
-				<input type="hidden" name="id" value="${device.id}">
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label" for="simId">请输入SIM卡号:</label>
-			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入SIM卡号..."
-					id="no" name="no" value="${device.sim.no}" > <span
-					class="help-inline"> <font color="red">*</font></span>
-				<c:if test="${ empty device.sim }">
-					<input type="submit" class="btn btn-primary" value="绑定">
-				</c:if>
-				<c:if test="${ not empty device.sim }">
-					<input type="submit" class="btn btn-primary" value="修改">
-				</c:if>
-			</div>
-		</div>
-		<c:if test="${not empty errors }">
-				<div class="alert alert-error">
-					<ul>
-						<c:forEach items="${errors }" var="error">
-							<li>${error.defaultMessage }</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</c:if>
-			
-		<div id="errorModal" class="modal hide fade">
-			<div class="modal-body">
-				<p id="resultMessage"></p>
-			</div>
-			<div class="modal-footer">
-				<a href="#" class="btn" data-dismiss="modal">确定</a>
-			</div>
-		</div>
-	</form>
+	<div class="well span8">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th colspan="2"><center>
+							<h4>设备详细信息</h4>
+						</center></th>
+				</tr>
+			</thead>
+			<tr>
+				<td width="30%">盒子名称:</td>
+				<td width="70%">${device.device.sn}</td>
+			</tr>
+			<tr>
+				<td>所属商户:</td>
+				<td>${device.merchant.name}</td>
+			</tr>
+			<tr>
+				<td>sim卡号:</td>
+				<td>${device.device.simInfo.serviceNo}</td>
+			</tr>
+			<tr>
+				<td>用户名:</td>
+				<td>${device.device.simInfo.username}</td>
+			</tr>
+			<tr>
+				<td>uim卡号:</td>
+				<td>${device.device.simInfo.simUimCardNo}</td>
+			</tr>
+			<tr>
+				<td>imsiNo号:</td>
+				<td>${device.device.simInfo.imsiNo}</td>
+			</tr>
+			<tr>
+				<td>软件版本:</td>
+				<td>${device.device.apkVersion}</td>
+			</tr>
+			<tr>
+				<td>上次心跳时间</td>
+				<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
+						value="${device.deviceStatus.lastAskTime}" /></td>
+			</tr>
 
-	<script type="text/javascript">
-		$(document).ready(function(){
-			 var validateOptions = {
-					rules : { 
-						no : {
-							required : true,
-							minlength : 2
-						}
-					},
-					messages : {
-						no : {
-							required : "请填写SIM卡号",
-							minlength : "至少输入两个字符"
-						}
-					}
-				};
-		
-		$('#deviceInfo').validate(validateOptions); 
-		 $('#deviceInfo').submit(function() { 
-		 	 if(!$('#deviceInfo').valid()){
-				return false;
-			} 
-			var options = {
-			url : "${pageContext.request.contextPath}/admin/device/update/",
-			type : "post",
-			success : toList // post-submit callback
-		};
-			
-			$('#deviceInfo').ajaxSubmit(options);
-		
-			return false;
-		});
-		
-		initDialog(); 
-
-		
-		
- 	});
-		function toList(data) {
-			$("#pageContentFrame").html(data);
-		}
-		 function initDialog() {
-			if (${not empty success }== true) {
-				$("#resultMessage").html("绑定成功！");
-				$("#errorModal").modal();
-			}
-		}   
-	</script>
-
+			<tr>
+				<td>上次成功获取任务时间</td>
+				<c:choose>
+					<c:when test="${not empty device.deviceStatus.lastUpdateTime}">
+						<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
+								value="${device.deviceStatus.lastUpdateTime}" /></td>
+					</c:when>
+					<c:otherwise>
+						<td>无</td>
+					</c:otherwise>
+				</c:choose>
+			</tr>
+			<tr>
+				<td>上次成功获取任务id</td>
+				<c:choose>
+					<c:when test="${not empty device.deviceStatus.lastTaskId}">
+						<td>${device.deviceStatus.lastTaskId}</td>
+					</c:when>
+					<c:otherwise>
+						<td>无</td>
+					</c:otherwise>
+				</c:choose>
+			</tr>
+			<tr>
+				<td>任务堆积数量:</td>
+				<c:choose>
+					<c:when test="${not empty device.restTaskCount}">
+						<td>${device.restTaskCount}</td>
+					</c:when>
+					<c:otherwise>
+						<td>无</td>
+					</c:otherwise>
+				</c:choose>
+			</tr>
+			<tr>
+				<td colspan="2">转卡记录:</td>
+			</tr>
+			<c:forEach items="${device.device.simChangeRecords }"
+				var="changeRecord" varStatus="status">
+				<tr>
+					<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
+							value="${changeRecord.changeTime}" /> </td>
+					<td>从${changeRecord.oldSim.serviceNo}
+						转到${changeRecord.newSim.serviceNo }</td>
+				</tr>
+			</c:forEach>
+		</table>
+	</div>
 </body>
 </html>
