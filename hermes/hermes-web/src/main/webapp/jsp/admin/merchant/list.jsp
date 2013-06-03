@@ -19,13 +19,15 @@
 	<table class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="30%">名称</th>
-				<th width="30%">地址</th>
-				<th width="40%">操作</th>
+				<th width="25%">账号</th>
+				<th width="25%">名称</th>
+				<th width="25%">地址</th>
+				<th width="25%">操作</th>
 			</tr>
 		</thead>
 		<c:forEach items="${page.data}" var="merchant">
 			<tr>
+				<td>${merchant.account }</td>
 				<td>${merchant.name }<c:if test="${merchant.canceled==true }">  [已删除]</c:if></td>
 				<td>${merchant.addr }</td>
 				<td>

@@ -69,20 +69,19 @@ public class SimController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public String list(SimInfo sim, String pageNo,Model model) {
-		 if (StringUtils.isEmpty(pageNo)) {
-		 pageNo = "1";
-		 }
-		 String uri = ConfigParams.getBaseUrl() + "sim/list/?pageNo=" +pageNo;
-		 if (StringUtils.isNotEmpty(sim.getServiceNumber())) {
-		 uri += "&serviceNumber=" + sim.getServiceNumber();
-			model.addAttribute("serviceNumber", sim.getServiceNumber());
-		 }
-		 if (StringUtils.isNotEmpty(sim.getImsiNo())) {
-			 uri += "&imsiNo=" + sim.getImsiNo();
-			 model.addAttribute("imsiNo", sim.getImsiNo());
-			 }
-		 Page page = restTemplate.getForObject(uri, Page.class);
+	public String list(SimInfo sim, String pageNo, Model model) {
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		String uri = ConfigParams.getBaseUrl() + "sim/list/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(sim.getServiceNo())) {
+			uri += "&serviceNo=" + sim.getServiceNo();
+		}
+		if (StringUtils.isNotEmpty(sim.getImsiNo())) {
+			uri += "&imsiNo=" + sim.getImsiNo();
+		}
+		model.addAttribute("sim", sim);
+		Page page = restTemplate.getForObject(uri, Page.class);
 		model.addAttribute("page", page);
 		return "/admin/sim/list";
 	}

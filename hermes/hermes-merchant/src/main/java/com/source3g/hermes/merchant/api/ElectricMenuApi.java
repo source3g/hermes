@@ -47,15 +47,18 @@ public class ElectricMenuApi {
 		electricMenuItem.setTitle(title);
 		electricMenuItem.setUnit(unit);
 		electricMenuItem.setId(new ObjectId(itemId));
-		electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		try {
+			electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/updateItem/{menuId}/{itemId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String updateItem(@PathVariable String itemId, @RequestParam("file") MultipartFile file, @PathVariable String menuId, String price, String title, String unit) throws IOException {
-		// title = FormateUtils.changeEncode(title, "iso-8859-1", "UTF-8");
-		// unit = FormateUtils.changeEncode(unit, "iso-8859-1", "UTF-8");
 		title = new String(title.getBytes("iso-8859-1"));
 		unit = new String(unit.getBytes("iso-8859-1"));
 		String dirByDay = FormateUtils.getDirByDay();
@@ -79,7 +82,12 @@ public class ElectricMenuApi {
 		electricMenuItem.setTitle(title);
 		electricMenuItem.setUnit(unit);
 		electricMenuItem.setId(new ObjectId(itemId));
-		electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		try {
+			electricMenuService.updateItem(electricMenuItem, new ObjectId(menuId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -110,7 +118,12 @@ public class ElectricMenuApi {
 		electricMenuItem.setPrice(Double.parseDouble(price));
 		electricMenuItem.setTitle(title);
 		electricMenuItem.setUnit(unit);
-		electricMenuService.addItem(electricMenuItem, new ObjectId(menuId));
+		try {
+			electricMenuService.addItem(electricMenuItem, new ObjectId(menuId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -155,7 +168,12 @@ public class ElectricMenuApi {
 	@RequestMapping(value = "update/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String update(@RequestBody ElectricMenu electricMenu, @PathVariable ObjectId merchantId) {
-		electricMenuService.updateMenu(electricMenu, merchantId);
+		try {
+			electricMenuService.updateMenu(electricMenu, merchantId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 		return ReturnConstants.SUCCESS;
 	}
 
@@ -169,7 +187,12 @@ public class ElectricMenuApi {
 	@RequestMapping(value = "/add/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody ElectricMenuDto electricMenuDto, @PathVariable ObjectId merchantId) {
-		return electricMenuService.addMenu(electricMenuDto.getMenus(), merchantId);
+		try {
+			electricMenuService.addMenu(electricMenuDto.getMenus(), merchantId);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/sync/{merchantId}", method = RequestMethod.GET)
@@ -182,7 +205,10 @@ public class ElectricMenuApi {
 	@RequestMapping(value = "/titleValidate/{menuId}/{title}", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean titleValidate(@PathVariable ObjectId menuId, @PathVariable String title) {
-		return electricMenuService.titleValidate(menuId, title);
+		if (electricMenuService.hasTitle(menuId, title)) {
+			return Boolean.FALSE;
+		}
+		return Boolean.TRUE;
 	}
 
 }

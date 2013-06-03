@@ -44,7 +44,7 @@ public class SimService extends BaseService {
 		Page page = new Page();
 	 if (StringUtils.isNotEmpty(serviceNumber)) {
 			Pattern pattern = Pattern.compile("^.*" + serviceNumber + ".*$", Pattern.CASE_INSENSITIVE);
-			criteria.and("serviceNumber").is(pattern);
+			criteria.and("serviceNo").is(pattern);
 		}
 		if(StringUtils.isNotEmpty(imsiNo)){
 			Pattern pattern = Pattern.compile("^.*" + imsiNo + ".*$", Pattern.CASE_INSENSITIVE);
@@ -85,7 +85,7 @@ public class SimService extends BaseService {
 		ReadExcelResult result = excelHelper.readFromExcel(excelFile);
 		for (Object s : result.getResult()) {
 			SimInfo simInfo = (SimInfo) s;
-			mongoTemplate.upsert(new Query(Criteria.where("serviceNumber").is(simInfo.getServiceNumber())), genUpdate(simInfo), SimInfo.class);
+			mongoTemplate.upsert(new Query(Criteria.where("serviceNo").is(simInfo.getServiceNo())), genUpdate(simInfo), SimInfo.class);
 		}
 		SimImportRecord importRecord = new SimImportRecord();
 		importRecord.setImportCount(result.getResult().size());
@@ -98,8 +98,8 @@ public class SimService extends BaseService {
 		List<ExcelObjectMapperDO> list = new ArrayList<ExcelObjectMapperDO>();
 		ExcelObjectMapperDO serviceNumberMapperDO = new ExcelObjectMapperDO();
 		serviceNumberMapperDO.setExcelColumnName("业务号码");
-		serviceNumberMapperDO.setObjectFieldName("serviceNumber");
-		serviceNumberMapperDO.setObjectFieldType(Long.class);
+		serviceNumberMapperDO.setObjectFieldName("serviceNo");
+		serviceNumberMapperDO.setObjectFieldType(String.class);
 		list.add(serviceNumberMapperDO);
 
 		ExcelObjectMapperDO usernameMapperDO = new ExcelObjectMapperDO();
@@ -117,7 +117,7 @@ public class SimService extends BaseService {
 		ExcelObjectMapperDO imsiNoMapperDO = new ExcelObjectMapperDO();
 		imsiNoMapperDO.setExcelColumnName("IMSI号");
 		imsiNoMapperDO.setObjectFieldName("imsiNo");
-		imsiNoMapperDO.setObjectFieldType(Long.class);
+		imsiNoMapperDO.setObjectFieldType(String.class);
 		list.add(imsiNoMapperDO);
 		return list;
 	}

@@ -9,18 +9,19 @@ import com.source3g.hermes.entity.AbstractEntity;
 public class SimInfo extends AbstractEntity {
 	private static final long serialVersionUID = 3387120404561117471L;
 
-	@Indexed(unique = true)
-	private String serviceNumber;
+	@Indexed
+	private String serviceNo;
 	private String username;
 	private String simUimCardNo;
+	@Indexed
 	private String imsiNo;
 
-	public String getServiceNumber() {
-		return serviceNumber;
+	public String getServiceNo() {
+		return serviceNo;
 	}
 
-	public void setServiceNumber(String serviceNumber) {
-		this.serviceNumber = serviceNumber;
+	public void setServiceNo(String serviceNo) {
+		this.serviceNo = serviceNo;
 	}
 
 	public String getUsername() {
@@ -46,6 +47,5 @@ public class SimInfo extends AbstractEntity {
 	public void setImsiNo(String imsiNo) {
 		this.imsiNo = imsiNo;
 	}
-	
 
 }

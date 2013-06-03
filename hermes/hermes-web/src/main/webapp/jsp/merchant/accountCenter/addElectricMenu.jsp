@@ -72,10 +72,6 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#menuSel").change(function (){
-				 $("#title").attr("value"," ");
-			});
-			
 				var validateOptions={
 						rules : {
 							 title : {

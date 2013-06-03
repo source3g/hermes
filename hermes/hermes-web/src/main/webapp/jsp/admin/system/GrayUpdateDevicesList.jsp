@@ -25,15 +25,15 @@
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${page.data}" var="GrayUpdateDevice"> 
+			<c:forEach items="${page.data}" var="device"> 
 				<tr>
-					<td>${GrayUpdateDevice.sn}</td>
-					<td>${GrayUpdateDevice.apkVersion} 
+					<td>${device.sn}</td>
+					<td>${device.apkVersion} 
 					<c:choose>
-						<c:when test="${onlineVersion.apkVersion eq GrayUpdateDevice.apkVersion}">
+						<c:when test="${onlineVersion.apkVersion eq device.apkVersion}">
 						[稳定版]
 					</c:when>
-					<c:when test="${betaVersion.apkVersion eq GrayUpdateDevice.apkVersion}">
+					<c:when test="${betaVersion.apkVersion eq device.apkVersion}">
 						[测试版]
 					</c:when>
 						<c:otherwise>
@@ -41,7 +41,7 @@
 					</c:otherwise>
 					</c:choose>
 					</td>
-					<td><input type="button" value="删除" class="btn btn-danger" onclick="deleteThis('${GrayUpdateDevice.id}')"></td>
+					<td><input type="button" value="删除" class="btn btn-danger" onclick="deleteThis('${device.id}')"></td>
 				</tr>
 			 </c:forEach> 
 		</tbody>

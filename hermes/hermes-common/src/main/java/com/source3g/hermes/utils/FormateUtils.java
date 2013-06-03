@@ -107,4 +107,10 @@ public class FormateUtils {
 		String result = sdf.format(new Date());
 		return result;
 	}
+
+	public static String getDirByMonth() {
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.FILE_PATH_MONTH_FORMAT);
+		String result = sdf.format(new Date());
+		return result;
+	}
 }

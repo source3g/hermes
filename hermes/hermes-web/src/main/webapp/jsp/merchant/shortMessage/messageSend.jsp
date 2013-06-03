@@ -11,10 +11,10 @@
 <body>
 	<form id="messageSendForm" class="well ">
 		<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th colspan="4"><center>
-							<h4>短信录入 </h4>
+			<thead>
+				<tr>
+					<th colspan="4"><center>
+							<h4>短信群发</h4>
 						</center></th>
 				</tr>
 		</thead>
@@ -44,79 +44,78 @@
 					<td><label class="control-label">输入客户电话号码(电话号码以分号分隔)：</label></td>
 					<td colspan="4">
 						<!-- <textarea class="span8" rows="5"
-							name="customerPhones" id="customerPhones"></textarea> -->
-							<input id="customerPhonesInput" name="customerPhones" type="hidden" >
+							name="customerPhones" id="customerPhones"></textarea> --> <input
+						id="customerPhonesInput" name="customerPhones" type="hidden">
 						<div style="background-color: white; height: 150px; width: 500px;"
-							id="customerPhones" contentEditable="true" ></div>
+							id="customerPhones" contentEditable="true"></div>
 					</td>
 				</tr>
-				
-			  <tr>
-			  <td>
-			  		<label class="control-label">选择短信模板：</label> </td>
-			  		<td colspan="4"> <select id="sel">
-								<option>请选择</option>
-									</select>
-			  	</td>
-			  </tr>
-			<tr>
-			<td>
-				<label class="control-label">编辑短信内容：</label> </td>
-				<td colspan="4"><textarea class="span8" rows="5" name="content" id="content"></textarea>
-			 </td>
-			 </tr>
-			 <tr>
-					<td ><label class="control-label">字数统计：</label></td>
-					<td colspan="4"><span  id="contentLength"></span></td>
-			</tr>
-			<tr>
-			<td colspan="4">
-			<input id="sendBtn"  type="submit" data-loading-text="发送中..." class="btn btn-primary" value="发送" >
-				</td>
-		    </tr>
+
+				<tr>
+					<td><label class="control-label">选择短信模板：</label></td>
+					<td colspan="4"><select id="sel">
+							<option>请选择</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td><label class="control-label">编辑短信内容：</label></td>
+					<td colspan="4"><textarea class="span8" rows="5"
+							name="content" id="content"></textarea></td>
+				</tr>
+				<tr>
+					<td><label class="control-label">字数统计：</label></td>
+					<td colspan="4"><span id="contentLength"></span></td>
+				</tr>
+				<tr>
+					<td colspan="4"><input id="sendBtn" type="submit"
+						data-loading-text="发送中..." class="btn btn-primary" value="发送">
+					</td>
+				</tr>
 			</tbody>
 		</table>
 	</form>
 	<table class="table table-bordered" id="groupSendLog">
-	<thead>
+		<thead>
 			<tr>
 				<th colspan="4">
-							<h4>最近短信群发记录  </h4>
-						</th>
-				</tr>
-	</thead>
+					<h4>最近短信群发记录</h4>
+				</th>
+			</tr>
+		</thead>
 		<tbody>
 			<tr>
 				<td width="30%">发送时间</td>
-				<td width="30%">发送内容</td>	
+				<td width="30%">发送内容</td>
 				<td width="40%">发送数量/成功数量</td>
 			</tr>
 		</tbody>
 	</table>
-		<div id="myModal" class="modal hide fade">
+	<div id="myModal" class="modal hide fade">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">&times;</a>
 			<h3>顾客组信息明细</h3>
 		</div>
 		<div class="modal-body">
 			<div class="well" id="customersForm">
-			<table id="customersTab"
-				class="table table-bordered table-striped">
-				<tbody>
-				<tr><td id="customer">
-				</td></tr>
-				<tr><td id="allList">
-				</td></tr>
-				</tbody>
-			</table>
+				<table id="customersTab" class="table table-bordered table-striped">
+					<tbody>
+						<tr>
+							<td id="customer"></td>
+						</tr>
+						<tr>
+							<td id="allList"></td>
+						</tr>
+					</tbody>
+				</table>
 				<div>
-					<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="chosePhones()"></input>
+					<input type="button" class="btn btn-primary" id="customersFormBtn"
+						value="确定" onclick="chosePhones()"></input>
 				</div>
 			</div>
 		</div>
 		<div class="modal-footer"></div>
 	</div>
-	
+
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
 			<p id="resultMessage"></p>
@@ -125,7 +124,7 @@
 			<a href="#" class="btn" data-dismiss="modal">确定</a>
 		</div>
 	</div>
-	
+
 	<script type="text/javascript">
 	$(document).ready(function() {
 			var i=1;

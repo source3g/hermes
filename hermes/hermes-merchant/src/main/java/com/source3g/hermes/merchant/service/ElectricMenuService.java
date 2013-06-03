@@ -1,6 +1,5 @@
 package com.source3g.hermes.merchant.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jms.Destination;
@@ -14,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import com.mongodb.BasicDBObject;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.entity.merchant.ElectricMenu;
 import com.source3g.hermes.entity.merchant.ElectricMenuItem;
@@ -22,13 +22,10 @@ import com.source3g.hermes.service.JmsService;
 
 @Component
 public class ElectricMenuService extends BaseService {
-
 	@Autowired
 	private JmsService jmsService;
-	
 	@Autowired
 	private Destination syncDestination;
-
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
@@ -37,67 +34,51 @@ public class ElectricMenuService extends BaseService {
 		return electricMenus;
 	}
 
-	public void deleteItem(ObjectId ItemId, ObjectId menuId) {
-		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
-		for (int i = 0; i < electricMenuItems.size(); i++) {
-			if (electricMenuItems.get(i).getId().equals(ItemId)) {
-				electricMenuItems.remove(i);
-			}
-		}
+	public void deleteItem(ObjectId itemId, ObjectId menuId) {
 		Update update = new Update();
-		update.set("items", electricMenuItems);
+		BasicDBObject basicDBObject = new BasicDBObject();
+		basicDBObject.append("_id", itemId);
+		update.pull("items", basicDBObject);
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
 	}
 
-	public String addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) {
-		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
-		if (electricMenuItems == null) {
-			electricMenuItems = new ArrayList<ElectricMenuItem>();
+	public void addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) throws Exception {
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.title").is(electricMenuItem.getTitle())), ElectricMenu.class);
+		if (electricMenu != null) {
+			throw new Exception("名称已存在");
 		}
-		for(ElectricMenuItem e :electricMenuItems){
-			if(e.getTitle().equals(electricMenuItem.getTitle())){
-				return"名称已存在" ;
-			}
-		}
-		electricMenuItems.add(electricMenuItem);
-		electricMenu.setItems(electricMenuItems);
-		mongoTemplate.save(electricMenu);
-		return null;
+		Update update = new Update();
+		update.addToSet("items", electricMenuItem);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId)), update, ElectricMenu.class);
 	}
 
-	public void  updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId ) {
-		ElectricMenu electricMenu=mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), ElectricMenu.class);
-			if(electricMenu==null){
-				ObjectId obj=electricMenuItem.getId();
-				ElectricMenu oldElectricMenu=mongoTemplate.findOne(new Query(Criteria.where("items.id").is(obj)),ElectricMenu.class);
-				if(electricMenuItem.getPicPath()==null){
-					List<ElectricMenuItem> electricMenuItems=oldElectricMenu.getItems();
-					for(ElectricMenuItem e:electricMenuItems){
-						if(e.getId().equals(electricMenuItem.getId())){
-							electricMenuItem.setPicPath(e.getPicPath());
-						}
+	public void updateItem(ElectricMenuItem electricMenuItem, ObjectId menuId) throws Exception {
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), ElectricMenu.class);
+		// 如果menu下没有electricMenu，那么就是从别的菜单转过来的
+		if (electricMenu == null) {
+			ObjectId itemId = electricMenuItem.getId();
+			ElectricMenu oldElectricMenu = mongoTemplate.findOne(new Query(Criteria.where("items.id").is(itemId)), ElectricMenu.class);
+			if (electricMenuItem.getPicPath() == null) {
+				List<ElectricMenuItem> electricMenuItems = oldElectricMenu.getItems();
+				for (ElectricMenuItem e : electricMenuItems) {
+					if (e.getId().equals(electricMenuItem.getId())) {
+						electricMenuItem.setPicPath(e.getPicPath());
 					}
 				}
-				electricMenuItem.setId(new ObjectId());
-				String result=addItem(electricMenuItem, menuId);
-				if(result!=null){
-					return ;
-				}
-				deleteItem(obj, oldElectricMenu.getId());
-			}else{
-				if(StringUtils.isEmpty(electricMenuItem.getPicPath())){
-					Update update=new Update();
-					update.set("items.$.title", electricMenuItem.getTitle()).set("items.$.price", electricMenuItem.getPrice()).set("items.$.unit", electricMenuItem.getUnit());
-					mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
-				}else{
-					Update update=new Update();
-					update.set("items.$", electricMenuItem);
-					mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
-				}
 			}
-		
+			deleteItem(itemId, oldElectricMenu.getId());
+			addItem(electricMenuItem, menuId);
+		} else {
+			if (StringUtils.isEmpty(electricMenuItem.getPicPath())) {
+				Update update = new Update();
+				update.set("items.$.title", electricMenuItem.getTitle()).set("items.$.price", electricMenuItem.getPrice()).set("items.$.unit", electricMenuItem.getUnit());
+				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
+			} else {
+				Update update = new Update();
+				update.set("items.$", electricMenuItem);
+				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(menuId).and("items.id").is(electricMenuItem.getId())), update, ElectricMenu.class);
+			}
+		}
 	}
 
 	public void addMenu(ElectricMenu electricMenu, ObjectId merchantId) {
@@ -105,11 +86,11 @@ public class ElectricMenuService extends BaseService {
 		mongoTemplate.insert(electricMenu);
 	}
 
-	public void updateMenu(ElectricMenu electricMenu, ObjectId merchantId) {
+	public void updateMenu(ElectricMenu electricMenu, ObjectId merchantId) throws Exception {
 		Update update = new Update();
 		List<ElectricMenu> electricMenus = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId).and("name").is(electricMenu.getName())), ElectricMenu.class);
 		if (electricMenus.size() != 0) {
-			return;
+			throw new Exception("菜单名称已存在");
 		}
 		update.set("name", electricMenu.getName());
 		mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(merchantId).and("_id").is(electricMenu.getId())), update, ElectricMenu.class);
@@ -132,36 +113,29 @@ public class ElectricMenuService extends BaseService {
 
 	/**
 	 * 只增加menu或者修改menu的基本属性,不修改item
+	 * 
+	 * @throws Exception
 	 */
-	public String addMenu(List<ElectricMenu> menus, ObjectId merchantId) {
+	public void addMenu(List<ElectricMenu> menus, ObjectId merchantId) throws Exception {
 		for (ElectricMenu electricMenu : menus) {
 			if (electricMenu.getName() == null) {
-				return "类别名称不能为空";
+				throw new Exception("类别名称不能为空");
 			}
 			List<ElectricMenu> electricMenus = mongoTemplate.find(new Query(Criteria.where("name").is(electricMenu.getName()).and("merchantId").is(merchantId)), ElectricMenu.class);
 			if (electricMenus.size() != 0) {
-				return "类别名称已存在";
+				throw new Exception("类别名称已存在");
 			}
 			electricMenu.setMerchantId(merchantId);
 			mongoTemplate.insert(electricMenu);
 		}
-		return "添加成功";
 	}
 
-	public Boolean titleValidate(ObjectId menuId, String title) {
-		Boolean result = true;
-		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId)), ElectricMenu.class);
-		List<ElectricMenuItem> electricMenuItems = electricMenu.getItems();
-		if (electricMenuItems == null) {
-			return result;
+	public Boolean hasTitle(ObjectId menuId, String title) {
+		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.title").is(title)), ElectricMenu.class);
+		if (electricMenu != null) {
+			return true;
 		}
-		for (ElectricMenuItem e : electricMenuItems) {
-			if (e.getTitle().equals(title)) {
-				result = false;
-				return result;
-			}
-		}
-		return result;
+		return false;
 	}
 
 	public void sync(ObjectId merchantId) {

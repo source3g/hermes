@@ -6,47 +6,48 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>盒子列表</title>
-
 </head>
 <body>
 
 	<form id="queryForm" class="well form-inline " method="get">
-		<label class="control-label" for="sn">名称：</label> <input type="text"
-			name="sn" value="${device.sn}" placeholder="请输入盒子SN..." /> <input
-			id="pageNo" name="pageNo" type="hidden"> <input type="submit"
-			class="btn btn-primary" value="查询" />
+		<label class="control-label" for="sn">编码：</label> <input id="sn"
+			type="text" name="sn" value="${device.sn}" placeholder="请输入盒子SN..." />
+		<input type="text" name="merchantName" id="merchantName"
+			value="${merchantName}" placeholder="请输入商户名称" />
+			<input id="pageNo" name="pageNo" type="hidden"> 
+			<input type="submit" class="btn btn-primary" value="查询" />
+			<input type="button" class="btn btn-primary" onclick="exportCustomer();" value="导出" />
 	</form>
 
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="20%">名称</th>
-				<th width="20%">绑定SIM卡号</th>
-				<th width="20%">绑定状态</th>
+				<th width="20%">编码</th>
+				<th width="20%">卡号</th>
+				<th width="20%">imsi号</th>
 				<th width="20%">软件版本</th>
 				<th width="20%">操作</th>
 			</tr>
 		</thead>
 
-		<c:forEach items="${page.data}" var="deviceVo">
+		<c:forEach items="${page.data}" var="device">
 			<tr>
-				<td>${deviceVo.device.sn}</td>
-				<td>${deviceVo.device.sim.no}</td>
-				<td><c:if test="${not empty deviceVo.merchant.name}">[已绑定商户 : ${deviceVo.merchant.name}]</c:if>
-					<c:if test="${empty deviceVo.merchant.name}">[未绑定商户]</c:if></td>
+				<td>${device.sn}</td>
+				<td>${device.simInfo.serviceNo}</td>
+				<td>${device.simInfo.imsiNo}</td>
 				<td><c:choose>
-						<c:when test="${not empty deviceVo.device.apkVersion }">
-						${deviceVo.device.apkVersion }
+						<c:when test="${not empty device.apkVersion }">
+						${device.apkVersion }
 					</c:when>
 						<c:otherwise>
 						未知
 					</c:otherwise>
 					</c:choose></td>
 				<td><a class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${deviceVo.device.id}');">删除</a> <a
+					onclick="deleteById('${device.id}');">删除</a> <a
 					class="btn btn-success" href="javascript:void();"
-					onclick="detialOfDevice('${deviceVo.device.id}');">详细信息</a></td>
+					onclick="deviceDetail('${device.id}');">详细信息</a></td>
 			</tr>
 		</c:forEach>
 
@@ -76,16 +77,23 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			if(${not empty error}==true){
-				alert('${error}');
-			} 
 			initPage(${page.currentPage},${page.totalPageCount});
 			$("#queryForm").submit(function(){
 				goToPage(1);
 				return false;
 			});
 		});
-		
+		function exportCustomer(){
+			var sn=$("#sn").val();
+			var merchantName=$("#merchantName").val();
+			if(sn||merchantName){
+				$.get("${pageContext.request.contextPath}/admin/device/export/?sn="+sn+"&merchantName="+merchantName,function(data){
+					window.open(data);
+				});
+			}else{
+				alert("必须有一个条件才能导出");
+			}
+		}
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);
 			var options = {
@@ -98,25 +106,24 @@
 		}
 
 		function deleteById(id) {
+			if(confirm("确定删除？")){
 			$.ajax({
 				url : "${pageContext.request.contextPath}/admin/device/delete/" + id + "/",
 				type : "get",
 				success : showContentInfo
 			});
+			}
 		}
 		function showError() {
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
-		function detialOfDevice(id){
+		function deviceDetail(id){
 			$.ajax({
-				url:"${pageContext.request.contextPath}/admin/device/detialOfDevice/"+id+"/",
+				url:"${pageContext.request.contextPath}/admin/device/detail/"+id+"/",
 				type:"get",
-				success:toDeviceInformation
+				success:showContentInfo
 			});
-		}
-		function toDeviceInformation(data){
-			$("#pageContentFrame").html(data);
 		}
 	</script>
 </body>

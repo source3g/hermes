@@ -9,6 +9,7 @@ public class RespReceiver implements IRespReceiver {
 	@Override
 	public void receive(IApiSubmit submit, IApiSubmitResp resp) {
 		System.out.println("cbipMessage:收到响应:" + "submit:" + submit + "resp" + resp);
+		
 	}
 
 }

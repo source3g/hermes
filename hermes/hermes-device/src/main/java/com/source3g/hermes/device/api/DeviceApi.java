@@ -1,7 +1,15 @@
 package com.source3g.hermes.device.api;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -22,6 +30,7 @@ import com.source3g.hermes.entity.device.PublicKey;
 import com.source3g.hermes.utils.GpsPoint;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.DeviceDistributionVo;
+import com.source3g.hermes.vo.DeviceVo;
 
 @Controller
 @RequestMapping("/device")
@@ -51,12 +60,12 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String sn) {
+	public Page list(String pageNo, String sn,String merchantName) {
 		logger.debug("list device....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Device device = new Device();
 		device.setSn(sn);
-		return deviceService.list(pageNoInt, device);
+		return deviceService.list(pageNoInt, device,merchantName);
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
@@ -72,6 +81,12 @@ public class DeviceApi {
 	public List<Device> getDeviceInfo(@PathVariable String ids) {
 		String idArray[] = ids.split(",");
 		return deviceService.findByIds(Arrays.asList(idArray));
+	}
+
+	@RequestMapping(value = "/detail/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public DeviceVo detail(@PathVariable String id) {
+		return deviceService.findDetail(new ObjectId(id));
 	}
 
 	@RequestMapping(value = "/sn/{sn}", method = RequestMethod.GET)
@@ -118,7 +133,33 @@ public class DeviceApi {
 	@RequestMapping(value = "/sync/status/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<DeviceStatusDto> syncStatus(@PathVariable String merchantId) {
-		return deviceService.findDeviceStatusByMerchantId(merchantId);
+		return deviceService.findDeviceStatusByMerchantId(new ObjectId(merchantId));
+	}
+
+	@RequestMapping(value = "/export", method = RequestMethod.GET)
+	@ResponseBody
+	public String export(String sn, String merchantName) throws IOException {
+		String url = deviceService.exportDevice(sn, merchantName);
+		return url;
+	}
+
+	@RequestMapping(value = "/export/{year}/{month}/{day}/{fileName}")
+	public void download(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		String downLoadPath = deviceService.getExportDir() + DeviceService.EXPORT_FOLDER_NAME + "/" + year + "/" + month + "/" + day + "/" + fileName;
+		long fileLength = new File(downLoadPath).length();
+		response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+		response.setHeader("Content-Length", String.valueOf(fileLength));
+		bis = new BufferedInputStream(new FileInputStream(downLoadPath));
+		bos = new BufferedOutputStream(response.getOutputStream());
+		byte[] buff = new byte[2048];
+		int bytesRead;
+		while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+			bos.write(buff, 0, bytesRead);
+		}
+		bis.close();
+		bos.close();
 	}
 
 	@RequestMapping(value = "/publicKey")

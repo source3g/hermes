@@ -34,7 +34,7 @@
 			<label class="control-label" for="tag">标签分类选择：</label>
 			<div class="controls">
 				<a href="javascript:void();" class="btn btn-primary btn-small"
-					onclick="showTags()">标签分类选择</a><span id="tagName"> 标签： <c:if
+					onclick="showTags();">标签分类选择</a><span id="tagName"> 标签： <c:if
 						test="${not empty update }">
 						<c:forEach items="${merchant.merchantTagNodes}"
 							var="merchantTagNode" varStatus="status">
@@ -42,7 +42,7 @@
 								name="merchantTagNodes[${status.index }].id"
 								value="${merchantTagNode.id}">
 							<span>${merchantTagNode.name}<a href="javascript:void();"
-								onclick="deleteTag(this)" style="color: red">×</a></span>
+								onclick="deleteTag(this);" style="color: red">×</a></span>
 						</c:forEach>
 					</c:if></span>
 			</div>
@@ -52,14 +52,16 @@
 			<label class="control-label" for="tag">所属销售选择：</label>
 			<div class="controls">
 				<a href="javascript:void();" class="btn btn-primary btn-small"
-					onclick="branchCompanyList()">所属销售选择</a><span id="salerName">
+					onclick="branchCompanyList();">所属销售选择</a><span id="salerName">
 					商户所属销售: <c:if test="${not empty saler }">
 						<span>${saler.name}<a href="javascript:void();"
-							onclick="deleteSaler(this)" style="color: red">×</a><input type="hidden" name="salerId" value="${saler.id}"></span>
+							onclick="deleteSaler(this);" style="color: red">×</a><input
+							type="hidden" name="salerId" value="${saler.id}"></span>
 					</c:if>
 				</span>
 			</div>
 		</div>
+		F
 
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
@@ -106,7 +108,7 @@
 			<div class="controls">
 				<input type="text" class="input-xlarge" placeholder="请输入盒子SN编码..."
 					id="deviceSn" name="sn"> <input type="button"
-					class="btn btn-primary " id="deviceId" onclick="findDevice()"
+					class="btn btn-primary " id="deviceId" onclick="findDevice();"
 					value="加入列表"><span id="deviceMessage"></span>
 			</div>
 		</div>
@@ -123,7 +125,7 @@
 					<tr>
 						<td class='deviceSnTd'>${device.sn}</td>
 						<td><input type='button' name='deleteDeviceSn'
-							class='btn btn-danger' onclick='deleteDevice(this)' value='删除'>
+							class='btn btn-danger' onclick='deleteDevice(this);' value='删除'>
 							<input type='hidden' name='deviceIds' value='${device.id}'></td>
 					</tr>
 				</c:forEach>
@@ -184,7 +186,7 @@
 
 		<div class="modal-footer">
 			<input type="button" class="btn btn-primary" id="customersFormBtn"
-				value="确定" onclick="choseTags()"></input>
+				value="确定" onclick="choseTags();"></input>
 		</div>
 	</div>
 	<div id="salersModal" class="modal hide fade">
@@ -195,7 +197,7 @@
 		<div class="modal-body" id="companyModalBody"></div>
 		<div class="modal-footer">
 			<input type="button" class="btn btn-primary" id="" value="确定"
-				onclick="choseSalers()"></input>
+				onclick="choseSalers();"></input>
 		</div>
 	</div>
 	<c:if test="${not empty errors }">
@@ -377,6 +379,8 @@
 		//查出标签分类信息
 		$.get("${pageContext.request.contextPath}/admin/dictionary/tag/list",drawmerchantTagNodeList);
 	});
+	
+	
 	function findDevice(){
 		var sn=$("#deviceSn").val();
 		var isInTable=false;

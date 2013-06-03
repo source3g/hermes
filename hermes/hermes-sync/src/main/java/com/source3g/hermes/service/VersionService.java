@@ -1,5 +1,6 @@
 package com.source3g.hermes.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -81,10 +82,6 @@ public class VersionService extends BaseService {
 		OnlineVersion bateOnlineVersion=mongoTemplate.findOne(new Query(Criteria.where("versionType").is(VersionType.BETA)), OnlineVersion.class);
 		//测试版与稳定版 版本号相同时 测试版清空 返回稳定版
 		if(version.equals(bateOnlineVersion.getApkVersion())){
-			List<GrayUpdateDevices> grayUpdateDevices=mongoTemplate.find(new Query(Criteria.where("apkVersion").ne(version)), GrayUpdateDevices.class);
-			for(int i=0;i<grayUpdateDevices.size();i++){
-				mongoTemplate.remove(grayUpdateDevices.get(i));
-			}
 			mongoTemplate.remove(bateOnlineVersion);
 		}
 	}
@@ -93,13 +90,6 @@ public class VersionService extends BaseService {
 		mongoTemplate.upsert(new Query(Criteria.where("versionType").is(VersionType.BETA)), new Update().set("apkVersion", version), OnlineVersion.class);
 	}
 	
-	//灰色设备列表盒子升级 比较是否为最新版本
-	public void updateGrayUpdateDevices(String sn, String version) {
-		OnlineVersion onlineVersion = super.findOne(new Query(Criteria.where("versionType").is(VersionType.BETA)), OnlineVersion.class);
-		if(!onlineVersion.getApkVersion().equals(version)){
-		mongoTemplate.upsert(new Query(Criteria.where("sn").is(sn)),new Update().set("apkVersion", version),GrayUpdateDevices.class);
-	}
-	}
 	
 	public void updateDeviceVersion(String sn, String version) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("sn").is(sn)), new Update().set("apkVersion", version), Device.class);
@@ -114,24 +104,34 @@ public class VersionService extends BaseService {
 		}
 		return result;
 	}
+
 	public Boolean codeValidate(int codeInt) {
-		Boolean result=true;
-		List<ApkVersion> list=mongoTemplate.find(new Query(Criteria.where("code").is(codeInt)), ApkVersion.class);
-		if(list.size()>0){
-			result=false;
+		Boolean result = true;
+		List<ApkVersion> list = mongoTemplate.find(new Query(Criteria.where("code").is(codeInt)), ApkVersion.class);
+		if (list.size() > 0) {
+			result = false;
 			return result;
 		}
 		return result;
 	}
 	public Page GrayUpdateDevicesList(int pageNoInt) {
-		Query query = new Query();
-		query.with(new Sort(Direction.DESC, "_id"));
+		GrayUpdateDevices grayUpdateDevices = super.findOne((new Query()), GrayUpdateDevices.class);
 		Page page = new Page();
-		Long totalCount = mongoTemplate.count(query, GrayUpdateDevices.class);
-		page.setTotalRecords(totalCount);
-		page.gotoPage(pageNoInt);
-		List<GrayUpdateDevices> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), GrayUpdateDevices.class);
-		page.setData(list);
+		if(grayUpdateDevices==null){
+			GrayUpdateDevices gud=new GrayUpdateDevices();
+			gud.setId(new ObjectId());
+			gud.setDeviceIds(new ArrayList<ObjectId>());
+			page.setTotalRecords(gud.getDeviceIds().size());
+			mongoTemplate.insert(gud);
+			page.gotoPage(pageNoInt);
+			List<Device> devices=mongoTemplate.find(new Query(Criteria.where("_id").in(gud.getDeviceIds())).skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
+			page.setData(devices);
+		}else{
+			page.setTotalRecords(grayUpdateDevices.getDeviceIds().size());
+			page.gotoPage(pageNoInt);
+			List<Device> devices=mongoTemplate.find(new Query(Criteria.where("_id").in(grayUpdateDevices.getDeviceIds())).skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
+			page.setData(devices);
+		}
 		return page;
 	}
 	public void addToGrayUpdateDevicesList(String sn) {
@@ -139,15 +139,15 @@ public class VersionService extends BaseService {
 		if(device==null){
 			return ;
 		}
-		GrayUpdateDevices g=mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), GrayUpdateDevices.class);
-		if(g!=null){
-			return;
-		}
-		GrayUpdateDevices grayUpdateDevices=new GrayUpdateDevices();
-		grayUpdateDevices.setApkVersion(device.getApkVersion());
-		grayUpdateDevices.setSn(sn);
-		grayUpdateDevices.setId(new ObjectId());
-		mongoTemplate.insert(grayUpdateDevices);
+		GrayUpdateDevices grayUpdateDevices=mongoTemplate.findOne(new Query(), GrayUpdateDevices.class);
+		List<ObjectId> deviceIds=grayUpdateDevices.getDeviceIds();
+			for(ObjectId o:deviceIds){
+				if(o.equals(device.getId())){
+					return;
+				}
+			}
+			deviceIds.add(device.getId());
+			mongoTemplate.updateFirst(new Query(), new Update().set("deviceIds",deviceIds ), GrayUpdateDevices.class);
 	}
 
 	public Boolean DeviceSnValidate(String sn) {
@@ -159,7 +159,14 @@ public class VersionService extends BaseService {
 	}
 
 	public void deleteGrayUpdateDevice(ObjectId id) {
-		mongoTemplate.remove(new Query(Criteria.where("_id").is(id)), GrayUpdateDevices.class);
+		GrayUpdateDevices grayUpdateDevices=mongoTemplate.findOne(new Query(), GrayUpdateDevices.class);
+		List<ObjectId> list=grayUpdateDevices.getDeviceIds();
+		for(int i=0;i<list.size();i++){
+			if(list.get(i).equals(id)){
+				list.remove(i);
+			}
+		}
+		mongoTemplate.updateFirst(new Query(), new Update().set("deviceIds", list),GrayUpdateDevices.class);
 	}
 
 

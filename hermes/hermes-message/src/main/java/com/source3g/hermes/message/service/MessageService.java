@@ -271,12 +271,12 @@ public class MessageService extends BaseService {
 	}
 
 	public void singleSend(ObjectId merchantId, String customerPhone, String content, MessageType messageType) {
-		if(!PhoneUtils.isMobile(customerPhone)){
+		if (!PhoneUtils.isMobile(customerPhone)) {
 			return;
 		}
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(customerPhone)), Customer.class);
 		if (c == null) {
-			MessageSendLog messageSendLog = genMessageSendLog(c, 1, content, messageType, MessageStatus.发送中);
+			MessageSendLog messageSendLog = genMessageSendLog(merchantId, customerPhone, 1, content, messageType, MessageStatus.发送中);
 			sendByPhone(merchantId, customerPhone, content, messageType, messageSendLog.getId());
 		} else {
 			singleSend(c, content, messageType);
@@ -537,19 +537,19 @@ public class MessageService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)), update, ShortMessage.class);
 	}
 
-	public Page failedMessagelist(int pageNoInt, Date startTime,Date endTime,String status) {
+	public Page failedMessagelist(int pageNoInt, Date startTime, Date endTime, String status) {
 		Query query = new Query();
 		query.with(new Sort(Direction.DESC, "sendTime"));
-		Criteria criteria=new Criteria();
-		if(startTime!= null&&endTime!=null){
+		Criteria criteria = new Criteria();
+		if (startTime != null && endTime != null) {
 			criteria.and("sendTime").gte(startTime).lte(endTime);
-		}else if (startTime!= null) {
+		} else if (startTime != null) {
 			criteria.and("sendTime").gte(startTime);
-		}else if(endTime!=null){
+		} else if (endTime != null) {
 			criteria.and("sendTime").lte(endTime);
 		}
-		if(StringUtils.isNotEmpty(status)){
-				criteria.and("status").is(status);
+		if (StringUtils.isNotEmpty(status)) {
+			criteria.and("status").is(status);
 		}
 		// query.addCriteria(Criteria.where("status").is(MessageStatus.提交失败));
 		query.addCriteria(criteria);
@@ -563,37 +563,37 @@ public class MessageService extends BaseService {
 	}
 
 	public Boolean failedMessageResend(String id) {
-		Boolean result=true;
+		Boolean result = true;
 		ShortMessage message = mongoTemplate.findOne(new Query(Criteria.where("_id").is(id)), ShortMessage.class);
-		MessageStatus status= failedMessageResend(message);
-		if(MessageStatus.已发送.equals(status)){
+		MessageStatus status = failedMessageResend(message);
+		if (MessageStatus.已发送.equals(status)) {
 			return result;
 		}
 		return false;
 	}
 
 	public MessageStatus failedMessageResend(ShortMessage message) {
-			message.setStatus(MessageStatus.重新发送);
-			jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
-			return message.getStatus();
+		message.setStatus(MessageStatus.重新发送);
+		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+		return message.getStatus();
 	}
 
-	public Boolean allFailedMessagesResend( Date startTime, Date endTime, String status) {
-		Boolean result=true;
-		Query query=new Query();
-		Criteria criteria=new Criteria();
-		if(startTime!=null&&endTime!=null){
+	public Boolean allFailedMessagesResend(Date startTime, Date endTime, String status) {
+		Boolean result = true;
+		Query query = new Query();
+		Criteria criteria = new Criteria();
+		if (startTime != null && endTime != null) {
 			criteria.and("sendTime").gte(startTime).lte(endTime);
-		}else if(startTime!=null){
+		} else if (startTime != null) {
 			criteria.and("sendTime").gte(startTime);
-		}else if(endTime!=null){
+		} else if (endTime != null) {
 			criteria.and("sendTime").lte(endTime);
 		}
-		if(status!=null){
+		if (status != null) {
 			criteria.and("status").is(status);
 		}
 		query.addCriteria(criteria);
-		List<ShortMessage> list =mongoTemplate.find(query, ShortMessage.class);
+		List<ShortMessage> list = mongoTemplate.find(query, ShortMessage.class);
 		for (ShortMessage shortMessage : list) {
 			failedMessageResend(shortMessage);
 		}

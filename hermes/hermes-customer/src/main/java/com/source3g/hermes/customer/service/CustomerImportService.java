@@ -9,14 +9,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -45,6 +43,7 @@ import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.utils.excel.ExcelUtils;
 
 @Service
 public class CustomerImportService extends BaseService {
@@ -126,27 +125,21 @@ public class CustomerImportService extends BaseService {
 						customerList.add(customer);
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
 					customerImportItem.setFailedReason(e.getMessage());
 					customerImportLog.setFailedCount(customerImportLog.getFailedCount() + 1);
 					failedImortItems.add(customerImportItem);
-					// mongoTemplate.insert(customerImportItem);
-					// mongoTemplate.updateFirst(new
-					// Query(Criteria.where("_id").is(customerImportItem.getId())),
-					// new Update().set("importStatus",
-					// ImportStatus.导入失败.toString()).set("failedReason",
-					// e.getMessage()), CustomerImportItem.class);//
-					// (customerImportItem);
 				}
 			}
 			mongoTemplate.insertAll(customerList);
 			mongoTemplate.insertAll(failedImortItems);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), new Update().set("locking", Boolean.FALSE), PackageLock.class);
 		}
-		logger.error("导入完成 ");
+		logger.debug("导入完成 ");
 		customerImportLog.setStatus(ImportStatus.导入完成.toString());
 		mongoTemplate.save(customerImportLog);
 	}
@@ -179,16 +172,31 @@ public class CustomerImportService extends BaseService {
 	}
 
 	private void checkItem(CustomerImportItem customerImportItem) throws Exception {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<CustomerImportItem>> constraintViolations = validator.validate(customerImportItem);
-		if (constraintViolations.size() > 0) {
-			String failedReason = "";
-			for (ConstraintViolation<CustomerImportItem> v : constraintViolations) {
-				failedReason += v.getMessage() + ",";
-			}
-			throw new Exception(failedReason);
+		// ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		// Validator validator = factory.getValidator();
+		// try {
+		// Set<ConstraintViolation<CustomerImportItem>> constraintViolations =
+		// validator.validate(customerImportItem);
+		// if (constraintViolations.size() > 0) {
+		// String failedReason = "";
+		// for (ConstraintViolation<CustomerImportItem> v :
+		// constraintViolations) {
+		// failedReason += v.getMessage() + ",";
+		// }
+		// throw new Exception(failedReason);
+		// }
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		if (StringUtils.isEmpty(customerImportItem.getPhone())) {
+			throw new Exception(" 电话号码不能为空");
 		}
+		Pattern pattern = Pattern.compile("[0-9]*");
+		Matcher match = pattern.matcher(customerImportItem.getPhone());
+		if (match.matches() == false) {
+			throw new Exception("电话号码必须为数字");
+		}
+
 		return;
 	}
 
@@ -273,46 +281,61 @@ public class CustomerImportService extends BaseService {
 			CustomerImportItem customerImportItem = new CustomerImportItem();
 			customerImportItem.setId(ObjectId.get());
 			customerImportItem.setMerchantId(new ObjectId(merchantId));
-			if (row.getCell(nameIndex) != null) {
-				customerImportItem.setName(row.getCell(nameIndex).getStringCellValue());
-			}
-			if (row.getCell(sexIndex) != null) {
-				String sexStr = row.getCell(sexIndex).getStringCellValue();
-				if ("男".equals(sexStr)) {
-					customerImportItem.setSex(Sex.MALE);
-				} else {
-					customerImportItem.setSex(Sex.FEMALE);
+			try {
+				if (row.getCell(nameIndex) != null) {
+					customerImportItem.setName(row.getCell(nameIndex).getStringCellValue());
 				}
-			}
-			if (row.getCell(birthIndex) != null) {
-				String birthStr = row.getCell(birthIndex).getStringCellValue();
-				birthStr = birthStr.replace("月", "-");
-				birthStr = birthStr.replace("日", "-");
-				customerImportItem.setBirthday(birthStr);
-			}
-			if (row.getCell(phoneIndex) != null) {
-				customerImportItem.setPhone(String.valueOf((long) row.getCell(phoneIndex).getNumericCellValue()));
-			}
-			if (row.getCell(addrIndex) != null) {
-				customerImportItem.setAddress(row.getCell(addrIndex).getStringCellValue());
-			}
-			if (row.getCell(qqIndex) != null) {
-				customerImportItem.setQq(String.valueOf((long) row.getCell(qqIndex).getNumericCellValue()));
-			}
-			if (row.getCell(emailIndex) != null) {
-				customerImportItem.setEmail(row.getCell(emailIndex).getStringCellValue());
-			}
-			if (row.getCell(noteIndex) != null) {
-				customerImportItem.setNote(row.getCell(noteIndex).getStringCellValue());
-			}
-			if (row.getCell(customerGroupIndex) != null) {
-				customerImportItem.setCustomerGroupName(row.getCell(customerGroupIndex).getStringCellValue());
-			}
+				if (row.getCell(sexIndex) != null) {
+					String sexStr = row.getCell(sexIndex).getStringCellValue();
+					if ("男".equals(sexStr)) {
+						customerImportItem.setSex(Sex.MALE);
+					} else {
+						customerImportItem.setSex(Sex.FEMALE);
+					}
+				}
+				if (row.getCell(birthIndex) != null) {
+					// String birthStr =
+					// row.getCell(birthIndex).getStringCellValue();
+					// birthStr = birthStr.replace("月", "-");
+					// birthStr = birthStr.replace("日", "-");
+					try {
+						String birth = ExcelUtils.getCellStringValue(row.getCell(birthIndex));
+						Date date = new Date(Long.parseLong(birth));
+						SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+						customerImportItem.setBirthday(sdf.format(date));
+					} catch (Exception e) {
+						throw new Exception("生日格式不正确");
+					}
+				}
+				if (row.getCell(phoneIndex) != null) {
+					customerImportItem.setPhone(String.valueOf((long) row.getCell(phoneIndex).getNumericCellValue()));
+				}
+				if (row.getCell(addrIndex) != null) {
+					customerImportItem.setAddress(row.getCell(addrIndex).getStringCellValue());
+				}
+				if (row.getCell(qqIndex) != null) {
+					customerImportItem.setQq(String.valueOf((long) row.getCell(qqIndex).getNumericCellValue()));
+				}
+				if (row.getCell(emailIndex) != null) {
+					customerImportItem.setEmail(row.getCell(emailIndex).getStringCellValue());
+				}
+				if (row.getCell(noteIndex) != null) {
+					customerImportItem.setNote(row.getCell(noteIndex).getStringCellValue());
+				}
+				if (row.getCell(customerGroupIndex) != null) {
+					customerImportItem.setCustomerGroupName(row.getCell(customerGroupIndex).getStringCellValue());
+				}
 
-			customerImportItem.setImportStatus(ImportStatus.未导入.toString());
-			customerImportItem.setCustomerImportLogId(new ObjectId(customerImportLogId));
-			// mongoTemplate.insert(customerImportItem);
-			result.add(customerImportItem);
+				customerImportItem.setImportStatus(ImportStatus.未导入.toString());
+				customerImportItem.setCustomerImportLogId(new ObjectId(customerImportLogId));
+				// mongoTemplate.insert(customerImportItem);
+				result.add(customerImportItem);
+			} catch (Exception e) {
+				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
+				customerImportItem.setFailedReason(e.getMessage());
+				customerImportItem.setCustomerImportLogId(new ObjectId(customerImportLogId));
+				mongoTemplate.insert(customerImportItem);
+			}
 		}
 		// 不入库
 		// mongoTemplate.insertAll(result);

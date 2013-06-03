@@ -25,15 +25,18 @@ import com.mongodb.DBObject;
 import com.source3g.hermes.entity.AbstractEntity;
 
 @Component
-public class BaseService  implements ApplicationContextAware{
-	
+public class BaseService implements ApplicationContextAware {
+
 	private static ApplicationContext applicationContext;
-	
+
 	@Value(value = "${image.menu.dir}")
-	private String picPath;
-	
+	protected String picPath;
+
 	@Value(value = "${local.url}")
-	private String localUrl;
+	protected String localUrl;
+
+	@Value(value = "${customer.export.temp.dir}")
+	protected String exportDir;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -58,8 +61,6 @@ public class BaseService  implements ApplicationContextAware{
 		}
 		return applicationContext.getBean(beanName, clazz);
 	}
-
-	
 
 	@Autowired
 	protected MongoTemplate mongoTemplate;
@@ -244,6 +245,12 @@ public class BaseService  implements ApplicationContextAware{
 		return result;
 	}
 
+	public void assertNotNull(Object o, String message) throws Exception {
+		if (o == null) {
+			throw new Exception(message);
+		}
+	}
+
 	public String getPicPath() {
 		return picPath;
 	}
@@ -258,5 +265,13 @@ public class BaseService  implements ApplicationContextAware{
 
 	public void setLocalUrl(String localUrl) {
 		this.localUrl = localUrl;
+	}
+
+	public String getExportDir() {
+		return exportDir;
+	}
+
+	public void setExportDir(String exportDir) {
+		this.exportDir = exportDir;
 	}
 }

@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.source3g.hermes.entity.customer.CustomerGroup;
+import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.entity.merchant.MerchantResource;
@@ -240,23 +241,22 @@ public class MerchantService extends BaseService {
 		}
 	}
 
-	public Boolean passwordValidate(String password,ObjectId merchantId) {
-		Boolean passwordValidate=true;
+	public Boolean passwordValidate(String password, ObjectId merchantId) {
+		Boolean passwordValidate = true;
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("password").is(password).and("_id").is(merchantId)), Merchant.class);
-		if(merchant == null){
-			passwordValidate=false;
+		if (merchant == null) {
+			passwordValidate = false;
 			return passwordValidate;
 		}
 		return passwordValidate;
 	}
-	
+
 	public void addMerchantResource(ObjectId merchantId, String name) throws Exception {
 		if (name == null || name.equals("")) {
 			throw new Exception("名称不能为空 ");
 		}
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
-		MerchantResource merchantResource
-		= merchant.getMerchantResource();
+		MerchantResource merchantResource = merchant.getMerchantResource();
 		if (merchantResource == null) {
 			merchant.setMerchantResource(new MerchantResource());
 		}
@@ -296,5 +296,25 @@ public class MerchantService extends BaseService {
 		return null;
 	}
 
+	public void initDevice(String sn, String username, String password) throws Exception {
+		Device device = super.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
+		Merchant merchant = super.findOne(new Query(Criteria.where("account").is(username).and("password").is(password)), Merchant.class);
+		assertNotNull(device, "盒子不存在");
+		assertNotNull(merchant, "商户不存在");
+		List<ObjectId> deviceIds = merchant.getDeviceIds();
+		if (deviceIds == null) {
+			deviceIds = new ArrayList<ObjectId>();
+		}
+		deviceIds.add(device.getId());
+		int newTotalCount = merchant.getMessageBalance().getTotalCount();
+		int newsurplusMsgCount = merchant.getMessageBalance().getSurplusMsgCount();
+		if (newTotalCount > 200 && newsurplusMsgCount == 0) {
+			newTotalCount -= 200;
+			newsurplusMsgCount += 200;
+		}
+		Update update = new Update();
+		update.set("deviceIds", deviceIds).set("messageBalance.totalCount", newTotalCount).set("messageBalance.surplusMsgCount", newsurplusMsgCount);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
+	}
 
 }

@@ -65,7 +65,7 @@ public class VersionApi {
 	public String upload(@RequestParam("describe") String describe, @RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version, @RequestParam("code") String code) throws IOException, ParseException {
 		describe = new String(describe.getBytes("iso-8859-1"));
 		int codeInt = Integer.parseInt(code);
-		String dirByDay = FormateUtils.getDirByDay();
+		String dirByDay = FormateUtils.getDirByMonth();
 		String suffxPath = dirByDay + new String(oldName.getBytes("iso-8859-1"));
 		String dir = versionService.getUploadDir() + suffxPath;
 		File fileToCopy = new File(dir);
@@ -117,7 +117,7 @@ public class VersionApi {
 	
 	@RequestMapping(value = "/online", method = RequestMethod.GET)
 	@ResponseBody
-	public ApkVersion returnLastVersion() {
+	public ApkVersion getLastVersion() {
 		ApkVersion apkVersion = versionService.getOnlineVersion();
 		if (apkVersion != null) {
 			processUrl(apkVersion);
@@ -130,8 +130,7 @@ public class VersionApi {
 	@ResponseBody
 	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody String version) {
 		versionService.updateDeviceVersion(sn, version);
-		versionService.updateGrayUpdateDevices(sn, version);
-		return returnLastVersion();
+		return getLastVersion();
 	}
 
 	private void processUrl(ApkVersion apkVersion) {
