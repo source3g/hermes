@@ -108,7 +108,7 @@ public class VersionController {
 			return "redirect:/admin/version/versionList";
 		}
 	}
-	
+
 	@RequestMapping(value = "/changeBetaVersion", method = RequestMethod.POST)
 	public String changeBetaVersion(String version) {
 		String uri = ConfigParams.getBaseUrl() + "version/changeBetaVersion";
@@ -120,7 +120,7 @@ public class VersionController {
 			return "redirect:/admin/version/versionList";
 		}
 	}
-	
+
 	@RequestMapping(value = "versionList", method = RequestMethod.GET)
 	public ModelAndView versionList(String pageNo) {
 		if (StringUtils.isEmpty(pageNo)) {
@@ -128,45 +128,38 @@ public class VersionController {
 		}
 		String uri = ConfigParams.getBaseUrl() + "version/versionList/?pageNo=" + pageNo;
 		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/releaseVersion";
-		String betaVersionUri= ConfigParams.getBaseUrl() + "version/betaVersion";
+		String betaVersionUri = ConfigParams.getBaseUrl() + "version/betaVersion";
 		Page page = restTemplate.getForObject(uri, Page.class);
 		OnlineVersion releaseVersion = restTemplate.getForObject(onlineVersionUri, OnlineVersion.class);
-		OnlineVersion betaVersion =restTemplate.getForObject(betaVersionUri, OnlineVersion.class);
+		OnlineVersion betaVersion = restTemplate.getForObject(betaVersionUri, OnlineVersion.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("page", page);
 		model.put("onlineVersion", releaseVersion);
-		if(betaVersion!=null){
+		if (betaVersion != null) {
 			model.put("betaVersion", betaVersion);
 		}
 		return new ModelAndView("admin/system/versionList", model);
 	}
-	
+
 	@RequestMapping(value = "/toGrayUpdateDevicesList", method = RequestMethod.GET)
-	public String toGrayUpdateDevicesList(String pageNo,Model model) {
-		if(StringUtils.isEmpty(pageNo)){
-			pageNo="1";
+	public String toGrayUpdateDevicesList(String pageNo, Model model) {
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
 		}
-		String uri=ConfigParams.getBaseUrl()+"version/GrayUpdateDevicesList/?pageNo="+pageNo;
-		String onlineVersionUri = ConfigParams.getBaseUrl() + "version/releaseVersion";
-		String betaVersionUri= ConfigParams.getBaseUrl() + "version/betaVersion";
-		Page page=restTemplate.getForObject(uri, Page.class);
-		OnlineVersion releaseVersion = restTemplate.getForObject(onlineVersionUri, OnlineVersion.class);
-		OnlineVersion betaVersion =restTemplate.getForObject(betaVersionUri, OnlineVersion.class);
-		if(betaVersion!=null){
-			model.addAttribute("betaVersion", betaVersion);
-		}
+		String uri = ConfigParams.getBaseUrl() + "version/GrayUpdateDevicesList/?pageNo=" + pageNo;
+		Page page = restTemplate.getForObject(uri, Page.class);
 		model.addAttribute("page", page);
-		model.addAttribute("onlineVersion", releaseVersion);
-		return "/admin/system/GrayUpdateDevicesList";
+		return "/admin/system/grayUpdateDevicesList";
 	}
+
 	@RequestMapping(value = "/snValidate")
 	@ResponseBody
 	public Boolean DeviceSnValidate(String sn) {
-		String uri = ConfigParams.getBaseUrl() + "version/snValidate/"+sn+"/";
-		Boolean result=restTemplate.getForObject(uri, Boolean.class);
+		String uri = ConfigParams.getBaseUrl() + "version/snValidate/" + sn + "/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/addToGrayUpdateDevicesList", method = RequestMethod.POST)
 	public String addToGrayUpdateDevicesList(String sn) {
 		String uri = ConfigParams.getBaseUrl() + "version/addToGrayUpdateDevicesList/";
@@ -174,10 +167,10 @@ public class VersionController {
 		restTemplate.postForObject(uri, entity, String.class);
 		return "redirect:/admin/version/toGrayUpdateDevicesList";
 	}
-	
-	@RequestMapping(value = "/deleteGrayUpdateDevice/{id}", method = RequestMethod.GET)
-	public String deleteGrayUpdateDevice(@PathVariable String id) {
-		String uri = ConfigParams.getBaseUrl() + "version/deleteGrayUpdateDevice/"+id+"/";
+
+	@RequestMapping(value = "/deleteGrayUpdateDevice/{sn}", method = RequestMethod.GET)
+	public String deleteGrayUpdateDevice(@PathVariable String sn) {
+		String uri = ConfigParams.getBaseUrl() + "version/deleteGrayUpdateDevice/" + sn + "/";
 		restTemplate.getForObject(uri, String.class);
 		return "redirect:/admin/version/toGrayUpdateDevicesList";
 	}

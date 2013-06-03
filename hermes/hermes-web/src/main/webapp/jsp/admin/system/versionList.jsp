@@ -12,7 +12,8 @@
 		<input id="pageNo" name="pageNo" type="hidden">
 	</form>
 	<div class="well">
-		<input type="button" onclick="toGrayUpdateDevicesList()" class="btn btn-primary" value="灰度升级设备列表"/> 
+		<input type="button" onclick="toGrayUpdateDevicesList()"
+			class="btn btn-primary" value="灰度升级设备列表" />
 	</div>
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
@@ -33,7 +34,8 @@
 				<tr>
 					<td><input type="radio" name="betaVersionRadio"
 						value="${version.apkVersion}" onclick="return seltest(this);"
-						<c:if test="${betaVersion.apkVersion eq  version.apkVersion}">checked="checked"</c:if>></td><!-- && onlineVersion.versionType eq beta release -->
+						<c:if test="${betaVersion.apkVersion eq  version.apkVersion}">checked="checked"</c:if>></td>
+					<!-- && onlineVersion.versionType eq beta release -->
 					<td><input type="radio" name="onlineVersionRadio"
 						value="${version.apkVersion }" onclick="return selOnline(this);"
 						<c:if test="${onlineVersion.apkVersion eq version.apkVersion}">checked="checked"</c:if>></td>
@@ -43,7 +45,9 @@
 					<td>${version.uploadTime}</td>
 					<td>${version.md5}</td>
 					<td title="${version.describe}">
-					<div style="width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">${version.describe}</div></td>
+						<div
+							style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${version.describe}</div>
+					</td>
 					<%--  <td><fmt:formatDate value="${version.uploadTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td> --%>
 				</tr>
 			</c:forEach>
@@ -103,14 +107,17 @@
     var betaVersion=$("input[name='betaVersionRadio']:checked").val();
     function seltest(el){
     	var version=$(el).val();
+    	//if($(el).parent().next().children().attr("checked")=="checked"){
+     //		alert("测试版与正式版不能共存");
+     	//	$(el).removeAttr("checked"); 
+     //		$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
+     	//	return ;
+     	//}
+    	var message="你确定更换版本?";
     	if($(el).parent().next().children().attr("checked")=="checked"){
-     		alert("测试版与正式版不能共存");
-     		$(el).removeAttr("checked"); 
-     		$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
-     		return ;
-     	}
-    	
-    	  	if(confirm("你确定更换版本?"))
+    		message="确定要换回稳定版？";
+    	}
+    	  if(confirm(message))
         	{
     	  		$.post("${pageContext.request.contextPath}/admin/version/changeBetaVersion/",{"version":version},function (data,status){
         			alert("更换成功");

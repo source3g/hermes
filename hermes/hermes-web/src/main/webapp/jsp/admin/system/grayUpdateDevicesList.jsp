@@ -10,40 +10,31 @@
 <body>
 	<form id="queryForm" method="get">
 		<input id="pageNo" name="pageNo" type="hidden">
-	
- 	<div class="well">
-		<input type="text" name="sn" id="sn" placeholder="填写盒子名称..."> <input type="button" id="addDevice" class="btn btn-primary" value="增加设备" onclick="add()"/> 
-	</div> 
+
+		<div class="well">
+			<input type="text" name="sn" id="sn" placeholder="填写盒子编码...">
+			<input type="button" id="addDevice" class="btn btn-primary"
+				value="增加设备" onclick="add()" />
+		</div>
 	</form>
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
 				<th width="33%">设备名称</th>
-				<th width="33%">设备版本</th>
+				<th width="33%">版本</th>
 				<th width="34%">操作</th>
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${page.data}" var="device"> 
+			<c:forEach items="${page.data}" var="device">
 				<tr>
 					<td>${device.sn}</td>
-					<td>${device.apkVersion} 
-					<c:choose>
-						<c:when test="${onlineVersion.apkVersion eq device.apkVersion}">
-						[稳定版]
-					</c:when>
-					<c:when test="${betaVersion.apkVersion eq device.apkVersion}">
-						[测试版]
-					</c:when>
-						<c:otherwise>
-					
-					</c:otherwise>
-					</c:choose>
-					</td>
-					<td><input type="button" value="删除" class="btn btn-danger" onclick="deleteThis('${device.id}')"></td>
+					<td>${device.apkVersion}</td>
+					<td><input type="button" value="删除" class="btn btn-danger"
+						onclick="deleteThis('${device.sn}')"></td>
 				</tr>
-			 </c:forEach> 
+			</c:forEach>
 		</tbody>
 	</table>
 	<div>
@@ -104,15 +95,17 @@
 	}
     function add(){
     	var sn=$("#sn").val();
-  	  if (!$("#queryForm").valid()) {
+		if (!$("#queryForm").valid()) {
 			return false;
 		} 
-  	  $.post("${pageContext.request.contextPath}/admin/version/addToGrayUpdateDevicesList",{"sn":sn},showContentInfo);
+  	 	$.post("${pageContext.request.contextPath}/admin/version/addToGrayUpdateDevicesList",{"sn":sn},showContentInfo);
     }
     
-function deleteThis(id){
-	  $.get("${pageContext.request.contextPath}/admin/version/deleteGrayUpdateDevice/"+id+"/",showContentInfo);
-}
+	function deleteThis(sn){
+		if(confirm("确定要删除设备"+sn+"么？")){
+	 	 $.get("${pageContext.request.contextPath}/admin/version/deleteGrayUpdateDevice/"+id+"/",showContentInfo);
+		}
+	}
 	</script>
 </body>
 </html>

@@ -21,3 +21,12 @@ db.onlineVersion.insert(
 "versionType":"BETA"
 }
 );
+
+
+
+=============20120603===============
+db.grayUpdateDevices.insert(
+{
+        "_class" : "com.source3g.hermes.entity.device.GrayUpdateDevices",
+        "snList" : [ ]
+})
