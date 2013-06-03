@@ -178,6 +178,7 @@
 					$.post(url, post_params);
 					if(swfu.getStats().files_queued==0){
 						$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+						
 					}
 				} else {
 					var updateUrl = "${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";

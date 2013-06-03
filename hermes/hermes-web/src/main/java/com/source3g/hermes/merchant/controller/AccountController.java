@@ -374,8 +374,8 @@ public class AccountController {
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/addItem/" + menuId + "/";
-		restTemplate.postForObject(uri, requestEntity, String.class);
-		
+		String result=restTemplate.postForObject(uri, requestEntity, String.class);
+		model.addAttribute("result", result);
 		String menuUri = ConfigParams.getBaseUrl() + "merchant/electricMenu/list/" + LoginUtils.getLoginMerchant().getId() + "/";
 		ElectricMenu[] electricMenus = restTemplate.getForObject(menuUri, ElectricMenu[].class);
 		model.addAttribute("menus", electricMenus);

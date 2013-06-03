@@ -227,7 +227,6 @@
 			});
 			if (checkDuplicate()) {
 				alert("类别名称重复！");
->>>>>>> branch 'master' of https://github.com/source3g/hermes.git
 				return false;
 
 			}
@@ -238,7 +237,6 @@
 				return false;
 			}
 
->>>>>>> branch 'master' of https://github.com/source3g/hermes.git
 			var strJson = "{";
 			for ( var tagsIndex = 0; tagsIndex < menus.length; tagsIndex++) {
 				strJson += "\"menus[" + tagsIndex + "].name\":\"";
@@ -249,7 +247,7 @@
 			}
 			strJson += "}";
 			var dataJson = eval('(' + strJson + ')');
-			alert(strJson);
+			
 			$.post("${pageContext.request.contextPath}/merchant/account/electricMenu/add/", dataJson, showInfo);
 			return false;
 		}
