@@ -88,10 +88,10 @@
     var betaVersion=$("input[name='betaVersionRadio']:checked").val();
     
     function selOnline(el){
-    	var message="你确定更换版本?";
+    	var message="确定更换版本?";
     	 if($(el).parent().prev().children().attr("checked")=="checked"){
      		$(el).parent().prev().children().removeAttr("checked");
-     		message="选择稳定版将覆盖测试版,你确定更换版本?";
+     		message="选择稳定版将覆盖测试版,确定更换版本?";
      	}
     	var version=$(el).val();
     	if(confirm(message))
@@ -112,7 +112,7 @@
    
     function seltest(el){
     	var version=$(el).val();
-    	var message="你确定更换版本?";
+    	var message="确定更换版本?";
     	if($(el).parent().next().children().attr("checked")=="checked"){
     		message="该版本号已存在稳定版,点击确定将清空测试版";
     	}
