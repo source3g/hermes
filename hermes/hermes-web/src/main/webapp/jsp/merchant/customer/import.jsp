@@ -20,7 +20,7 @@
 	</div>
 	<br>
 	<br>
-<p style="color:red">提示:请不要在旺财宝使用高峰期导入大量顾客信息,这样会影响旺财宝的正常使用</p>
+	<p style="color: red">提示:请不要在旺财宝使用高峰期导入大量顾客信息,这样会影响旺财宝的正常使用</p>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/swfupload/swfupload.js"></script>
 	<script type="text/javascript"
@@ -32,7 +32,7 @@
 		$(document).ready(function() {
 			swfu = new SWFUpload({
 				upload_url : "${pageContext.request.contextPath}/merchant/customer/import/",
-
+				post_params:{"jsessionid":"<%=session.getId()%>"},
 				// File Upload Settings
 				file_size_limit : "10MB", // 1000MB
 				file_types : "*.xls;*.xlsx",//设置可上传的类型

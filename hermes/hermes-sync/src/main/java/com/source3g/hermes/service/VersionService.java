@@ -51,13 +51,6 @@ public class VersionService extends BaseService {
 		return super.findOne(new Query(Criteria.where("versionType").is(VersionType.RELEASE)), OnlineVersion.class);
 	}
 
-	// 升级时返回最新测试版apk
-	public ApkVersion getOnlineVersion() {
-		OnlineVersion onlineVersion = super.findOne(new Query(Criteria.where("versionType").is(VersionType.BETA)), OnlineVersion.class);
-		ApkVersion apkVersion = super.findOne(new Query(Criteria.where("apkVersion").is(onlineVersion.getApkVersion())), ApkVersion.class);
-		return apkVersion;
-	}
-
 	public String getLocalUrl() {
 		return localUrl;
 	}

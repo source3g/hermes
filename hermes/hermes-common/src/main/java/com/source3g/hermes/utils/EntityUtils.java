@@ -14,8 +14,7 @@ import com.source3g.hermes.entity.customer.Remind;
 
 public class EntityUtils {
 
-	public static void copyCustomerEntityToDto(Customer customer,
-			CustomerDto customerDto) {
+	public static void copyCustomerEntityToDto(Customer customer, CustomerDto customerDto) {
 		if (customer == null || customerDto == null) {
 			return;
 		}
@@ -35,28 +34,27 @@ public class EntityUtils {
 		customerDto.setPhone(customer.getPhone());
 		customerDto.setQq(customer.getQq());
 		customerDto.setSex(customer.getSex());
+		// if (!CollectionUtils.isEmpty(customer.getCallRecords())) {
+		// customerDto.setLastCallInDuration(customer.getCallRecords().get(customer.getCallRecords().size()
+		// - 1).getCallDuration());
+		// }
 		List<RemindDto> reminds = new ArrayList<RemindDto>();
 		if (customer.getReminds() != null) {
 			for (Remind r : customer.getReminds()) {
 				RemindDto remindDto = new RemindDto();
-				remindDto.setAdvancedTime(String.valueOf(r
-						.getMerchantRemindTemplate().getAdvancedTime()));
+				remindDto.setAdvancedTime(String.valueOf(r.getMerchantRemindTemplate().getAdvancedTime()));
 				remindDto.setAlreadyRemind(r.isAlreadyRemind());
 				remindDto.setRemindTime(r.getRemindTime());
-				if (r.getMerchantRemindTemplate() != null
-						&& r.getMerchantRemindTemplate().getRemindTemplate() != null
-						&& StringUtils.isNotEmpty(r.getMerchantRemindTemplate()
-								.getRemindTemplate().getTitle())) {
-					remindDto.setName(r.getMerchantRemindTemplate()
-							.getRemindTemplate().getTitle());
+				if (r.getMerchantRemindTemplate() != null && r.getMerchantRemindTemplate().getRemindTemplate() != null && StringUtils.isNotEmpty(r.getMerchantRemindTemplate().getRemindTemplate().getTitle())) {
+					remindDto.setName(r.getMerchantRemindTemplate().getRemindTemplate().getTitle());
 				}
 				reminds.add(remindDto);
 			}
 		}
 		customerDto.setReminds(reminds);
 	}
-	
-	public static void copyCustomerDtoToEntity(CustomerDto customerDto,Customer customer,ObjectId merchantId){
+
+	public static void copyCustomerDtoToEntity(CustomerDto customerDto, Customer customer, ObjectId merchantId) {
 		if (customer == null || customerDto == null) {
 			return;
 		}
@@ -65,13 +63,13 @@ public class EntityUtils {
 		customer.setBirthday(customerDto.getBirthday());
 		customer.setBlackList(customerDto.isBlackList());
 		if (customerDto.getGroupId() != null) {
-			CustomerGroup customerGroup=new CustomerGroup();
+			CustomerGroup customerGroup = new CustomerGroup();
 			customerGroup.setId(customerDto.getGroupId());
 			customer.setCustomerGroup(customerGroup);
 		}
-		try{
+		try {
 			customer.setFavorite(Boolean.parseBoolean(customerDto.getFavorite()));
-		}catch(Exception e){
+		} catch (Exception e) {
 			customer.setFavorite(false);
 		}
 		customer.setEmail(customerDto.getEmail());

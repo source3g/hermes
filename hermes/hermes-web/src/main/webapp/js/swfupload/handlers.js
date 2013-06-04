@@ -222,7 +222,7 @@ function uploadError(file, errorCode, message) {
 				imageName = "<font color='red'>文件大小超过限制!请分开多次上传</font>";
 				break;
 			default:
-				alert(message);
+				alert(errorCode);
 				break;
 		}
 		addFileInfo(file.id, imageName);
