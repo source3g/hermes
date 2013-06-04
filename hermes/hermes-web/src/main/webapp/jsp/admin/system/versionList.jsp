@@ -93,15 +93,12 @@
     		});
     		return true;
     	}
+    $.get("${pageContext.request.contextPath}/admin/version/versionList/",showContentInfo);
     	return false;
     }
-    
     function selbeta(el){
     	var version=$(el).val();
     	var message="确定更换版本?";
-    	if(betaVersion==null){
-    		message="确定选择此版本作为测试版?";
-    	}
     	if(confirm(message)){
     	  	$.post("${pageContext.request.contextPath}/admin/version/changeBetaVersion/",{"version":version},function (data,status){
         		alert("操作成功");
@@ -109,6 +106,7 @@
         	});
         	return true;
         	}
+    	$.get("${pageContext.request.contextPath}/admin/version/versionList/",showContentInfo);
     	  return false;
     }
     
