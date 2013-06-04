@@ -96,7 +96,6 @@
     	return false;
     }
     
-   
     function selbeta(el){
     	var version=$(el).val();
     	var message="确定更换版本?";

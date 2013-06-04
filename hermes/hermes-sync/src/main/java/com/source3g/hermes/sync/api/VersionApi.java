@@ -114,21 +114,9 @@ public class VersionApi {
 		return versionService.releaseVersion();
 	}
 
-	// @RequestMapping(value = "/online", method = RequestMethod.GET)
-	// @ResponseBody
-	// public ApkVersion getLastVersion() {
-	// ApkVersion apkVersion = versionService.getOnlineVersion();
-	// if (apkVersion != null) {
-	// processUrl(apkVersion);
-	// return apkVersion;
-	// }
-	// return null;
-	// }
-
 	@RequestMapping(value = "/online/sn/{sn}", method = RequestMethod.POST)
 	@ResponseBody
 	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody String deviceVersion) {
-		// versionService.updateDeviceVersion(sn, version);
 		ApkVersion apkVersion = versionService.getOnlineVersion(sn,deviceVersion);
 		if (apkVersion != null) {
 			processUrl(apkVersion);
