@@ -114,11 +114,7 @@
     	var version=$(el).val();
     	var message="你确定更换版本?";
     	if($(el).parent().next().children().attr("checked")=="checked"){
-    		message="该版本号已存在稳定版,不能共用.";
-    		alert(message);
-    		$(el).removeAttr("checked"); 
-    	   	$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
-    	   	return;	
+    		message="该版本号已存在稳定版,点击确定将清空测试版";
     	}
     	if(betaVersion==null){
     		message="确定选择此版本作为初始化版本?";
