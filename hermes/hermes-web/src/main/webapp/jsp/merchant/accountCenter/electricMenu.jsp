@@ -178,8 +178,8 @@
 
 		function checkDuplicate() {
 			var result = false;
-			var hash = {};
-			$("td[class='node']").each(function(index) {
+			var hash = {0:1};
+			 $("td[class='node']").each(function(index) {
 				var text = $(this).children("input[name='name']").val();
 				var aHtml = $(this).children(".menuNameA").html();
 				var name;
@@ -193,7 +193,7 @@
 					return false;
 				}
 				hash[name] = true;
-			});
+			}); 
 			return result;
 		}
 

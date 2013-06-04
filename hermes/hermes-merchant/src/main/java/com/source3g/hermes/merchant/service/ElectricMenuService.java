@@ -45,7 +45,7 @@ public class ElectricMenuService extends BaseService {
 	public void addItem(ElectricMenuItem electricMenuItem, ObjectId menuId) throws Exception {
 		ElectricMenu electricMenu = mongoTemplate.findOne(new Query(Criteria.where("_id").is(menuId).and("items.title").is(electricMenuItem.getTitle())), ElectricMenu.class);
 		if (electricMenu != null) {
-			throw new Exception("名称已存在");
+			throw new Exception("菜单名称已存在");
 		}
 		Update update = new Update();
 		update.addToSet("items", electricMenuItem);

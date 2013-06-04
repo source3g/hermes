@@ -85,46 +85,54 @@
 	}
     
     var onlineVersion=$("input[name='onlineVersionRadio']:checked").val();
+    var betaVersion=$("input[name='betaVersionRadio']:checked").val();
+    
     function selOnline(el){
+    	var message="你确定更换版本?";
     	 if($(el).parent().prev().children().attr("checked")=="checked"){
-     		//alert("测试版与正式版不能共存");
      		$(el).parent().prev().children().removeAttr("checked");
-     		//$("input[value='"+onlineVersion+"'][name='onlineVersionRadio']").attr("checked","checked");
+     		message="选择稳定版将覆盖测试版,你确定更换版本?";
      	}
     	var version=$(el).val();
-    	if(confirm("你确定更换版本?"))
+    	if(confirm(message))
     	{
     		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"version":version},function (data,status){
     			alert("更换成功");
     			showContentInfo(data);
     		});
     		return true;
-    	}else{
+    	}else{	
+    		$(el).removeAttr("checked"); 
+    		$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
+    		$("input[value='"+onlineVersion+"'][name='onlineVersionRadio']").attr("checked","checked");
     		return false;
     	}
     }
     
-    var betaVersion=$("input[name='betaVersionRadio']:checked").val();
+   
     function seltest(el){
     	var version=$(el).val();
-    	//if($(el).parent().next().children().attr("checked")=="checked"){
-     //		alert("测试版与正式版不能共存");
-     	//	$(el).removeAttr("checked"); 
-     //		$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
-     	//	return ;
-     	//}
     	var message="你确定更换版本?";
     	if($(el).parent().next().children().attr("checked")=="checked"){
-    		message="确定要换回稳定版？";
+    		message="该版本号已存在稳定版,不能共用.";
+    		alert(message);
+    		$(el).removeAttr("checked"); 
+    	   	$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
+    	   	return;	
+    	}
+    	if(betaVersion==null){
+    		message="确定选择此版本作为初始化版本?";
     	}
     	  if(confirm(message))
         	{
     	  		$.post("${pageContext.request.contextPath}/admin/version/changeBetaVersion/",{"version":version},function (data,status){
-        			alert("更换成功");
+        			alert("操作成功");
         			showContentInfo(data);
         		});
         		return true;
         	}else{
+        		$(el).removeAttr("checked"); 
+        	 	$("input[value='"+betaVersion+"'][name='betaVersionRadio']").attr("checked","checked");
         		return false;
         	}
     }

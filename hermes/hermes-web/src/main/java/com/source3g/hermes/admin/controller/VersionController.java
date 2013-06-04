@@ -165,13 +165,13 @@ public class VersionController {
 		String uri = ConfigParams.getBaseUrl() + "version/addToGrayUpdateDevicesList/";
 		HttpEntity<String> entity = new HttpEntity<String>(sn);
 		restTemplate.postForObject(uri, entity, String.class);
-		return "redirect:/admin/version/toGrayUpdateDevicesList";
+		return "/admin/system/grayUpdateDevicesList";
 	}
 
 	@RequestMapping(value = "/deleteGrayUpdateDevice/{sn}", method = RequestMethod.GET)
 	public String deleteGrayUpdateDevice(@PathVariable String sn) {
 		String uri = ConfigParams.getBaseUrl() + "version/deleteGrayUpdateDevice/" + sn + "/";
 		restTemplate.getForObject(uri, String.class);
-		return "redirect:/admin/version/toGrayUpdateDevicesList";
+		return "/admin/system/grayUpdateDevicesList";
 	}
 }

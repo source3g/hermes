@@ -52,25 +52,25 @@
 	</div>
 	<script type="text/javascript">
     $(document).ready(function(){
-    	$('#queryForm').submit(function(){
+     	$('#queryForm').submit(function(){
     		goToPage(1);
     		return false;
     	});
     	
-    	initPage(${page.currentPage},${page.totalPageCount});
+    	initPage(${page.currentPage},${page.totalPageCount}); 
     	
     	$('#queryForm').validate({
 			rules : {
 				sn : {
 					required : true,
-		 			remote:{
+		 			 remote:{
 						type: "get",
 						url:"${pageContext.request.contextPath}/admin/version/snValidate",
 						data:{"sn":function(){
 											return $('#sn').val();
 										}
 							}
-					}
+					} 
 				
 				}
 			},
@@ -83,8 +83,8 @@
  
 		});  
     	
-});
-  	function goToPage(pageNo){
+}); 
+   	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
 		var options={
 				url:"${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/",
@@ -92,19 +92,22 @@
 				error:showError
 		};
 		$('#queryForm').ajaxSubmit(options);
-	}
+	} 
     function add(){
     	var sn=$("#sn").val();
 		if (!$("#queryForm").valid()) {
 			return false;
 		} 
-  	 	$.post("${pageContext.request.contextPath}/admin/version/addToGrayUpdateDevicesList",{"sn":sn},showContentInfo);
+  	 	$.post("${pageContext.request.contextPath}/admin/version/addToGrayUpdateDevicesList",{"sn":sn},showInfo);
     }
     
 	function deleteThis(sn){
 		if(confirm("确定要删除设备"+sn+"么？")){
-	 	 $.get("${pageContext.request.contextPath}/admin/version/deleteGrayUpdateDevice/"+id+"/",showContentInfo);
+	 	 $.get("${pageContext.request.contextPath}/admin/version/deleteGrayUpdateDevice/"+sn+"/",showInfo);
 		}
+	}
+	function showInfo(data){
+		 $.get("${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/",showContentInfo);
 	}
 	</script>
 </body>
