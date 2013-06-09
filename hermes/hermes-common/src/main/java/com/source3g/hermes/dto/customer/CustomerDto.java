@@ -24,7 +24,7 @@ public class CustomerDto {
 	private String favorite;
 
 	private Date lastCallInTime; // 最后通电话时间
-	private Long lastCallInDuration;
+	private Integer lastCallInDuration; // 最后通话时长
 	private ObjectId groupId;
 	private Date operateTime;
 
@@ -164,11 +164,13 @@ public class CustomerDto {
 		}
 	}
 
-	public Long getLastCallInDuration() {
+	public Integer getLastCallInDuration() {
 		return lastCallInDuration;
 	}
 
-	public void setLastCallInDuration(Long lastCallInDuration) {
+	public void setLastCallInDuration(Integer lastCallInDuration) {
 		this.lastCallInDuration = lastCallInDuration;
 	}
+
+
 }

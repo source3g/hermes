@@ -61,7 +61,6 @@
 				</span>
 			</div>
 		</div>
-		F
 
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
@@ -134,10 +133,11 @@
 
 		<div class="form-actions">
 			<c:if test="${not empty update }">
-				<input type="submit" class="btn btn-primary" value="修改">
+				<input type="submit" id="addMerchantBtn"
+					data-loading-text="修改商户中..." class="btn btn-primary" value="修改">
 			</c:if>
 			<c:if test="${ empty update }">
-				<input type="submit" id="addMerchantBtn"
+				<input type="button" id="addMerchantBtn"
 					data-loading-text="增加商户中..." class="btn btn-primary" value="增加" />
 			</c:if>
 			<c:if test="${not empty errors }">
@@ -357,7 +357,7 @@
 			queryMerchantGroup();
 			return false;
 		});
-		$('#addMerchantForm').submit(function() {
+		$('#addMerchantBtn').click(function() {
 		 	if (!$("#addMerchantForm").valid()) {
 		 		return false;
 			 }
@@ -373,7 +373,7 @@
 				 async:false,//同步执行
 				success :showContentInfo
 			}; 
-			$(this).ajaxSubmit(options);
+			$("#addMerchantForm").ajaxSubmit(options);
 			return false;
 		});
 		//查出标签分类信息

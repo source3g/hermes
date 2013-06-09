@@ -68,6 +68,8 @@ import com.source3g.hermes.utils.EntityUtils;
 import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.utils.PhoneUtils;
+import com.source3g.hermes.utils.excel.ExcelHelper;
+import com.source3g.hermes.utils.excel.ExcelObjectMapperDO;
 import com.source3g.hermes.vo.CallInStatisticsCount;
 
 @Service
@@ -75,8 +77,8 @@ public class CustomerService extends BaseService {
 
 	@Value(value = "${temp.import.log.dir}")
 	private String tempDir;
-//	@Value(value = "${local.url}")
-//	private String localUrl;
+	// @Value(value = "${local.url}")
+	// private String localUrl;
 
 	@Autowired
 	private Destination customerDestination;
@@ -357,6 +359,29 @@ public class CustomerService extends BaseService {
 		String relativePath = merchantPath + fileName;
 		File absoluteFolder = new File(absoluteDir);
 		absoluteFolder.mkdirs();
+		ExcelHelper<Customer> excelHelper = new ExcelHelper<>(initObjectMapper(), Customer.class);
+		File file = new File(absoluteFile);
+		excelHelper.writeToExcel(list, file);
+		if (file.exists()) {
+			return relativePath;
+		}
+		return null;
+	}
+
+	public String export1(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		List<Customer> list = list(customer, customerType);
+		Date createTime = new Date();
+		// 文件名
+		DateFormat dateFormatExport = new SimpleDateFormat("yyyy-MM-dd");
+		String fileName = String.valueOf(dateFormatExport.format(createTime) + "顾客导出列表") + ".xls";
+		// 产生文件路径
+		// 所在商户的相对路径
+		String merchantPath = FormateUtils.getDirByDay() + customer.getMerchantId().toString() + "/";
+		String absoluteDir = getExportDir() + merchantPath;
+		String absoluteFile = absoluteDir + fileName;
+		String relativePath = merchantPath + fileName;
+		File absoluteFolder = new File(absoluteDir);
+		absoluteFolder.mkdirs();
 		String headers[] = { "姓名", "性别", "生日", "电话", "地址", "qq", "email", "备注", "顾客组名" };
 		Map<String, String> headerFieldMap = new HashMap<String, String>();
 		headerFieldMap.put("姓名", "name");
@@ -463,6 +488,70 @@ public class CustomerService extends BaseService {
 		workbook.write(fos);
 		fos.close();
 		return relativePath;
+	}
+
+	private List<ExcelObjectMapperDO> initObjectMapper() {
+		// String headers[] = { "姓名", "性别", "生日", "电话", "地址", "qq", "email",
+		// "备注", "顾客组名" };
+		List<ExcelObjectMapperDO> list = new ArrayList<ExcelObjectMapperDO>();
+		ExcelObjectMapperDO nameMapperDo = new ExcelObjectMapperDO();
+		nameMapperDo.setExcelColumnName("姓名");
+		nameMapperDo.setObjectFieldName("name");
+		nameMapperDo.setObjectFieldType(String.class);
+		list.add(nameMapperDo);
+
+		ExcelObjectMapperDO sexMapperDo = new ExcelObjectMapperDO();
+		sexMapperDo.setExcelColumnName("性别");
+		sexMapperDo.setObjectFieldName("sex");
+		sexMapperDo.setObjectFieldType(String.class);
+		Map<String, Object> mappedValue = new HashMap<String, Object>();
+		mappedValue.put("MALE", "男");
+		mappedValue.put("FEMALE", "女");
+		sexMapperDo.setValueMap(mappedValue);
+		list.add(sexMapperDo);
+
+		ExcelObjectMapperDO birthDayMapperDo = new ExcelObjectMapperDO();
+		birthDayMapperDo.setExcelColumnName("生日");
+		birthDayMapperDo.setObjectFieldName("birthday");
+		birthDayMapperDo.setObjectFieldType(Date.class);
+		list.add(birthDayMapperDo);
+
+		ExcelObjectMapperDO phoneMapperDo = new ExcelObjectMapperDO();
+		phoneMapperDo.setExcelColumnName("电话");
+		phoneMapperDo.setObjectFieldName("phone");
+		phoneMapperDo.setObjectFieldType(Long.class);
+		list.add(phoneMapperDo);
+
+		ExcelObjectMapperDO addrMapperDo = new ExcelObjectMapperDO();
+		addrMapperDo.setExcelColumnName("地址");
+		addrMapperDo.setObjectFieldName("name");
+		addrMapperDo.setObjectFieldType(String.class);
+		list.add(addrMapperDo);
+
+		ExcelObjectMapperDO qqMapperDo = new ExcelObjectMapperDO();
+		qqMapperDo.setExcelColumnName("qq");
+		qqMapperDo.setObjectFieldName("qq");
+		qqMapperDo.setObjectFieldType(Long.class);
+		list.add(qqMapperDo);
+
+		ExcelObjectMapperDO emailMapperDo = new ExcelObjectMapperDO();
+		emailMapperDo.setExcelColumnName("email");
+		emailMapperDo.setObjectFieldName("name");
+		emailMapperDo.setObjectFieldType(String.class);
+		list.add(emailMapperDo);
+
+		ExcelObjectMapperDO noteMapperDo = new ExcelObjectMapperDO();
+		noteMapperDo.setExcelColumnName("备注");
+		noteMapperDo.setObjectFieldName("note");
+		noteMapperDo.setObjectFieldType(String.class);
+		list.add(noteMapperDo);
+
+		ExcelObjectMapperDO groupMapperDo = new ExcelObjectMapperDO();
+		groupMapperDo.setExcelColumnName("顾客组名");
+		groupMapperDo.setObjectFieldName("customerGroup.name");
+		groupMapperDo.setObjectFieldType(String.class);
+		list.add(groupMapperDo);
+		return list;
 	}
 
 	public Customer get(String id) {
@@ -606,7 +695,6 @@ public class CustomerService extends BaseService {
 
 		return values;
 	}
-
 
 	public List<Customer> findByCallRecords(String deviceSn, Date startTime, Date endTime) {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(deviceSn)), Device.class);

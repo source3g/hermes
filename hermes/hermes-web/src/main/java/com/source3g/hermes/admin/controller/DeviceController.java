@@ -72,7 +72,7 @@ public class DeviceController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(Device device, String pageNo,String merchantName) {
+	public ModelAndView list(Device device, String pageNo,String merchantAccount) {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
@@ -80,8 +80,8 @@ public class DeviceController {
 		if (StringUtils.isNotEmpty(device.getSn())) {
 			uri += "&sn=" + device.getSn();
 		}
-		if (StringUtils.isNotEmpty(merchantName)) {
-			uri += "&merchantName=" +merchantName;
+		if (StringUtils.isNotEmpty(merchantAccount)) {
+			uri += "&merchantAccount=" +merchantAccount;
 		}
 		Page page = restTemplate.getForObject(uri, Page.class);
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -91,13 +91,13 @@ public class DeviceController {
 
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody
-	public String export(String sn, String merchantName) {
+	public String export(String sn, String merchantAccount) {
 		String uri = ConfigParams.getBaseUrl() + "device/export/?1=1" ;
 		if(StringUtils.isNotEmpty(sn)){
 			uri+="&sn="+sn;
 		}
-		if(StringUtils.isNotEmpty(merchantName)){
-			uri+="&merchantName="+merchantName;
+		if(StringUtils.isNotEmpty(merchantAccount)){
+			uri+="&merchantAccount="+merchantAccount;
 		}
 		String result = restTemplate.getForObject(uri, String.class);
 		return result;

@@ -78,7 +78,7 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name,String account) {
+	public Page list(String pageNo, String name, String account) {
 		logger.debug("list merchant....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Merchant merchant = new Merchant();
@@ -249,6 +249,18 @@ public class MerchantApi {
 	public String initDevice(@PathVariable String sn, @PathVariable String username, @PathVariable String password) {
 		try {
 			merchantService.initDevice(sn, username, password);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+
+	@RequestMapping(value = "/fireDevice/{sn}", method = RequestMethod.GET)
+	@ResponseBody
+	public String fireDevice(@PathVariable String sn) {
+		try {
+			merchantService.fireDevice(sn);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();

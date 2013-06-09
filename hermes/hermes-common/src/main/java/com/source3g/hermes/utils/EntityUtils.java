@@ -3,6 +3,7 @@ package com.source3g.hermes.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
 
@@ -34,10 +35,10 @@ public class EntityUtils {
 		customerDto.setPhone(customer.getPhone());
 		customerDto.setQq(customer.getQq());
 		customerDto.setSex(customer.getSex());
-		// if (!CollectionUtils.isEmpty(customer.getCallRecords())) {
-		// customerDto.setLastCallInDuration(customer.getCallRecords().get(customer.getCallRecords().size()
-		// - 1).getCallDuration());
-		// }
+		 if (!CollectionUtils.isEmpty(customer.getCallRecords())) {
+		 customerDto.setLastCallInDuration(customer.getCallRecords().get(customer.getCallRecords().size()
+		 - 1).getCallDuration());
+		 }
 		List<RemindDto> reminds = new ArrayList<RemindDto>();
 		if (customer.getReminds() != null) {
 			for (Remind r : customer.getReminds()) {

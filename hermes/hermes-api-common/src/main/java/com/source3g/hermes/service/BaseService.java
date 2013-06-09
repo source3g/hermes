@@ -251,6 +251,12 @@ public class BaseService implements ApplicationContextAware {
 		}
 	}
 
+	public void assertNull(Object o, String message) throws Exception {
+		if (o != null) {
+			throw new Exception(message);
+		}
+	}
+
 	public String getPicPath() {
 		return picPath;
 	}

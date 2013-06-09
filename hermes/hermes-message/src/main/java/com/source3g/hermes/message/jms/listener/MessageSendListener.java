@@ -54,7 +54,8 @@ public class MessageSendListener implements MessageListener {
 				logger.debug("发送消息:" + shortMessage.getContent() + " 电话:" + shortMessage.getPhone() + " 类型:" + shortMessage.getMessageType());
 				if (MessageStatus.已发送.equals(status)) {
 					Update updateSurplus = new Update();
-					updateSurplus.inc("messageBalance.surplusMsgCount", -1).inc("messageBalance.totalCount", -1).inc("messageBalance.sentCount", 1);
+					int messageCount = shortMessage.getContent().length() > 70 ? 2 : 1;
+					updateSurplus.inc("messageBalance.surplusMsgCount",0-messageCount).inc("messageBalance.totalCount", 0-messageCount).inc("messageBalance.sentCount", messageCount);
 					mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), updateSurplus, Merchant.class);
 					if (MessageType.群发.equals(shortMessage.getMessageType())) {
 						Update updateGroupLog = new Update();

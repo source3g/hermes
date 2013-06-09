@@ -285,9 +285,9 @@ public class TaskService extends CommonBaseService {
 		}
 		List<Customer> addOrUpdateList = findAddOrUpdateList(merchantId);
 		List<Customer> deleteList = findDeleteList(merchantId);
-		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {
-			return;
-		}
+//		if ((addOrUpdateList == null || addOrUpdateList.size() == 0) && (deleteList == null || deleteList.size() == 0)) {
+//			return;
+//		}
 		packageTask(merchantId, addOrUpdateList, deleteList, TaskConstants.ALL_PACKAGE, createTime);
 	}
 

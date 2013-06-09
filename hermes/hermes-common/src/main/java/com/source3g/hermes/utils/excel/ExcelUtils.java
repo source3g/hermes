@@ -2,7 +2,9 @@ package com.source3g.hermes.utils.excel;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -66,7 +68,14 @@ public class ExcelUtils {
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_NUMERIC:
 		case Cell.CELL_TYPE_FORMULA:
-			if (HSSFDateUtil.isCellDateFormatted(cell)) {
+			short dateFormat = cell.getCellStyle().getDataFormat();
+			// yyyy-MM-dd----- 14
+			// yyyy年m月d日--- 31
+			// yyyy年m月------- 57
+			// m月d日---------- 58
+			// HH:mm----------- 20
+			// h时mm分 ------- 32
+			if (HSSFDateUtil.isCellDateFormatted(cell) || dateFormat == 14 || dateFormat == 31 || dateFormat == 57 || dateFormat == 58) {
 				value = String.valueOf(cell.getDateCellValue().getTime());
 			} else {
 				DecimalFormat dd = new DecimalFormat("0");
@@ -79,6 +88,21 @@ public class ExcelUtils {
 			break;
 		}
 		return value;
+	}
+
+	public static boolean isNull(Row row) {
+		if (row == null) {
+			return true;
+		}
+		Iterator<?> it = row.cellIterator();
+		while (it.hasNext()) {
+			Cell cell = (Cell) it.next();
+			String value = getCellStringValue(cell);
+			if (StringUtils.isNotBlank(value)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

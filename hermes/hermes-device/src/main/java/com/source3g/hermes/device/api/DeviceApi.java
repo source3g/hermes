@@ -60,12 +60,12 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String sn,String merchantName) {
+	public Page list(String pageNo, String sn,String merchantAccount) {
 		logger.debug("list device....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Device device = new Device();
 		device.setSn(sn);
-		return deviceService.list(pageNoInt, device,merchantName);
+		return deviceService.list(pageNoInt, device,merchantAccount);
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
@@ -138,8 +138,8 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody
-	public String export(String sn, String merchantName) throws IOException {
-		String url = deviceService.exportDevice(sn, merchantName);
+	public String export(String sn, String merchantAccount) throws IOException {
+		String url = deviceService.exportDevice(sn, merchantAccount);
 		return url;
 	}
 

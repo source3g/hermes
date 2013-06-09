@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -61,7 +62,7 @@ public class DeviceService extends BaseService {
 		return false;
 	}
 
-	public Page list(int pageNo, Device device,String merchantName) {
+	public Page list(int pageNo, Device device, String merchantAccount) {
 		Page page = new Page();
 		Query query = new Query();
 		query.with(new Sort(Direction.DESC, "_id"));
@@ -69,8 +70,8 @@ public class DeviceService extends BaseService {
 			Pattern pattern = Pattern.compile("^.*" + device.getSn() + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("sn").is(pattern));
 		}
-		if (StringUtils.isNotEmpty(merchantName)) {
-			Merchant merchant=super.findOne(new Query(Criteria.where("name").is(merchantName)), Merchant.class);
+		if (StringUtils.isNotEmpty(merchantAccount)) {
+			Merchant merchant = super.findOne(new Query(Criteria.where("account").is(merchantAccount)), Merchant.class);
 			query.addCriteria(Criteria.where("_id").in(merchant.getDeviceIds()));
 		}
 		Long totalCount = mongoTemplate.count(query, Device.class);
@@ -125,7 +126,7 @@ public class DeviceService extends BaseService {
 	public List<DeviceStatusDto> findDeviceStatusByMerchantId(ObjectId merchantId) {
 		List<DeviceStatusDto> result = new ArrayList<DeviceStatusDto>();
 		Merchant merchant = mongoTemplate.findById(merchantId, Merchant.class);
-		List<ObjectId> ids = merchant.getDeviceIds();
+		Set<ObjectId> ids = merchant.getDeviceIds();
 		if (CollectionUtils.isEmpty(ids)) {
 			return null;
 		}
@@ -255,58 +256,57 @@ public class DeviceService extends BaseService {
 	}
 
 	public DeviceVo findDetail(ObjectId deviceId) {
-		DeviceVo deviceVo = new DeviceVo();
 		Device device = super.findOne(new Query(Criteria.where("_id").is(deviceId)), Device.class);
+		return findDetail(device);
+	}
+
+	public DeviceVo findDetail(Device device) {
+		DeviceVo deviceVo = new DeviceVo();
 		deviceVo.setDevice(device);
-		Merchant merchant = super.findOne(new Query(Criteria.where("deviceIds").is(deviceId)), Merchant.class);
+		Merchant merchant = super.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		deviceVo.setMerchant(merchant);
-		DeviceStatus status = super.findOne(new Query(Criteria.where("deviceSn").is(device.getSn())), DeviceStatus.class);
-		deviceVo.setDeviceStatus(status);
-		if (status != null) {
-			Long restTaskCount = 0L;
-			if (TaskConstants.INIT.equals(status.getStatus())) {
-				TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
-				if (lastAllPackage != null) {
-					restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(merchant.getId())), TaskPackage.class);
+		if (merchant != null) {
+			Saler saler = super.findOne(new Query(Criteria.where("_id").is(merchant.getSalerId())), Saler.class);
+			deviceVo.setSaler(saler);
+			DeviceStatus status = super.findOne(new Query(Criteria.where("deviceSn").is(device.getSn())), DeviceStatus.class);
+			deviceVo.setDeviceStatus(status);
+			if (status != null) {
+				Long restTaskCount = 0L;
+				if (TaskConstants.INIT.equals(status.getStatus())) {
+					TaskPackage lastAllPackage = mongoTemplate.findOne(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.ALL_PACKAGE)), TaskPackage.class);
+					if (lastAllPackage != null) {
+						restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gte(lastAllPackage.getTaskId()).and("merchantId").is(merchant.getId())), TaskPackage.class);
+					} else {
+						restTaskCount = 0L;
+					}
 				} else {
-					restTaskCount = 0L;
+					restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
 				}
-			} else {
-				restTaskCount = mongoTemplate.count(new Query(Criteria.where("taskId").gt(status.getLastTaskId()).and("merchantId").is(merchant.getId()).and("type").is(TaskConstants.INCREMENT_PACKAGE)), TaskPackage.class);
+				deviceVo.setRestTaskCount(restTaskCount);
 			}
-			deviceVo.setRestTaskCount(restTaskCount);
 		}
 		return deviceVo;
 	}
 
-	public String exportDevice(String sn, String merchantName) throws IOException {
+	public String exportDevice(String sn, String merchantAccount) throws IOException {
 		Query query = new Query();
 		if (StringUtils.isNotEmpty(sn)) {
 			Pattern pattern = Pattern.compile("^.*" + sn + ".*$", Pattern.CASE_INSENSITIVE);
 			query.addCriteria(Criteria.where("sn").is(pattern));
 		}
-		Merchant merchant = null;
-		Saler saler = null;
-		if (StringUtils.isNotEmpty(merchantName)) {
-			merchant = super.findOne(new Query(Criteria.where("name").is(merchantName)), Merchant.class);
-			if (merchant != null) {
-				query.addCriteria(Criteria.where("_id").in(merchant.getDeviceIds()));
-				saler = super.findOne(new Query(Criteria.where("_id").is(merchant.getSalerId())), Saler.class);
+		Merchant merchantByAccount = null;
+		if (StringUtils.isNotEmpty(merchantAccount)) {
+			merchantByAccount = super.findOne(new Query(Criteria.where("account").is(merchantAccount)), Merchant.class);
+			if (merchantByAccount != null) {
+				query.addCriteria(Criteria.where("_id").in(merchantByAccount.getDeviceIds()));
+			} else {
+				query.addCriteria(Criteria.where("_id").in(new ArrayList<ObjectId>()));
 			}
 		}
 		List<Device> devices = mongoTemplate.find(query, Device.class);
 		List<DeviceVo> deviceVoList = new ArrayList<DeviceVo>();
 		for (Device d : devices) {
-			DeviceVo deviceVo = new DeviceVo();
-			deviceVo.setDevice(d);
-			if (merchant == null) {
-				merchant = super.findOne(new Query(Criteria.where("deviceIds").is(d.getId())), Merchant.class);
-				if (merchant != null) {
-					saler = super.findOne(new Query(Criteria.where("_id").is(merchant.getSalerId())), Saler.class);
-				}
-			}
-			deviceVo.setMerchant(merchant);
-			deviceVo.setSaler(saler);
+			DeviceVo deviceVo = findDetail(d);
 			deviceVoList.add(deviceVo);
 		}
 		ExcelHelper<DeviceVo> excelHelper = new ExcelHelper<>(initDeviceVoMapper(), DeviceVo.class);
@@ -371,6 +371,13 @@ public class DeviceService extends BaseService {
 		imsiNoMapperDO.setObjectFieldName("device.simInfo.imsiNo");
 		imsiNoMapperDO.setObjectFieldType(String.class);
 		list.add(imsiNoMapperDO);
+
+		ExcelObjectMapperDO deviceStatus = new ExcelObjectMapperDO();
+		deviceStatus.setExcelColumnName("最后心跳时间");
+		deviceStatus.setObjectFieldName("deviceStatus.lastAskTime");
+		deviceStatus.setObjectFieldType(Date.class);
+		list.add(deviceStatus);
+
 		return list;
 	}
 }

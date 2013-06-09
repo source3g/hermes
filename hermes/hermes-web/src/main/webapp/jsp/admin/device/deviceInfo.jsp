@@ -9,7 +9,8 @@
 <title>盒子详细信息</title>
 </head>
 <body>
-	<div class="well span8">
+	<div class="well ">
+		<!-- span8 -->
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -25,6 +26,14 @@
 			<tr>
 				<td>所属商户:</td>
 				<td>${device.merchant.name}</td>
+			</tr>
+			<tr>
+				<td>所属商户账号:</td>
+				<td>${device.merchant.account}</td>
+			</tr>
+			<tr>
+				<td>所属商户销售:</td>
+				<td>${device.saler.name}</td>
 			</tr>
 			<tr>
 				<td>sim卡号:</td>
@@ -93,7 +102,7 @@
 				var="changeRecord" varStatus="status">
 				<tr>
 					<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
-							value="${changeRecord.changeTime}" /> </td>
+							value="${changeRecord.changeTime}" /></td>
 					<td>从${changeRecord.oldSim.serviceNo}
 						转到${changeRecord.newSim.serviceNo }</td>
 				</tr>

@@ -11,12 +11,14 @@
 
 	<form id="queryForm" class="well form-inline " method="get">
 		<label class="control-label" for="sn">编码：</label> <input id="sn"
-			type="text" name="sn" value="${device.sn}" placeholder="请输入盒子SN..." />
-		<input type="text" name="merchantName" id="merchantName"
-			value="${merchantName}" placeholder="请输入商户名称" />
-			<input id="pageNo" name="pageNo" type="hidden"> 
-			<input type="submit" class="btn btn-primary" value="查询" />
-			<input type="button" class="btn btn-primary" onclick="exportCustomer();" value="导出" />
+			type="text" class="input-medium " name="sn" value="${device.sn}"
+			placeholder="请输入盒子SN..." /> <label class="control-label" for="sn">商户账号：</label>
+		<input type="text" name="merchantAccount" id="merchantAccount"
+			value="${merchantAccount}" class="input-medium "
+			placeholder="请输入商户账号" /> <input id="pageNo" name="pageNo"
+			type="hidden"> <input type="submit" class="btn btn-primary"
+			value="查询" /> <input type="button" class="btn btn-primary"
+			onclick="exportCustomer();" value="导出" />
 	</form>
 
 	<table
@@ -47,7 +49,7 @@
 				<td><a class="btn btn-danger" href="javascript:void();"
 					onclick="deleteById('${device.id}');">删除</a> <a
 					class="btn btn-success" href="javascript:void();"
-					onclick="deviceDetail('${device.id}');">详细信息</a></td>
+					onclick="return showDeviceDetail('${device.id}');">详细信息</a></td>
 			</tr>
 		</c:forEach>
 
@@ -66,6 +68,18 @@
 		</ul>
 	</div>
 
+	<div id="deviceDetailModal" class="modal hide fade">
+		<div class="modal-header">
+			<a class="close" data-dismiss="modal">&times;</a>
+			<h3>设备详细信息</h3>
+		</div>
+		<div class="modal-body" id="deviceDetailContent">载入中</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">确定</a>
+		</div>
+	</div>
+
+
 	<div id="errorModal" class="modal hide fade">
 		<div class="modal-body">
 			<p id="resultMessage"></p>
@@ -83,16 +97,22 @@
 				return false;
 			});
 		});
+		
+		function showDeviceDetail(id){
+			var url = "${pageContext.request.contextPath}/admin/device/detail/"+id+"/";
+			$.get(url, function(data) {
+				$("#deviceDetailContent").html(data);
+				$("#deviceDetailModal").modal("show");
+			});
+			return false;
+		}
 		function exportCustomer(){
 			var sn=$("#sn").val();
-			var merchantName=$("#merchantName").val();
-			if(sn||merchantName){
-				$.get("${pageContext.request.contextPath}/admin/device/export/?sn="+sn+"&merchantName="+merchantName,function(data){
-					window.open(data);
-				});
-			}else{
-				alert("必须有一个条件才能导出");
-			}
+			var merchantAccount=$("#merchantAccount").val();
+			$.get("${pageContext.request.contextPath}/admin/device/export/?sn="+sn+"&merchantAccount="+merchantAccount,function(data){
+				window.open(data);
+			});
+			
 		}
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);

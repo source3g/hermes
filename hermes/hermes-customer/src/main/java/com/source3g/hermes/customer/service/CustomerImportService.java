@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.DBRef;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
@@ -85,8 +86,10 @@ public class CustomerImportService extends BaseService {
 	}
 
 	public void importCustomer(List<CustomerImportItem> customerImportItems, String merchantId, String customerImportLogId) {
-		CustomerImportLog customerImportLog = mongoTemplate.findOne(new Query(Criteria.where("_id").is(new ObjectId(customerImportLogId))), CustomerImportLog.class);
-		List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), CustomerGroup.class);
+		CustomerImportLog customerImportLog = mongoTemplate.findOne(new Query(Criteria.where("_id").is(new ObjectId(customerImportLogId))),
+				CustomerImportLog.class);
+		List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))),
+				CustomerGroup.class);
 		Collection<CustomerImportItem> itemsNoRepeat = filterImportItems(customerImportItems);
 		customerImportLog.setTotalCount(itemsNoRepeat.size());
 		customerImportLog.setStatus(ImportStatus.导入中.toString());
@@ -97,7 +100,8 @@ public class CustomerImportService extends BaseService {
 		logger.error("开始导入");
 		List<CustomerImportItem> failedImortItems = new ArrayList<CustomerImportItem>();
 		// 加锁
-		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), new Update().set("locking", Boolean.TRUE), PackageLock.class);
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), new Update().set("locking", Boolean.TRUE),
+				PackageLock.class);
 		try {
 			for (CustomerImportItem customerImportItem : itemsNoRepeat) {
 				try {
@@ -119,8 +123,16 @@ public class CustomerImportService extends BaseService {
 					customer.setSex(customerImportItem.getSex());
 					customer.setOperateTime(new Date());
 					if (phoneMap.get(customer.getPhone()) != null) {
-						customer.setId(phoneMap.get(customer.getPhone()).getId());
-						mongoTemplate.save(customer);
+						// customer.setId(phoneMap.get(customer.getPhone()).getId());
+						Update update = new Update();
+						update.set("address", customerImportItem.getAddress()).set("birthday", customerImportItem.getBirthday())
+								.set("email", customerImportItem.getEmail()).set("name", customerImportItem.getName())
+								.set("note", customerImportItem.getNote()).set("phone", customerImportItem.getPhone())
+								.set("qq", customerImportItem.getQq()).set("sex", customerImportItem.getSex()).set("operateTime", new Date())
+								.set("customerGroup", new DBRef(mongoTemplate.getDb(), "customerGroup", customerGroupId));
+						// mongoTemplate.save(customer);
+						mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(phoneMap.get(customer.getPhone()).getId())), update,
+								Customer.class);
 					} else {
 						customerList.add(customer);
 					}
@@ -137,7 +149,8 @@ public class CustomerImportService extends BaseService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))), new Update().set("locking", Boolean.FALSE), PackageLock.class);
+			mongoTemplate.updateFirst(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))),
+					new Update().set("locking", Boolean.FALSE), PackageLock.class);
 		}
 		logger.debug("导入完成 ");
 		customerImportLog.setStatus(ImportStatus.导入完成.toString());
@@ -209,7 +222,8 @@ public class CustomerImportService extends BaseService {
 		return null;
 	}
 
-	public List<CustomerImportItem> readFromExcel(Resource resource, String merchantId, String customerImportLogId) throws InvalidFormatException, IOException {
+	public List<CustomerImportItem> readFromExcel(Resource resource, String merchantId, String customerImportLogId) throws InvalidFormatException,
+			IOException {
 		List<CustomerImportItem> result = new ArrayList<CustomerImportItem>();
 		// 创建文件输入流对象
 		InputStream is = resource.getInputStream();
@@ -278,12 +292,15 @@ public class CustomerImportService extends BaseService {
 			// }
 			// for (int i = 1; i < rows.size(); i++) {
 			row = sheet.getRow(i);
+			if (ExcelUtils.isNull(row)) {
+				continue;
+			}
 			CustomerImportItem customerImportItem = new CustomerImportItem();
 			customerImportItem.setId(ObjectId.get());
 			customerImportItem.setMerchantId(new ObjectId(merchantId));
 			try {
 				if (row.getCell(nameIndex) != null) {
-					customerImportItem.setName(row.getCell(nameIndex).getStringCellValue());
+					customerImportItem.setName(ExcelUtils.getCellStringValue(row.getCell(nameIndex)));
 				}
 				if (row.getCell(sexIndex) != null) {
 					String sexStr = row.getCell(sexIndex).getStringCellValue();
@@ -308,29 +325,29 @@ public class CustomerImportService extends BaseService {
 					}
 				}
 				if (row.getCell(phoneIndex) != null) {
-					customerImportItem.setPhone(String.valueOf((long) row.getCell(phoneIndex).getNumericCellValue()));
+					customerImportItem.setPhone(ExcelUtils.getCellStringValue(row.getCell(phoneIndex)));
 				}
 				if (row.getCell(addrIndex) != null) {
-					customerImportItem.setAddress(row.getCell(addrIndex).getStringCellValue());
+					customerImportItem.setAddress(ExcelUtils.getCellStringValue(row.getCell(addrIndex)));
 				}
 				if (row.getCell(qqIndex) != null) {
-					customerImportItem.setQq(String.valueOf((long) row.getCell(qqIndex).getNumericCellValue()));
+					customerImportItem.setQq(ExcelUtils.getCellStringValue(row.getCell(qqIndex)));
 				}
 				if (row.getCell(emailIndex) != null) {
-					customerImportItem.setEmail(row.getCell(emailIndex).getStringCellValue());
+					customerImportItem.setEmail(ExcelUtils.getCellStringValue(row.getCell(emailIndex)));
 				}
 				if (row.getCell(noteIndex) != null) {
-					customerImportItem.setNote(row.getCell(noteIndex).getStringCellValue());
+					customerImportItem.setNote(ExcelUtils.getCellStringValue(row.getCell(noteIndex)));
 				}
 				if (row.getCell(customerGroupIndex) != null) {
-					customerImportItem.setCustomerGroupName(row.getCell(customerGroupIndex).getStringCellValue());
+					customerImportItem.setCustomerGroupName(ExcelUtils.getCellStringValue(row.getCell(customerGroupIndex)));
 				}
 
 				customerImportItem.setImportStatus(ImportStatus.未导入.toString());
 				customerImportItem.setCustomerImportLogId(new ObjectId(customerImportLogId));
 				// mongoTemplate.insert(customerImportItem);
 				result.add(customerImportItem);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				customerImportItem.setImportStatus(ImportStatus.导入失败.toString());
 				customerImportItem.setFailedReason(e.getMessage());
 				customerImportItem.setCustomerImportLogId(new ObjectId(customerImportLogId));
@@ -349,7 +366,8 @@ public class CustomerImportService extends BaseService {
 		Page page = new Page();
 		page.setTotalRecords(mongoTemplate.count(query, CustomerImportItem.class));
 		page.gotoPage(pageNo);
-		List<CustomerImportItem> customerImportItem = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), CustomerImportItem.class);
+		List<CustomerImportItem> customerImportItem = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()),
+				CustomerImportItem.class);
 		page.setData(customerImportItem);
 		return page;
 	}

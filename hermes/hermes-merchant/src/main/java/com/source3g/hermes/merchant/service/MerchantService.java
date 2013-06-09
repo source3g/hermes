@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,6 +29,9 @@ import com.source3g.hermes.utils.Page;
 
 @Service
 public class MerchantService extends BaseService {
+
+	private static final Logger logger = LoggerFactory.getLogger(MerchantService.class);
+
 	public Merchant login(String username, String password) {
 		return mongoTemplate.findOne(new Query(Criteria.where("account").is(username).and("password").is(password).and("canceled").is(false)), Merchant.class);
 	}
@@ -297,24 +302,55 @@ public class MerchantService extends BaseService {
 	}
 
 	public void initDevice(String sn, String username, String password) throws Exception {
+		logger.debug("盒子:"+sn+"和商户建立绑定关系");
 		Device device = super.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 		Merchant merchant = super.findOne(new Query(Criteria.where("account").is(username).and("password").is(password)), Merchant.class);
 		assertNotNull(device, "盒子不存在");
 		assertNotNull(merchant, "商户不存在");
-		List<ObjectId> deviceIds = merchant.getDeviceIds();
-		if (deviceIds == null) {
-			deviceIds = new ArrayList<ObjectId>();
+		try {
+			fireDevice(device);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
 		}
-		deviceIds.add(device.getId());
-		int newTotalCount = merchant.getMessageBalance().getTotalCount();
-		int newsurplusMsgCount = merchant.getMessageBalance().getSurplusMsgCount();
-		if (newTotalCount > 200 && newsurplusMsgCount == 0) {
-			newTotalCount -= 200;
-			newsurplusMsgCount += 200;
-		}
+		// Merchant deviceMerchant = super.findOne(new
+		// Query(Criteria.where("deviceIds").is(device.getId())),
+		// Merchant.class);
+		// assertNull(deviceMerchant, "盒子已经绑定商户");
+		// List<ObjectId> deviceIds = merchant.getDeviceIds();
+		// if (deviceIds == null) {
+		// deviceIds = new ArrayList<ObjectId>();
+		// }
+		// deviceIds.add(device.getId());
+		// int newTotalCount = merchant.getMessageBalance().getTotalCount();
+		// int newsurplusMsgCount =
+		// merchant.getMessageBalance().getSurplusMsgCount();
+		// if (newTotalCount > 200 && newsurplusMsgCount == 0) {
+		// newTotalCount -= 200;
+		// newsurplusMsgCount += 200;
+		// }
+		// Update update = new Update();
+		// update.set("deviceIds", deviceIds).set("messageBalance.totalCount",
+		// newTotalCount).set("messageBalance.surplusMsgCount",
+		// newsurplusMsgCount);
+		// mongoTemplate.updateFirst(new
+		// Query(Criteria.where("_id").is(merchant.getId())), update,
+		// Merchant.class);
 		Update update = new Update();
-		update.set("deviceIds", deviceIds).set("messageBalance.totalCount", newTotalCount).set("messageBalance.surplusMsgCount", newsurplusMsgCount);
+		update.addToSet("deviceIds", device.getId());
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), update, Merchant.class);
 	}
 
+	public void fireDevice(String sn) throws Exception {
+		Device device = super.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
+		fireDevice(device);
+	}
+
+	public void fireDevice(Device device) throws Exception {
+		assertNotNull(device, "盒子不存在");
+		Merchant deviceMerchant = super.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
+		assertNotNull(deviceMerchant, "盒子未绑定商户，不用解绑");
+		Update update = new Update();
+		update.pull("deviceIds", device.getId());
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(deviceMerchant.getId())), update, Merchant.class);
+	}
 }

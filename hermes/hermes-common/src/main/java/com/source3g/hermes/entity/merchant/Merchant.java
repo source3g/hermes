@@ -1,9 +1,11 @@
 package com.source3g.hermes.entity.merchant;
 
 import java.util.List;
+import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,16 +17,18 @@ import com.source3g.hermes.entity.note.Note;
 public class Merchant extends AbstractEntity {
 	private static final long serialVersionUID = -9148277944381440756L;
 	@NotEmpty(message = "{merchant.name.not.null}")
+	@Indexed(unique=true)
 	private String name;
 	private String addr;
 	@NotEmpty(message = "{merchant.account.not.null}")
+	@Indexed(unique=true)
 	private String account;
 	@NotEmpty(message = "{merchant.password.not.null}")
 	private String password;
 
 	private ObjectId merchantGroupId;
 
-	private List<ObjectId> deviceIds;
+	private Set<ObjectId> deviceIds;
 	
 	private MessageBalance messageBalance=new MessageBalance();
 	private MerchantResource merchantResource;
@@ -77,13 +81,7 @@ public class Merchant extends AbstractEntity {
 		this.merchantGroupId = merchantGroupId;
 	}
 
-	public List<ObjectId> getDeviceIds() {
-		return deviceIds;
-	}
 
-	public void setDeviceIds(List<ObjectId> deviceIds) {
-		this.deviceIds = deviceIds;
-	}
 
 	public String getAccount() {
 		return account;
@@ -140,5 +138,12 @@ public class Merchant extends AbstractEntity {
 	public void setMerchantResource(MerchantResource merchantResource) {
 		this.merchantResource = merchantResource;
 	}
-	
+
+	public Set<ObjectId> getDeviceIds() {
+		return deviceIds;
+	}
+
+	public void setDeviceIds(Set<ObjectId> deviceIds) {
+		this.deviceIds = deviceIds;
+	}
 }

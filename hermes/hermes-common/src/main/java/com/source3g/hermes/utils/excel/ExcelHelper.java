@@ -4,15 +4,23 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.BeanUtilsBean2;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.Converter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -20,11 +28,36 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExcelHelper<T extends Object> {
+	private static final Logger logger = LoggerFactory.getLogger(ExcelHelper.class);
 
 	private List<ExcelObjectMapperDO> objectMappers;
 	private Class<T> clazz;
+
+	static {
+		BeanUtilsBean.setInstance(new BeanUtilsBean2());
+		ConvertUtils.register(new Converter() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Object convert(Class type, Object value) {
+				// 当value参数等于空时返回空
+				if (value == null) {
+					return null;
+				}
+				// 自定义时间的格式为yyyy-MM-dd28 29
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				// 创建日期类对象
+				String str = null;
+				// 使用自定义日期的格式转化value参数为yyyy-MM-dd格式
+				str = sdf.format((Date) value);
+				// 返回dt日期对象
+				return str;
+			}
+		}, Date.class);
+	}
 
 	public ExcelHelper(List<ExcelObjectMapperDO> objectMappers, Class<T> clazz) {
 		this.objectMappers = objectMappers;
@@ -43,6 +76,9 @@ public class ExcelHelper<T extends Object> {
 		for (int i = 1; i <= maxRowNum; i++) {
 			// 开始行
 			row = sheet.getRow(i);
+			if (ExcelUtils.isNull(row)) {
+				continue;
+			}
 			try {
 				T t = fill(row);
 				result.add(t);
@@ -145,7 +181,7 @@ public class ExcelHelper<T extends Object> {
 			HSSFRichTextString text = new HSSFRichTextString(objectMappers.get(i).getExcelColumnName());
 			cell.setCellValue(text);
 			objectMappers.get(i).excelColumnNum = i;
-			sheet.setColumnWidth(i, 255 * 15);
+			sheet.setColumnWidth(i, 255 * 25);
 		}
 		for (int i = 1; i <= data.size(); i++) {
 			row = sheet.createRow(i);
@@ -153,14 +189,70 @@ public class ExcelHelper<T extends Object> {
 				HSSFCell cell = row.createCell(excelObjectMapperDO.getExcelColumnNum());
 				try {
 					String value = BeanUtils.getProperty(data.get(i - 1), excelObjectMapperDO.getObjectFieldName());
-					cell.setCellValue(value);
+					if (value == null) {
+						continue;
+					}
+					Class<?> fieldType = excelObjectMapperDO.getObjectFieldType();
+					if (fieldType.equals(Date.class) || fieldType.getSimpleName().equalsIgnoreCase("date")) {
+						Pattern dateByDay = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+						Pattern shortDate = Pattern.compile("\\d{2}-\\d{2}");
+						Pattern dateByTime = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}");
+						if (shortDate.matcher(value).matches()) {
+							String year = "2013";
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+							Date time = sdf.parse(year + "-" + value);
+							HSSFDataFormat format = workbook.createDataFormat();
+							HSSFCellStyle style = workbook.createCellStyle();
+							style.setDataFormat(format.getFormat("MM-dd"));
+							cell.setCellValue(time);
+							cell.setCellStyle(style);
+						} else if (dateByDay.matcher(value).matches()) {
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+							Date time = sdf.parse(value);
+							HSSFDataFormat format = workbook.createDataFormat();
+							HSSFCellStyle style = workbook.createCellStyle();
+							style.setDataFormat(format.getFormat("yyyy-MM-dd"));
+							cell.setCellValue(time);
+							cell.setCellStyle(style);
+						} else if (dateByTime.matcher(value).matches()) {
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							Date time = sdf.parse(value);
+							HSSFDataFormat format = workbook.createDataFormat();
+							HSSFCellStyle style = workbook.createCellStyle();
+							style.setDataFormat(format.getFormat("yyyy-MM-dd HH:mm:ss"));
+							cell.setCellValue(time);
+							cell.setCellStyle(style);
+						}
+					} else if (fieldType.equals(Long.class) || fieldType.getSimpleName().equalsIgnoreCase("long")) {
+						Long longValue = Long.parseLong(value);
+						cell.setCellValue(longValue);
+					} else {
+						if (excelObjectMapperDO.getValueMap() != null && excelObjectMapperDO.getValueMap().size() > 0) {
+							Object mappedValue = excelObjectMapperDO.getValueMap().get(value);
+							value = mappedValue != null ? (String) mappedValue : value;
+						}
+						cell.setCellValue(value);
+					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.debug(e.getMessage());
 				}
 			}
 		}
 		FileOutputStream fos = new FileOutputStream(destFile);
 		workbook.write(fos);
 		fos.close();
+	}
+
+	public static void main(String[] args) {
+		String shortTime = "05-12";
+		String dayTime = "2013-05-03";
+		String time = "2013-05-06 15:23:16";
+		Pattern dateByDay = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+		Pattern shortDate = Pattern.compile("\\d{2}-\\d{2}");
+		Pattern dateByTime = Pattern.compile("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}");
+		System.out.println(shortDate.matcher(shortTime).matches());
+		System.out.println(dateByDay.matcher(dayTime).matches());
+		System.out.println(dateByTime.matcher(time).matches());
+
 	}
 }
