@@ -99,6 +99,10 @@
 	
 	}
 	function oneKeyAllSend(){
+		var str=prompt("请输入密码");
+		if(str!="12345"){
+			return;
+		}
 		 $('#oneKeyAllSend').button('loading')
 		var options={
 			    url:"${pageContext.request.contextPath}/admin/message/failed/resendAll/",

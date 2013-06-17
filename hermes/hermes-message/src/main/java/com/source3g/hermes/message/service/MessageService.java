@@ -192,7 +192,8 @@ public class MessageService extends BaseService {
 	}
 
 	public List<MessageTemplate> listAll(String merchantId) {
-		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))).with(new Sort(Direction.DESC, "_id")), MessageTemplate.class);
+		return mongoTemplate.find(new Query(Criteria.where("merchantId").is(new ObjectId(merchantId))).with(new Sort(Direction.DESC, "_id")),
+				MessageTemplate.class);
 	}
 
 	public void save(MessageTemplate messageTemplate) {
@@ -283,14 +284,6 @@ public class MessageService extends BaseService {
 		}
 	}
 
-	/**
-	 * 暂时测试用
-	 */
-	public void groupSend() {
-		String a = "a";
-		jmsService.sendObject(messageDestination, a, JmsConstants.TYPE, JmsConstants.GROUP_SEND_MESSAGE);
-	}
-
 	private void checkSurplus(ObjectId merchantId, long count) throws Exception {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
 		if (count > merchant.getMessageBalance().getSurplusMsgCount()) {
@@ -318,7 +311,8 @@ public class MessageService extends BaseService {
 		}
 
 		if (StringUtils.isNotEmpty(customerGroupName)) {
-			CustomerGroup customerGroup = mongoTemplate.findOne(new Query(Criteria.where("name").is(customerGroupName).and("merchantId").is(merchantId)), CustomerGroup.class);
+			CustomerGroup customerGroup = mongoTemplate.findOne(
+					new Query(Criteria.where("name").is(customerGroupName).and("merchantId").is(merchantId)), CustomerGroup.class);
 			criteria.and("customerGroup").is(customerGroup);
 		}
 
@@ -353,7 +347,8 @@ public class MessageService extends BaseService {
 
 	public MessageStatus send(ShortMessage message) {
 		message.setMsgId(String.valueOf(Standard_SeqNum.computeSeqNoErr(1)));
-		MessageStatus status = sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(), PhoneUtils.getOperatior(message.getPhone()));
+		MessageStatus status = sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(),
+				PhoneUtils.getOperatior(message.getPhone()));
 		message.setStatus(status);
 		message.setSendTime(new Date());
 		save(message);
@@ -386,7 +381,8 @@ public class MessageService extends BaseService {
 		Update update = new Update();
 		update.set("newMessageCotent", AutoSendMessageTemplate.getNewMessageCotent());
 		update.set("oldMessageCotent", AutoSendMessageTemplate.getOldMessageCotent());
-		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(AutoSendMessageTemplate.getMerchantId())), update, AutoSendMessageTemplate.class);
+		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(AutoSendMessageTemplate.getMerchantId())), update,
+				AutoSendMessageTemplate.class);
 	}
 
 	public AutoSendMessageTemplate getMessageAutoSend(ObjectId merchantId) {
@@ -395,10 +391,14 @@ public class MessageService extends BaseService {
 
 	public List<Map<String, Object>> findMessageStastics(ObjectId merchantId) {
 		MessageStatisticsDto messageStatisticsDto = new MessageStatisticsDto();
-		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObjectDto("一周内挂机短信发送数量：", findMessageSentCountFromToday(merchantId, 7, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObjectDto("一周内短信群发数量：", findMessageSentCountFromToday(merchantId, 7, MessageType.群发)));
-		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObjectDto("三天内挂机短信群发数量：", findMessageSentCountFromToday(merchantId, 3, MessageType.挂机短信)));
-		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObjectDto("三天内短信群发数量：", findMessageSentCountFromToday(merchantId, 3, MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountAWeek(new StatisticObjectDto("一周内挂机短信发送数量：", findMessageSentCountFromToday(merchantId, 7,
+				MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountAWeek(new StatisticObjectDto("一周内短信群发数量：", findMessageSentCountFromToday(merchantId, 7,
+				MessageType.群发)));
+		messageStatisticsDto.setHandUpMessageSentCountThreeDay(new StatisticObjectDto("三天内挂机短信群发数量：", findMessageSentCountFromToday(merchantId, 3,
+				MessageType.挂机短信)));
+		messageStatisticsDto.setMessageGroupSentCountThreeDay(new StatisticObjectDto("三天内短信群发数量：", findMessageSentCountFromToday(merchantId, 3,
+				MessageType.群发)));
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
 		Map<String, Object> handUpMessageSentCountThreeDay = new HashMap<String, Object>();
@@ -491,7 +491,9 @@ public class MessageService extends BaseService {
 		if (remindTemplate == null) {
 			return;
 		}
-		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())), MerchantRemindTemplate.class);
+		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(
+				new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())),
+				MerchantRemindTemplate.class);
 		String content = merchantRemindTemplate.getMessageContent();
 		List<Customer> customers = findCustomerByMerchantRemindTemplate(title, merchantId, remindTemplate, merchantRemindTemplate);
 		Set<Customer> customersSet = new HashSet<Customer>(customers);
@@ -505,12 +507,15 @@ public class MessageService extends BaseService {
 		if (remindTemplate == null) {
 			return;
 		}
-		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())), MerchantRemindTemplate.class);
+		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(
+				new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())),
+				MerchantRemindTemplate.class);
 		@SuppressWarnings("unused")
 		List<Customer> customers = findCustomerByMerchantRemindTemplate(title, merchantId, remindTemplate, merchantRemindTemplate);
 	}
 
-	public List<Customer> findCustomerByMerchantRemindTemplate(String title, ObjectId merchantId, RemindTemplate remindTemplate, MerchantRemindTemplate merchantRemindTemplate) {
+	public List<Customer> findCustomerByMerchantRemindTemplate(String title, ObjectId merchantId, RemindTemplate remindTemplate,
+			MerchantRemindTemplate merchantRemindTemplate) {
 		Query query = new Query();
 		Criteria criteria = Criteria.where("merchantId").is(merchantId);
 		Date startTime = new Date();
@@ -582,6 +587,11 @@ public class MessageService extends BaseService {
 		Boolean result = true;
 		Query query = new Query();
 		Criteria criteria = new Criteria();
+		Date yesterday = DateUtils.addDays(new Date(), -1);
+		if (startTime == null || startTime.getTime() < yesterday.getTime()) {
+			startTime = yesterday;
+		}
+
 		if (startTime != null && endTime != null) {
 			criteria.and("sendTime").gte(startTime).lte(endTime);
 		} else if (startTime != null) {
@@ -592,6 +602,8 @@ public class MessageService extends BaseService {
 		if (status != null) {
 			criteria.and("status").is(status);
 		}
+		criteria.and("status").ne(MessageStatus.发送成功);
+
 		query.addCriteria(criteria);
 		List<ShortMessage> list = mongoTemplate.find(query, ShortMessage.class);
 		for (ShortMessage shortMessage : list) {

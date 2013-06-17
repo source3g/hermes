@@ -836,7 +836,7 @@ public class CustomerService extends BaseService {
 		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
 			Query query = new Query();
 			Criteria criteria = Criteria.where("merchantId").is(merchantId);
-			Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
+			Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime()+1);
 			criteria.and("reminds").elemMatch(Criteria.where("remindTime").gte(startTime).lte(endTime).and("merchantRemindTemplate.$id").is(merchantRemindTemplate.getId()).and("alreadyRemind").is(false));
 			query.addCriteria(criteria);
 			List<Customer> customers = mongoTemplate.find(query, Customer.class);

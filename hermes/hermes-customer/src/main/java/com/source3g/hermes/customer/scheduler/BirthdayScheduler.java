@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,6 +24,8 @@ public class BirthdayScheduler {
 	private CustomerService customerService;
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	
+	private static final Logger logger=LoggerFactory.getLogger(BirthdayScheduler.class);
 
 	public void addBirthdayRemind() {
 		List<Merchant> merchants = mongoTemplate.find(new Query(Criteria.where("canceled").is(false)), Merchant.class);
@@ -29,12 +33,17 @@ public class BirthdayScheduler {
 			if (!merchant.getSetting().isBirthdayRemind()) {
 				continue;
 			}
-
 			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.DAY_OF_MONTH, merchant.getSetting().getBirthdayRemindAdvancedTime());
-
-			String birthday = calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
-
+			calendar.add(Calendar.DAY_OF_MONTH, merchant.getSetting().getBirthdayRemindTemplate().getAdvancedTime());
+			int month=calendar.get(Calendar.MONTH)+1;
+			String monthStr="";
+			if(month<10){
+				monthStr="0"+month;
+			}else{
+				monthStr=String.valueOf(month);
+			}
+			String birthday = monthStr + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+			logger.debug(merchant.getName()+"生成生日为"+birthday+"的提醒");
 			List<Customer> customersTodayBirthday = customerService.findCustomersByBirthday(merchant.getId(), birthday);
 			Remind remind = new Remind();
 			remind.setAlreadyRemind(false);

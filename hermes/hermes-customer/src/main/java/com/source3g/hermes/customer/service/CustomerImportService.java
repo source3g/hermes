@@ -235,11 +235,9 @@ public class CustomerImportService extends BaseService {
 		if (sheet.getLastRowNum() <= 0) {
 			return result;
 		}
-
 		// 声明行对象
 		Row row = null;
 		// 通过循环获取每一行
-
 		Row header = sheet.getRow(0);
 		int nameIndex = 0;
 		int sexIndex = 0;
@@ -317,9 +315,11 @@ public class CustomerImportService extends BaseService {
 					// birthStr = birthStr.replace("日", "-");
 					try {
 						String birth = ExcelUtils.getCellStringValue(row.getCell(birthIndex));
-						Date date = new Date(Long.parseLong(birth));
-						SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
-						customerImportItem.setBirthday(sdf.format(date));
+						if (StringUtils.isNotEmpty(birth)) {
+							Date date = new Date(Long.parseLong(birth));
+							SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+							customerImportItem.setBirthday(sdf.format(date));
+						}
 					} catch (Exception e) {
 						throw new Exception("生日格式不正确");
 					}
