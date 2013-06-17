@@ -417,7 +417,5 @@ public class CustomerImportService extends BaseService {
 		public void setId(ObjectId id) {
 			Id = id;
 		}
-
 	}
-
 }

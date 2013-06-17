@@ -35,10 +35,9 @@ public class EntityUtils {
 		customerDto.setPhone(customer.getPhone());
 		customerDto.setQq(customer.getQq());
 		customerDto.setSex(customer.getSex());
-		 if (!CollectionUtils.isEmpty(customer.getCallRecords())) {
-		 customerDto.setLastCallInDuration(customer.getCallRecords().get(customer.getCallRecords().size()
-		 - 1).getCallDuration());
-		 }
+		if (!CollectionUtils.isEmpty(customer.getCallRecords())) {
+			customerDto.setLastCallInDuration(customer.getCallRecords().get(customer.getCallRecords().size() - 1).getCallDuration());
+		}
 		List<RemindDto> reminds = new ArrayList<RemindDto>();
 		if (customer.getReminds() != null) {
 			for (Remind r : customer.getReminds()) {
@@ -46,7 +45,8 @@ public class EntityUtils {
 				remindDto.setAdvancedTime(String.valueOf(r.getMerchantRemindTemplate().getAdvancedTime()));
 				remindDto.setAlreadyRemind(r.isAlreadyRemind());
 				remindDto.setRemindTime(r.getRemindTime());
-				if (r.getMerchantRemindTemplate() != null && r.getMerchantRemindTemplate().getRemindTemplate() != null && StringUtils.isNotEmpty(r.getMerchantRemindTemplate().getRemindTemplate().getTitle())) {
+				if (r.getMerchantRemindTemplate() != null && r.getMerchantRemindTemplate().getRemindTemplate() != null
+						&& StringUtils.isNotEmpty(r.getMerchantRemindTemplate().getRemindTemplate().getTitle())) {
 					remindDto.setName(r.getMerchantRemindTemplate().getRemindTemplate().getTitle());
 				}
 				reminds.add(remindDto);
