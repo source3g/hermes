@@ -69,7 +69,6 @@ public class MessageSendListener implements MessageListener {
 					}
 				}
 			}
-
 		} catch (Exception e) {
 			if (shortMessage != null) {
 				MessageStatus status;
