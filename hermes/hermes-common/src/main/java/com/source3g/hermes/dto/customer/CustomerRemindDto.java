@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 
 public class CustomerRemindDto {
 
@@ -15,14 +15,9 @@ public class CustomerRemindDto {
 	private int advancedTime;
 	private String title;
 	private String content;
-	private MerchantRemindTemplate merchantRemindTemplate;
+	
+	private ObjectId merchantRemindId;
 
-	public MerchantRemindTemplate getMerchantRemindTemplate() {
-		return merchantRemindTemplate;
-	}
-	public void setMerchantRemindTemplate(MerchantRemindTemplate merchantRemindTemplate) {
-		this.merchantRemindTemplate = merchantRemindTemplate;
-	}
 
 	public int getAdvancedTime() {
 		return advancedTime;
@@ -56,6 +51,13 @@ public class CustomerRemindDto {
 			return;
 		}
 		customers.add(customerInfo);
+	}
+
+	public ObjectId getMerchantRemindId() {
+		return merchantRemindId;
+	}
+	public void setMerchantRemindId(ObjectId merchantRemindId) {
+		this.merchantRemindId = merchantRemindId;
 	}
 
 	public static class CustomerInfo{

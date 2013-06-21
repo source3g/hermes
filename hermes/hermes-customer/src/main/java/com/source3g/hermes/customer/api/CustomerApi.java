@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +37,6 @@ import com.source3g.hermes.customer.service.CustomerImportService;
 import com.source3g.hermes.customer.service.CustomerService;
 import com.source3g.hermes.dto.customer.CallRecordDto;
 import com.source3g.hermes.dto.customer.CustomerDto;
-import com.source3g.hermes.dto.customer.CustomerRemindDto;
 import com.source3g.hermes.dto.customer.NewCustomerDto;
 import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
@@ -47,7 +44,6 @@ import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
-import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
 import com.source3g.hermes.service.CommonBaseService;
 import com.source3g.hermes.utils.FormateUtils;
@@ -391,48 +387,5 @@ public class CustomerApi {
 				}
 			}
 		}
-	}
-
-	@RequestMapping(value = "/todayReminds/{merchantId}", method = RequestMethod.GET)
-	@ResponseBody
-	public List<CustomerRemindDto> findTodayReminds(@PathVariable String merchantId) {
-		return customerService.findTodayReminds(new ObjectId(merchantId));
-	}
-
-	@RequestMapping(value = "/todayReminds/sn/{sn}", method = RequestMethod.GET)
-	@ResponseBody
-	public List<CustomerRemindDto> findTodayRemindsBySn(@PathVariable String sn) throws Exception {
-		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
-		return customerService.findTodayReminds(merchant.getId());
-	}
-
-	@Autowired
-	private MongoTemplate mongoTemplate;
-
-	@RequestMapping(value = "/test")
-	public void test() {
-		for (int i = 0; i < 10000; i++) {
-			Customer c = new Customer();
-			c.setAddress("北京市");
-			c.setBirthday("01-29");
-			c.setCustomerGroup(new CustomerGroup(new ObjectId("50ee335630ff9cfc19554b6a")));
-			c.setEmail("abc@163.com");
-			c.setId(ObjectId.get());
-			c.setMerchantId(new ObjectId("50ee332730ff9cfc19554b67"));
-			c.setName("熊炜" + i);
-			c.setOperateTime(new Date());
-			String p = "0123456789";
-			Random rnd = new Random();
-			StringBuffer sb1 = new StringBuffer();
-			sb1.append("3");
-			for (int n = 0; n < 10; n++) {
-				int number1 = rnd.nextInt(p.length());
-				sb1.append(p.charAt(number1));
-			}
-			c.setPhone(sb1.toString());
-			c.setSex(Sex.MALE);
-			mongoTemplate.insert(c);
-		}
-
 	}
 }

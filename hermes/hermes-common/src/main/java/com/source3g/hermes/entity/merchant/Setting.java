@@ -8,6 +8,7 @@ public class Setting implements Serializable {
 	private static final long serialVersionUID = -1777068155348389553L;
 	private boolean autoSend = false;
 	private boolean nameMatch = false;
+	private boolean title=true;
 	private boolean salerMatch = false;
 	private boolean birthdayRemind = false;
 	private int birthdayRemindAdvancedTime=0;
@@ -61,6 +62,14 @@ public class Setting implements Serializable {
 
 	public void setBirthdayRemindTemplate(MerchantRemindTemplate birthdayRemindTemplate) {
 		this.birthdayRemindTemplate = birthdayRemindTemplate;
+	}
+
+	public boolean isTitle() {
+		return title;
+	}
+
+	public void setTitle(boolean title) {
+		this.title = title;
 	}
 
 

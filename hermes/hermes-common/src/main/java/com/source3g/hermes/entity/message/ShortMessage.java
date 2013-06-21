@@ -26,6 +26,7 @@ public class ShortMessage extends AbstractEntity {
 	private ObjectId merchantId;
 	private ObjectId sendId;// 短信对应的发送记录ID，群发ID或单发ID
 	private Date sendTime;
+	private int priority=0;
 
 	private MessageStatus status;
 
@@ -91,5 +92,13 @@ public class ShortMessage extends AbstractEntity {
 
 	public void setStatus(MessageStatus status) {
 		this.status = status;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 }

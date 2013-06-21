@@ -5,8 +5,6 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd">
 
-
-
 	<bean id="messageTopicListenerConnectionFactory"
 		class="org.springframework.jms.connection.CachingConnectionFactory">
 		<constructor-arg ref="jmsFactory" />
@@ -15,32 +13,6 @@
 		<property name="clientId" value="clientId_message" />
 	</bean>
 
-	
-	<bean id="messageSendListenerContainer"
-		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="messageTopicListenerConnectionFactory" />
-		<property name="destination" ref="messageDestination" />
-		<property name="pubSubDomain" value="true" />
-		<property name="sessionTransacted" value="true" />
-		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
-		<property name="messageListener" ref="messageSendListener" />
-		<property name="subscriptionDurable" value="true" />
-		<property name="durableSubscriptionName" value="message_send" />
-		<property name="messageSelector" value="type='sendMessage'"></property>
-	</bean>
-	<bean id="messageGroupSendListenerContainer"
-		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="messageTopicListenerConnectionFactory" />
-		<property name="destination" ref="messageDestination" />
-		<property name="pubSubDomain" value="true" />
-		<property name="sessionTransacted" value="true" />
-		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
-		<property name="messageListener" ref="messageGroupSendListener" />
-		<property name="subscriptionDurable" value="true" />
-		<property name="durableSubscriptionName" value="message_groupSend" />
-		<property name="messageSelector" value="type='groupSendMessage'"></property>
-	</bean>
-	
 	<bean id="messageCallInListenerContainer"
 		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
 		<property name="connectionFactory" ref="messageTopicListenerConnectionFactory" />

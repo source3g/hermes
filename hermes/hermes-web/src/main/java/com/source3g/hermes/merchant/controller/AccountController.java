@@ -151,8 +151,12 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "remind/toList", method = RequestMethod.GET)
-	public ModelAndView toRemindList() throws Exception {
-		return new ModelAndView("merchant/accountCenter/remindList");
+	public String toRemindList(Model model) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "customer/todayReminds/" + merchant.getId() + "/";
+		CustomerRemindDto[] result = restTemplate.getForObject(uri, CustomerRemindDto[].class);
+		model.addAttribute("reminds", result);
+		return "merchant/accountCenter/remindList";
 	}
 
 	@RequestMapping(value = "remind/list", method = RequestMethod.GET)
@@ -165,18 +169,17 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "sendMessages/{title}", method = RequestMethod.GET)
-	public ModelAndView sendMessages(@PathVariable String title, HttpServletRequest req) throws Exception {
+	public String sendMessages(@PathVariable String title, HttpServletRequest req, Model model, RedirectAttributes redirectAttributes)
+			throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/remindSend/" + title + "/" + merchant.getId() + "/";
 		String result = restTemplate.getForObject(uri, String.class);
-		Map<String, Object> model = new HashMap<String, Object>();
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			model.put("success", result);
-			return new ModelAndView("merchant/accountCenter/remindList", model);
+			redirectAttributes.addAttribute("success", result);
 		} else {
-			model.put("error", result);
-			return new ModelAndView("merchant/accountCenter/remindList", model);
+			redirectAttributes.addAttribute("error", result);
 		}
+		return "redirect:/merchant/account/remind/toList/";
 	}
 
 	@RequestMapping(value = "ignoreSendMessages/{title}", method = RequestMethod.GET)
@@ -196,7 +199,7 @@ public class AccountController {
 		MerchantResource result = restTemplate.getForObject(uri, MerchantResource.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("merchantResource", result);
-		return new ModelAndView("/merchant/accountCenter/resourceSetting",model);
+		return new ModelAndView("/merchant/accountCenter/resourceSetting", model);
 	}
 
 	@RequestMapping(value = "/addMerchantResource", method = RequestMethod.GET)
@@ -228,7 +231,7 @@ public class AccountController {
 
 	@RequestMapping(value = "/updateMerchantResource", method = RequestMethod.POST)
 	@ResponseBody
-	public String updateMerchantResource( String messageContent ) throws Exception {
+	public String updateMerchantResource(String messageContent) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant();
 		String uri = ConfigParams.getBaseUrl() + "merchant/updateMerchantResource/" + merchant.getId() + "/";
 		HttpEntity<String> entity = new HttpEntity<String>(messageContent);
@@ -272,12 +275,12 @@ public class AccountController {
 	@RequestMapping(value = "/electricMenu/add", method = RequestMethod.POST)
 	@ResponseBody
 	public String electricMenuSubmit(ElectricMenuDto electricMenuDto, Model model) throws Exception {
-		if(electricMenuDto.getMenus()==null){
+		if (electricMenuDto.getMenus() == null) {
 			return "类别名称不能为空";
 		}
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/add/" + LoginUtils.getLoginMerchant().getId() + "/";
 		HttpEntity<ElectricMenuDto> entity = new HttpEntity<ElectricMenuDto>(electricMenuDto);
-		String str=restTemplate.postForObject(uri, entity, String.class);
+		String str = restTemplate.postForObject(uri, entity, String.class);
 		return str;
 	}
 
@@ -298,7 +301,7 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "/electricMenu/updateItem/{menuId}/{title}", method = RequestMethod.GET)
-	public String toUpdateElectricMenuItem(@PathVariable String menuId, @PathVariable String title,Boolean detail, Model model) throws Exception {
+	public String toUpdateElectricMenuItem(@PathVariable String menuId, @PathVariable String title, Boolean detail, Model model) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/findItem/" + menuId + "/" + title + "/";
 		ElectricMenuItem electricMenuItem = restTemplate.getForObject(uri, ElectricMenuItem.class);
 		String menusUri = ConfigParams.getBaseUrl() + "merchant/electricMenu/list/" + LoginUtils.getLoginMerchant().getId() + "/";
@@ -307,13 +310,15 @@ public class AccountController {
 		model.addAttribute("electricMenus", electricMenus);
 		model.addAttribute("menuId", menuId);
 		model.addAttribute("update", true);
-		model.addAttribute("detail",detail);
+		model.addAttribute("detail", detail);
 		return "/merchant/accountCenter/addElectricMenu";
 	}
 
 	@RequestMapping(value = "/electricMenu/updateItem/{menuId}/{itemId}", method = RequestMethod.POST)
-	public String updateElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId, String price, String title, String unit, MultipartFile Filedata, Model model) throws Exception {
-		File fileToCopy = new File("/temp/file/" + new Date().getTime() + Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
+	public String updateElectricMenuItem(@PathVariable String menuId, @PathVariable String itemId, String price, String title, String unit,
+			MultipartFile Filedata, Model model) throws Exception {
+		File fileToCopy = new File("/temp/file/" + new Date().getTime()
+				+ Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
 		Resource resource = new FileSystemResource(fileToCopy);
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
@@ -334,13 +339,15 @@ public class AccountController {
 
 	@RequestMapping(value = "/electricMenu/updateItemNoPic/{menuId}/{itemId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String updateElectricMenuItemWidthoutPic(@PathVariable String menuId, @PathVariable String itemId  ,String price, String title, String unit, Model model) throws Exception {
+	public String updateElectricMenuItemWidthoutPic(@PathVariable String menuId, @PathVariable String itemId, String price, String title,
+			String unit, Model model) throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("title", title);
 		map.put("unit", unit);
 		map.put("price", String.valueOf(price));
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/updateItemNoPic/" + menuId + "/" + itemId + "/?title={title}&unit={unit}&price={price}";
-		restTemplate.postForObject(uri, null, String.class,map);
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/updateItemNoPic/" + menuId + "/" + itemId
+				+ "/?title={title}&unit={unit}&price={price}";
+		restTemplate.postForObject(uri, null, String.class, map);
 		return "success";
 	}
 
@@ -356,13 +363,15 @@ public class AccountController {
 	@ResponseBody
 	public String deleteMenu(@PathVariable String menuId, Model model) throws Exception {
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/delete/" + menuId + "/";
-		String result =restTemplate.getForObject(uri, String.class);
+		String result = restTemplate.getForObject(uri, String.class);
 		return result;
 	}
 
 	@RequestMapping(value = "/electricMenu/addItem", method = RequestMethod.POST)
-	public String addElectricMenuItem(String menuId, String title, double price, String unit, @RequestParam("Filedata") MultipartFile Filedata,Model model) throws Exception {
-		File fileToCopy = new File("/temp/file/" + new Date().getTime() + Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
+	public String addElectricMenuItem(String menuId, String title, double price, String unit, @RequestParam("Filedata") MultipartFile Filedata,
+			Model model) throws Exception {
+		File fileToCopy = new File("/temp/file/" + new Date().getTime()
+				+ Filedata.getOriginalFilename().substring(Filedata.getOriginalFilename().lastIndexOf("."), Filedata.getOriginalFilename().length()));
 		FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
 		Resource resource = new FileSystemResource(fileToCopy);
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
@@ -374,30 +383,30 @@ public class AccountController {
 		requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
 		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/addItem/" + menuId + "/";
-		String result=restTemplate.postForObject(uri, requestEntity, String.class);
+		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		model.addAttribute("result", result);
 		String menuUri = ConfigParams.getBaseUrl() + "merchant/electricMenu/list/" + LoginUtils.getLoginMerchant().getId() + "/";
 		ElectricMenu[] electricMenus = restTemplate.getForObject(menuUri, ElectricMenu[].class);
 		model.addAttribute("menus", electricMenus);
 		return "/merchant/accountCenter/electricMenu";
 	}
-	
+
 	@RequestMapping(value = "/electricMenu/sync", method = RequestMethod.GET)
 	public String sync() throws Exception {
-		String uri=ConfigParams.getBaseUrl()+"merchant/electricMenu/sync/"+LoginUtils.getLoginMerchant().getId()+"/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/sync/" + LoginUtils.getLoginMerchant().getId() + "/";
 		restTemplate.getForObject(uri, String.class);
 		return "/merchant/accountCenter/electricMenu";
 	}
-	
+
 	@RequestMapping(value = "/titleValidate", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean titleValidate(String title,String oldTitle,String menuId)  {	
-		if(StringUtils.isNotEmpty(title)&&title.equals(oldTitle)){
+	public Boolean titleValidate(String title, String oldTitle, String menuId) {
+		if (StringUtils.isNotEmpty(title) && title.equals(oldTitle)) {
 			return true;
 		}
-		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/titleValidate/" + menuId +"/"+title +"/";
-		Boolean result=restTemplate.getForObject(uri, Boolean.class);
+		String uri = ConfigParams.getBaseUrl() + "merchant/electricMenu/titleValidate/" + menuId + "/" + title + "/";
+		Boolean result = restTemplate.getForObject(uri, Boolean.class);
 		return result;
 	}
-	
+
 }

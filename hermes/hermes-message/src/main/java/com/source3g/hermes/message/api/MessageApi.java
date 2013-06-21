@@ -199,6 +199,7 @@ public class MessageApi {
 		messageService.ignoreSendMessages(title, merchant.getId());
 		return ReturnConstants.SUCCESS;
 	}
+	
 
 	// TODO 方法名要改
 	@RequestMapping(value = "/ignoreSendMessages/{title}/{merchantId}", method = RequestMethod.GET)

@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import javax.jms.Destination;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -44,8 +43,6 @@ import com.mongodb.DBObject;
 import com.mongodb.DBRef;
 import com.source3g.hermes.constants.JmsConstants;
 import com.source3g.hermes.dto.customer.CustomerDto;
-import com.source3g.hermes.dto.customer.CustomerRemindDto;
-import com.source3g.hermes.dto.customer.CustomerRemindDto.CustomerInfo;
 import com.source3g.hermes.dto.customer.CustomerStatisticsDto;
 import com.source3g.hermes.dto.message.StatisticObjectDto;
 import com.source3g.hermes.entity.ObjectValue;
@@ -53,10 +50,8 @@ import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
-import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
-import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.enums.CallStatus;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
@@ -173,7 +168,8 @@ public class CustomerService extends BaseService {
 			}
 			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				List<CustomerGroup> customerGroups = mongoTemplate.find(
+						new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
 				if (customerGroups != null) {
 					criteria.and("customerGroup").in(customerGroups);
 				}
@@ -190,7 +186,8 @@ public class CustomerService extends BaseService {
 			}
 			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				List<CustomerGroup> customerGroups = mongoTemplate.find(
+						new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
 				if (customerGroups != null) {
 					criteria.and("customerGroup").in(customerGroups);
 				}
@@ -317,7 +314,8 @@ public class CustomerService extends BaseService {
 			}
 			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				List<CustomerGroup> customerGroups = mongoTemplate.find(
+						new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
 				if (customerGroups != null) {
 					query.addCriteria(Criteria.where("customerGroup").in(customerGroups));
 				}
@@ -334,7 +332,8 @@ public class CustomerService extends BaseService {
 			}
 			if (StringUtils.isNotEmpty(customer.getCustomerGroup().getName())) {
 				Pattern groupPattern = Pattern.compile("^.*" + customer.getCustomerGroup().getName() + ".*$", Pattern.CASE_INSENSITIVE);
-				List<CustomerGroup> customerGroups = mongoTemplate.find(new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
+				List<CustomerGroup> customerGroups = mongoTemplate.find(
+						new Query(Criteria.where("name").is(groupPattern).and("merchantId").is(customer.getMerchantId())), CustomerGroup.class);
 				if (customerGroups != null) {
 					query.addCriteria(Criteria.where("customerGroup").in(customerGroups));
 				}
@@ -345,7 +344,8 @@ public class CustomerService extends BaseService {
 		return list;
 	}
 
-	public String export(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public String export(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException,
+			NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		List<Customer> list = list(customer, customerType);
 		Date createTime = new Date();
 		// 文件名
@@ -368,7 +368,8 @@ public class CustomerService extends BaseService {
 		return null;
 	}
 
-	public String export1(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public String export1(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException,
+			NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		List<Customer> list = list(customer, customerType);
 		Date createTime = new Date();
 		// 文件名
@@ -586,10 +587,12 @@ public class CustomerService extends BaseService {
 		if (c == null || StringUtils.isEmpty(c.getName())) {
 			record.setNewCustomer(true);
 		}
-		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).set("operateTime", new Date()).addToSet("callRecords", record);
+		update.set("phone", phone).set("merchantId", merchant.getId()).set("lastCallInTime", callInTime).set("operateTime", new Date())
+				.addToSet("callRecords", record);
 		mongoTemplate.upsert(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), update, Customer.class);
 		if (PhoneUtils.isMobile(phone)) {
-			if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() > 0 && record.getCallDuration() >= 6 && CallStatus.CALL_IN.equals(record.getCallStatus())) {
+			if (merchant.getSetting().isAutoSend() == true && merchant.getMessageBalance().getSurplusMsgCount() > 0 && record.getCallDuration() >= 6
+					&& CallStatus.CALL_IN.equals(record.getCallStatus())) {
 				CallInMessage callInMessage = new CallInMessage();
 				callInMessage.setDeviceSn(deviceSn);
 				callInMessage.setDuration(duration);
@@ -623,12 +626,14 @@ public class CustomerService extends BaseService {
 	public void updateInfo(Customer customer, String merchantId) {
 		customer.setOperateTime(new Date());
 		if (customer.getId() == null) {
-			Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customer.getPhone()).and("merchantId").is(new ObjectId(merchantId))), Customer.class);
+			Customer c = mongoTemplate.findOne(
+					new Query(Criteria.where("phone").is(customer.getPhone()).and("merchantId").is(new ObjectId(merchantId))), Customer.class);
 			if (c != null) {
 				customer.setId(c.getId());
 			}
 		}
-		super.updateIncludeProperties(customer, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "reminds", "customerGroup", "favorite", "operateTime");
+		super.updateIncludeProperties(customer, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note",
+				"reminds", "customerGroup", "favorite", "operateTime");
 	}
 
 	public CustomerDto findBySnAndPhone(String sn, String phone) {
@@ -638,7 +643,8 @@ public class CustomerService extends BaseService {
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
 		if (merchant == null)
 			return null;
-		Customer customer = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), Customer.class);
+		Customer customer = mongoTemplate
+				.findOne(new Query(Criteria.where("merchantId").is(merchant.getId()).and("phone").is(phone)), Customer.class);
 		CustomerDto customerDto = new CustomerDto();
 		EntityUtils.copyCustomerEntityToDto(customer, customerDto);
 		return customerDto;
@@ -670,7 +676,8 @@ public class CustomerService extends BaseService {
 			mapResource = "classpath:mapreduce/oldCallRecordsByDayMap.js";
 		}
 		query.addCriteria(criteria);
-		MapReduceResults<ObjectValue> results = mongoTemplate.mapReduce(query, "customer", mapResource, "classpath:mapreduce/callRecordsByDayReduce.js", ObjectValue.class);
+		MapReduceResults<ObjectValue> results = mongoTemplate.mapReduce(query, "customer", mapResource,
+				"classpath:mapreduce/callRecordsByDayReduce.js", ObjectValue.class);
 		List<ObjectValue> values = new ArrayList<ObjectValue>();
 		List<String> daysHasValue = new ArrayList<String>();
 		List<String> allDays = FormateUtils.getDays(startTime, endTime);
@@ -711,14 +718,18 @@ public class CustomerService extends BaseService {
 	public long findNewCustomerCount(String sn, Date startTime) {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
-		long count = mongoTemplate.count(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
+		long count = mongoTemplate.count(
+				new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)),
+				Customer.class);
 		return count;
 	}
 
 	public List<Customer> findNewCustomers(String sn, Date startTime) {
 		Device device = mongoTemplate.findOne(new Query(Criteria.where("sn").is(sn)), Device.class);
 		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("deviceIds").is(device.getId())), Merchant.class);
-		return mongoTemplate.find(new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)), Customer.class);
+		return mongoTemplate.find(
+				new Query(Criteria.where("name").is(null).and("merchantId").is(merchant.getId()).and("lastCallInTime").gte(startTime)),
+				Customer.class);
 	}
 
 	public CallInStatisticsCount findCallInStatisticsByCount(ObjectId merchantId, Date startTime, Date endTime) {
@@ -761,7 +772,8 @@ public class CustomerService extends BaseService {
 	public List<Map<String, Object>> findCustomerStatistics(ObjectId merchantId) {
 		CustomerStatisticsDto customerStatisticsDto = new CustomerStatisticsDto();
 		customerStatisticsDto.setEditedCustomerCount(new StatisticObjectDto("已编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.oldCustomer)));
-		customerStatisticsDto.setUneditedCustomerCount(new StatisticObjectDto("未编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.newCustomer)));
+		customerStatisticsDto
+				.setUneditedCustomerCount(new StatisticObjectDto("未编辑顾客数量：", findAllCustomerCount(merchantId, CustomerType.newCustomer)));
 		CallInStatisticsCount callInStatisticsCountThreeDay = findCallInCountByDayFromToday(merchantId, 3);
 		customerStatisticsDto.setUneditedCallInCountThreeDay(new StatisticObjectDto("三天内未编辑顾客打进电话数：", callInStatisticsCountThreeDay.getNewCount()));
 		customerStatisticsDto.setEditedCallInCountThreeDay(new StatisticObjectDto("三天内已编辑顾客打进电话数：", callInStatisticsCountThreeDay.getOldCount()));
@@ -829,39 +841,9 @@ public class CustomerService extends BaseService {
 		return mongoTemplate.count(query, Customer.class);
 	}
 
-	public List<CustomerRemindDto> findTodayReminds(ObjectId merchantId) {
-		List<CustomerRemindDto> result = new ArrayList<CustomerRemindDto>();
-		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)), MerchantRemindTemplate.class);
-		Date startTime = new Date();
-		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
-			Query query = new Query();
-			Criteria criteria = Criteria.where("merchantId").is(merchantId);
-			Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime()+1);
-			criteria.and("reminds").elemMatch(Criteria.where("remindTime").gte(startTime).lte(endTime).and("merchantRemindTemplate.$id").is(merchantRemindTemplate.getId()).and("alreadyRemind").is(false));
-			query.addCriteria(criteria);
-			List<Customer> customers = mongoTemplate.find(query, Customer.class);
-			if (CollectionUtils.isEmpty(customers)) {
-				continue;
-			}
-			CustomerRemindDto customerRemindDto = new CustomerRemindDto();
-			customerRemindDto.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
-			customerRemindDto.setContent(merchantRemindTemplate.getMessageContent());
-			customerRemindDto.setTitle(merchantRemindTemplate.getRemindTemplate().getTitle());
-			for (Customer customer : customers) {
-				for (Remind remind : customer.getReminds()) {
-					if (remind.getMerchantRemindTemplate().getId().equals(merchantRemindTemplate.getId()) && remind.getRemindTime().getTime() > startTime.getTime() && remind.getRemindTime().getTime() < endTime.getTime() && remind.isAlreadyRemind() == false) {
-						CustomerInfo customerInfo = new CustomerInfo(customer.getName(), customer.getPhone(), remind.getRemindTime());
-						customerRemindDto.addRemind(customerInfo);
-					}
-				}
-			}
-			result.add(customerRemindDto);
-		}
-		return result;
-	}
-
 	public void saveBySn(CustomerDto customerDto, ObjectId merchantId) {
-		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerDto.getPhone()).and("merchantId").is(merchantId)), Customer.class);
+		Customer c = mongoTemplate.findOne(new Query(Criteria.where("phone").is(customerDto.getPhone()).and("merchantId").is(merchantId)),
+				Customer.class);
 		if (c == null) {
 			c = new Customer();
 			c.setOperateTime(new Date());
@@ -872,7 +854,8 @@ public class CustomerService extends BaseService {
 			c.setOperateTime(new Date());
 			c.setMerchantId(merchantId);
 			EntityUtils.copyCustomerDtoToEntity(customerDto, c, merchantId);
-			super.updateIncludeProperties(c, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note", "customerGroup", "favorite", "operateTime");
+			super.updateIncludeProperties(c, "name", "sex", "birthday", "phone", "blackList", "address", "otherPhones", "qq", "email", "note",
+					"customerGroup", "favorite", "operateTime");
 		}
 	}
 

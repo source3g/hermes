@@ -16,11 +16,12 @@ import com.hongxun.pub.DataCommand;
 import com.hongxun.pub.tcptrans.CommReceiveEvent;
 import com.hongxun.pub.tcptrans.CommReceiveListener;
 import com.hongxun.pub.tcptrans.TcpCommTrans;
+import com.source3g.hermes.entity.message.ShortMessage;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.PhoneOperator;
 
 @Service
-public class TcpCommandService implements ApplicationContextAware {
+public class TcpCommandService extends AbstractPositiveMessageService implements ApplicationContextAware {
 
 	private static Logger logger = LoggerFactory.getLogger(TcpCommandService.class);
 
@@ -51,6 +52,13 @@ public class TcpCommandService implements ApplicationContextAware {
 
 	public TcpCommandService() {
 		super();
+	}
+
+	@Override
+	public String send(ShortMessage shortMessage) {
+		// 运营商随便
+		send(shortMessage.getMsgId(), shortMessage.getPhone(), shortMessage.getContent(), PhoneOperator.移动);
+		return shortMessage.getMsgId();
 	}
 
 	public void send(String msgId, String phoneNumber, String content, PhoneOperator operator) {

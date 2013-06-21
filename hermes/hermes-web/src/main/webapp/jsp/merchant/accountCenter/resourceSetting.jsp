@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -25,19 +24,15 @@
 
 	<form id="addMerchantResourceForm1" class="form-inline">
 		<h3>编辑短信内容</h3>
-		<textarea rows="8" class="span6" id="messageContent"
-			name="messageContent">${merchantResource.messageContent}</textarea>
+		<textarea rows="8" class="span6" id="messageContent" name="messageContent">${merchantResource.messageContent}</textarea>
 		<br> <input type=submit class="btn btn-primary" id="updateMerchantResource" value="保存">
 		<%-- <label><c:if test="${not empty success }">保存成功</c:if> </label> --%>
 	</form>
 
 	<h3>资源操作</h3>
 	<form id="addMerchantResourceForm">
-		<label class="control-label" for="name">资源名称：</label> <input
-			type="text" class="input-xlarge" placeholder="请输入资源名称..." id="name"
-			name="name"> <span class="help-inline"><font
-			color="red">*</font></span> <input type="submit" id="addMerchantResource"
-			data-loading-text="增加中..." class="btn btn-primary" value="增加">
+		<label class="control-label" for="name">资源名称：</label> <input type="text" class="input-xlarge" placeholder="请输入资源名称..." id="name" name="name"> <span class="help-inline"><font color="red">*</font></span> <input type="submit" id="addMerchantResource" data-loading-text="增加中..."
+			class="btn btn-primary" value="增加">
 	</form>
 	<h3>资源列表</h3>
 
@@ -49,11 +44,11 @@
 			</tr>
 		</thead>
 		<tbody id="tbody">
-		<c:forEach items="${merchantResource.resourceList}" var="resourceList" varStatus="status" >
-			<tr>
-				<td>${resourceList}</td>
-				<td><input type='button' value='删除' class='btn btn-danger' onclick="deletemerchantResource('${resourceList}')"></td>
-			</tr>
+			<c:forEach items="${merchantResource.resourceList}" var="resourceList" varStatus="status">
+				<tr>
+					<td>${resourceList}</td>
+					<td><input type='button' value='删除' class='btn btn-danger' onclick="deletemerchantResource('${resourceList}')"></td>
+				</tr>
 			</c:forEach>
 		</tbody>
 	</table>

@@ -23,6 +23,20 @@
 				<span>(注：选择关时，将不会进行挂机短信发送) </span>
 			</div>
 		</div>
+		
+		
+		
+		<div class="control-group">
+			<label class="control-label" for="nameMatch">称谓开关：</label>
+			<div class="controls">
+				<input type="radio" name="title" id="title" value="true"
+					<c:if test="${ merchant.setting.title eq true }"> checked="checked" </c:if> />开
+				<input type="radio" name="title" id="title" value="false"
+					<c:if test="${ merchant.setting.title eq false }"> checked="checked" </c:if> />关
+				<span>(注：选择关时，发送短信将不会有任何称谓，性别匹配开关也无作用 )</span>
+			</div>
+		</div>
+		
 
 		<div class="control-group">
 			<label class="control-label" for="nameMatch">性别匹配开关：</label>
@@ -83,6 +97,9 @@
 					nameMatch : {
 						required : true
 					},
+					title:{
+						required:true
+					},
 					salerMatch : {
 						required : true
 					},
@@ -97,6 +114,9 @@
 					},
 					nameMatch : {
 						required : "选项不能为空"
+					},
+					title:{
+						required:"选项不能为空"
 					},
 					salerMatch : {
 						required : "选项不能为空"

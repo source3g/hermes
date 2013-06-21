@@ -9,15 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.jms.Destination;
-
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,7 +27,8 @@ import com.lxt2.protocol.common.Standard_SeqNum;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
-import com.source3g.hermes.constants.JmsConstants;
+import com.source3g.hermes.dto.customer.CustomerRemindDto;
+import com.source3g.hermes.dto.customer.CustomerRemindDto.CustomerInfo;
 import com.source3g.hermes.dto.message.MessageStatisticsDto;
 import com.source3g.hermes.dto.message.StatisticObjectDto;
 import com.source3g.hermes.entity.customer.Customer;
@@ -45,9 +44,7 @@ import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.entity.message.ShortMessage;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
-import com.source3g.hermes.enums.PhoneOperator;
 import com.source3g.hermes.enums.Sex;
-import com.source3g.hermes.message.GroupSendMsg;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.service.JmsService;
 import com.source3g.hermes.utils.FormateUtils;
@@ -57,18 +54,18 @@ import com.source3g.hermes.utils.PhoneUtils;
 @Service
 public class MessageService extends BaseService {
 	private static final Logger logger = LoggerFactory.getLogger(MessageService.class);
-
 	@Autowired
 	private JmsService jmsService;
 	@Autowired
-	private Destination messageDestination;
+	private MessageQueueService messageQueueService;
+	@Autowired
+	private PositiveSenderService positiveSenderService;
 	@Autowired
 	private CbipMesssageService cbipMesssageService;
 	@Autowired
 	private TcpCommandService tcpCommandService;
-
-	@Value(value = "${message.channel.select}")
-	private int channel;
+	@Autowired
+	private XuntongMessageService xuntongMessageService;
 
 	/**
 	 * 短信群发
@@ -82,18 +79,65 @@ public class MessageService extends BaseService {
 		if (customerPhones != null) {
 			customerPhoneArray = getMobilePhone(customerPhones);
 		}
-		Long count = findCustomerHasMobileCountByGroupIds(ids);
-		count += customerPhoneArray.length;
-		checkSurplus(merchantId, count);
 		// 生成群发记录
-		GroupSendLog groupSendLog = genGroupSendLog(count.intValue(), content, merchantId);
-		GroupSendMsg groupSendMsg = new GroupSendMsg(customerPhoneArray, ids, content, merchantId, groupSendLog.getId());
-		jmsService.sendObject(messageDestination, groupSendMsg, JmsConstants.TYPE, JmsConstants.GROUP_SEND_MESSAGE);
+		GroupSendLog groupSendLog = genGroupSendLog(0, content, merchantId);
+		logger.debug("开始群发消息:" + content);
+		Set<Customer> customerSet = new HashSet<Customer>();
+		if (ids != null && ids.length > 0) {
+			List<Customer> customerList = findCustomerByGroupIds(ids);
+			customerSet.addAll(customerList);
+		}
+		Set<String> phoneSet = new HashSet<String>();
+		if (customerPhoneArray != null && customerPhoneArray.length > 0) {
+			for (String phone : customerPhoneArray) {
+				Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(phone)), Customer.class);
+				if (c != null) {
+					customerSet.add(c);
+				} else {
+					phoneSet.add(phone);
+				}
+			}
+		}
+		Set<ShortMessage> shortMessageSet = processGroupMessage(merchantId, customerSet, phoneSet, content, MessageType.群发, groupSendLog.getId());
+		checkSurplus(merchantId, shortMessageSet.size());
+		groupSendLog.setSendCount(shortMessageSet.size());
+		mongoTemplate.insert(groupSendLog);
+		for (ShortMessage message : shortMessageSet) {
+			send(message);
+		}
+	}
+
+	private Set<ShortMessage> processGroupMessage(ObjectId merchantId, Set<Customer> customerSet, Set<String> phoneSet, String content,
+			MessageType messageType, ObjectId groupLogId) {
+		Set<ShortMessage> result = new HashSet<ShortMessage>();
+		Merchant merchant = super.findOne(new Query(Criteria.where("_id").is(merchantId)), Merchant.class);
+		int priority = customerSet.size() + phoneSet.size();
+		for (Customer c : customerSet) {
+			if (PhoneUtils.isMobile(c.getPhone())) {
+				String proceedContent = processContent(merchant, c, content);
+				result.add(genShortMessage(proceedContent, c.getPhone(), messageType, merchant.getId(), groupLogId, priority));
+			}
+		}
+		for (String phone : phoneSet) {
+			result.add(genShortMessage(content, phone, messageType, merchantId, groupLogId, priority));
+		}
+		return result;
+	}
+
+	private ShortMessage genShortMessage(String content, String phone, MessageType type, ObjectId merchantId, ObjectId logId, int priority) {
+		ShortMessage shortMessage = new ShortMessage();
+		shortMessage.setContent(content);
+		shortMessage.setMessageType(type);
+		shortMessage.setId(ObjectId.get());
+		shortMessage.setMerchantId(merchantId);
+		shortMessage.setPhone(phone);
+		shortMessage.setSendId(logId);
+		shortMessage.setStatus(MessageStatus.发送中);
+		shortMessage.setPriority(priority);
+		return shortMessage;
 	}
 
 	public String[] getMobilePhone(String customerPhones) {
-		// Pattern pattern = Pattern.compile("\\d{11}");
-		// Matcher isNum =null;
 		String customerPhoneArray[] = customerPhones.split(";");
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < customerPhoneArray.length; i++) {
@@ -103,20 +147,6 @@ public class MessageService extends BaseService {
 		}
 		String[] length = new String[list.size()];
 		return list.toArray(length);
-	}
-
-	private long findCustomerHasMobileCountByGroupIds(String[] ids) {
-		if (ids == null || ids.length == 0) {
-			return 0L;
-		}
-		List<ObjectId> customerGroupIds = new ArrayList<ObjectId>();
-		for (String id : ids) {
-			ObjectId ObjId = new ObjectId(id);
-			customerGroupIds.add(ObjId);
-		}
-		BasicDBObject parameter = new BasicDBObject();
-		parameter.put("customerGroup.$id", new BasicDBObject("$in", customerGroupIds));
-		return findCountByBasicDBObject(Customer.class, parameter);
 	}
 
 	public List<Customer> findCustomerByGroupIds(String[] ids) {
@@ -187,7 +217,6 @@ public class MessageService extends BaseService {
 		groupSendLog.setSendTime(new Date());
 		groupSendLog.setId(ObjectId.get());
 		groupSendLog.setSuccessCount(0);
-		mongoTemplate.save(groupSendLog);
 		return groupSendLog;
 	}
 
@@ -200,16 +229,6 @@ public class MessageService extends BaseService {
 		mongoTemplate.save(messageTemplate);
 	}
 
-	public void sendMessage(ObjectId merchantId, String phone, String content, MessageType messageType, ObjectId logId) {
-		Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(phone)), Customer.class);
-		if (c == null) {
-			sendByPhone(merchantId, phone, content, messageType, logId);
-		} else {
-			sendMessage(c, content, messageType, logId);
-		}
-
-	}
-
 	/**
 	 * 私有，调用这个方法时，phone为库中没有的
 	 * 
@@ -219,56 +238,14 @@ public class MessageService extends BaseService {
 	 * @param messageType
 	 * @param logId
 	 */
-	private void sendByPhone(ObjectId merchantId, String phone, String content, MessageType messageType, ObjectId logId) {
-		if (PhoneUtils.isMobile(phone)) {
-			ShortMessage shortMessage = new ShortMessage();
-			shortMessage.setContent(content);
-			shortMessage.setMessageType(messageType);
-			shortMessage.setId(ObjectId.get());
-			shortMessage.setMerchantId(merchantId);
-			shortMessage.setPhone(phone);
-			shortMessage.setSendId(logId);
-			jmsService.sendObject(messageDestination, shortMessage, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
-		}
-	}
-
-	/**
-	 * 
-	 * @param c
-	 * @param content
-	 * @param messageType
-	 * @throws Exception
-	 */
-	public void sendMessage(Customer c, String content, MessageType messageType, ObjectId logId) {
-		Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(c.getMerchantId())), Merchant.class);
-		String proceedContent = processContent(merchant, c, content);
-		sendMessageWithProceedContent(c, proceedContent, messageType, logId);
-	}
-
-	/**
-	 * 
-	 * @param c
-	 * @param content
-	 * @param messageType
-	 * @throws Exception
-	 */
-	private void sendMessageWithProceedContent(Customer c, String proceedContent, MessageType messageType, ObjectId logId) {
-		if (PhoneUtils.isMobile(c.getPhone())) {
-			ShortMessage shortMessage = new ShortMessage();
-			shortMessage.setContent(proceedContent);
-			shortMessage.setMessageType(messageType);
-			shortMessage.setId(ObjectId.get());
-			shortMessage.setMerchantId(c.getMerchantId());
-			shortMessage.setPhone(c.getPhone());
-			shortMessage.setSendId(logId);
-			jmsService.sendObject(messageDestination, shortMessage, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
-		}
+	private void sendByOriginalContent(ObjectId merchantId, String phone, String content, MessageType messageType, ObjectId logId) {
+		send(genShortMessage(content, phone, messageType, merchantId, logId, 0));
 	}
 
 	public void singleSend(Customer c, String content, MessageType type) {
 		String proceedContent = processContent(c.getMerchantId(), c, content);
 		MessageSendLog messageSendLog = genMessageSendLog(c, 1, proceedContent, type, MessageStatus.发送中);
-		sendMessageWithProceedContent(c, proceedContent, type, messageSendLog.getId());
+		sendByOriginalContent(c.getMerchantId(), c.getPhone(), proceedContent, type, messageSendLog.getId());
 	}
 
 	public void singleSend(ObjectId merchantId, String customerPhone, String content, MessageType messageType) {
@@ -278,7 +255,7 @@ public class MessageService extends BaseService {
 		Customer c = mongoTemplate.findOne(new Query(Criteria.where("merchantId").is(merchantId).and("phone").is(customerPhone)), Customer.class);
 		if (c == null) {
 			MessageSendLog messageSendLog = genMessageSendLog(merchantId, customerPhone, 1, content, messageType, MessageStatus.发送中);
-			sendByPhone(merchantId, customerPhone, content, messageType, messageSendLog.getId());
+			sendByOriginalContent(merchantId, customerPhone, content, messageType, messageSendLog.getId());
 		} else {
 			singleSend(c, content, messageType);
 		}
@@ -345,36 +322,56 @@ public class MessageService extends BaseService {
 		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), update, MessageSendLog.class);
 	}
 
-	public MessageStatus send(ShortMessage message) {
-		message.setMsgId(String.valueOf(Standard_SeqNum.computeSeqNoErr(1)));
-		MessageStatus status = sendByOperator(message.getMsgId(), message.getPhone(), message.getContent(),
-				PhoneUtils.getOperatior(message.getPhone()));
-		message.setStatus(status);
-		message.setSendTime(new Date());
-		save(message);
-		return status;
+	public void addGroupSuccess(ObjectId groupId) {
+		Update updateGroupLog = new Update();
+		updateGroupLog.inc("successCount", 1);
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(groupId)), updateGroupLog, GroupSendLog.class);
 	}
 
-	// @Deprecated
-	// public MessageStatus send(String msgId, String phoneNumber, String
-	// content) {
-	// return sendByOperator(Long.parseLong(msgId), phoneNumber, content,
-	// PhoneUtils.getOperatior(phoneNumber));
-	// }
-
-	private MessageStatus sendByOperator(String msgId, String phoneNumber, String content, PhoneOperator operator) {
-		logger.debug("通过" + operator.toString() + "向" + phoneNumber + "发送" + content + "msgId:" + msgId);
+	public MessageStatus send(ShortMessage message) {
+		message.setMsgId(String.valueOf(Standard_SeqNum.computeSeqNoErr(1)));
+		MessageStatus status = MessageStatus.发送中;
 		try {
-			if (channel == 1) {
-				cbipMesssageService.send(msgId, phoneNumber, content, operator);
-			} else {
-				tcpCommandService.send(msgId, phoneNumber, content, operator);
+			Merchant merchant = mongoTemplate.findOne(new Query(Criteria.where("_id").is(message.getMerchantId())), Merchant.class);
+			if (merchant == null) {
+				throw new Exception("商户不存在");
 			}
+			int messageCount = (message.getContent().length() / 70) + 1;
+			if (merchant.getMessageBalance().getSurplusMsgCount() - messageCount <= 0) {
+				throw new Exception("余额不足发送失败");
+			}
+			if (!MessageStatus.重新发送.equals(message.getStatus())) {
+				logger.debug("发送到消息缓冲区:" + message.getContent() + " 电话:" + message.getPhone() + " 类型:" + message.getMessageType());
+				Update updateSurplus = new Update();
+				updateSurplus.inc("messageBalance.surplusMsgCount", 0 - messageCount).inc("messageBalance.totalCount", 0 - messageCount)
+						.inc("messageBalance.sentCount", messageCount);
+				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(merchant.getId())), updateSurplus, Merchant.class);
+				if (MessageType.群发.equals(message.getMessageType())) {
+					// addGroupSuccess(message.getSendId());
+				} else {
+					updateLog(message.getSendId(), new Date(), MessageStatus.发送中);
+				}
+			}
+			message.setStatus(status);
+			message.setSendTime(new Date());
+			messageQueueService.add(message);
+			save(message);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return MessageStatus.发送失败;
+			if (message != null) {
+				try {
+					status = MessageStatus.valueOf(e.getMessage());
+				} catch (Exception e2) {
+					status = MessageStatus.发送失败;
+				}
+				Update update = new Update();
+				update.set("status", status);
+				mongoTemplate.upsert(new Query(Criteria.where("_id").is(message.getSendId())), update, MessageSendLog.class);
+				message.setSendTime(new Date());
+				message.setStatus(status);
+				save(message);
+			}
 		}
-		return MessageStatus.已发送;
+		return status;
 	}
 
 	public void saveMessageAutoSend(AutoSendMessageTemplate AutoSendMessageTemplate) {
@@ -453,6 +450,11 @@ public class MessageService extends BaseService {
 		if (customer == null) {
 			return content;
 		}
+		if (!merchant.getSetting().isTitle()) {
+			return content;
+		}
+
+		String title = "尊敬的";
 		String[] suffix = { "先生", "女士", "小姐" };
 		assert (merchant != null);
 		boolean isHasSuffix = false;
@@ -483,7 +485,8 @@ public class MessageService extends BaseService {
 				}
 			}
 		}
-		return "尊敬的" + customerName + ":" + content;
+		title += customerName;
+		return title + ":\n" + content;
 	}
 
 	public void remindSend(String title, ObjectId merchantId) throws Exception {
@@ -495,11 +498,28 @@ public class MessageService extends BaseService {
 				new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())),
 				MerchantRemindTemplate.class);
 		String content = merchantRemindTemplate.getMessageContent();
-		List<Customer> customers = findCustomerByMerchantRemindTemplate(title, merchantId, remindTemplate, merchantRemindTemplate);
-		Set<Customer> customersSet = new HashSet<Customer>(customers);
-		for (Customer c : customersSet) {
+		Date startTime = new Date();
+		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime() + 1);
+		List<Customer> customers = findTodayRemindCustomers(merchantId, merchantRemindTemplate, startTime, endTime);// findCustomerByMerchantRemindTemplate(title,
+		for (Customer c : customers) {
 			singleSend(c, content, MessageType.提醒短信);
+			setAlreadyRemind(c, merchantRemindTemplate, true);
 		}
+	}
+
+	private void setAlreadyRemind(Customer c, MerchantRemindTemplate merchantRemindTemplate, boolean alreadyRemind) {
+		Update update = new Update();
+		update.set("reminds.$.alreadyRemind", alreadyRemind);
+		Date startTime = new Date();
+		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime() + 1);
+		mongoTemplate.updateFirst(
+				new Query(Criteria
+						.where("_id")
+						.is(c.getId())
+						.and("reminds")
+						.elemMatch(
+								Criteria.where("merchantRemindTemplate.$id").is(merchantRemindTemplate.getId()).and("remindTime").gte(startTime)
+										.lte(endTime).and("alreadyRemind").is(false))), update, Customer.class);
 	}
 
 	public void ignoreSendMessages(String title, ObjectId merchantId) {
@@ -510,28 +530,56 @@ public class MessageService extends BaseService {
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(
 				new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())),
 				MerchantRemindTemplate.class);
-		@SuppressWarnings("unused")
-		List<Customer> customers = findCustomerByMerchantRemindTemplate(title, merchantId, remindTemplate, merchantRemindTemplate);
+		Date startTime = new Date();
+		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime() + 1);
+		List<Customer> customers = findTodayRemindCustomers(merchantId, merchantRemindTemplate, startTime, endTime);
+		for (Customer c : customers) {
+			setAlreadyRemind(c, merchantRemindTemplate, true);
+		}
 	}
 
-	public List<Customer> findCustomerByMerchantRemindTemplate(String title, ObjectId merchantId, RemindTemplate remindTemplate,
-			MerchantRemindTemplate merchantRemindTemplate) {
-		Query query = new Query();
-		Criteria criteria = Criteria.where("merchantId").is(merchantId);
+	public List<CustomerRemindDto> findTodayReminds(ObjectId merchantId) {
+		List<CustomerRemindDto> result = new ArrayList<CustomerRemindDto>();
+		List<MerchantRemindTemplate> merchantRemindTemplates = mongoTemplate.find(new Query(Criteria.where("merchantId").is(merchantId)),
+				MerchantRemindTemplate.class);
 		Date startTime = new Date();
-		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime());
-		criteria.and("reminds.remindTime").gte(startTime).lte(endTime);
-		criteria.and("reminds.merchantRemindTemplate.$id").is(merchantRemindTemplate.getId());
-		query.addCriteria(criteria);
-		List<Customer> customers = mongoTemplate.find(query, Customer.class);
-		for (Customer c : customers) {
-			for (Remind r : c.getReminds()) {
-				if (r.getMerchantRemindTemplate().equals(merchantRemindTemplate) && r.isAlreadyRemind() == false) {
-					r.setAlreadyRemind(true);
-					mongoTemplate.save(c);
+
+		for (MerchantRemindTemplate merchantRemindTemplate : merchantRemindTemplates) {
+			Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime() + 1);
+			List<Customer> customers = findTodayRemindCustomers(merchantId, merchantRemindTemplate, startTime, endTime);
+			if (CollectionUtils.isEmpty(customers)) {
+				continue;
+			}
+			CustomerRemindDto customerRemindDto = new CustomerRemindDto();
+			customerRemindDto.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
+			customerRemindDto.setContent(merchantRemindTemplate.getMessageContent());
+			customerRemindDto.setTitle(merchantRemindTemplate.getRemindTemplate().getTitle());
+			customerRemindDto.setMerchantRemindId(merchantRemindTemplate.getId());
+			for (Customer customer : customers) {
+				for (Remind remind : customer.getReminds()) {
+					if (remind.getMerchantRemindTemplate().getId().equals(merchantRemindTemplate.getId())
+							&& remind.getRemindTime().getTime() > startTime.getTime() && remind.getRemindTime().getTime() < endTime.getTime()
+							&& remind.isAlreadyRemind() == false) {
+						CustomerInfo customerInfo = new CustomerInfo(customer.getName(), customer.getPhone(), remind.getRemindTime());
+						customerRemindDto.addRemind(customerInfo);
+					}
 				}
 			}
+			result.add(customerRemindDto);
+		}
+		return result;
+	}
 
+	public List<Customer> findTodayRemindCustomers(ObjectId merchantId, MerchantRemindTemplate merchantRemindTemplate, Date startTime, Date endTime) {
+		Query query = new Query();
+		Criteria criteria = Criteria.where("merchantId").is(merchantId);
+		criteria.and("reminds").elemMatch(
+				Criteria.where("remindTime").gte(startTime).lte(endTime).and("merchantRemindTemplate.$id").is(merchantRemindTemplate.getId())
+						.and("alreadyRemind").is(false));
+		query.addCriteria(criteria);
+		List<Customer> customers = mongoTemplate.find(query, Customer.class);
+		if (CollectionUtils.isEmpty(customers)) {
+			return null;
 		}
 		return customers;
 	}
@@ -579,7 +627,7 @@ public class MessageService extends BaseService {
 
 	public MessageStatus failedMessageResend(ShortMessage message) {
 		message.setStatus(MessageStatus.重新发送);
-		jmsService.sendObject(messageDestination, message, JmsConstants.TYPE, JmsConstants.SEND_MESSAGE);
+		send(message);
 		return message.getStatus();
 	}
 
@@ -611,21 +659,4 @@ public class MessageService extends BaseService {
 		}
 		return result;
 	}
-
-	public int getChannel() {
-		return channel;
-	}
-
-	public void setChannel(int channel) {
-		this.channel = channel;
-	}
-
-	public TcpCommandService getTcpCommandService() {
-		return tcpCommandService;
-	}
-
-	public void setTcpCommandService(TcpCommandService tcpCommandService) {
-		this.tcpCommandService = tcpCommandService;
-	}
-
 }
