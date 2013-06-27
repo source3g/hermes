@@ -1,6 +1,8 @@
 package com.source3g.hermes.merchant.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -108,7 +110,7 @@ public class MessageController {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
-		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo+"&merchantId="+merchant.getId().toString();
+		String uriMsgLog = ConfigParams.getBaseUrl() + "merchant/msgLogList/?pageNo=" + pageNo + "&merchantId=" + merchant.getId().toString();
 		Page page = restTemplate.getForObject(uriMsgLog, Page.class);
 		model.put("page", page);
 		model.put("merchant", merchant);
@@ -118,11 +120,11 @@ public class MessageController {
 	@RequestMapping(value = "/toMessageSend", method = RequestMethod.GET)
 	public ModelAndView toMessageSend(HttpServletRequest req) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
-		toMessageSendModel(req,model);
+		toMessageSendModel(req, model);
 		return new ModelAndView("merchant/shortMessage/messageSend", model);
 	}
-	
-	private void toMessageSendModel(HttpServletRequest req,Map<String, Object> model) throws Exception{
+
+	private void toMessageSendModel(HttpServletRequest req, Map<String, Object> model) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uriCustomerGroup = ConfigParams.getBaseUrl() + "customerGroup/listAll/" + merchant.getId() + "/";
 		CustomerGroup[] customerGroups = restTemplate.getForObject(uriCustomerGroup, CustomerGroup[].class);
@@ -130,25 +132,24 @@ public class MessageController {
 		Merchant merchant1 = restTemplate.getForObject(uri, Merchant.class);
 		model.put("merchant", merchant1);
 		model.put("customerGroups", customerGroups);
-	
+
 	}
-	
+
 	@RequestMapping(value = "/messageSend", method = RequestMethod.POST)
 	public ModelAndView messageSend(HttpServletRequest req, String[] ids, String customerPhones, String content) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		Map<String, Object> model = new HashMap<String, Object>();
 		MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
-		if(customerPhones==null){
+		if (ids != null && ids.length > 0) {
 			for (String id : ids) {
 				formData.add("ids", id);
 			}
-		}else if(ids==null){
-			formData.add("customerPhones", customerPhones);
-		}else{
-			for (String id : ids) {
-				formData.add("ids", id);
+		}
+		if (StringUtils.isNotEmpty(customerPhones)) {
+			List<String> usefulPhones = processCustomerPhones(customerPhones);
+			for (String phone : usefulPhones) {
+				formData.add("customerPhones", phone);
 			}
-			formData.add("customerPhones", customerPhones);
 		}
 		formData.add("content", content);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -159,23 +160,36 @@ public class MessageController {
 		String result = restTemplate.postForObject(uri, requestEntity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
 			model.put("success", "success");
-		}else{
+		} else {
 			model.put("error", result);
 		}
-		toMessageSendModel(req,model);
+		toMessageSendModel(req, model);
 		return new ModelAndView("merchant/shortMessage/messageSend", model);
 	}
+
+	private List<String> processCustomerPhones(String customerPhones) {
+		List<String> result = new ArrayList<String>();
+		String[] phoneArray = customerPhones.split(";|\n");
+		for (String phone : phoneArray) {
+			if (phone.matches("[0-9]{11}")) {
+				result.add(phone);
+			}
+		}
+		return result;
+	}
+
 	@RequestMapping(value = "/groupSendLogList", method = RequestMethod.GET)
 	@ResponseBody
 	public GroupSendLog[] groupSendLogList(HttpServletRequest req) throws Exception {
-		Merchant merchant=LoginUtils.getLoginMerchant(req);
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "shortMessage/groupSendLogList/" + merchant.getId() + "/";
-		GroupSendLog[] groupSendLogs = restTemplate.getForObject(uri, GroupSendLog[] .class);
-		return groupSendLogs; 
+		GroupSendLog[] groupSendLogs = restTemplate.getForObject(uri, GroupSendLog[].class);
+		return groupSendLogs;
 	}
-	
+
 	@RequestMapping(value = "/toMessageList", method = RequestMethod.GET)
-	public ModelAndView toMessageList(HttpServletRequest req, String pageNo, String startTime, String endTime, String phone, String customerGroupName) throws Exception {
+	public ModelAndView toMessageList(HttpServletRequest req, String pageNo, String startTime, String endTime, String phone, String customerGroupName)
+			throws Exception {
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
 		}
@@ -207,17 +221,17 @@ public class MessageController {
 
 	@RequestMapping(value = "/toAutoSend", method = RequestMethod.GET)
 	public ModelAndView toAutoSend(HttpServletRequest req) throws Exception {
-		Merchant merchant=LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "shortMessage/autoSend/messageInfo/"+merchant.getId()+"/";
-		AutoSendMessageTemplate  AutoSendMessageTemplate = restTemplate.getForObject(uri, AutoSendMessageTemplate.class);
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		String uri = ConfigParams.getBaseUrl() + "shortMessage/autoSend/messageInfo/" + merchant.getId() + "/";
+		AutoSendMessageTemplate AutoSendMessageTemplate = restTemplate.getForObject(uri, AutoSendMessageTemplate.class);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("AutoSendMessageTemplate", AutoSendMessageTemplate);
-		return new ModelAndView("merchant/shortMessage/autoSend",model);
+		return new ModelAndView("merchant/shortMessage/autoSend", model);
 	}
 
 	@RequestMapping(value = "/autoSend", method = RequestMethod.POST)
-	public ModelAndView autoSend(HttpServletRequest req,AutoSendMessageTemplate AutoSendMessageTemplate) throws Exception {
-		Merchant merchant=LoginUtils.getLoginMerchant(req);
+	public ModelAndView autoSend(HttpServletRequest req, AutoSendMessageTemplate AutoSendMessageTemplate) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		String uri = ConfigParams.getBaseUrl() + "/shortMessage/autoSend/messageInfo/";
 		AutoSendMessageTemplate.setMerchantId(merchant.getId());
 		HttpEntity<AutoSendMessageTemplate> entity = new HttpEntity<AutoSendMessageTemplate>(AutoSendMessageTemplate);

@@ -74,7 +74,7 @@ public class MessageService extends BaseService {
 	 * @param ids
 	 * @param content
 	 */
-	public void groupSend(ObjectId merchantId, String[] ids, String customerPhones, String content) throws Exception {
+	public void groupSend(ObjectId merchantId, String[] ids, String[] customerPhones, String content) throws Exception {
 		String customerPhoneArray[] = {};
 		if (customerPhones != null) {
 			customerPhoneArray = getMobilePhone(customerPhones);
@@ -137,12 +137,14 @@ public class MessageService extends BaseService {
 		return shortMessage;
 	}
 
-	public String[] getMobilePhone(String customerPhones) {
-		String customerPhoneArray[] = customerPhones.split(";");
+	public String[] getMobilePhone(String[] customerPhones) {
+		if (customerPhones == null || customerPhones.length == 0) {
+			return new String[0];
+		}
 		List<String> list = new ArrayList<String>();
-		for (int i = 0; i < customerPhoneArray.length; i++) {
-			if (PhoneUtils.isMobile(customerPhoneArray[i])) {
-				list.add(customerPhoneArray[i]);
+		for (int i = 0; i < customerPhones.length; i++) {
+			if (PhoneUtils.isMobile(customerPhones[i])) {
+				list.add(customerPhones[i]);
 			}
 		}
 		String[] length = new String[list.size()];

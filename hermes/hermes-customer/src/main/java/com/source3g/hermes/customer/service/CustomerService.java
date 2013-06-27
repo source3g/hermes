@@ -525,7 +525,7 @@ public class CustomerService extends BaseService {
 
 		ExcelObjectMapperDO addrMapperDo = new ExcelObjectMapperDO();
 		addrMapperDo.setExcelColumnName("地址");
-		addrMapperDo.setObjectFieldName("name");
+		addrMapperDo.setObjectFieldName("address");
 		addrMapperDo.setObjectFieldType(String.class);
 		list.add(addrMapperDo);
 
@@ -537,7 +537,7 @@ public class CustomerService extends BaseService {
 
 		ExcelObjectMapperDO emailMapperDo = new ExcelObjectMapperDO();
 		emailMapperDo.setExcelColumnName("email");
-		emailMapperDo.setObjectFieldName("name");
+		emailMapperDo.setObjectFieldName("email");
 		emailMapperDo.setObjectFieldType(String.class);
 		list.add(emailMapperDo);
 

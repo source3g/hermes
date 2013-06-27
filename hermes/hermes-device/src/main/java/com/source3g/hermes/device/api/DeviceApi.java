@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -167,6 +168,12 @@ public class DeviceApi {
 	public String getPublicKey() {
 		PublicKey publicKey = deviceService.getPublicKey();
 		return publicKey.getPublickey();
+	}
+	
+	@RequestMapping(value = "/now")
+	@ResponseBody
+	public Date now() {
+		return new Date();
 	}
 
 }

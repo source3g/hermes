@@ -2,6 +2,8 @@ package com.source3g.hermes.message.service;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import com.source3g.hermes.entity.message.ShortMessage;
 
 @Service
 public class PositiveSenderService implements ApplicationContextAware {
+	private static final Logger logger = LoggerFactory.getLogger(PositiveSenderService.class);
 	@Autowired
 	private MessageQueueService messageQueueService;
 
@@ -40,6 +43,7 @@ public class PositiveSenderService implements ApplicationContextAware {
 			while (true) {
 				try {
 					ShortMessage shortMessage = messageQueueService.poll();
+					logger.debug("开始检测短信:" + shortMessage);
 					if (shortMessage != null) {
 						abstractPositiveMessageService.sendMessage(shortMessage);
 					}

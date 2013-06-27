@@ -110,7 +110,7 @@ public class MessageApi {
 	 */
 	@RequestMapping(value = "/groupSend/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
-	public String groupSend(@PathVariable String merchantId, String[] ids, String customerPhones, String content) {
+	public String groupSend(@PathVariable String merchantId, String[] ids, String[] customerPhones, String content) {
 		try {
 			messageService.groupSend(new ObjectId(merchantId), ids, customerPhones, content);
 		} catch (Exception e) {

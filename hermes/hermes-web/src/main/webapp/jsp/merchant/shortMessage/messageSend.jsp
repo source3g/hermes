@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="../../include/import.jsp"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -17,37 +16,29 @@
 							<h4>短信群发</h4>
 						</center></th>
 				</tr>
-		</thead>
-		<tbody>
-			<tr>
-			<td width="20%" ><label class="control-label">商户短信数据 :</label></td>
-			<td width="26%" >短信可用余额总数：${merchant.messageBalance.totalCount}</td>
-			<td width="27%" >短信可用数量：${merchant.messageBalance.surplusMsgCount}</td>
-			<td width="27%" >短信已发送数量：${merchant.messageBalance.sentCount}</td>
-				
-			</tr>
-			
-			 <tr>
-			 <td><label class="control-label">选择客户组:</label></td>
-			 <td colspan="3"> 
-			<c:if test="${not empty customerGroups }">
-				<c:forEach items="${customerGroups}" var="customerGroup">
-					 <input type=checkbox name="ids" value="${customerGroup.id}">
-					 <a href="javascript:void();" onclick="customerListBycustomerGroupId('${customerGroup.id}')" > ${customerGroup.name}</a>
-				</c:forEach>
-			</c:if>
-			
-			  </td>	
-			  </tr>
-			  
-			  	<tr>
-					<td><label class="control-label">输入客户电话号码(电话号码以分号分隔)：</label></td>
-					<td colspan="4">
-						<!-- <textarea class="span8" rows="5"
-							name="customerPhones" id="customerPhones"></textarea> --> <input
-						id="customerPhonesInput" name="customerPhones" type="hidden">
-						<div style="background-color: white; height: 150px; width: 500px;"
-							id="customerPhones" contentEditable="true"></div>
+			</thead>
+			<tbody>
+				<tr>
+					<td width="20%"><label class="control-label">商户短信数据 :</label></td>
+					<td width="26%">短信可用余额总数：${merchant.messageBalance.totalCount}</td>
+					<td width="27%">短信可用数量：${merchant.messageBalance.surplusMsgCount}</td>
+					<td width="27%">短信已发送数量：${merchant.messageBalance.sentCount}</td>
+
+				</tr>
+
+				<tr>
+					<td><label class="control-label">选择客户组:</label></td>
+					<td colspan="3"><c:if test="${not empty customerGroups }">
+							<c:forEach items="${customerGroups}" var="customerGroup">
+								<input type=checkbox name="ids" value="${customerGroup.id}">
+								<a href="javascript:void();" onclick="customerListBycustomerGroupId('${customerGroup.id}')"> ${customerGroup.name}</a>
+							</c:forEach>
+						</c:if></td>
+				</tr>
+
+				<tr>
+					<td><label class="control-label">输入客户电话号码(电话号码以分号或换行分隔)：</label></td>
+					<td colspan="4"><textarea class="span8" rows="10" name="customerPhones" id="customerPhones"></textarea> <!--  <input id="customerPhonesInput" name="customerPhones" type="hidden"> --> <!-- <div style="background-color: white; height: 150px; width: 500px;" id="customerPhones" contentEditable="true"></div> -->
 					</td>
 				</tr>
 
@@ -59,17 +50,14 @@
 				</tr>
 				<tr>
 					<td><label class="control-label">编辑短信内容：</label></td>
-					<td colspan="4"><textarea class="span8" rows="5"
-							name="content" id="content"></textarea></td>
+					<td colspan="4"><textarea class="span8" rows="5" name="content" id="content"></textarea></td>
 				</tr>
 				<tr>
 					<td><label class="control-label">字数统计：</label></td>
 					<td colspan="4"><span id="contentLength"></span></td>
 				</tr>
 				<tr>
-					<td colspan="4"><input id="sendBtn" type="submit"
-						data-loading-text="发送中..." class="btn btn-primary" value="发送">
-					</td>
+					<td colspan="4"><input id="sendBtn" type="submit" data-loading-text="发送中..." class="btn btn-primary" value="发送"></td>
 				</tr>
 			</tbody>
 		</table>
@@ -108,8 +96,7 @@
 					</tbody>
 				</table>
 				<div>
-					<input type="button" class="btn btn-primary" id="customersFormBtn"
-						value="确定" onclick="chosePhones()"></input>
+					<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="chosePhones()"></input>
 				</div>
 			</div>
 		</div>
@@ -162,12 +149,8 @@
 		};
 		$('#messageSendForm').validate(validateOptions); 
 	 $('#messageSendForm').submit(function() {
-		  if($('#customerPhones').text()!=""){
-			 if ((!testCustomerPhones())||(!fastSend())) {
-					return false;
-				} 
-		 } 
-		 if($("input:checked[name='ids']").length==0&&$('#customerPhones').text()==""){
+		 var usfulCount=getusfulCount();
+		 if($("input:checked[name='ids']").length==0&&usfulCount==0){
 			 alert("请填写有效电话号码");
 			 return false;
 		 }
@@ -179,11 +162,9 @@
 				 type:"post",
 				success :showContentInfo	
 		}; 
-		$("#customerPhonesInput").attr("value",$('#customerPhones').text());
-		 $('#sendBtn').button('loading')
-		$(this).ajaxSubmit(options);
+		$('#sendBtn').button('loading')
+	 	$(this).ajaxSubmit(options);
 		return false;
-
 		}); 
 	 
 	 //短信模板
@@ -212,49 +193,34 @@
 				var str="<tr><td width=\"30%\">"+data[i].sendTime+"</td><td width=\"40%\" title="+data[i].content+" ><div style=\"width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; \">"+data[i].content+"</div></td><td width=\"30%\">"+data[i].sendCount+"/"+data[i].successCount+"</td></tr>";
 				$('#groupSendLog').append(str);
 			}
-	}
+		}
 		function initSel(data) {
 			for ( var i = 0; i < data.length; i++) {
 				$("#sel").append("<option value='"+data[i].id+"'>" + data[i].title + "</option>");
 				$("#sel").after("<span id="+data[i].id+" style='display: none;'>" + data[i].content + "</span>");
 			}
 		}
-		 function testCustomerPhones() {
-			var j = 1;
-			var customerPhones = $('#customerPhones').text();
-			customerPhones.replace("<span id=\"wrongPhone\" >","");
-			customerPhones.replace("</span>","");
-			var re = /^[0-9]*$/;
- 			if(customerPhones.length==0){
-				alert("请输入有效手机号码");
-				return false;
-			} 
-			if(customerPhones[customerPhones.length-1]!= ';'){
-				customerPhones=customerPhones+";";
-				$('#customerPhones').text(customerPhones);
-			}
-			
-			for ( var i = 0; i < customerPhones.length; i++) {
-				if (customerPhones[i] == ';') {
-					if (i == j * 12 - 1
-							&& re.test(customerPhones.substring(i - 11, i - 1))) {
-						j++;
-					} else {
-						var str1 = customerPhones.substring(0, (j - 1) * 12);
-						var str2 = customerPhones.substring((j - 1) * 12, i);
-						var str3 = customerPhones.substring(i,
-								customerPhones.length);
-						var str = str1 + "<span id=\"wrongPhone\" >" + str2
-								+ "</span>" + str3;
-
-						$('#customerPhones').html(str);
-						$('#wrongPhone').css('color', 'red');
-						alert("电话号码不合法");
-						return false;
-					}
+		 function getusfulCount() {
+			var customerPhones = $('#customerPhones').val();
+			var phoneArray=customerPhones.split(/;|\n/);
+			var usfulCount=0;
+			for (var i=0;i<phoneArray.length;i++){
+				if(phoneArray[i].match(/[0-9]{11}/)){
+					usfulCount++;
 				}
 			}
-			return true;
+			/*var startPos=0;
+			for (var i=0;i<phoneArray.length;i++){
+				alert(i);
+				if(i==2){
+					alert($("#customerPhones"));
+					alert(startPos);
+					alert(phoneArray[i].length);
+					$("#customerPhones").selectRange(startPos, phoneArray[i].length);
+				}
+				startPos+=phoneArray[i].length;
+			}*/
+			return usfulCount;
 		} 
 		function customerListBycustomerGroupId(id){
 			$("#customer").html("");
@@ -300,15 +266,6 @@
 			$("#myModal").modal("hide");
 			
 		}
- 		function fastSend() {
-			var phones=$('#customerPhones').text();
-			var phone=phones.split(";");
-	 		if(phone.length-1>${merchant.messageBalance.surplusMsgCount}){
-				alert("余额不足，请充值");
-				return false;
-			} 
-	 		return true;
-		} 
 	</script>
 </body>
 </html>
