@@ -1,5 +1,6 @@
 package com.source3g.hermes.customer.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -14,8 +15,10 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -38,13 +41,20 @@ import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportItem;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
+import com.source3g.hermes.entity.customer.CustomerRemindImportItem;
+import com.source3g.hermes.entity.customer.CustomerRemindImportLog;
 import com.source3g.hermes.entity.customer.PackageLock;
+import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.service.BaseService;
 import com.source3g.hermes.utils.Page;
+import com.source3g.hermes.utils.excel.ExcelHelper;
+import com.source3g.hermes.utils.excel.ExcelObjectMapperDO;
 import com.source3g.hermes.utils.excel.ExcelUtils;
+import com.source3g.hermes.utils.excel.ReadExcelResult;
+import com.source3g.hermes.utils.excel.SetProperty;
 
 @Service
 public class CustomerImportService extends BaseService {
@@ -314,9 +324,8 @@ public class CustomerImportService extends BaseService {
 					// birthStr = birthStr.replace("月", "-");
 					// birthStr = birthStr.replace("日", "-");
 					try {
-						String birth = ExcelUtils.getCellStringValue(row.getCell(birthIndex));
-						if (StringUtils.isNotEmpty(birth)) {
-							Date date = new Date(Long.parseLong(birth));
+						Date date = ExcelUtils.getCellDateValue(row.getCell(birthIndex));
+						if (date != null) {
 							SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
 							customerImportItem.setBirthday(sdf.format(date));
 						}
@@ -325,7 +334,7 @@ public class CustomerImportService extends BaseService {
 					}
 				}
 				if (row.getCell(phoneIndex) != null) {
-					customerImportItem.setPhone(ExcelUtils.getCellStringValue(row.getCell(phoneIndex)));
+					customerImportItem.setPhone(ExcelUtils.getPhoneValue(row.getCell(phoneIndex)));
 				}
 				if (row.getCell(addrIndex) != null) {
 					customerImportItem.setAddress(ExcelUtils.getCellStringValue(row.getCell(addrIndex)));
@@ -417,5 +426,71 @@ public class CustomerImportService extends BaseService {
 		public void setId(ObjectId id) {
 			Id = id;
 		}
+	}
+
+	public void importCustomerRemind(CustomerRemindImportLog importLog) {
+		List<CustomerRemindImportItem> reminds = readRemindFromExcel(importLog);
+		importReminds(importLog, reminds);
+	}
+
+	private void importReminds(CustomerRemindImportLog importLog, List<CustomerRemindImportItem> reminds) {
+		changeRemindImportLog(importLog, "开始导入");
+		for (CustomerRemindImportItem customerRemindImportItem : reminds) {
+			Customer customer = mongoTemplate.findOne(
+					new Query(Criteria.where("phone").is(customerRemindImportItem.getPhone()).and("merchnatId").is(importLog.getMerchantId()).and("reminds.title")),
+					Customer.class);
+			
+		}
+	}
+
+	
+	
+	public void changeRemindImportLog(CustomerRemindImportLog customerRemindImportLog, String status) {
+		Query query = new Query(Criteria.where("_id").is(customerRemindImportLog.getId()));
+		mongoTemplate.updateFirst(query, new Update().set("status", status), CustomerRemindImportLog.class);
+	}
+
+	private List<CustomerRemindImportItem> readRemindFromExcel(CustomerRemindImportLog importLog) {
+		changeRemindImportLog(importLog, "解析EXCEL中");
+		ExcelHelper<CustomerRemindImportItem> excelHelper = new ExcelHelper<>(initObjectMapper(), CustomerRemindImportItem.class);
+		ReadExcelResult<CustomerRemindImportItem> result = null;
+		try {
+			result = excelHelper.readFromExcel(new File(importLog.getFilePath()));
+		} catch (Exception e) {
+			changeRemindImportLog(importLog, "解析excel失败");
+		}
+		changeRemindImportLog(importLog, "解析EXCEL完成，准备导入");
+		return result.getResult();
+	}
+
+	private List<ExcelObjectMapperDO> initObjectMapper() {
+		List<ExcelObjectMapperDO> list = new ArrayList<ExcelObjectMapperDO>();
+
+		ExcelObjectMapperDO phoneMapper = new ExcelObjectMapperDO();
+		phoneMapper.setExcelColumnName("电话号码");
+		phoneMapper.setObjectFieldName("phone");
+		phoneMapper.setObjectFieldType(String.class);
+		list.add(phoneMapper);
+
+		ExcelObjectMapperDO remindTitleMapper = new ExcelObjectMapperDO();
+		remindTitleMapper.setExcelColumnName("提醒标题");
+		remindTitleMapper.setObjectFieldName("remindTitle");
+		remindTitleMapper.setObjectFieldType(String.class);
+		list.add(remindTitleMapper);
+
+		ExcelObjectMapperDO remindTimeMapper = new ExcelObjectMapperDO();
+		remindTimeMapper.setExcelColumnName("提醒时间");
+		remindTimeMapper.setObjectFieldName("remindTime");
+		remindTimeMapper.setObjectFieldType(String.class);
+		remindTimeMapper.setCustomerProperty(new SetProperty() {
+			@Override
+			public void setProperty(Cell cell, Object obj) {
+				Date date = ExcelUtils.getCellDateValue(cell);
+				CustomerRemindImportItem customerRemindImportItem = (CustomerRemindImportItem) obj;
+				customerRemindImportItem.setRemindTime(date);
+			}
+		});
+		list.add(remindTimeMapper);
+		return list;
 	}
 }
