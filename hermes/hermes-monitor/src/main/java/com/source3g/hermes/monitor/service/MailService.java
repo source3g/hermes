@@ -28,6 +28,7 @@ public class MailService {
 		email.setAuthentication(username, password);
 		// 设置邮件的主题
 		email.setSubject(subject);
+		
 		// 邮件正文消息
 		email.setContent(msgContent, "text/plain;charset=UTF-8");
 		email.send();

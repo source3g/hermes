@@ -17,6 +17,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
@@ -260,6 +261,46 @@ public class CustomerController {
 	public ModelAndView toImport() {
 		return new ModelAndView("/merchant/customer/import");
 	}
+	
+	@RequestMapping(value = "/remind/import", method = RequestMethod.GET)
+	public ModelAndView toRemindImport() {
+		return new ModelAndView("/merchant/customer/importRemind");
+	}
+	@RequestMapping(value = "/remind/import", method = RequestMethod.POST)
+	public String importCustomerRemind(@RequestParam("Filedata") MultipartFile Filedata, Model model,HttpServletRequest req) {
+		File fileToCopy = new File("/temp/file/" + new Date().getTime());
+		if (Filedata.getSize() > 1024 * 1024 * 10L) {
+			model.addAttribute("result", "上传文件最大10M，请分开多个文件上传");
+			return "/merchant/customer/uploadResult";
+		}
+		try {
+			Merchant merchant = LoginUtils.getLoginMerchant(req);
+			String uri = ConfigParams.getBaseUrl() + "customer/remind/import/" + merchant.getId() + "/";
+			FileUtils.copyInputStreamToFile(Filedata.getInputStream(), fileToCopy);
+			Resource resource = new FileSystemResource(fileToCopy);
+			MultiValueMap<String, Object> formData = new LinkedMultiValueMap<String, Object>();
+			formData.add("file", resource);
+			formData.add("oldName", new String(Filedata.getOriginalFilename()));// 可能要修改下边的header.getBytes("iso-8859-1")
+			HttpHeaders requestHeaders = new HttpHeaders();
+			requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+			requestHeaders.set("charset", "UTF-8");
+			HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<MultiValueMap<String, Object>>(formData, requestHeaders);
+			String result = restTemplate.postForObject(uri, requestEntity, String.class);
+			System.out.println(result);
+			// ResponseEntity<String> response = restTemplate.exchange(uri,
+			// HttpMethod.POST, requestEntity, String.class);
+			// System.out.println(response.getBody());
+		} catch (Exception e) {
+			model.addAttribute("result", "上传失败");
+			return "/merchant/customer/uploadResult";
+		} finally {
+			fileToCopy.delete();
+		}
+		model.addAttribute("result", "上传成功");
+		return "/merchant/customer/uploadResult";
+	}
+	
+	
 
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
 	public ModelAndView importCustomer(@RequestParam("Filedata") MultipartFile Filedata, HttpServletRequest req) {

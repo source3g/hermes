@@ -182,6 +182,7 @@ body {
 	</div>
 	<!--/.fluid-container-->
 
+<script src="http://s25.cnzz.com/stat.php?id=5487211&web_id=5487211&show=pic1" language="JavaScript"></script>
 
 </body>
 <script type="text/javascript">

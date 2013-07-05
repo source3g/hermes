@@ -7,6 +7,7 @@ public interface JmsConstants {
 	public String UPDATE_CUSTOMER="updateCustomer";
 	
 	public String IMPORT_CUSTOMER="importCustomer";
+	public String IMPORT_CUSTOMER_REMIND="importCustomerRemind";
 	
 	public String CALL_IN="callIn";
 	

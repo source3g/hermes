@@ -50,6 +50,7 @@ import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
+import com.source3g.hermes.entity.customer.CustomerRemindImportLog;
 import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.CallStatus;
@@ -622,6 +623,17 @@ public class CustomerService extends BaseService {
 		}
 		mongoTemplate.insert(importLog);
 	}
+	
+	public void addRemindImportLog(CustomerRemindImportLog remindImportLog) throws Exception {
+		final CustomerRemindImportLog importLogFinal = remindImportLog;
+		try {
+			jmsService.sendObject(customerDestination, importLogFinal, JmsConstants.TYPE, JmsConstants.IMPORT_CUSTOMER_REMIND);
+		} catch (Exception e) {
+			remindImportLog.setStatus(ImportStatus.导入失败.toString());
+			throw new Exception("日志接收失败");
+		}
+		mongoTemplate.insert(remindImportLog);
+	}
 
 	public void updateInfo(Customer customer, String merchantId) {
 		customer.setOperateTime(new Date());
@@ -858,5 +870,7 @@ public class CustomerService extends BaseService {
 					"customerGroup", "favorite", "operateTime");
 		}
 	}
+
+
 
 }

@@ -26,4 +26,17 @@ http://www.springframework.org/schema/jee http://www.springframework.org/schema/
 		<property name="durableSubscriptionName" value="customer_import" />
 		<property name="messageSelector" value="type='importCustomer'"></property>
 	</bean>
+	
+	<bean id="customerRemindImportListenerContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="customerTopicListenerConnectionFactory" />
+		<property name="destination" ref="customerDestination" />
+		<property name="pubSubDomain" value="true" />
+		<property name="sessionTransacted" value="true" />
+		<property name="sessionAcknowledgeModeName" value="AUTO_ACKNOWLEDGE" />
+		<property name="messageListener" ref="customerRemindImportMessageListener" />
+		<property name="subscriptionDurable" value="true" />
+		<property name="durableSubscriptionName" value="customer_remind_import" />
+		<property name="messageSelector" value="type='importCustomerRemind'"></property>
+	</bean>
 </beans>

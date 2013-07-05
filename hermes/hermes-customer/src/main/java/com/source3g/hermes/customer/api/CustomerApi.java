@@ -42,6 +42,7 @@ import com.source3g.hermes.entity.customer.CallRecord;
 import com.source3g.hermes.entity.customer.Customer;
 import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.CustomerImportLog;
+import com.source3g.hermes.entity.customer.CustomerRemindImportLog;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.TypeEnum.CustomerType;
@@ -50,6 +51,7 @@ import com.source3g.hermes.utils.FormateUtils;
 import com.source3g.hermes.utils.Page;
 import com.source3g.hermes.vo.CallInStatistics;
 import com.source3g.hermes.vo.CallInStatisticsCount;
+
 @Controller
 @RequestMapping("/customer")
 public class CustomerApi {
@@ -62,9 +64,10 @@ public class CustomerApi {
 	private CustomerImportService customerImportService;
 	@Autowired
 	private CommonBaseService commonBaseService;
-	
+
 	@RequestMapping(value = "/export/download/{year}/{month}/{day}/{merchantId}/{fileName}", method = RequestMethod.GET)
-	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void downloadExport(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String merchantId,
+			@PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
 		String downLoadPath = customerService.getExportDir() + year + "/" + month + "/" + day + "/" + merchantId + "/" + fileName;
@@ -117,14 +120,15 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/list/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String name, String phone,String customerGroupName, String property, String sortType, String phoneSortType, CustomerType type, @PathVariable String merchantId) {
+	public Page list(String pageNo, String name, String phone, String customerGroupName, String property, String sortType, String phoneSortType,
+			CustomerType type, @PathVariable String merchantId) {
 		logger.debug("list customer....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Customer customer = new Customer();
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
-		CustomerGroup customerGroup=new CustomerGroup();
+		CustomerGroup customerGroup = new CustomerGroup();
 		customerGroup.setName(customerGroupName);
 		customer.setCustomerGroup(customerGroup);
 		Direction direction = Direction.DESC;
@@ -139,18 +143,19 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String export(String name, String phone,CustomerType customerType, String customerGroupName,@PathVariable String merchantId) {
+	public String export(String name, String phone, CustomerType customerType, String customerGroupName, @PathVariable String merchantId) {
 		Customer customer = new Customer();
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
 		customer.setPhone(phone);
-		CustomerGroup customerGroup=new CustomerGroup();
+		CustomerGroup customerGroup = new CustomerGroup();
 		customerGroup.setName(customerGroupName);
 		customer.setCustomerGroup(customerGroup);
 		String result = "";
 		try {
-			result = customerService.export(customer,customerType);
-		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException e) {
+			result = customerService.export(customer, customerType);
+		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | IOException e) {
 			e.printStackTrace();
 		}
 		return customerService.getLocalUrl() + "customer/export/download/" + result + "/";
@@ -197,7 +202,8 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/call/{deviceSn}/{phone}/{time}/{duration}/{callStatus}", method = RequestMethod.GET)
 	@ResponseBody
-	public String call(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration, @PathVariable Integer callStatus) {// ,@PathVariable
+	public String call(@PathVariable String deviceSn, @PathVariable String phone, @PathVariable String time, @PathVariable String duration,
+			@PathVariable Integer callStatus) {// ,@PathVariable
 		try {
 			Integer durationInt = Integer.parseInt(duration);
 			customerService.callIn(deviceSn, phone, time, durationInt, callStatus);// ,status
@@ -229,12 +235,40 @@ public class CustomerApi {
 		return customerService.callInList(pageNoInt, customer, customerType);
 	}
 
-	
 	@RequestMapping(value = "/importLog/merchant/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public Page importLog(@PathVariable String merchantId, String pageNo, Date startTime, Date endTime) {
 		int pageNoInt = Integer.parseInt(pageNo);
 		return customerImportService.findImportLog(merchantId, pageNoInt, startTime, endTime);
+	}
+
+	@RequestMapping(value = "/remind/import/{merchantId}", method = RequestMethod.POST)
+	@ResponseBody
+	public String importRemind(MultipartFile file, String oldName, @PathVariable String merchantId) {
+		String dir = customerService.getTempDir() + file.getOriginalFilename();
+		try {
+			oldName = new String(oldName.getBytes("iso-8859-1"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		File fileToCopy = new File(dir);
+		try {
+			FileUtils.copyInputStreamToFile(file.getInputStream(), fileToCopy);
+			CustomerRemindImportLog remindImportLog = new CustomerRemindImportLog();
+			remindImportLog.setId(ObjectId.get());
+			Date importTime = new Date();
+			remindImportLog.setImportTime(importTime);
+			remindImportLog.setMerchantId(new ObjectId(merchantId));
+			remindImportLog.setName(new String(oldName.getBytes("utf-8")));
+			remindImportLog.setNewName(file.getOriginalFilename());
+			remindImportLog.setStatus(ImportStatus.已接收准备导入.toString());
+			remindImportLog.setFilePath(fileToCopy.getAbsolutePath());
+			customerService.addRemindImportLog(remindImportLog);
+		} catch (Exception e) {
+			fileToCopy.delete();
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/import/{merchantId}", method = RequestMethod.POST)

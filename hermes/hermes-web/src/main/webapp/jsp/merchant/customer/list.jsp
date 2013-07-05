@@ -34,11 +34,20 @@
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/add/');">
 			<input class="btn btn-primary" type="button"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');"
-			value="导入"> <div style="margin-top:10px"><input class="btn btn-primary" type="button"
+			value="导入顾客">
+			
+			<input class="btn btn-primary" type="button"
+			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/import/');"
+			value="导入提醒">
+			
+			 <div style="margin-top:10px"><input class="btn btn-primary" type="button"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');"
 			value="查看导入日志"> <input class="btn btn-primary" type="button"
 			onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');"
-			value="导入日志模板下载"></div>
+			value="顾客模板下载">
+			<input class="btn btn-primary" type="button"
+			onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');"
+			value="提醒模板下载"></div>
 	</form>
 	<table
 		class="table table-striped table-bordered bootstrap-datatable datatable">
