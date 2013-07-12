@@ -148,7 +148,7 @@ body {
 							<ul id="security-menu"
 								class="nav nav-list nav-tabs  nav-stacked  main-menu">
 								<!-- class="nav nav-list nav-tabs  nav-stacked collapse main-menu" -->
-								<li><a href="#" id="remindDictionary">提醒设置</a></li>
+							<!-- 	<li><a href="#" id="remindDictionary">提醒设置</a></li> -->
 								<li><a href="#" id="merchantTagDictionary">商户标签</a></li>
 								<li><a href="#" id="branchAndSalers">销售管理</a></li>
 							</ul>

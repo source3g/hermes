@@ -44,7 +44,7 @@ public class DeviceController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView add(@Valid Device device, BindingResult errorResult) {
+	public ModelAndView add( @Valid Device device,BindingResult errorResult) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
 			model.put("errors", errorResult.getAllErrors());
@@ -144,7 +144,7 @@ public class DeviceController {
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public ModelAndView update(@Valid Device device, String no, BindingResult errorResult) {
+	public ModelAndView update( @Valid Device device, String no,BindingResult errorResult) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
 			model.put("errors", errorResult.getAllErrors());
