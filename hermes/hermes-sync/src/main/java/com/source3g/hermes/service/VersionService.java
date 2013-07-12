@@ -73,7 +73,8 @@ public class VersionService extends BaseService {
 
 	// 更改稳定版apk版本
 	public void changeVersion(String version) {
-		mongoTemplate.upsert(new Query(Criteria.where("versionType").is(VersionType.RELEASE)), new Update().set("apkVersion", version), OnlineVersion.class);
+		mongoTemplate.upsert(new Query(Criteria.where("versionType").is(VersionType.RELEASE)), new Update().set("apkVersion", version),
+				OnlineVersion.class);
 		OnlineVersion bateOnlineVersion = mongoTemplate.findOne(new Query(Criteria.where("versionType").is(VersionType.BETA)), OnlineVersion.class);
 		// 测试版与稳定版 版本号相同时 测试版清空 返回稳定版
 		if (version.equals(bateOnlineVersion.getApkVersion())) {
@@ -87,7 +88,8 @@ public class VersionService extends BaseService {
 		if (releaseOnlineVersion.getApkVersion().equals(version)) {
 			mongoTemplate.remove(new Query(Criteria.where("versionType").is(VersionType.BETA)), OnlineVersion.class);
 		} else {
-			mongoTemplate.upsert(new Query(Criteria.where("versionType").is(VersionType.BETA)), new Update().set("apkVersion", version), OnlineVersion.class);
+			mongoTemplate.upsert(new Query(Criteria.where("versionType").is(VersionType.BETA)), new Update().set("apkVersion", version),
+					OnlineVersion.class);
 		}
 	}
 
@@ -120,7 +122,8 @@ public class VersionService extends BaseService {
 		Page page = new Page();
 		page.setTotalRecords(grayUpdateDevices.getSnList().size());
 		page.gotoPage(pageNoInt);
-		List<Device> devices = mongoTemplate.find(new Query(Criteria.where("sn").in(grayUpdateDevices.getSnList())).skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
+		List<Device> devices = mongoTemplate.find(
+				new Query(Criteria.where("sn").in(grayUpdateDevices.getSnList())).skip(page.getStartRow()).limit(page.getPageSize()), Device.class);
 		page.setData(devices);
 		return page;
 	}
@@ -155,6 +158,9 @@ public class VersionService extends BaseService {
 		ApkVersion apkVersion = null;
 		if (grayUpdateDevices != null) {
 			OnlineVersion onlineVersion = super.findOne(new Query(Criteria.where("versionType").is(VersionType.BETA)), OnlineVersion.class);
+			if (onlineVersion == null) {
+				onlineVersion = super.findOne(new Query(Criteria.where("versionType").is(VersionType.RELEASE)), OnlineVersion.class);
+			}
 			apkVersion = super.findOne(new Query(Criteria.where("apkVersion").is(onlineVersion.getApkVersion())), ApkVersion.class);
 		} else {
 			OnlineVersion onlineVersion = super.findOne(new Query(Criteria.where("versionType").is(VersionType.RELEASE)), OnlineVersion.class);

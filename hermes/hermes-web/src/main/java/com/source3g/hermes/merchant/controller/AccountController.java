@@ -74,7 +74,7 @@ public class AccountController {
 			model.put(ReturnConstants.SUCCESS, ReturnConstants.SUCCESS);
 			return new ModelAndView("merchant/accountCenter/switch", model);
 		}
-		return new ModelAndView("admin/error");
+		return new ModelAndView("merchant/error");
 
 	}
 
@@ -85,6 +85,31 @@ public class AccountController {
 		String uri = ConfigParams.getBaseUrl() + "merchant/merchantRemindList/" + merchant.getId() + "/";
 		MerchantRemindTemplate[] merchantRemindTemplates = restTemplate.getForObject(uri, MerchantRemindTemplate[].class);
 		return merchantRemindTemplates;
+	}
+
+	@RequestMapping(value = "/remindTemplate/{remindTemplateId}/delete", method = RequestMethod.GET)
+	public String deleteRemindTemplate(@PathVariable String remindTemplateId) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/remindTemplate/delete/" + remindTemplateId + "/";
+		/*String result = */restTemplate.getForObject(uri, String.class);
+		// if (ReturnConstants.SUCCESS.equals(result)) {
+		//
+		// }
+		return "redirect:/merchant/account/remindSetting";
+	}
+
+	@RequestMapping(value = "/remindTemplate/add", method = RequestMethod.POST)
+	public String addRemindTemplate(MerchantRemindTemplate merchantRemindTemplate, RedirectAttributes redirectAttributes) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant();
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/remindTemplate/add/";
+		HttpEntity<MerchantRemindTemplate> entity = new HttpEntity<MerchantRemindTemplate>(merchantRemindTemplate);
+		String result = restTemplate.postForObject(uri, entity, String.class);
+		if (ReturnConstants.SUCCESS.equals(result)) {
+			redirectAttributes.addFlashAttribute("success", "增加成功");
+		} else {
+			redirectAttributes.addFlashAttribute("error", result);
+		}
+		return "redirect:/merchant/account/remindSetting";
 	}
 
 	@RequestMapping(value = "/remindSetting", method = RequestMethod.GET)
@@ -107,16 +132,19 @@ public class AccountController {
 		return merchantRemindTemplates;
 	}
 
-	@RequestMapping(value = "/remindSave", method = RequestMethod.POST)
-	public ModelAndView remindSave(MerchantRemindTemplate merchantRemindTemplate, HttpServletRequest req) throws Exception {
+	@RequestMapping(value = "/remindTemplate/save", method = RequestMethod.POST)
+	public String remindSave(MerchantRemindTemplate merchantRemindTemplate, RedirectAttributes redirectAttributes, HttpServletRequest req)
+			throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
-		String uri = ConfigParams.getBaseUrl() + "merchant/remindSave/" + merchant.getId() + "/";
+		String uri = ConfigParams.getBaseUrl() + "merchant/" + merchant.getId() + "/remindTemplate/save/";
 		HttpEntity<MerchantRemindTemplate> entity = new HttpEntity<MerchantRemindTemplate>(merchantRemindTemplate);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		if (ReturnConstants.SUCCESS.equals(result)) {
-			return new ModelAndView("redirect:/merchant/account/remindSetting");
+			redirectAttributes.addFlashAttribute("success", "保存成功");
+		} else {
+			redirectAttributes.addFlashAttribute("error", result);
 		}
-		return new ModelAndView("admin/error");
+		return "redirect:/merchant/account/remindSetting";
 	}
 
 	@RequestMapping(value = "/toPasswordChange", method = RequestMethod.GET)

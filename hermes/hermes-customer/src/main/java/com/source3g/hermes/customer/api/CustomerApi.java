@@ -242,6 +242,13 @@ public class CustomerApi {
 		return customerImportService.findImportLog(merchantId, pageNoInt, startTime, endTime);
 	}
 
+	@RequestMapping(value = "/remind/importLog/merchant/{merchantId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Page remindImportLog(@PathVariable String merchantId, String pageNo, Date startTime, Date endTime) {
+		int pageNoInt = Integer.parseInt(pageNo);
+		return customerImportService.findRemindImportLog(merchantId, pageNoInt, startTime, endTime);
+	}
+
 	@RequestMapping(value = "/remind/import/{merchantId}", method = RequestMethod.POST)
 	@ResponseBody
 	public String importRemind(MultipartFile file, String oldName, @PathVariable String merchantId) {
@@ -308,6 +315,13 @@ public class CustomerApi {
 	public Page findImportItems(String pageNo, @PathVariable String logId) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return customerImportService.findImportItems(pageNoInt, logId);
+	}
+
+	@RequestMapping(value = "/remind/importLog/items/{logId}", method = RequestMethod.GET)
+	@ResponseBody
+	public Page findRemindImportItems(String pageNo, @PathVariable String logId) {
+		int pageNoInt = Integer.valueOf(pageNo);
+		return customerImportService.findRemindImportItems(pageNoInt, logId);
 	}
 
 	@RequestMapping(value = "/importLog/items/import/test", method = RequestMethod.GET)

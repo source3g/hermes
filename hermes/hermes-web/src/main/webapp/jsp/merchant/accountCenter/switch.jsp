@@ -141,7 +141,7 @@
 			});
 
 			function showTemplates(data) {
-				var sel = "选择模板 <select id='sel' name='birthdayRemindTemplate.id'> </select>";
+				var sel = "选择模板 <select id='sel' name='birthdayRemindTemplate.id'><option value=''>请选择</option> </select>";
 				$("#templateSpan").html(sel);
 				for ( var i = 0; i < data.length; i++) {
 					var option = "<option value='" + data[i].id + "'";
@@ -149,7 +149,7 @@
 						option += "  selected='selected'";
 					}
 					option += " >";
-					option += data[i].remindTemplate.title + "</option>";
+					option += data[i].title + "</option>";
 					$("#sel").append(option);
 				}
 			}

@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -46,6 +45,7 @@ import com.source3g.hermes.entity.customer.CustomerRemindImportLog;
 import com.source3g.hermes.entity.customer.PackageLock;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
+import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
 import com.source3g.hermes.enums.ImportStatus;
 import com.source3g.hermes.enums.Sex;
 import com.source3g.hermes.service.BaseService;
@@ -91,6 +91,28 @@ public class CustomerImportService extends BaseService {
 		page.setTotalRecords(totalCount);
 		page.gotoPage(pageNoInt);
 		List<CustomerImportLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()), CustomerImportLog.class);
+		page.setData(list);
+		return page;
+	}
+
+	public Page findRemindImportLog(String merchantId, int pageNoInt, Date startTime, Date endTime) {
+		Query query = new Query();
+		if (startTime != null && endTime != null) {
+			query.addCriteria(Criteria.where("importTime").gte(startTime).lte(endTime));
+		} else if (startTime != null) {
+			query.addCriteria(Criteria.where("importTime").gte(startTime));
+		} else if (endTime != null) {
+			query.addCriteria(Criteria.where("importTime").lte(endTime));
+		}
+		query.addCriteria(Criteria.where("merchantId").is(new ObjectId(merchantId)));
+		Sort sort = new Sort(Direction.DESC, "_id");
+		query.with(sort);
+		Page page = new Page();
+		Long totalCount = mongoTemplate.count(query, CustomerRemindImportLog.class);
+		page.setTotalRecords(totalCount);
+		page.gotoPage(pageNoInt);
+		List<CustomerRemindImportLog> list = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()),
+				CustomerRemindImportLog.class);
 		page.setData(list);
 		return page;
 	}
@@ -195,22 +217,6 @@ public class CustomerImportService extends BaseService {
 	}
 
 	private void checkItem(CustomerImportItem customerImportItem) throws Exception {
-		// ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		// Validator validator = factory.getValidator();
-		// try {
-		// Set<ConstraintViolation<CustomerImportItem>> constraintViolations =
-		// validator.validate(customerImportItem);
-		// if (constraintViolations.size() > 0) {
-		// String failedReason = "";
-		// for (ConstraintViolation<CustomerImportItem> v :
-		// constraintViolations) {
-		// failedReason += v.getMessage() + ",";
-		// }
-		// throw new Exception(failedReason);
-		// }
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
 		if (StringUtils.isEmpty(customerImportItem.getPhone())) {
 			throw new Exception(" 电话号码不能为空");
 		}
@@ -381,6 +387,18 @@ public class CustomerImportService extends BaseService {
 		return page;
 	}
 
+	public Page findRemindImportItems(int pageNo, String importLogId) {
+		ObjectId importLogObjId = new ObjectId(importLogId);
+		Query query = new Query(Criteria.where("importLogId").is(importLogObjId));
+		Page page = new Page();
+		page.setTotalRecords(mongoTemplate.count(query, CustomerRemindImportItem.class));
+		page.gotoPage(pageNo);
+		List<CustomerRemindImportItem> customerImportItem = mongoTemplate.find(query.skip(page.getStartRow()).limit(page.getPageSize()),
+				CustomerRemindImportItem.class);
+		page.setData(customerImportItem);
+		return page;
+	}
+
 	public void testImport() {
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -434,33 +452,70 @@ public class CustomerImportService extends BaseService {
 	}
 
 	private void importReminds(CustomerRemindImportLog importLog, List<CustomerRemindImportItem> reminds) {
-		changeRemindImportLog(importLog, "开始导入");
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(importLog.getId())), new Update().set("totalCount", reminds.size()),
+				CustomerRemindImportLog.class);
+		changeRemindImportLog(importLog.getId(), "开始导入");
 		for (CustomerRemindImportItem customerRemindImportItem : reminds) {
-			Customer customer = mongoTemplate.findOne(
-					new Query(Criteria.where("phone").is(customerRemindImportItem.getPhone()).and("merchnatId").is(importLog.getMerchantId()).and("reminds.title")),
-					Customer.class);
-			
+			try {
+				MerchantRemindTemplate remindTemplate = super.findOne(new Query(Criteria.where("title").is(customerRemindImportItem.getRemindTitle())
+						.and("isDelete").is(false)), MerchantRemindTemplate.class);
+				if (remindTemplate == null) {
+					throw new Exception("提醒不存在");
+				}
+				Customer customer = super.findOne(
+						new Query(Criteria.where("phone").is(customerRemindImportItem.getPhone()).and("merchnatId").is(importLog.getMerchantId())
+								.and("reminds.merchantRemindTemplate.$id").is(remindTemplate.getId())), Customer.class);
+				if (customer == null) {
+					Customer c = super
+							.findOne(
+									new Query(Criteria.where("phone").is(customerRemindImportItem.getPhone()).and("merchantId")
+											.is(importLog.getMerchantId())), Customer.class);
+					if (c == null) {
+						throw new Exception("电话号码不存在");
+					}
+					Remind remind = new Remind();
+					remind.setAlreadyRemind(false);
+					remind.setMerchantRemindTemplate(remindTemplate);
+					remind.setRemindTime(customerRemindImportItem.getRemindTime());
+					mongoTemplate
+							.updateFirst(
+									new Query(Criteria.where("phone").is(customerRemindImportItem.getPhone()).and("merchantId")
+											.is(importLog.getMerchantId())), new Update().addToSet("reminds", remind), Customer.class);
+					customerRemindImportItem.setImportStatus(ImportStatus.导入成功);
+					mongoTemplate.save(customerRemindImportItem);
+
+				}
+			} catch (Throwable e) {
+				customerRemindImportItem.setImportStatus(ImportStatus.导入失败);
+				customerRemindImportItem.setReasion(e.getMessage());
+				mongoTemplate.save(customerRemindImportItem);
+				mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(importLog.getId())), new Update().inc("failedCount", 1),
+						CustomerRemindImportLog.class);
+			}
 		}
+		changeRemindImportLog(importLog.getId(), "导入完成");
 	}
 
-	
-	
-	public void changeRemindImportLog(CustomerRemindImportLog customerRemindImportLog, String status) {
-		Query query = new Query(Criteria.where("_id").is(customerRemindImportLog.getId()));
+	public void changeRemindImportLog(ObjectId remindImportLogId, String status) {
+		Query query = new Query(Criteria.where("_id").is(remindImportLogId));
 		mongoTemplate.updateFirst(query, new Update().set("status", status), CustomerRemindImportLog.class);
 	}
 
 	private List<CustomerRemindImportItem> readRemindFromExcel(CustomerRemindImportLog importLog) {
-		changeRemindImportLog(importLog, "解析EXCEL中");
+		changeRemindImportLog(importLog.getId(), "解析EXCEL中");
 		ExcelHelper<CustomerRemindImportItem> excelHelper = new ExcelHelper<>(initObjectMapper(), CustomerRemindImportItem.class);
 		ReadExcelResult<CustomerRemindImportItem> result = null;
 		try {
 			result = excelHelper.readFromExcel(new File(importLog.getFilePath()));
-		} catch (Exception e) {
-			changeRemindImportLog(importLog, "解析excel失败");
+			changeRemindImportLog(importLog.getId(), "解析EXCEL完成，准备导入");
+		} catch (Throwable e) {
+			changeRemindImportLog(importLog.getId(), "解析excel失败");
 		}
-		changeRemindImportLog(importLog, "解析EXCEL完成，准备导入");
-		return result.getResult();
+		List<CustomerRemindImportItem> list = result.getResult();
+		for (CustomerRemindImportItem i : list) {
+			i.setImportLogId(importLog.getId());
+		}
+		return list;
 	}
 
 	private List<ExcelObjectMapperDO> initObjectMapper() {
@@ -493,4 +548,5 @@ public class CustomerImportService extends BaseService {
 		list.add(remindTimeMapper);
 		return list;
 	}
+
 }

@@ -10,12 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.source3g.hermes.customer.service.CustomerImportService;
-import com.source3g.hermes.entity.customer.CustomerImportLog;
 import com.source3g.hermes.entity.customer.CustomerRemindImportLog;
 
 @Component
 public class CustomerRemindImportMessageListener implements MessageListener {
-	private static Logger logger=LoggerFactory.getLogger(CustomerRemindImportMessageListener.class);
+	private static Logger logger = LoggerFactory.getLogger(CustomerRemindImportMessageListener.class);
 	@Autowired
 	private CustomerImportService customerImportService;
 
@@ -31,9 +30,10 @@ public class CustomerRemindImportMessageListener implements MessageListener {
 				importLog = (CustomerRemindImportLog) obj;
 				customerImportService.importCustomerRemind(importLog);
 			}
-		}catch(Exception e){
-			logger.debug("接受提醒消息出错:"+e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug("接受提醒消息出错:" + e.getMessage());
 		}
-		
+
 	}
 }

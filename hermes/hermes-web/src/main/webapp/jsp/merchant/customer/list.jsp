@@ -42,7 +42,11 @@
 			
 			 <div style="margin-top:10px"><input class="btn btn-primary" type="button"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');"
-			value="查看导入日志"> <input class="btn btn-primary" type="button"
+			value="顾客导入日志">
+			<input class="btn btn-primary" type="button"
+			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/importLog/');"
+			value="提醒导入日志">
+			 <input class="btn btn-primary" type="button"
 			onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');"
 			value="顾客模板下载">
 			<input class="btn btn-primary" type="button"

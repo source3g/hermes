@@ -98,7 +98,8 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public ModelAndView list(Customer customer, String property, String sortType, String phoneSortType, String pageNo, String type, HttpServletRequest req) throws Exception {
+	public ModelAndView list(Customer customer, String property, String sortType, String phoneSortType, String pageNo, String type,
+			HttpServletRequest req) throws Exception {
 		Merchant merchant = LoginUtils.getLoginMerchant(req);
 		if (StringUtils.isEmpty(pageNo)) {
 			pageNo = "1";
@@ -261,13 +262,14 @@ public class CustomerController {
 	public ModelAndView toImport() {
 		return new ModelAndView("/merchant/customer/import");
 	}
-	
+
 	@RequestMapping(value = "/remind/import", method = RequestMethod.GET)
 	public ModelAndView toRemindImport() {
 		return new ModelAndView("/merchant/customer/importRemind");
 	}
+
 	@RequestMapping(value = "/remind/import", method = RequestMethod.POST)
-	public String importCustomerRemind(@RequestParam("Filedata") MultipartFile Filedata, Model model,HttpServletRequest req) {
+	public String importCustomerRemind(@RequestParam("Filedata") MultipartFile Filedata, Model model, HttpServletRequest req) {
 		File fileToCopy = new File("/temp/file/" + new Date().getTime());
 		if (Filedata.getSize() > 1024 * 1024 * 10L) {
 			model.addAttribute("result", "上传文件最大10M，请分开多个文件上传");
@@ -299,8 +301,6 @@ public class CustomerController {
 		model.addAttribute("result", "上传成功");
 		return "/merchant/customer/uploadResult";
 	}
-	
-	
 
 	@RequestMapping(value = "/import", method = RequestMethod.POST)
 	public ModelAndView importCustomer(@RequestParam("Filedata") MultipartFile Filedata, HttpServletRequest req) {
@@ -358,6 +358,27 @@ public class CustomerController {
 		return new ModelAndView("/merchant/customer/importLog", model);
 	}
 
+	@RequestMapping(value = "/remind/importLog", method = RequestMethod.GET)
+	public ModelAndView remindImportLog(HttpServletRequest req, String pageNo, String startTime, String endTime) throws Exception {
+		Merchant merchant = LoginUtils.getLoginMerchant(req);
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		String uri = ConfigParams.getBaseUrl() + "customer/remind/importLog/merchant/" + merchant.getId() + "/?pageNo=" + pageNo;
+		if (StringUtils.isNotEmpty(startTime)) {
+			uri += "&startTime=" + startTime;
+		}
+		if (StringUtils.isNotEmpty(endTime)) {
+			uri += "&endTime=" + endTime;
+		}
+		Page page = restTemplate.getForObject(uri, Page.class);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("page", page);
+		model.put("startTime", startTime);
+		model.put("endTime", endTime);
+		return new ModelAndView("/merchant/customer/remindImportLog", model);
+	}
+
 	@RequestMapping(value = "/importLog/items/{id}", method = RequestMethod.GET)
 	public ModelAndView importLogMerchantInfo(String pageNo, @PathVariable String id) throws Exception {
 		if (StringUtils.isEmpty(pageNo)) {
@@ -369,6 +390,19 @@ public class CustomerController {
 		model.put("page", page);
 		model.put("logId", id);
 		return new ModelAndView("/merchant/customer/importItems", model);
+	}
+
+	@RequestMapping(value = "/remind/importLog/items/{id}", method = RequestMethod.GET)
+	public ModelAndView remindImportLogMerchantInfo(String pageNo, @PathVariable String id) throws Exception {
+		if (StringUtils.isEmpty(pageNo)) {
+			pageNo = "1";
+		}
+		Map<String, Object> model = new HashMap<String, Object>();
+		String uri = ConfigParams.getBaseUrl() + "customer/remind/importLog/items/" + id + "/?pageNo=" + pageNo;
+		Page page = restTemplate.getForObject(uri, Page.class);
+		model.put("page", page);
+		model.put("logId", id);
+		return new ModelAndView("/merchant/customer/remindImportItems", model);
 	}
 
 	@RequestMapping(value = "/callInList", method = RequestMethod.GET)

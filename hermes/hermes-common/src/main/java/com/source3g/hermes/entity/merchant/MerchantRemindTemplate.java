@@ -1,7 +1,8 @@
 package com.source3g.hermes.entity.merchant;
 
+import javax.validation.constraints.NotNull;
+
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -12,13 +13,16 @@ public class MerchantRemindTemplate extends AbstractEntity {
 	 * 
 	 */
 	private static final long serialVersionUID = 5210818040577743106L;
-	@DBRef
-	private RemindTemplate remindTemplate;
+	@NotNull(message = "标题不能为空")
+	private String title;
+	@NotNull(message = "提醒不能为空")
 	private Integer advancedTime;
+	@NotNull(message = "提醒内容不能为空")
 	private String messageContent;
-	private ObjectId merchantId;
-	private Boolean isDelete=false;
 	
+	private ObjectId merchantId;
+	private Boolean isDelete = false;
+
 	public Boolean getIsDelete() {
 		return isDelete;
 	}
@@ -33,14 +37,6 @@ public class MerchantRemindTemplate extends AbstractEntity {
 
 	public void setMerchantId(ObjectId merchantId) {
 		this.merchantId = merchantId;
-	}
-
-	public RemindTemplate getRemindTemplate() {
-		return remindTemplate;
-	}
-
-	public void setRemindTemplate(RemindTemplate remindTemplate) {
-		this.remindTemplate = remindTemplate;
 	}
 
 	public String getMessageContent() {
@@ -82,6 +78,12 @@ public class MerchantRemindTemplate extends AbstractEntity {
 		this.advancedTime = advancedTime;
 	}
 
+	public String getTitle() {
+		return title;
+	}
 
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 }

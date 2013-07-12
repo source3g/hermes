@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.enums.ImportStatus;
 
 @Document
 public class CustomerRemindImportItem extends AbstractEntity {
@@ -16,6 +17,8 @@ public class CustomerRemindImportItem extends AbstractEntity {
 	private String phone;
 	private String remindTitle;
 	private Date remindTime;
+	private ImportStatus importStatus;
+	private String reasion;
 
 	public ObjectId getImportLogId() {
 		return importLogId;
@@ -47,6 +50,22 @@ public class CustomerRemindImportItem extends AbstractEntity {
 
 	public void setRemindTime(Date remindTime) {
 		this.remindTime = remindTime;
+	}
+
+	public ImportStatus getImportStatus() {
+		return importStatus;
+	}
+
+	public void setImportStatus(ImportStatus importStatus) {
+		this.importStatus = importStatus;
+	}
+
+	public String getReasion() {
+		return reasion;
+	}
+
+	public void setReasion(String reasion) {
+		this.reasion = reasion;
 	}
 
 }
