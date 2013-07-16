@@ -24,14 +24,17 @@ public class MerchantSecurityController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ModelAndView login(String username, String password, boolean rememberMe) {
+	public ModelAndView login(String username, String password,
+			boolean rememberMe) {
 		Subject currentUser = SecurityUtils.getSubject();
 		boolean result = false;
 		if (!currentUser.isAuthenticated()) {
 			result = login(currentUser, username, password, rememberMe);
 		} else {// 重复登录
 			ShiroUser shiroUser = (ShiroUser) currentUser.getPrincipal();
-			if (shiroUser.getMerchant() != null && shiroUser.getMerchant().getAccount().equalsIgnoreCase(username))// 如果登录名不同
+			if (shiroUser.getMerchant() != null
+					&& shiroUser.getMerchant().getAccount()
+							.equalsIgnoreCase(username))// 如果登录名不同
 				currentUser.logout();
 			result = login(currentUser, username, password, rememberMe);
 		}
@@ -41,6 +44,7 @@ public class MerchantSecurityController {
 			return new ModelAndView("redirect:/login");
 		}
 	}
+
 	@RequestMapping(value = "/login/json", method = RequestMethod.POST)
 	@ResponseBody
 	public String loginJson(String username, String password, boolean rememberMe) {
@@ -50,13 +54,15 @@ public class MerchantSecurityController {
 			result = login(currentUser, username, password, rememberMe);
 		} else {// 重复登录
 			ShiroUser shiroUser = (ShiroUser) currentUser.getPrincipal();
-			if (shiroUser.getMerchant() != null && shiroUser.getMerchant().getAccount().equalsIgnoreCase(username))// 如果登录名不同
+			if (shiroUser.getMerchant() != null
+					&& shiroUser.getMerchant().getAccount()
+							.equalsIgnoreCase(username))// 如果登录名不同
 				currentUser.logout();
 			result = login(currentUser, username, password, rememberMe);
 		}
 		return String.valueOf(result);
 	}
-	
+
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public ModelAndView logout() {
 		Subject currentUser = SecurityUtils.getSubject();
@@ -64,11 +70,14 @@ public class MerchantSecurityController {
 		return new ModelAndView("redirect:/login");
 	}
 
-	private boolean login(Subject currentUser, String username, String password, boolean rememberMe) {
-		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+	private boolean login(Subject currentUser, String username,
+			String password, boolean rememberMe) {
+		UsernamePasswordToken token = new UsernamePasswordToken(username,
+				password);
 		token.setRememberMe(rememberMe);
 		try {
-			currentUser.getSession().setAttribute("loginType", LoginType.merchant);
+			currentUser.getSession().setAttribute("loginType",
+					LoginType.merchant);
 			currentUser.login(token);
 		} catch (Exception e) {
 			return false;
@@ -83,7 +92,44 @@ public class MerchantSecurityController {
 		return "merchant/index";
 	}
 
-	
+	@RequestMapping(value = "/api/customer/chart/line", method = RequestMethod.GET)
+	public String toLine(String username, String password) {
+		Subject currentUser = SecurityUtils.getSubject();
+		boolean result = false;
+		if (!currentUser.isAuthenticated()) {
+			result = login(currentUser, username, password, true);
+		} else {// 重复登录
+			ShiroUser shiroUser = (ShiroUser) currentUser.getPrincipal();
+			if (shiroUser.getMerchant() != null&& shiroUser.getMerchant().getAccount().equalsIgnoreCase(username))// 如果登录名不同
+				currentUser.logout();
+			result = login(currentUser, username, password, true);
+		}
+		if (result) {
+			return "/merchant/chart/lineChartApi";
+		} else {
+			return "redirect:/login";
+		}
+	}
+
+	@RequestMapping(value = "/api/customer/chart/pie", method = RequestMethod.GET)
+	public String toPie(String username, String password) {
+		Subject currentUser = SecurityUtils.getSubject();
+		boolean result = false;
+		if (!currentUser.isAuthenticated()) {
+			result = login(currentUser, username, password, true);
+		} else {// 重复登录
+			ShiroUser shiroUser = (ShiroUser) currentUser.getPrincipal();
+			if (shiroUser.getMerchant() != null&& shiroUser.getMerchant().getAccount().equalsIgnoreCase(username))// 如果登录名不同
+				currentUser.logout();
+			result = login(currentUser, username, password, true);
+		}
+		if (result) {
+			return "/merchant/chart/callInPieChartApi";
+		} else {
+			return "redirect:/login";
+		}
+	}
+
 	/*
 	 * private void initSession(HttpServletRequest request) { String id =
 	 * "50a1b46286c3d8c834f49723"; String uri = ConfigParams.getBaseUrl() +

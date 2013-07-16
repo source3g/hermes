@@ -124,6 +124,14 @@ public class VersionApi {
 		}
 		return null;
 	}
+	
+	@RequestMapping(value = "/boss/online/", method = RequestMethod.POST)
+	@ResponseBody
+	public ApkVersion getBossVersion( @RequestBody String deviceVersion) {
+		ApkVersion apkVersion = new ApkVersion("1.0.0","2013/07/WangcaibaoAnalytics.apk",new Date(),"王财宝老板系统",1);
+		processUrl(apkVersion);
+		return apkVersion;
+	}
 
 	private void processUrl(ApkVersion apkVersion) {
 		apkVersion.setUrl(versionService.getLocalUrl() + "version/download/" + apkVersion.getUrl() + "/");
