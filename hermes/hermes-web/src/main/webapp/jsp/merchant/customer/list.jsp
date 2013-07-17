@@ -16,18 +16,16 @@
 			<option value="allCustomer" <c:if test="${type eq 'allCustomer' }"> selected="selected"</c:if>>全部</option>
 		</select> <input type="submit" class="btn btn-primary" value="查询"> <input type="button" onclick="exportCustomer();" class="btn btn-primary" value="导出" data-loading-text="导出中..." id="exportCustomerBtn"> <input type="button" class="btn btn-primary" value="新增"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/add/');">
-		<div class="btn-group ">
-				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						<span> 更多。。</span> <span
-						class="caret"></span>
-					</a>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span> 更多...</span> <span class="caret"></span>
+			</a>
 			<ul class="dropdown-menu">
-				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');" >导入顾客</a></li>
-				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/import/');" >导入提醒</a></li>
-				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');" >顾客导入日志</a></li>
-				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/importLog/');" >提醒导入日志</a></li>
-				<li><a href="javascript:void(0)" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');" >顾客模板下载</a></li>
-				<li><a href="javascript:void(0)" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/remindTemplate.xls');" >提醒模板下载</a></li>
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');">导入顾客</a></li>
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/import/');">导入提醒</a></li>
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');">顾客导入日志</a></li>
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/importLog/');">提醒导入日志</a></li>
+				<li><a href="javascript:void(0)" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');">顾客模板下载</a></li>
+				<li><a href="javascript:void(0)" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/remindTemplate.xls');">提醒模板下载</a></li>
 			</ul>
 		</div>
 	</form>

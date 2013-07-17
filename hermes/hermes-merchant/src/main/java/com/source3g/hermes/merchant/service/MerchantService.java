@@ -186,12 +186,9 @@ public class MerchantService extends BaseService {
 	// }
 
 	public void saveRemind(ObjectId merchantId, MerchantRemindTemplate merchantRemindTemplate) throws Exception {
-		MerchantRemindTemplate merchantRemind = super.findOne(
-				new Query(Criteria.where("merchantId").is(merchantId).and("_id").is(merchantRemindTemplate.getId()).and("isDelete").is(false)),
-				MerchantRemindTemplate.class);
-		if (merchantRemind == null) {
-			return;
-		}
+//		MerchantRemindTemplate merchantRemind = super.findOne(
+//				new Query(Criteria.where("merchantId").is(merchantId).and("_id").is(merchantRemindTemplate.getId()).and("isDelete").is(false)),
+//				MerchantRemindTemplate.class);
 		MerchantRemindTemplate title = super.findOne(
 				new Query(Criteria.where("merchantId").is(merchantId).and("title").is(merchantRemindTemplate.getTitle())),
 				MerchantRemindTemplate.class);

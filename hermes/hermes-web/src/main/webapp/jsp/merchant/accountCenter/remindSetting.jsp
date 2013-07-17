@@ -56,7 +56,7 @@
 				</tr>
 				<tr>
 					<td width="20%"><label class="control-label">操作：</label></td>
-					<td width="80%"><a class="btn btn-success" href="javascript:void();" onclick="save();">保存</a>&nbsp; <a class="btn btn-success" href="javascript:void();" onclick="add();">新增</a>&nbsp; <a class="btn btn-danger" href="javascript:void();" onclick="deleteById();">删除</a>
+					<td width="80%"><a class="btn btn-success" href="javascript:void();" onclick="save();">保存</a>&nbsp; <a class="btn btn-danger" href="javascript:void();" onclick="deleteById();">删除</a>
 				</tr>
 			</table>
 		</form>
@@ -105,7 +105,7 @@
 				var advancedTime = $("#advancedTime" + $("#sel").val()).text();
 				var title = $("#sel").find("option:selected").text();
 				if (title == '请选择') {
-					$("#id").html("");
+					$("#id").attr("value", "");
 					$("#title").attr("value", "");
 					$("#advancedTime").attr("value", "");
 					$("#messageContent").val(messageContent);

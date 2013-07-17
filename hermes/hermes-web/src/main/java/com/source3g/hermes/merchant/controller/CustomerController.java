@@ -299,6 +299,7 @@ public class CustomerController {
 			fileToCopy.delete();
 		}
 		model.addAttribute("result", "上传成功");
+		model.addAttribute("type", "remind");
 		return "/merchant/customer/uploadResult";
 	}
 
@@ -334,6 +335,7 @@ public class CustomerController {
 			fileToCopy.delete();
 		}
 		map.put("result", "上传成功");
+		map.put("type", "customer");
 		return new ModelAndView("/merchant/customer/uploadResult", map);
 	}
 

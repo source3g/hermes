@@ -39,7 +39,7 @@
 										<tr>
 											<th>顾客姓名</th>
 											<th>顾客电话</th>
-											<th>提醒天数</th>
+											<th>提醒日期</th>
 										</tr>
 										<c:forEach items="${remind.customers }" var="customer">
 											<tr><td>${customer.customerName }</td><td>${customer.phone}</td><td>
