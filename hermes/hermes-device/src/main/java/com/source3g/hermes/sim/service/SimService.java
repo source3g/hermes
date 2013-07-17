@@ -82,10 +82,9 @@ public class SimService extends BaseService {
 
 	public void importFromExcel(File excelFile) throws Exception {
 		ExcelHelper<SimInfo> excelHelper = new ExcelHelper<>(initObjectMapper(), SimInfo.class);
-		ReadExcelResult result = excelHelper.readFromExcel(excelFile);
-		for (Object s : result.getResult()) {
-			SimInfo simInfo = (SimInfo) s;
-			mongoTemplate.upsert(new Query(Criteria.where("serviceNo").is(simInfo.getServiceNo())), genUpdate(simInfo), SimInfo.class);
+		ReadExcelResult<SimInfo> result = excelHelper.readFromExcel(excelFile);
+		for (SimInfo s : result.getResult()) {
+			mongoTemplate.upsert(new Query(Criteria.where("serviceNo").is(s.getServiceNo())), genUpdate(s), SimInfo.class);
 		}
 		SimImportRecord importRecord = new SimImportRecord();
 		importRecord.setImportCount(result.getResult().size());

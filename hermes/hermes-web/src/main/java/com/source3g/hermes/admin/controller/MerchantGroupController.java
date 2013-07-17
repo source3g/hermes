@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
-
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +36,7 @@ public class MerchantGroupController {
 	}
 
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public ModelAndView add(@Valid MerchantGroup merchantGroup, BindingResult errorResult) {
+	public ModelAndView add( MerchantGroup merchantGroup, BindingResult errorResult) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		if (errorResult.hasErrors()) {
 			model.put("errors", errorResult.getAllErrors());
@@ -123,7 +120,7 @@ public class MerchantGroupController {
 	}
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public ModelAndView modify(@Valid MerchantGroup merchantGroup, BindingResult errorResult) {
+	public ModelAndView modify( MerchantGroup merchantGroup, BindingResult errorResult) {
 		if (errorResult.hasErrors()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("errors", errorResult.getAllErrors());

@@ -89,9 +89,9 @@
 						<div class="remindItem">
 								<input type=hidden name="reminds[${status.index }].alreadyRemind" value="${remind.alreadyRemind }">
 							事项：<input type="text" readonly="readonly"
-								name="reminds[${status.index }].merchantRemindTemplate.remindTemplate.title"
+								name="reminds[${status.index }].merchantRemindTemplate.title"
 								class="input-medium"
-								value="${remind.merchantRemindTemplate.remindTemplate.title }"></input>
+								value="${remind.merchantRemindTemplate.title }"></input>
 							<input type="hidden"
 								name="reminds[${status.index }].merchantRemindTemplate.id"
 								class="input-medium" value="${remind.merchantRemindTemplate.id}"></input>
@@ -107,7 +107,7 @@
 		</table>
 		<div class="form-actions">
 			<c:if test="${not empty update }">
-				<input class="btn btn-primary" type="submit" value="修改">
+				<input class="btn btn-primary" type="button" id="modifyBtn" value="修改">
 			</c:if>
 
 			<c:if test="${ empty update }">
@@ -213,11 +213,30 @@
 			$('#addCustomerForm').validate(validateoptions);
 			initCustomerGroupList();
 			initDialog();
+			
+			$("#modifyBtn").click(function(){
+				if(!$('#addCustomerForm').valid()){
+					return false;
+				}
+				//$('#modifyBtn').button('loading');
+				var options={
+						url : "${pageContext.request.contextPath}${action}",
+						type : "post",
+						success : function(data){
+							alert("修改成功，重新查询查看结果");
+							history.go(-1);
+						}
+				};
+				$("#addCustomerForm").ajaxSubmit(options);
+				return false;
+			});
+			
+			
 			$("#addCustomerForm").submit(function() {
 				if(!$('#addCustomerForm').valid()){
 					return false;
 				}
-				$('#addCustomer').button('loading')
+				$('#addCustomer').button('loading');
 				var options={
 						url : "${pageContext.request.contextPath}/merchant/customer/add/",
 						type : "post",
@@ -225,6 +244,10 @@
 				};
 				if(${not empty update }==true){
 					options.url="${pageContext.request.contextPath}${action}";
+					alert(options.url);
+					//options.success=function (){
+					//	history.go(-1);};
+					//}
 				}
 				$(this).ajaxSubmit(options);
 				return false;
@@ -264,7 +287,7 @@
 			function initRemingSelection(data){
 				remindOptions="<option value=''>请选择</option>"+remindOptions;
 				for(var i=0;i<data.length;i++){
-					remindOptions+="<option value='"+data[i].id+"'>"+data[i].remindTemplate.title+"</option>"
+					remindOptions+="<option value='"+data[i].id+"'>"+data[i].title+"</option>"
 				}
 				 addRemindItem();
 			}

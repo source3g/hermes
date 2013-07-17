@@ -3,15 +3,15 @@ package com.source3g.hermes.utils.excel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReadExcelResult {
-	private List<?> result;
+public class ReadExcelResult<T> {
+	private List<T> result;
 	private List<ErrorResult> reports = new ArrayList<ErrorResult>();
 
-	public List<?> getResult() {
+	public List<T> getResult() {
 		return result;
 	}
 
-	public void setResult(List<?> result) {
+	public void setResult(List<T> result) {
 		this.result = result;
 	}
 

@@ -10,12 +10,7 @@
 </head>
 <body>
 
-	<div class="thumbnail span10">
-		<div class="caption">
-			<h3>月度趋势</h3>
-		</div>
 		<div id="chartContainer"></div>
-	</div>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/highcharts.js">
 		

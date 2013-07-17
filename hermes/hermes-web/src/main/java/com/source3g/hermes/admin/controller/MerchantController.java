@@ -30,7 +30,6 @@ import com.source3g.hermes.entity.device.Device;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantGroup;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
-import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.utils.ConfigParams;
 import com.source3g.hermes.utils.Page;
 import com.sourse3g.hermes.branch.Saler;
@@ -140,13 +139,13 @@ public class MerchantController {
 		return new ModelAndView("/admin/merchant/set", model);
 	}
 
-	@RequestMapping(value = "/dataDictionaryList", method = RequestMethod.GET)
-	@ResponseBody
-	public RemindTemplate[] dataDictionaryList() {
-		String uri = ConfigParams.getBaseUrl() + "merchant/remindSetting/";
-		RemindTemplate[] remindTemplate = restTemplate.getForObject(uri, RemindTemplate[].class);
-		return remindTemplate;
-	}
+//	@RequestMapping(value = "/dataDictionaryList", method = RequestMethod.GET)
+//	@ResponseBody
+//	public RemindTemplate[] dataDictionaryList() {
+//		String uri = ConfigParams.getBaseUrl() + "merchant/remindSetting/";
+//		RemindTemplate[] remindTemplate = restTemplate.getForObject(uri, RemindTemplate[].class);
+//		return remindTemplate;
+//	}
 
 	@RequestMapping(value = "/remindAdd/{merchantId}/{templateId}", method = RequestMethod.GET)
 	public ModelAndView remindAdd(@PathVariable String merchantId, @PathVariable String templateId) {

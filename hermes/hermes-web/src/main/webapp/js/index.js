@@ -1,9 +1,17 @@
 var origContent = "";
 var isInit = false;
 var hashCode = "";
+var pageMap = new Array();
 function loadContent(hash) {
 	if (hash != "") {
-		if (hash == "#") {
+		//alert(hash);
+		if (hash.indexOf("html_") > -1) {
+		//	alert("有了");
+			var html=getByHash(hash);
+		//	alert(html);
+			if(html!=null){
+				$('#pageContentFrame').html(html);
+			}
 			return;
 		}
 		if (origContent == "") {
@@ -16,6 +24,7 @@ function loadContent(hash) {
 }
 
 function loadPage(url) {
+	//alert(url);
 	$.history.load(url);
 }
 
@@ -30,9 +39,33 @@ $(document).ready(function() {
 });
 
 function showContentInfo(data) {
-	$("#pageContentFrame").html(data);
-	$.history.load("#");
+	//$("#pageContentFrame").html(data);
+	var hash = "html_" + new Date().getTime();
+	//alert(hash);
+	pushHtml(hash,data);
+	// alert(hash);
+	$.history.load(hash);
+	if (pageMap.length > 10) {
+		pageMap.shift();
+	}
 }
+
+function getByHash(hash){
+	for (var i=0;i<pageMap.length;i++){
+		if(pageMap[i][hash]!=null){
+			return pageMap[i][hash];
+		}
+	}
+	return null;
+}
+
+function pushHtml(hash, html) {
+	var a=new Array();
+	a[hash] = html;
+	//alert("a[hash]"+a[hash]);
+	pageMap.push(a);
+}
+
 function showError(data) {
 	alert("出错了");
 }

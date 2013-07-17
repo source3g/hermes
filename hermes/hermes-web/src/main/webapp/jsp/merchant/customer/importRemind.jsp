@@ -17,6 +17,8 @@
 	<br>
 	<br>
 	<p style="color: red">提示:请不要在旺财宝使用高峰期导入大量顾客信息,这样会影响旺财宝的正常使用</p>
+		<button class="btn btn-primary" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/list/')">返回</button>
+	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/swfupload/swfupload.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/swfupload/handlers.js"></script>
 	<script type="text/javascript">

@@ -36,7 +36,6 @@ import com.source3g.hermes.entity.customer.CustomerGroup;
 import com.source3g.hermes.entity.customer.Remind;
 import com.source3g.hermes.entity.merchant.Merchant;
 import com.source3g.hermes.entity.merchant.MerchantRemindTemplate;
-import com.source3g.hermes.entity.merchant.RemindTemplate;
 import com.source3g.hermes.entity.message.AutoSendMessageTemplate;
 import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageSendLog;
@@ -492,12 +491,12 @@ public class MessageService extends BaseService {
 	}
 
 	public void remindSend(String title, ObjectId merchantId) throws Exception {
-		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
-		if (remindTemplate == null) {
-			return;
-		}
+//		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
+//		if (remindTemplate == null) {
+//			return;
+//		}
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(
-				new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())),
+				new Query(Criteria.where("merchantId").is(merchantId).and("title").is(title)),
 				MerchantRemindTemplate.class);
 		String content = merchantRemindTemplate.getMessageContent();
 		Date startTime = new Date();
@@ -525,12 +524,12 @@ public class MessageService extends BaseService {
 	}
 
 	public void ignoreSendMessages(String title, ObjectId merchantId) {
-		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
-		if (remindTemplate == null) {
-			return;
-		}
+//		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
+//		if (remindTemplate == null) {
+//			return;
+//		}
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(
-				new Query(Criteria.where("merchantId").is(merchantId).and("remindTemplate.$id").is(remindTemplate.getId())),
+				new Query(Criteria.where("merchantId").is(merchantId).and("title").is(title)),
 				MerchantRemindTemplate.class);
 		Date startTime = new Date();
 		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime() + 1);
@@ -555,7 +554,7 @@ public class MessageService extends BaseService {
 			CustomerRemindDto customerRemindDto = new CustomerRemindDto();
 			customerRemindDto.setAdvancedTime(merchantRemindTemplate.getAdvancedTime());
 			customerRemindDto.setContent(merchantRemindTemplate.getMessageContent());
-			customerRemindDto.setTitle(merchantRemindTemplate.getRemindTemplate().getTitle());
+			customerRemindDto.setTitle(merchantRemindTemplate.getTitle());
 			customerRemindDto.setMerchantRemindId(merchantRemindTemplate.getId());
 			for (Customer customer : customers) {
 				for (Remind remind : customer.getReminds()) {

@@ -37,6 +37,12 @@ public class ExcelObjectMapperDO implements Serializable {
 	 * 特殊值对应关系
 	 */
 	private Map<String, Object> valueMap = new HashMap<String, Object>();
+	
+	/**
+	 * 自定义赋值方法
+	 * @return
+	 */
+	private SetProperty customerProperty;
 
 	public String getObjectFieldName() {
 		return objectFieldName;
@@ -89,5 +95,13 @@ public class ExcelObjectMapperDO implements Serializable {
 
 	public void setValueMap(Map<String, Object> valueMap) {
 		this.valueMap = valueMap;
+	}
+
+	public SetProperty getCustomerProperty() {
+		return customerProperty;
+	}
+
+	public void setCustomerProperty(SetProperty customerProperty) {
+		this.customerProperty = customerProperty;
 	}
 }

@@ -64,8 +64,8 @@ public class ExcelHelper<T extends Object> {
 		this.clazz = clazz;
 	}
 
-	public ReadExcelResult readFromExcel(File file) throws Exception {
-		ReadExcelResult readExcelResult = new ReadExcelResult();
+	public ReadExcelResult<T> readFromExcel(File file) throws Exception {
+		ReadExcelResult<T> readExcelResult = new ReadExcelResult<T>();
 		List<T> result = new ArrayList<T>();
 		// 找到第一行
 		Sheet sheet = ExcelUtils.getSheet(file, 0);
@@ -94,7 +94,40 @@ public class ExcelHelper<T extends Object> {
 		readExcelResult.setResult(result);
 		return readExcelResult;
 	}
+	
+	
+	public ReadExcelResult<T> readFromExcel(File file,ExcelRowMapper<T> mapper) throws Exception {
+		ReadExcelResult<T> readExcelResult = new ReadExcelResult<T>();
+		List<T> result = new ArrayList<T>();
+		// 找到第一行
+		Sheet sheet = ExcelUtils.getSheet(file, 0);
+		Row row = ExcelUtils.getRow(sheet, 0);
+		initMapper(row);
+		int maxRowNum = sheet.getLastRowNum();
+		List<ErrorResult> reports = new ArrayList<ErrorResult>();
+		for (int i = 1; i <= maxRowNum; i++) {
+			// 开始行
+			row = sheet.getRow(i);
+			if (ExcelUtils.isNull(row)) {
+				continue;
+			}
+			try {
+				T t = mapper.fill(row);
+				result.add(t);
+			} catch (Exception e) {
+				ErrorResult errorResult = new ErrorResult();
+				errorResult.setRowNumber(i);
+				errorResult.setMessage(e.getMessage());
+				reports.add(errorResult);
+			}
+			
+		}
+		readExcelResult.setReports(reports);
+		readExcelResult.setResult(result);
+		return readExcelResult;
+	}
 
+	
 	/**
 	 * 将Excel中的一行转换成DO
 	 * 
@@ -109,6 +142,11 @@ public class ExcelHelper<T extends Object> {
 				continue;
 			}
 			Cell cell = row.getCell(eom.getExcelColumnNum());
+			if(eom.getCustomerProperty()!=null){
+				eom.getCustomerProperty().setProperty(cell, t);
+				continue;
+			}
+			
 			String cellVaule = ExcelUtils.getCellStringValue(cell);
 			if (eom.isRequired() && StringUtils.isEmpty(cellVaule)) {
 				throw new Exception(eom.getExcelColumnName() + "列名不能为空");

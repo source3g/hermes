@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -9,59 +8,33 @@
 </head>
 <body>
 	<form id="queryForm" class="well form-inline " method="get">
-		<label class="control-label" for="name">姓名：</label> <input type="text" name="name" class="input-medium" value="${customer.name}"
-			placeholder="请输入顾客名称..."> 
-			<label class="control-label" for="phone">电话：</label> <input type="text" name="phone" class="input-medium" value="${customer.phone}"
-			placeholder="请输入顾客电话..."> 
-			<label class="control-label" for="phone">顾客组名称：</label><input type="text" name="customerGroup.name" class="input-medium" value="${customer.customerGroup.name}"
-			placeholder="请输入顾客组名称...">
-			<input id="pageNo" name="pageNo" type="hidden"> 
-			<input id="sortType" name="sortType" value="${sortType }" type="hidden"> 
-			<input id="phoneSortType" name="phoneSortType" value="${phoneSortType }" type="hidden">
-		<input id="property" name="property" value="${property }" type="hidden"> 
-		<select name="type" class="input-small">
-			<option value="newCustomer"
-				<c:if test="${type eq 'newCustomer' }"> selected="selected"</c:if>>未编辑</option>
-			<option value="oldCustomer"
-				<c:if test="${type eq 'oldCustomer' }"> selected="selected"</c:if>>已编辑</option>
-			<option value="allCustomer"
-				<c:if test="${type eq 'allCustomer' }"> selected="selected"</c:if>>全部</option>
-		</select> 
-		<input type="submit" class="btn btn-primary" value="查询">
-		<input type="button" onclick="exportCustomer();" class="btn btn-primary" value="导出" data-loading-text="导出中..."
-			id="exportCustomerBtn"> 
-			 <input type="button" class="btn btn-primary" value="新增"
+		<label class="control-label" for="name">姓名：</label> <input type="text" name="name" class="input-medium" value="${customer.name}" placeholder="请输入顾客名称..."> <label class="control-label" for="phone">电话：</label> <input type="text" name="phone" class="input-medium" value="${customer.phone}"
+			placeholder="请输入顾客电话..."> <label class="control-label" for="phone">顾客组名称：</label><input type="text" name="customerGroup.name" class="input-medium" value="${customer.customerGroup.name}" placeholder="请输入顾客组名称..."> <input id="pageNo" name="pageNo" type="hidden"> <input
+			id="sortType" name="sortType" value="${sortType }" type="hidden"> <input id="phoneSortType" name="phoneSortType" value="${phoneSortType }" type="hidden"> <input id="property" name="property" value="${property }" type="hidden"> <select name="type" class="input-small">
+			<option value="newCustomer" <c:if test="${type eq 'newCustomer' }"> selected="selected"</c:if>>未编辑</option>
+			<option value="oldCustomer" <c:if test="${type eq 'oldCustomer' }"> selected="selected"</c:if>>已编辑</option>
+			<option value="allCustomer" <c:if test="${type eq 'allCustomer' }"> selected="selected"</c:if>>全部</option>
+		</select> <input type="submit" class="btn btn-primary" value="查询"> <input type="button" onclick="exportCustomer();" class="btn btn-primary" value="导出" data-loading-text="导出中..." id="exportCustomerBtn"> <input type="button" class="btn btn-primary" value="新增"
 			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/add/');">
-			<input class="btn btn-primary" type="button"
-			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');"
-			value="导入顾客">
-			
-			<input class="btn btn-primary" type="button"
-			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/import/');"
-			value="导入提醒">
-			
-			 <div style="margin-top:10px"><input class="btn btn-primary" type="button"
-			onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');"
-			value="查看导入日志"> <input class="btn btn-primary" type="button"
-			onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');"
-			value="顾客模板下载">
-			<input class="btn btn-primary" type="button"
-			onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');"
-			value="提醒模板下载"></div>
+		<div class="btn-group">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span> 更多...</span> <span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/import/');">导入顾客</a></li>
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/import/');">导入提醒</a></li>
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/importLog/');">顾客导入日志</a></li>
+				<li><a href="javascript:void(0)" onclick="loadPage('${pageContext.request.contextPath}/merchant/customer/remind/importLog/');">提醒导入日志</a></li>
+				<li><a href="javascript:void(0)" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/template.xls');">顾客模板下载</a></li>
+				<li><a href="javascript:void(0)" onclick="window.open('${pageContext.request.contextPath}/jsp/merchant/remindTemplate.xls');">提醒模板下载</a></li>
+			</ul>
+		</div>
 	</form>
-	<table
-		class="table table-striped table-bordered bootstrap-datatable datatable">
+	<table class="table table-striped table-bordered bootstrap-datatable datatable">
 		<thead>
 			<tr>
-				<th width="25%"><a href="javascript:void();" id="sortByName"
-					onclick="sortByName()">姓名<c:if
-							test="${sortType eq 'asc'and empty phoneSortType   }">↑</c:if> <c:if
-							test="${sortType eq 'desc'and  empty phoneSortType  }">↓</c:if>
+				<th width="25%"><a href="javascript:void();" id="sortByName" onclick="sortByName()">姓名<c:if test="${sortType eq 'asc'and empty phoneSortType   }">↑</c:if> <c:if test="${sortType eq 'desc'and  empty phoneSortType  }">↓</c:if>
 				</a></th>
-				<th width="25%"><a href="javascript:void();" id="sortByPhone"
-					onclick="sortByPhone()">电话<c:if
-							test="${phoneSortType eq 'asc'and  empty sortType  }">↑</c:if> <c:if
-							test="${phoneSortType eq 'desc'and  empty sortType }">↓</c:if></a></th>
+				<th width="25%"><a href="javascript:void();" id="sortByPhone" onclick="sortByPhone()">电话<c:if test="${phoneSortType eq 'asc'and  empty sortType  }">↑</c:if> <c:if test="${phoneSortType eq 'desc'and  empty sortType }">↓</c:if></a></th>
 				<th width="25%">所属顾客组</th>
 				<th width="25%">操作</th>
 			</tr>
@@ -71,10 +44,7 @@
 				<td>${customer.name }</td>
 				<td>${customer.phone }</td>
 				<td>${customer.customerGroup.name }</td>
-				<td><a class="btn btn-success" href="#"
-					onclick="return toModify('${customer.id}');">修改</a> <a
-					class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${customer.id}');">删除</a></td>
+				<td><a class="btn btn-success" href="#" onclick="return toModify('${customer.id}');">修改</a> <a class="btn btn-danger" href="javascript:void();" onclick="deleteById('${customer.id}');">删除</a></td>
 
 			</tr>
 		</c:forEach>
@@ -85,10 +55,7 @@
 			<li id="frontPage"><a href="javascript:void();">前一页</a></li>
 			<li id="nextPage"><a href="javascript:void();">后一页</a></li>
 			<li id="lastPage"><a href="javascript:void();">尾页</a></li>
-			<li>当前第${page.currentPage}/${page.totalPageCount}页
-				共${page.totalRecords }条 转到第<input type="text" id="pageNoToGo"
-				name="pageNo" class="input-mini">页<input type="button"
-				id="pageOk" class="btn" value="确定"></input>
+			<li>当前第${page.currentPage}/${page.totalPageCount}页 共${page.totalRecords }条 转到第<input type="text" id="pageNoToGo" name="pageNo" class="input-mini">页<input type="button" id="pageOk" class="btn" value="确定"></input>
 			</li>
 		</ul>
 	</div>

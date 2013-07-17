@@ -9,12 +9,7 @@
 <%@include file="../../include/footer.jsp"%>
 </head>
 <body>
-	<div class="thumbnail span10">
-		<div class="caption">
-			<h3>来电次数</h3>
-		</div>
 		<div id="dayChartContainer"></div>
-	</div>
 
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/highcharts.js">
