@@ -119,20 +119,22 @@
 		});
 
 		function deleteById() {
-			var title = $("#sel").find("option:selected").text();
-			if (title == '请选择') {
-				return;
+			if (confirm("确定要删除？")) {
+				var title = $("#sel").find("option:selected").text();
+				if (title == '请选择') {
+					return;
+				}
+				var id = $("#id").val();
+				$
+						.ajax({
+							url : "${pageContext.request.contextPath}/merchant/account/remindTemplate/"
+									+ id + "/delete/",
+							type : "get",
+							success : function(data) {
+								showContentInfo(data);
+							}
+						});
 			}
-			var id = $("#id").val();
-			$
-					.ajax({
-						url : "${pageContext.request.contextPath}/merchant/account/remindTemplate/"
-								+ id + "/delete/",
-						type : "get",
-						success : function(data) {
-							showContentInfo(data);
-						}
-					});
 		}
 
 		function cal() {
