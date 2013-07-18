@@ -38,7 +38,8 @@ public class VersionApi {
 	private VersionService versionService;
 
 	@RequestMapping(value = "/download/{year}/{month}/{fileName}", method = RequestMethod.GET)
-	public void versionDowload(@PathVariable String year, @PathVariable String month, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void versionDowload(@PathVariable String year, @PathVariable String month, @PathVariable String fileName, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
 		String path = versionService.getUploadDir() + year + "/" + month + "/" + fileName;
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
@@ -47,7 +48,7 @@ public class VersionApi {
 
 		response.setHeader("Content-disposition", "attachment; filename=" + fileName);
 		response.setHeader("Content-Length", String.valueOf(fileLength));
-
+		response.setContentType("application/octet-stream");
 		bis = new BufferedInputStream(new FileInputStream(path));
 		bos = new BufferedOutputStream(response.getOutputStream());
 		byte[] buff = new byte[2048];
@@ -61,7 +62,9 @@ public class VersionApi {
 
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@ResponseBody
-	public String upload(@RequestParam("describe") String describe, @RequestParam("file") MultipartFile file, @RequestParam("oldName") String oldName, @RequestParam("version") String version, @RequestParam("code") String code) throws IOException, ParseException {
+	public String upload(@RequestParam("describe") String describe, @RequestParam("file") MultipartFile file,
+			@RequestParam("oldName") String oldName, @RequestParam("version") String version, @RequestParam("code") String code) throws IOException,
+			ParseException {
 		describe = new String(describe.getBytes("iso-8859-1"));
 		int codeInt = Integer.parseInt(code);
 		String dirByDay = FormateUtils.getDirByMonth();
@@ -117,20 +120,25 @@ public class VersionApi {
 	@RequestMapping(value = "/online/sn/{sn}", method = RequestMethod.POST)
 	@ResponseBody
 	public ApkVersion getLastVersion(@PathVariable String sn, @RequestBody String deviceVersion) {
-		ApkVersion apkVersion = versionService.getOnlineVersion(sn,deviceVersion);
+		ApkVersion apkVersion = versionService.getOnlineVersion(sn, deviceVersion);
 		if (apkVersion != null) {
 			processUrl(apkVersion);
 			return apkVersion;
 		}
 		return null;
 	}
-	
+
 	@RequestMapping(value = "/boss/online/", method = RequestMethod.POST)
 	@ResponseBody
-	public ApkVersion getBossVersion( @RequestBody String deviceVersion) {
-		ApkVersion apkVersion = new ApkVersion("1.0.0","2013/07/WangcaibaoAnalytics.apk",new Date(),"王财宝老板系统",1);
+	public ApkVersion getBossVersion(@RequestBody String deviceVersion) {
+		ApkVersion apkVersion = new ApkVersion("1.0.0", "2013/07/WangcaibaoAnalytics.apk", new Date(), "王财宝老板系统", 1);
 		processUrl(apkVersion);
 		return apkVersion;
+	}
+
+	@RequestMapping(value = "/boss/download/", method = RequestMethod.GET)
+	public String getBossApk() {
+		return "redirect:/static/WangcaibaoAnalytics.apk";
 	}
 
 	private void processUrl(ApkVersion apkVersion) {
