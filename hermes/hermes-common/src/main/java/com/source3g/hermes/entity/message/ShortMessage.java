@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.enums.MerchantMessageType;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 
@@ -26,7 +27,9 @@ public class ShortMessage extends AbstractEntity {
 	private ObjectId merchantId;
 	private ObjectId sendId;// 短信对应的发送记录ID，群发ID或单发ID
 	private Date sendTime;
-	private int priority=0;
+	private int priority = 0;
+
+	private MerchantMessageType merchantType = MerchantMessageType.普通商户;
 
 	private MessageStatus status;
 
@@ -100,5 +103,13 @@ public class ShortMessage extends AbstractEntity {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	public MerchantMessageType getMerchantType() {
+		return merchantType;
+	}
+
+	public void setMerchantType(MerchantMessageType merchantType) {
+		this.merchantType = merchantType;
 	}
 }

@@ -623,7 +623,7 @@ public class CustomerService extends BaseService {
 		}
 		mongoTemplate.insert(importLog);
 	}
-	
+
 	public void addRemindImportLog(CustomerRemindImportLog remindImportLog) throws Exception {
 		final CustomerRemindImportLog importLogFinal = remindImportLog;
 		try {
@@ -678,7 +678,8 @@ public class CustomerService extends BaseService {
 	 */
 	public List<ObjectValue> findCallInCountByDay(String merchantId, Date startTime, Date endTime, int type) {
 		Query query = new Query();
-		Criteria criteria = Criteria.where("callRecords.callTime").gt(startTime).lt(endTime).and("merchantId").is(new ObjectId(merchantId));
+		Criteria criteria = Criteria.where("callRecords.callTime").gt(startTime).lt(endTime).and("merchantId").is(new ObjectId(merchantId))
+				.and("callRecords.callStatus").is(new Integer(0));
 		String mapResource = "classpath:mapreduce/allCallRecordsByDayMap.js";
 		if (type == 1) {
 			criteria.and("callRecords.newCustomer").is(true);
@@ -762,11 +763,13 @@ public class CustomerService extends BaseService {
 				continue;
 			}
 			for (CallRecord r : c.getCallRecords()) {
-				if (r.getCallTime().getTime() > startTime.getTime() && r.getCallTime().getTime() < endTime.getTime()) {
-					if (r.isNewCustomer()) {
-						newCount++;
-					} else {
-						oldCount++;
+				if (new Integer(0).equals(r.getCallStatus())) {
+					if (r.getCallTime().getTime() > startTime.getTime() && r.getCallTime().getTime() < endTime.getTime()) {
+						if (r.isNewCustomer()) {
+							newCount++;
+						} else {
+							oldCount++;
+						}
 					}
 				}
 			}
@@ -870,7 +873,5 @@ public class CustomerService extends BaseService {
 					"customerGroup", "favorite", "operateTime");
 		}
 	}
-
-
 
 }

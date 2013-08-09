@@ -24,7 +24,7 @@ public class PositiveSenderService implements ApplicationContextAware {
 	private static ApplicationContext applicationContext;
 	@Value(value = "${message.channel}")
 	private String channel;
-
+	
 	@PostConstruct
 	public void init() {
 		Object service = applicationContext.getBean(channel);

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.source3g.hermes.entity.AbstractEntity;
@@ -15,6 +16,7 @@ public class Device extends AbstractEntity {
 	private static final long serialVersionUID = -4975323959505730113L;
 
 	@NotEmpty(message = "{device.sn.not.null}")
+	@Indexed(unique=true)
 	private String sn;
 
 	private String apkVersion;

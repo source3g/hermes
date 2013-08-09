@@ -41,6 +41,7 @@ import com.source3g.hermes.entity.message.GroupSendLog;
 import com.source3g.hermes.entity.message.MessageSendLog;
 import com.source3g.hermes.entity.message.MessageTemplate;
 import com.source3g.hermes.entity.message.ShortMessage;
+import com.source3g.hermes.enums.MerchantMessageType;
 import com.source3g.hermes.enums.MessageStatus;
 import com.source3g.hermes.enums.MessageType;
 import com.source3g.hermes.enums.Sex;
@@ -114,11 +115,12 @@ public class MessageService extends BaseService {
 		for (Customer c : customerSet) {
 			if (PhoneUtils.isMobile(c.getPhone())) {
 				String proceedContent = processContent(merchant, c, content);
-				result.add(genShortMessage(proceedContent, c.getPhone(), messageType, merchant.getId(), groupLogId, priority));
+				result.add(genShortMessage(proceedContent, c.getPhone(), messageType, merchant.getId(), groupLogId, priority,
+						merchant.getMerchantMessageType()));
 			}
 		}
 		for (String phone : phoneSet) {
-			result.add(genShortMessage(content, phone, messageType, merchantId, groupLogId, priority));
+			result.add(genShortMessage(content, phone, messageType, merchantId, groupLogId, priority, merchant.getMerchantMessageType()));
 		}
 		return result;
 	}
@@ -131,6 +133,21 @@ public class MessageService extends BaseService {
 		shortMessage.setMerchantId(merchantId);
 		shortMessage.setPhone(phone);
 		shortMessage.setSendId(logId);
+		shortMessage.setStatus(MessageStatus.发送中);
+		shortMessage.setPriority(priority);
+		return shortMessage;
+	}
+
+	private ShortMessage genShortMessage(String content, String phone, MessageType type, ObjectId merchantId, ObjectId logId, int priority,
+			MerchantMessageType merchantMessageType) {
+		ShortMessage shortMessage = new ShortMessage();
+		shortMessage.setContent(content);
+		shortMessage.setMessageType(type);
+		shortMessage.setId(ObjectId.get());
+		shortMessage.setMerchantId(merchantId);
+		shortMessage.setPhone(phone);
+		shortMessage.setSendId(logId);
+		shortMessage.setMerchantType(merchantMessageType);
 		shortMessage.setStatus(MessageStatus.发送中);
 		shortMessage.setPriority(priority);
 		return shortMessage;
@@ -487,17 +504,17 @@ public class MessageService extends BaseService {
 			}
 		}
 		title += customerName;
-		return title + ":\n" + content;
+		return title + ":" + content;
 	}
 
 	public void remindSend(String title, ObjectId merchantId) throws Exception {
-//		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
-//		if (remindTemplate == null) {
-//			return;
-//		}
+		// RemindTemplate remindTemplate = mongoTemplate.findOne(new
+		// Query(Criteria.where("title").is(title)), RemindTemplate.class);
+		// if (remindTemplate == null) {
+		// return;
+		// }
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(
-				new Query(Criteria.where("merchantId").is(merchantId).and("title").is(title)),
-				MerchantRemindTemplate.class);
+				new Query(Criteria.where("merchantId").is(merchantId).and("title").is(title)), MerchantRemindTemplate.class);
 		String content = merchantRemindTemplate.getMessageContent();
 		Date startTime = new Date();
 		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime() + 1);
@@ -524,13 +541,13 @@ public class MessageService extends BaseService {
 	}
 
 	public void ignoreSendMessages(String title, ObjectId merchantId) {
-//		RemindTemplate remindTemplate = mongoTemplate.findOne(new Query(Criteria.where("title").is(title)), RemindTemplate.class);
-//		if (remindTemplate == null) {
-//			return;
-//		}
+		// RemindTemplate remindTemplate = mongoTemplate.findOne(new
+		// Query(Criteria.where("title").is(title)), RemindTemplate.class);
+		// if (remindTemplate == null) {
+		// return;
+		// }
 		MerchantRemindTemplate merchantRemindTemplate = mongoTemplate.findOne(
-				new Query(Criteria.where("merchantId").is(merchantId).and("title").is(title)),
-				MerchantRemindTemplate.class);
+				new Query(Criteria.where("merchantId").is(merchantId).and("title").is(title)), MerchantRemindTemplate.class);
 		Date startTime = new Date();
 		Date endTime = FormateUtils.calEndTime(startTime, merchantRemindTemplate.getAdvancedTime() + 1);
 		List<Customer> customers = findTodayRemindCustomers(merchantId, merchantRemindTemplate, startTime, endTime);

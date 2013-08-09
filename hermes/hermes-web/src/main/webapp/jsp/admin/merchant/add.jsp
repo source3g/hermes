@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -12,9 +11,7 @@
 		<div class="control-group">
 			<label class="control-label" for="name">名称：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户名称..."
-					id="name" name="name" value="${merchant.name}"> <span
-					class="help-inline"><font color="red">*</font></span>
+				<input type="text" class="input-xlarge" placeholder="请输入商户名称..." id="name" name="name" value="${merchant.name}"> <span class="help-inline"><font color="red">*</font></span>
 				<c:if test="${not empty update }">
 					<input type="hidden" id="id" name="id" value="${merchant.id }">
 				</c:if>
@@ -24,25 +21,27 @@
 		<div class="control-group">
 			<label class="control-label" for="addr">地址：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户地址..."
-					id="addr" name="addr" value="${merchant.addr}"> <span
-					class="help-inline"></span>
+				<input type="text" class="input-xlarge" placeholder="请输入商户地址..." id="addr" name="addr" value="${merchant.addr}"> <span class="help-inline"></span>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="addr">短信类型：</label>
+			<div class="controls">
+				<select name="merchantMessageType">
+					<option value="普通商户" <c:if test="${(merchant.merchantMessageType eq '普通商户') or (empty merchant.merchantMessageType) }"> selected="selected"</c:if>>普通商户</option>
+					<option value="地产类商户" <c:if test="${merchant.merchantMessageType eq '地产类商户'}"> selected="selected"</c:if>>地产类商户</option>
+				</select> <span class="help-inline"></span>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="tag">标签分类选择：</label>
 			<div class="controls">
-				<a href="javascript:void();" class="btn btn-primary btn-small"
-					onclick="showTags();">标签分类选择</a><span id="tagName"> 标签： <c:if
-						test="${not empty update }">
-						<c:forEach items="${merchant.merchantTagNodes}"
-							var="merchantTagNode" varStatus="status">
-							<input type="hidden" class="tagId"
-								name="merchantTagNodes[${status.index }].id"
-								value="${merchantTagNode.id}">
-							<span>${merchantTagNode.name}<a href="javascript:void();"
-								onclick="deleteTag(this);" style="color: red">×</a></span>
+				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="showTags();">标签分类选择</a><span id="tagName"> 标签： <c:if test="${not empty update }">
+						<c:forEach items="${merchant.merchantTagNodes}" var="merchantTagNode" varStatus="status">
+							<input type="hidden" class="tagId" name="merchantTagNodes[${status.index }].id" value="${merchantTagNode.id}">
+							<span>${merchantTagNode.name}<a href="javascript:void();" onclick="deleteTag(this);" style="color: red">×</a></span>
 						</c:forEach>
 					</c:if></span>
 			</div>
@@ -51,12 +50,8 @@
 		<div class="control-group">
 			<label class="control-label" for="tag">所属销售选择：</label>
 			<div class="controls">
-				<a href="javascript:void();" class="btn btn-primary btn-small"
-					onclick="branchCompanyList();">所属销售选择</a><span id="salerName">
-					商户所属销售: <c:if test="${not empty saler }">
-						<span>${saler.name}<a href="javascript:void();"
-							onclick="deleteSaler(this);" style="color: red">×</a><input
-							type="hidden" name="salerId" value="${saler.id}"></span>
+				<a href="javascript:void();" class="btn btn-primary btn-small" onclick="branchCompanyList();">所属销售选择</a><span id="salerName"> 商户所属销售: <c:if test="${not empty saler }">
+						<span>${saler.name}<a href="javascript:void();" onclick="deleteSaler(this);" style="color: red">×</a><input type="hidden" name="salerId" value="${saler.id}"></span>
 					</c:if>
 				</span>
 			</div>
@@ -65,13 +60,8 @@
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge"
-					placeholder="请选择集团商户，如果没有则不选..." id="merchantGroupSel"
-					readonly="readonly" value="${merchantGroup.name }"> <span>
-					<input type="hidden" id="merchantGroupId" name="merchantGroupId"
-					value="${merchant.merchantGroupId }"> <a
-					data-toggle="modal" href="#myModal"
-					class="btn btn-primary btn-small">选择集团商户</a>
+				<input type="text" class="input-xlarge" placeholder="请选择集团商户，如果没有则不选..." id="merchantGroupSel" readonly="readonly" value="${merchantGroup.name }"> <span> <input type="hidden" id="merchantGroupId" name="merchantGroupId" value="${merchant.merchantGroupId }"> <a
+					data-toggle="modal" href="#myModal" class="btn btn-primary btn-small">选择集团商户</a>
 				</span>
 			</div>
 		</div>
@@ -79,41 +69,29 @@
 		<div class="control-group">
 			<label class="control-label" for="account">账号：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户账号..."
-					id="account" name="account" value="${merchant.account}"
-					<c:if test="${not empty update}"> readonly="readonly"</c:if>>
-				<span class="help-inline"></span>
+				<input type="text" class="input-xlarge" placeholder="请输入商户账号..." id="account" name="account" value="${merchant.account}" <c:if test="${not empty update}"> readonly="readonly"</c:if>> <span class="help-inline"></span>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label class="control-label" for="password">密码：</label>
 			<div class="controls">
-				<input type="password" class="input-xlarge" placeholder="请输入商户密码..."
-					id="password" name="password" value="${merchant.password}">
-				<span class="help-inline"></span>
+				<input type="password" class="input-xlarge" placeholder="请输入商户密码..." id="password" name="password" value="${merchant.password}"> <span class="help-inline"></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="password">重复确认密码：</label>
 			<div class="controls">
-				<input type="password" class="input-xlarge"
-					placeholder="请重新输入商户密码..." id="password1" name="password1"
-					value="${merchant.password}"> <span class="help-inline"></span>
+				<input type="password" class="input-xlarge" placeholder="请重新输入商户密码..." id="password1" name="password1" value="${merchant.password}"> <span class="help-inline"></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="addr">盒子SN：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入盒子SN编码..."
-					id="deviceSn" name="sn"> <input type="button"
-					class="btn btn-primary " id="deviceId" onclick="findDevice();"
-					value="加入列表"><span id="deviceMessage"></span>
+				<input type="text" class="input-xlarge" placeholder="请输入盒子SN编码..." id="deviceSn" name="sn"> <input type="button" class="btn btn-primary " id="deviceId" onclick="findDevice();" value="加入列表"><span id="deviceMessage"></span>
 			</div>
 		</div>
-		<table
-			class="table table-striped table-bordered bootstrap-datatable datatable"
-			id="deviceTable">
+		<table class="table table-striped table-bordered bootstrap-datatable datatable" id="deviceTable">
 			<thead>
 				<tr>
 					<th width="100%">盒子SN编码</th>
@@ -123,9 +101,7 @@
 				<c:forEach items="${devices}" var="device">
 					<tr>
 						<td class='deviceSnTd'>${device.sn}</td>
-						<td><input type='button' name='deleteDeviceSn'
-							class='btn btn-danger' onclick='deleteDevice(this);' value='删除'>
-							<input type='hidden' name='deviceIds' value='${device.id}'></td>
+						<td><input type='button' name='deleteDeviceSn' class='btn btn-danger' onclick='deleteDevice(this);' value='删除'> <input type='hidden' name='deviceIds' value='${device.id}'></td>
 					</tr>
 				</c:forEach>
 			</c:if>
@@ -133,12 +109,10 @@
 
 		<div class="form-actions">
 			<c:if test="${not empty update }">
-				<input type="submit" id="addMerchantBtn"
-					data-loading-text="修改商户中..." class="btn btn-primary" value="修改">
+				<input type="submit" id="addMerchantBtn" data-loading-text="修改商户中..." class="btn btn-primary" value="修改">
 			</c:if>
 			<c:if test="${ empty update }">
-				<input type="button" id="addMerchantBtn"
-					data-loading-text="增加商户中..." class="btn btn-primary" value="增加" />
+				<input type="button" id="addMerchantBtn" data-loading-text="增加商户中..." class="btn btn-primary" value="增加" />
 			</c:if>
 			<c:if test="${not empty errors }">
 				<div class="alert alert-error">
@@ -159,13 +133,9 @@
 		</div>
 		<div class="modal-body">
 			<form class="well form-inline" id="queryMerchantGroupForm">
-				<label for="merchantGroup">集团商户名称：</label> <input
-					id="merchantGroupName" name="merchantGroupName" type="text"
-					class="input-small" placeholder="商户名称"> <input
-					type="submit" class="btn" id="queryMerchantGroupBtn" value="查询"></input>
+				<label for="merchantGroup">集团商户名称：</label> <input id="merchantGroupName" name="merchantGroupName" type="text" class="input-small" placeholder="商户名称"> <input type="submit" class="btn" id="queryMerchantGroupBtn" value="查询"></input>
 			</form>
-			<table id="merchantGroupTab"
-				class="table table-bordered table-striped">
+			<table id="merchantGroupTab" class="table table-bordered table-striped">
 				<thead>
 					<tr>
 						<th>名称</th>
@@ -185,8 +155,7 @@
 		<div class="modal-body" id="modalBody"></div>
 
 		<div class="modal-footer">
-			<input type="button" class="btn btn-primary" id="customersFormBtn"
-				value="确定" onclick="choseTags();"></input>
+			<input type="button" class="btn btn-primary" id="customersFormBtn" value="确定" onclick="choseTags();"></input>
 		</div>
 	</div>
 	<div id="salersModal" class="modal hide fade">
@@ -196,8 +165,7 @@
 		</div>
 		<div class="modal-body" id="companyModalBody"></div>
 		<div class="modal-footer">
-			<input type="button" class="btn btn-primary" id="" value="确定"
-				onclick="choseSalers();"></input>
+			<input type="button" class="btn btn-primary" id="" value="确定" onclick="choseSalers();"></input>
 		</div>
 	</div>
 	<c:if test="${not empty errors }">
@@ -274,10 +242,14 @@
 									}
 							}
 						},
+						merchantMessageType:{
+							required:true
+						},
 					password:{
 						required : true,
 						minlength : 2	
 					}, 
+					
 					password1:{
 						required : true,
 						minlength : 2,
@@ -298,6 +270,9 @@
 						minlength : "至少输入两个字符",
 						validateAccount:"请输入数字或字母",
 						remote:"该账号已存在"
+					},
+					merchantMessageType:{
+						required:"商户短信类型不能为空"
 					},
 				    password : {
 						required : "请填写密码",

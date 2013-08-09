@@ -103,9 +103,8 @@ D:\lib\maven-3.0.3\repositories\org\slf4j\slf4j-api\1.7.1\slf4j-api-1.7.1.jar
 D:\lib\maven-3.0.3\repositories\org\codehaus\jackson\jackson-core-asl\1.7.9\jackson-core-asl-1.7.9.jar
 D:\lib\maven-3.0.3\repositories\org\codehaus\jackson\jackson-mapper-asl\1.7.9\jackson-mapper-asl-1.7.9.jar
 D:\lib\maven-3.0.3\repositories\org\slf4j\slf4j-log4j12\1.7.1\slf4j-log4j12-1.7.1.jar
-D:\lib\maven-3.0.3\repositories\org\hibernate\hibernate-validator\4.3.0.Final\hibernate-validator-4.3.0.Final.jar
+D:\lib\maven-3.0.3\repositories\org\hibernate\hibernate-validator\4.1.0.Final\hibernate-validator-4.1.0.Final.jar
 D:\lib\maven-3.0.3\repositories\javax\validation\validation-api\1.0.0.GA\validation-api-1.0.0.GA.jar
-D:\lib\maven-3.0.3\repositories\org\jboss\logging\jboss-logging\3.1.0.CR2\jboss-logging-3.1.0.CR2.jar
 D:\java\git\hermes\hermes\hermes-api-common\target\classes
 D:\lib\maven-3.0.3\repositories\junit\junit\3.8.1\junit-3.8.1.jar
 D:\lib\maven-3.0.3\repositories\log4j\log4j\1.2.17\log4j-1.2.17.jar
@@ -116,7 +115,6 @@ D:\lib\maven-3.0.3\repositories\org\apache\commons\commons-compress\1.4.1\common
 D:\lib\maven-3.0.3\repositories\org\tukaani\xz\1.0\xz-1.0.jar
 D:\java\git\hermes\hermes\hermes-message\target\classes
 D:\lib\maven-3.0.3\repositories\com\hongxun\pub\1.0\pub-1.0.jar
-D:\lib\maven-3.0.3\repositories\org\slf4j\log4j-over-slf4j\1.7.3\log4j-over-slf4j-1.7.3.jar
 D:\lib\maven-3.0.3\repositories\com\lxt2\javaapi\2.0\javaapi-2.0.jar
 D:\lib\maven-3.0.3\repositories\com\lxt2\protocol\2.0\protocol-2.0.jar
 D:\lib\maven-3.0.3\repositories\com\techcenter\messagequeue\2.0\messagequeue-2.0.jar

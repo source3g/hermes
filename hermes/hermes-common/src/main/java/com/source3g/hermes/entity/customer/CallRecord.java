@@ -6,7 +6,10 @@ public class CallRecord {
 	private Date callTime;
 	private int callDuration;// 通话时长
 	private boolean newCustomer;// 来电时是否为新顾客
-	private Integer callStatus;
+	/**
+	 * 1为拨出，0为拨入
+	 */
+	private Integer callStatus=0;
 
 	public Integer getCallStatus() {
 		return callStatus;

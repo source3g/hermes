@@ -38,7 +38,7 @@ public abstract class AbstractPositiveMessageService {
 		String msgId = null;
 		try {
 			msgId = send(shortMessage);
-			sendSuccess(msgId);
+			sendSuccess(shortMessage.getId(), msgId);
 			if (MessageType.群发.equals(shortMessage.getMessageType())) {
 				addGroupSuccess(shortMessage.getSendId());
 			} else {
@@ -55,8 +55,9 @@ public abstract class AbstractPositiveMessageService {
 		return msgId;
 	}
 
-	public void sendSuccess(String msgId) {
-		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)), new Update().set("status", MessageStatus.已发送), ShortMessage.class);
+	public void sendSuccess(ObjectId id, String msgId) {
+		mongoTemplate.updateFirst(new Query(Criteria.where("_id").is(id)), new Update().set("status", MessageStatus.已发送).set("msgId", msgId),
+				ShortMessage.class);
 	}
 
 	public void updateLog(ObjectId id, Date date, MessageStatus status) {

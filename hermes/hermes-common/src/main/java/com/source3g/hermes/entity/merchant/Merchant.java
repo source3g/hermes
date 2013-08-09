@@ -12,16 +12,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.source3g.hermes.entity.AbstractEntity;
 import com.source3g.hermes.entity.dictionary.MerchantTagNode;
 import com.source3g.hermes.entity.note.Note;
+import com.source3g.hermes.enums.MerchantMessageType;
 
 @Document
 public class Merchant extends AbstractEntity {
 	private static final long serialVersionUID = -9148277944381440756L;
 	@NotEmpty(message = "{merchant.name.not.null}")
-	@Indexed(unique=true)
+	@Indexed(unique = true)
 	private String name;
 	private String addr;
 	@NotEmpty(message = "{merchant.account.not.null}")
-	@Indexed(unique=true)
+	@Indexed(unique = true)
 	private String account;
 	@NotEmpty(message = "{merchant.password.not.null}")
 	private String password;
@@ -29,17 +30,18 @@ public class Merchant extends AbstractEntity {
 	private ObjectId merchantGroupId;
 
 	private Set<ObjectId> deviceIds;
-	
-	private MessageBalance messageBalance=new MessageBalance();
+
+	private MessageBalance messageBalance = new MessageBalance();
 	private MerchantResource merchantResource;
 	@DBRef
 	private List<MerchantTagNode> merchantTagNodes;
 	private List<Note> notes;
-	//是否被删除
+	// 是否被删除
 	private boolean canceled;
-	private Setting setting=new Setting();
+	private Setting setting = new Setting();
 	private ObjectId salerId;
-	
+
+	private MerchantMessageType merchantMessageType = MerchantMessageType.普通商户;
 
 	public ObjectId getSalerId() {
 		return salerId;
@@ -54,7 +56,7 @@ public class Merchant extends AbstractEntity {
 	}
 
 	public void setMerchantTagNodes(List<MerchantTagNode> merchantTagNodes) {
-		this.merchantTagNodes=merchantTagNodes;
+		this.merchantTagNodes = merchantTagNodes;
 	}
 
 	public String getName() {
@@ -80,8 +82,6 @@ public class Merchant extends AbstractEntity {
 	public void setMerchantGroupId(ObjectId merchantGroupId) {
 		this.merchantGroupId = merchantGroupId;
 	}
-
-
 
 	public String getAccount() {
 		return account;
@@ -145,5 +145,13 @@ public class Merchant extends AbstractEntity {
 
 	public void setDeviceIds(Set<ObjectId> deviceIds) {
 		this.deviceIds = deviceIds;
+	}
+
+	public MerchantMessageType getMerchantMessageType() {
+		return merchantMessageType;
+	}
+
+	public void setMerchantMessageType(MerchantMessageType merchantMessageType) {
+		this.merchantMessageType = merchantMessageType;
 	}
 }
