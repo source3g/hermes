@@ -143,7 +143,7 @@ public class CustomerApi {
 
 	@RequestMapping(value = "/export/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String export(String name, String phone, CustomerType customerType, String customerGroupName, @PathVariable String merchantId) {
+	public String export(String name, String phone, CustomerType customerType, String customerGroupName, @PathVariable String merchantId) throws Exception {
 		Customer customer = new Customer();
 		customer.setName(name);
 		customer.setMerchantId(new ObjectId(merchantId));
@@ -157,6 +157,7 @@ public class CustomerApi {
 		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | IOException e) {
 			e.printStackTrace();
+			throw e;
 		}
 		return customerService.getLocalUrl() + "customer/export/download/" + result + "/";
 	}

@@ -23,6 +23,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.source3g.hermes.entity.AbstractEntity;
+import com.source3g.hermes.utils.NewPage;
 
 @Component
 public class BaseService implements ApplicationContextAware {
@@ -177,7 +178,8 @@ public class BaseService implements ApplicationContextAware {
 				// 调用赋值对象的set方法
 				setMethod.invoke(entityInDb, new Object[] { value });
 				// update.set(fieldName, value);
-			} catch (NoSuchFieldException | SecurityException | NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (NoSuchFieldException | SecurityException | NoSuchMethodException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
 				continue;
 			}
 		}
@@ -233,6 +235,17 @@ public class BaseService implements ApplicationContextAware {
 
 	public interface ObjectMapper<T> {
 		public T mapping(DBObject obj);
+	}
+
+	public <T extends Object, S extends Object> NewPage<T> packageVoPage(NewPage<S> page, PageProcesser<T, S> pageProcesser) {
+		NewPage<T> voPage = new NewPage<T>(page.getPageNo(), page.getTotalRecords());
+		List<T> list = pageProcesser.process(page.getContent());
+		voPage.setContent(list);
+		return voPage;
+	}
+
+	public interface PageProcesser<T extends Object, S extends Object> {
+		public List<T> process(List<S> list);
 	}
 
 	public <T extends AbstractEntity> T findOne(Query query, Class<T> entityClass) {

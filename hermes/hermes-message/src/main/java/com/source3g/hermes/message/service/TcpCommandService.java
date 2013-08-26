@@ -240,4 +240,11 @@ public class TcpCommandService extends AbstractPositiveMessageService implements
 	public void setPass(String pass) {
 		this.pass = pass;
 	}
+
+	@Override
+	protected AbstractRecvService getRecvService() {
+		return null;
+	}
+
+	
 }

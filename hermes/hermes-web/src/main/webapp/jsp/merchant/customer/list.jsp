@@ -133,20 +133,26 @@
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
 		}
-		 function exportCustomer(){
-		    	$("#pageNo").attr("value",pageNo);
-		    	$('#exportCustomerBtn').button('loading');
-				var options={
-						url:"${pageContext.request.contextPath}/merchant/customer/export/",
-						dataType:'json',
-						success:function (data){
-							window.open(data);
-							$('#exportCustomerBtn').button('reset');
-						},
-						error:showError
-				};
-				$('#queryForm').ajaxSubmit(options);
-		    }
+		// function exportCustomer(){
+			// alert("daoru");
+		    //	$("#pageNo").attr("value",pageNo);
+		    //	$('#exportCustomerBtn').button('loading');
+			//	var options={
+				//		url:"${pageContext.request.contextPath}/merchant/customer/export/",
+				//		dataType:'json',
+				//		success:function (data){
+							//if(data.contains(".xls")){
+							//	window.open(data);
+							//}else{
+				//				alert(data);
+							//}
+							
+			//				$('#exportCustomerBtn').button('reset');
+			//			},
+			//			error:showError
+			//	};
+				//$('#queryForm').ajaxSubmit(options);
+		  //  }
 
 	    $(document).ready(function(){
 	    	$('#queryForm').submit(function(){
@@ -158,13 +164,19 @@
 	    
 	    
 	    function exportCustomer(){
+	    	
 	    	$("#pageNo").attr("value",pageNo);
 	    	$('#exportCustomerBtn').button('loading');
 			var options={
 					url:"${pageContext.request.contextPath}/merchant/customer/export/",
 					dataType:'json',
 					success:function (data){
-						window.open(data);
+						if(data.indexOf(".xls")>=0){
+							window.open(data);
+						}else
+						{
+							alert(data);
+						}
 						$('#exportCustomerBtn').button('reset');
 					},
 					error:showError

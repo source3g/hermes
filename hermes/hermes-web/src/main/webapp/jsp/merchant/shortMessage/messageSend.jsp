@@ -38,15 +38,15 @@
 
 				<tr>
 					<td><label class="control-label">输入客户电话号码(电话号码以分号或换行分隔)：</label></td>
-					<td colspan="4"><textarea class="span8" rows="10" name="customerPhones" id="customerPhones"></textarea> <!--  <input id="customerPhonesInput" name="customerPhones" type="hidden"> --> <!-- <div style="background-color: white; height: 150px; width: 500px;" id="customerPhones" contentEditable="true"></div> -->
-					</td>
+					<td colspan="4"><textarea class="span8" rows="10" name="customerPhones" id="customerPhones"></textarea> <!--  <input id="customerPhonesInput" name="customerPhones" type="hidden"> -->
+						<!-- <div style="background-color: white; height: 150px; width: 500px;" id="customerPhones" contentEditable="true"></div> --></td>
 				</tr>
 
 				<tr>
 					<td><label class="control-label">选择短信模板：</label></td>
 					<td colspan="4"><select id="sel">
 							<option>请选择</option>
-					</select></td>
+						</select></td>
 				</tr>
 				<tr>
 					<td><label class="control-label">编辑短信内容：</label></td>
@@ -150,6 +150,10 @@
 		$('#messageSendForm').validate(validateOptions); 
 	 $('#messageSendForm').submit(function() {
 		 var usfulCount=getusfulCount();
+		 if(usfulCount>2000){
+			 alert("最多发2000条");
+			 return false;
+		 }
 		 if($("input:checked[name='ids']").length==0&&usfulCount==0){
 			 alert("请填写有效电话号码");
 			 return false;
@@ -264,7 +268,6 @@
 				$('#customerPhones').append($(this).val()+";");
 			});
 			$("#myModal").modal("hide");
-			
 		}
 	</script>
 </body>

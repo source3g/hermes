@@ -2,9 +2,7 @@ package com.source3g.hermes.customer.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -293,7 +291,7 @@ public class CustomerService extends BaseService {
 		return list(pageNo, customer, CustomerType.allCustomer, Direction.DESC, "name");
 	}
 
-	public List<Customer> list(Customer customer, CustomerType customerType) {
+	public List<Customer> list(Customer customer, CustomerType customerType) throws Exception {
 		Query query = new Query();
 		if (customer.getMerchantId() == null) {
 			return null;
@@ -341,12 +339,15 @@ public class CustomerService extends BaseService {
 			}
 			break;
 		}
+		Long count=mongoTemplate.count(query, Customer.class);
+		if(count>=65535){
+			throw new Exception("顾客数量过多无法导出，请联系工作人员");
+		}
 		List<Customer> list = mongoTemplate.find(query, Customer.class);
 		return list;
 	}
 
-	public String export(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException,
-			NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public String export(Customer customer, CustomerType customerType) throws Exception {
 		List<Customer> list = list(customer, customerType);
 		Date createTime = new Date();
 		// 文件名
@@ -369,8 +370,7 @@ public class CustomerService extends BaseService {
 		return null;
 	}
 
-	public String export1(Customer customer, CustomerType customerType) throws IOException, NoSuchMethodException, SecurityException,
-			NoSuchFieldException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public String export1(Customer customer, CustomerType customerType) throws Exception {
 		List<Customer> list = list(customer, customerType);
 		Date createTime = new Date();
 		// 文件名

@@ -44,4 +44,11 @@ public class XuntongMessageService extends AbstractPositiveMessageService {
 		send(shortMessage.getMsgId(), shortMessage.getPhone(), shortMessage.getContent(), PhoneOperator.移动);
 		return shortMessage.getMsgId();
 	}
+
+	@Override
+	protected AbstractRecvService getRecvService() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

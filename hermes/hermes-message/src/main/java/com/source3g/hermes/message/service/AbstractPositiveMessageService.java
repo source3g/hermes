@@ -26,6 +26,8 @@ public abstract class AbstractPositiveMessageService {
 
 	protected abstract String send(ShortMessage shortMessage) throws Exception;
 
+	protected abstract AbstractRecvService getRecvService();
+
 	public void reportSuccess(String msgId) {
 		mongoTemplate.updateFirst(new Query(Criteria.where("msgId").is(msgId)), new Update().set("status", MessageStatus.发送成功), ShortMessage.class);
 	}

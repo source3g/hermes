@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -27,10 +27,13 @@ public class ApiMessageService extends AbstractPositiveMessageService {
 	private String dcUsername;
 	@Value(value = "${message.api.dichan.password}")
 	private String dcPassword;
+	
+	@Autowired
+	private ApiMessageRecvService apiMessageRecvService;
 
 	@Override
 	protected String send(ShortMessage shortMessage) throws Exception {
-		shortMessage.setMsgId(ObjectId.get().toString());
+		//shortMessage.setMsgId(ObjectId.get().toString());
 		String username = youzhiUsername;
 		String password = youzhiPassword;
 		if (MerchantMessageType.地产类商户.equals(shortMessage.getMerchantType())) {
@@ -38,6 +41,7 @@ public class ApiMessageService extends AbstractPositiveMessageService {
 			password = dcPassword;
 		}
 		HttpClient httpClient = new HttpClient();
+		httpClient.getParams().setConnectionManagerTimeout(5000);
 		PostMethod postMethod = new PostMethod(apiUrl);
 		postMethod.addParameter("username", username);
 		postMethod.addParameter("password", password);
@@ -46,6 +50,8 @@ public class ApiMessageService extends AbstractPositiveMessageService {
 		postMethod.getParams().setContentCharset("UTF-8");
 		try {
 			httpClient.executeMethod(postMethod);
+			String sysId=postMethod.getResponseBodyAsString();
+			shortMessage.setMsgId(sysId.replaceAll("\"", ""));
 		} catch (Exception e) {
 			throw new Exception(e);
 		} finally {
@@ -104,4 +110,11 @@ public class ApiMessageService extends AbstractPositiveMessageService {
 		postMethod.getParams().setContentCharset("UTF-8");
 		httpClient.executeMethod(postMethod);
 	}
+
+	@Override
+	protected AbstractRecvService getRecvService() {
+		return apiMessageRecvService;
+	}
+
+	
 }
