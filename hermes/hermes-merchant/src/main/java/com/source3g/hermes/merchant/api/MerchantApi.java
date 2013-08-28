@@ -1,5 +1,6 @@
 package com.source3g.hermes.merchant.api;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +70,13 @@ public class MerchantApi {
 	@ResponseBody
 	public boolean accountValidate(@PathVariable String account) {
 		return merchantService.accountValidate(account);
+	}
+
+	@RequestMapping(value = "/balance/sn/{sn}")
+	@ResponseBody
+	public String getBalanceBySn(@PathVariable String sn) throws Exception {
+		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
+		return String.valueOf(merchant.getMessageBalance().getSurplusMsgCount());
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -314,4 +324,14 @@ public class MerchantApi {
 		merchant.setMerchantTagNodes(merchantTagNodes);
 	}
 
+	public static void main(String[] args) throws JsonGenerationException, JsonMappingException, IOException {
+		Merchant merchant = new Merchant();
+		merchant.setName("某KTV");
+		merchant.setAccount("username");
+		merchant.setPassword("password");
+		merchant.setAddr("地址");
+		org.codehaus.jackson.map.ObjectMapper objectMapper=new org.codehaus.jackson.map.ObjectMapper();
+		String s=objectMapper.writeValueAsString(merchant);
+		System.out.println(s);
+	}
 }

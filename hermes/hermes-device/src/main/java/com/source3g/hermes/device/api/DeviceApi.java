@@ -53,6 +53,20 @@ public class DeviceApi {
 		return ReturnConstants.SUCCESS;
 	}
 
+	@RequestMapping(value = "/add/api", method = RequestMethod.POST)
+	@ResponseBody
+	public String add(String sn) {
+		logger.debug("add device....");
+		try {
+			Device device = new Device();
+			device.setSn(sn);
+			deviceService.add(device);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return ReturnConstants.SUCCESS;
+	}
+
 	@RequestMapping(value = "/snValidate/{sn}", method = RequestMethod.GET)
 	@ResponseBody
 	public boolean snValidate(@PathVariable String sn) {
@@ -61,12 +75,12 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page list(String pageNo, String sn,String merchantAccount) {
+	public Page list(String pageNo, String sn, String merchantAccount) {
 		logger.debug("list device....");
 		int pageNoInt = Integer.valueOf(pageNo);
 		Device device = new Device();
 		device.setSn(sn);
-		return deviceService.list(pageNoInt, device,merchantAccount);
+		return deviceService.list(pageNoInt, device, merchantAccount);
 	}
 
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
@@ -145,7 +159,8 @@ public class DeviceApi {
 	}
 
 	@RequestMapping(value = "/export/{year}/{month}/{day}/{fileName}")
-	public void download(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String fileName, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void download(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String fileName,
+			HttpServletRequest request, HttpServletResponse response) throws IOException {
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
 		String downLoadPath = deviceService.getExportDir() + DeviceService.EXPORT_FOLDER_NAME + "/" + year + "/" + month + "/" + day + "/" + fileName;
@@ -169,7 +184,7 @@ public class DeviceApi {
 		PublicKey publicKey = deviceService.getPublicKey();
 		return publicKey.getPublickey();
 	}
-	
+
 	@RequestMapping(value = "/now")
 	@ResponseBody
 	public Date now() {
