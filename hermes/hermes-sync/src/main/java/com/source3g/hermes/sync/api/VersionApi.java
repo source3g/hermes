@@ -143,7 +143,7 @@ public class VersionApi {
 
 	private void processUrl(ApkVersion apkVersion) {
 		apkVersion.setUrl(versionService.getLocalUrl() + "version/download/" + apkVersion.getUrl() + "/");
-	};
+	}
 
 	@RequestMapping(value = "/versionList")
 	@ResponseBody

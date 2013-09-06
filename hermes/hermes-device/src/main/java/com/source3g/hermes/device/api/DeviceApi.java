@@ -55,7 +55,7 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/add/api", method = RequestMethod.POST)
 	@ResponseBody
-	public String add(String sn) {
+	public String add(String sn) throws Exception {
 		logger.debug("add device....");
 		try {
 			Device device = new Device();
@@ -126,7 +126,8 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/gps/report/{sn}/{x}/{y}", method = RequestMethod.GET)
 	@ResponseBody
-	public String gpsReport(@PathVariable String sn, @PathVariable Double x, @PathVariable Double y) {
+	public String gpsReport(@PathVariable String sn, @PathVariable Double x,
+			@PathVariable Double y) {
 		GpsPoint gpsPoint = new GpsPoint(x, y);
 		deviceService.updateGpsPoint(sn, gpsPoint);
 		return ReturnConstants.SUCCESS;
@@ -134,7 +135,8 @@ public class DeviceApi {
 
 	@RequestMapping(value = "/imsi/report/{sn}/{imsiNo}", method = RequestMethod.GET)
 	@ResponseBody
-	public String imsiReport(@PathVariable String sn, @PathVariable String imsiNo) {
+	public String imsiReport(@PathVariable String sn,
+			@PathVariable String imsiNo) {
 		deviceService.updateImsiNo(sn, imsiNo);
 		return ReturnConstants.SUCCESS;
 	}
@@ -148,7 +150,8 @@ public class DeviceApi {
 	@RequestMapping(value = "/sync/status/{merchantId}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<DeviceStatusDto> syncStatus(@PathVariable String merchantId) {
-		return deviceService.findDeviceStatusByMerchantId(new ObjectId(merchantId));
+		return deviceService.findDeviceStatusByMerchantId(new ObjectId(
+				merchantId));
 	}
 
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
@@ -159,13 +162,18 @@ public class DeviceApi {
 	}
 
 	@RequestMapping(value = "/export/{year}/{month}/{day}/{fileName}")
-	public void download(@PathVariable String year, @PathVariable String month, @PathVariable String day, @PathVariable String fileName,
-			HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void download(@PathVariable String year, @PathVariable String month,
+			@PathVariable String day, @PathVariable String fileName,
+			HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
-		String downLoadPath = deviceService.getExportDir() + DeviceService.EXPORT_FOLDER_NAME + "/" + year + "/" + month + "/" + day + "/" + fileName;
+		String downLoadPath = deviceService.getExportDir()
+				+ DeviceService.EXPORT_FOLDER_NAME + "/" + year + "/" + month
+				+ "/" + day + "/" + fileName;
 		long fileLength = new File(downLoadPath).length();
-		response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+		response.setHeader("Content-disposition", "attachment; filename="
+				+ fileName);
 		response.setHeader("Content-Length", String.valueOf(fileLength));
 		bis = new BufferedInputStream(new FileInputStream(downLoadPath));
 		bos = new BufferedOutputStream(response.getOutputStream());

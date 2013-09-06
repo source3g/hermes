@@ -1,5 +1,6 @@
 package com.source3g.hermes.customer.scheduler;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -36,14 +37,18 @@ public class BirthdayScheduler {
 				}
 				Calendar calendar = Calendar.getInstance();
 				calendar.add(Calendar.DAY_OF_MONTH, merchant.getSetting().getBirthdayRemindTemplate().getAdvancedTime());
-				int month = calendar.get(Calendar.MONTH) + 1;
-				String monthStr = "";
-				if (month < 10) {
-					monthStr = "0" + month;
-				} else {
-					monthStr = String.valueOf(month);
-				}
-				String birthday = monthStr + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+				
+				SimpleDateFormat sdf=new SimpleDateFormat("MM-dd");
+				
+//				int month = calendar.get(Calendar.MONTH) + 1;
+//				String monthStr = "";
+//				if (month < 10) {
+//					monthStr = "0" + month;
+//				} else {
+//					monthStr = String.valueOf(month);
+//				}
+				
+				String birthday = sdf.format(calendar.getTime());//monthStr + "-" + calendar.get(Calendar.DAY_OF_MONTH);
 				logger.debug(merchant.getName() + "生成生日为" + birthday + "的提醒");
 				List<Customer> customersTodayBirthday = customerService.findCustomersByBirthday(merchant.getId(), birthday);
 				Remind remind = new Remind();

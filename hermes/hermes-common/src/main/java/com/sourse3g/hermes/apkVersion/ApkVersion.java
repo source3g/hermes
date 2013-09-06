@@ -76,5 +76,5 @@ public class ApkVersion extends AbstractEntity {
 	public void setCode(int code) {
 		this.code = code;
 	}
-
+	
 }

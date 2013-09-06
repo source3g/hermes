@@ -74,9 +74,9 @@ public class MerchantApi {
 
 	@RequestMapping(value = "/balance/sn/{sn}")
 	@ResponseBody
-	public String getBalanceBySn(@PathVariable String sn) throws Exception {
+	public Integer getBalanceBySn(@PathVariable String sn) throws Exception {
 		Merchant merchant = commonBaseService.findMerchantByDeviceSn(sn);
-		return String.valueOf(merchant.getMessageBalance().getSurplusMsgCount());
+		return merchant.getMessageBalance().getSurplusMsgCount();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
