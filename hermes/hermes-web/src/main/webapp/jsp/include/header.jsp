@@ -7,3 +7,6 @@
 <link
 	href="${pageContext.request.contextPath}/css/bootstrap/bootstrap-responsive.css"
 	rel="stylesheet" />
+<link
+	href="${pageContext.request.contextPath}/css/default.css"
+	rel="stylesheet" />

@@ -41,6 +41,7 @@
 				/admin/** = anon
 				/adminLogin/** = anon
 				/jsp/admin/login.jsp = anon
+				/jsp/testF.jsp=anon
 				/device/** = anon
 				/api/**=anon
 				/** = authc

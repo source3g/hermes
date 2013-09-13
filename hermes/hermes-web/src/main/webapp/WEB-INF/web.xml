@@ -28,7 +28,7 @@
 		<filter-name>authorFilter</filter-name>
 		<filter-class>com.source3g.hermes.admin.author.AuthorFilter</filter-class>
 	</filter>
-	
+
 	<filter-mapping>
 		<filter-name>authorFilter</filter-name>
 		<url-pattern>/admin/*</url-pattern>
@@ -73,6 +73,16 @@
 		<servlet-name>springMVC</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	<!-- SiteMesh Web-Page Layout filter -->
+	<filter>
+		<filter-name>sitemeshFilter</filter-name>
+		<filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>sitemeshFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 
 	<!-- 浏览器不支持put,delete等method,由该filter将/blog?_method=delete转换为标准的http delete方法 -->
 	<!-- <filter> <filter-name>HiddenHttpMethodFilter</filter-name> <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class> 

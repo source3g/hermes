@@ -89,7 +89,8 @@ public class MerchantSecurityController {
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String toMerchant(HttpServletRequest request) throws Exception {
 		// initSession(request);
-		return "merchant/index";
+		//${pageContext.request.contextPath}/merchant/main/
+		return "redirect:/merchant/main/";
 	}
 
 	@RequestMapping(value = "/api/customer/chart/line", method = RequestMethod.GET)

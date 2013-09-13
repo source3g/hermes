@@ -1,11 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="sitemesh"
+	uri="http://www.opensymphony.com/sitemesh/decorator"%>
 <%@include file="../include/import.jsp"%>
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>旺财宝精准营销管理系统-首页</title>
+<title>旺财宝精准营销管理系统-<sitemesh:title /></title>
 <%@include file="../include/header.jsp"%>
 <%@include file="../include/footer.jsp"%>
 <style type="text/css">
@@ -13,18 +17,16 @@ body {
 	padding-bottom: 40px;
 }
 </style>
-
+<sitemesh:head />
 </head>
 <body>
-
+	<%@include file="top.jsp"%>
 	<div class="container-fluid">
 		<div class="row-fluid">
 			<div class="span2">
-				
+				<%@include file="left.jsp"%>
 			</div>
-
 			<!-- span2 -->
-
 			<noscript>
 				<div class="alert alert-block span10">
 					<h4 class="alert-heading">Warning!</h4>
@@ -35,7 +37,7 @@ body {
 				</div>
 			</noscript>
 
-			<div class="span10" id="pageContentFrame"></div>
+			<div class="span10" id="pageContentFrame"><sitemesh:body></sitemesh:body></div>
 		</div>
 		<div id="remindTipAlert" class="alert alert-error"
 			style="width: 200px; height: 20px; position: fixed; bottom: 5px; right: 5px; display: none;">
@@ -56,10 +58,10 @@ body {
 	$(document)
 			.ready(
 					function() {
-						loadPage("${pageContext.request.contextPath}/merchant/main/");
+						//loadPage("${pageContext.request.contextPath}/merchant/main/");
 
-						$("#collapseOne").collapse("show");
-						$("#customerList").addClass("active");
+						//$("#collapseOne").collapse("show");
+						//$("#customerList").addClass("active");
 						initRemind();
 						$("#remindTipContent")
 								.click(
@@ -68,12 +70,13 @@ body {
 											return false;
 										});
 
-						$("#customerList")
+						/*$("#customerList")
 								.click(
 										function() {
 											loadPage("${pageContext.request.contextPath}/merchant/customer/list/");
 											return false;
 										});
+						*/
 						$("#customerAdd")
 								.click(
 										function() {
