@@ -8,7 +8,7 @@
 <title>版本列表</title>
 </head>
 <body>
-	<form id="queryForm" method="get">
+	<form id="queryForm" method="get" action="${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/">
 		<input id="pageNo" name="pageNo" type="hidden">
 
 		<div class="well">
@@ -52,11 +52,7 @@
 	</div>
 	<script type="text/javascript">
     $(document).ready(function(){
-     	$('#queryForm').submit(function(){
-    		goToPage(1);
-    		return false;
-    	});
-    	
+    	activeMenu("versionList");
     	initPage(${page.currentPage},${page.totalPageCount}); 
     	
     	$('#queryForm').validate({
@@ -86,12 +82,7 @@
 }); 
    	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
-		var options={
-				url:"${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/",
-				success:showContentInfo,
-				error:showError
-		};
-		$('#queryForm').ajaxSubmit(options);
+		$('#queryForm').submit();
 	} 
     function add(){
     	var sn=$("#sn").val();
@@ -107,7 +98,7 @@
 		}
 	}
 	function showInfo(data){
-		 $.get("${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/",showContentInfo);
+		loadPage("${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/");
 	}
 	</script>
 </body>

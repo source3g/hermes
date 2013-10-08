@@ -73,6 +73,7 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("merchantRemindSetting");
 			var i = 1;
 			$("#messageContent").keyup(cal);
 			$("#messageContent").change(cal);
@@ -125,13 +126,12 @@
 					return;
 				}
 				var id = $("#id").val();
-				$
-						.ajax({
+				$.ajax({
 							url : "${pageContext.request.contextPath}/merchant/account/remindTemplate/"
 									+ id + "/delete/",
 							type : "get",
 							success : function(data) {
-								showContentInfo(data);
+								refresh();
 							}
 						});
 			}
@@ -149,28 +149,15 @@
 		}
 
 		function add() {
-			//if (!$("#remindSettingForm").valid()) {
-			//	return;
-			//}
-			$("#remindSettingForm")
-					.ajaxSubmit(
-							{
-								url : "${pageContext.request.contextPath}/merchant/account/remindTemplate/add/",
-								success : showContentInfo,
-								error : showError
-							});
+			$("#remindSettingForm").attr("action","${pageContext.request.contextPath}/merchant/account/remindTemplate/add/");
+			$("#remindSettingForm").submit();
 		}
 		function save() {
 			if (!$("#remindSettingForm").valid()) {
 				return;
 			}
-			$("#remindSettingForm")
-					.ajaxSubmit(
-							{
-								url : "${pageContext.request.contextPath}/merchant/account/remindTemplate/save/",
-								success : showContentInfo,
-								error : showError
-							});
+			$("#remindSettingForm").attr("action","${pageContext.request.contextPath}/merchant/account/remindTemplate/save/");
+			$("#remindSettingForm").submit();
 		}
 	</script>
 </body>

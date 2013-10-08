@@ -17,6 +17,7 @@ public class MyWebBindingInitializer implements WebBindingInitializer {
 		binder.setValidator(validator);
 		binder.registerCustomEditor(Date.class, new DatePropertyEditor());
 		binder.registerCustomEditor(ObjectId.class, new ObjectIdPropertyEditor());
+	//	binder.registerCustomEditor(MerchantMessageType.class, new MerchantMessageTypePropertyEditor());
 	}
 
 	public Validator getValidator() {

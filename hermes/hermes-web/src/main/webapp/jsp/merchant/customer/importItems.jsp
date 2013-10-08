@@ -61,11 +61,12 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			activeMenu("customerList");
 			initPage(${page.currentPage},${page.totalPageCount});
 		});
 		
 		function goToPage(pageNo){
-			$.get("${pageContext.request.contextPath}/merchant/customer/importLog/items/${logId}/?pageNo="+pageNo,showContentInfo);
+			loadPage("${pageContext.request.contextPath}/merchant/customer/importLog/items/${logId}/?pageNo="+pageNo);
 		}
 	
 	</script>

@@ -72,6 +72,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("electricMenu");
 				var validateOptions={
 						rules : {
 							 title : {
@@ -177,7 +178,7 @@
 					var url="${pageContext.request.contextPath}/merchant/account/electricMenu/updateItemNoPic/"+ $("#menuSel").val()+"/"+$("#id").val()+"/";
 					$.post(url, post_params);
 					if(swfu.getStats().files_queued==0){
-						$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+						loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu");
 						
 					}
 				} else {
@@ -207,7 +208,7 @@
 				upload_progress_handler : uploadProgress,
 				upload_error_handler : uploadError,
 				upload_success_handler : function (file, server_data){
-					$.get("${pageContext.request.contextPath}/merchant/account/electricMenu",showContentInfo);
+					window.location.href="${pageContext.request.contextPath}/merchant/account/electricMenu";
 				},
 				upload_complete_handler : uploadComplete,
 

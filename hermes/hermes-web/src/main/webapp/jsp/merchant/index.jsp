@@ -58,8 +58,9 @@ body {
 					function() {
 						loadPage("${pageContext.request.contextPath}/merchant/main/");
 
-						$("#collapseOne").collapse("show");
-						$("#customerList").addClass("active");
+						//$("#collapseOne").collapse("show");
+						//$("#customerList").addClass("active");
+						activeMenu("customerList");
 						initRemind();
 						$("#remindTipContent")
 								.click(
@@ -205,10 +206,7 @@ body {
 					});
 
 	function toPasswordChange() {
-		$
-				.get(
-						"${pageContext.request.contextPath}/merchant/account/toPasswordChange/",
-						showContentInfo);
+		loadPage("${pageContext.request.contextPath}/merchant/account/toPasswordChange/");
 	}
 	function aabb() {
 		loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");

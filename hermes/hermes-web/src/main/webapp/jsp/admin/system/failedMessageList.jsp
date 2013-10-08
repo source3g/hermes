@@ -8,7 +8,7 @@
 <title>短信发送失败记录</title>
 </head>
 <body>
-<form id="queryForm" class="well form-inline " method="get">
+<form id="queryForm" class="well form-inline " method="get" action="${pageContext.request.contextPath}/admin/message/failed/list/">
 			<label class="control-label" for="name">日期：</label>
 			<input type="text" class="input-medium" name="startTime"placeholder="起始日期..." onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="${startTime}"/> 
 			<input type="text" class="input-medium" name="endTime"placeholder="结束日期..." onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="${endTime}"/>
@@ -68,25 +68,14 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
+		activeMenu("failedMessageList");
 		initPage(${page.currentPage},${page.totalPageCount});
-		$('#queryForm').submit(function(){
-    		goToPage(1);
-    		return false;
-    	});
-});
+	});
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
-		var options={
-			    url:"${pageContext.request.contextPath}/admin/message/failed/list",
-				success:showContentInfo,
-				error:showError
-		};
-		$('#queryForm').ajaxSubmit(options);
+		$('#queryForm').submit();
 	}
-	function showError() {
-		$("#resultMessage").html("操作失败，请重试");
-		$("#errorModal").modal();
-	}
+	
 	function failedMessageSendAgain(id){
 		 $('#'+id).button('loading')
 		$.get("${pageContext.request.contextPath}/admin/message/failed/resend/"+id+"/",showInfo);
@@ -94,7 +83,7 @@
 		  if(data!=null){
 			 alert(data);
 		 } 
-		  $.get("${pageContext.request.contextPath}/admin/message/failed/list",showContentInfo);
+		  loadPage("${pageContext.request.contextPath}/admin/message/failed/list");
 	 }
 	
 	}
@@ -115,7 +104,7 @@
 			  if(data!=null){
 				 alert(data);
 			 } 
-			  $.get("${pageContext.request.contextPath}/admin/message/failed/list",showContentInfo);
+			  loadPage("${pageContext.request.contextPath}/admin/message/failed/list");
 		 }
 	}
 	</script>

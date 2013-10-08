@@ -10,7 +10,8 @@
 </head>
 <body>
 
-		<div id="chartContainer"></div>
+	<div id="chartContainer" style="width:900px;height:100%;"></div>
+	
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/highcharts.js">
 		

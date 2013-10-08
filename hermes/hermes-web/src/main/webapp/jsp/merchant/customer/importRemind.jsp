@@ -24,6 +24,7 @@
 	<script type="text/javascript">
 		var swfu;
 		$(document).ready(function() {
+			activeMenu("customerList");
 			swfu = new SWFUpload({
 				upload_url : "${pageContext.request.contextPath}/merchant/customer/remind/import/",
 										// File Upload Settings
@@ -67,15 +68,6 @@
 		function startUploadFile() {
 			swfu.startUpload();
 		}
-	</script>
-	<script type="text/javascript">
-		$("#importForm").submit(function() {
-			$("#loader").css("display", "");
-			$(this).ajaxSubmit({
-				success : showContentInfo
-			});
-			return false;
-		});
 	</script>
 </body>
 </html>

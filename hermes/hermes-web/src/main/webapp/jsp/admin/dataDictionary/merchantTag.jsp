@@ -31,6 +31,7 @@
 	</table>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("merchantTagDictionary");
 			$.get("${pageContext.request.contextPath}/admin/dictionary/tag/list/", callback);
 			function callback(data) {
 				for ( var i = 0; i < data.length; i++) {
@@ -116,7 +117,7 @@
 			strJson += "}";
 
 			var dataJson = eval('(' + strJson + ')');
-			$.post("${pageContext.request.contextPath}/admin/dictionary/tag/add/", dataJson, showContentInfo);
+			$.post("${pageContext.request.contextPath}/admin/dictionary/tag/add/", dataJson, refresh);
 		}
 		function addChild(el) {
 			var parentId = $(el).prevAll("input[name='id']").val();

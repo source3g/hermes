@@ -1,8 +1,12 @@
 package com.source3g.hermes.message.api;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,7 +163,8 @@ public class MessageApi {
 
 	@RequestMapping(value = "/messageSendLog/{merchantId}/list", method = RequestMethod.GET)
 	@ResponseBody
-	public Page listMessageSendLog(@PathVariable String merchantId, String pageNo, Date startTime, Date endTime, String phone, String customerGroupName) {
+	public Page listMessageSendLog(@PathVariable String merchantId, String pageNo, Date startTime, Date endTime, String phone,
+			String customerGroupName) {
 		int pageNoInt = Integer.valueOf(pageNo);
 		return messageService.list(pageNoInt, new ObjectId(merchantId), startTime, endTime, phone, customerGroupName);
 	}
@@ -199,7 +204,6 @@ public class MessageApi {
 		messageService.ignoreSendMessages(title, merchant.getId());
 		return ReturnConstants.SUCCESS;
 	}
-	
 
 	// TODO 方法名要改
 	@RequestMapping(value = "/ignoreSendMessages/{title}/{merchantId}", method = RequestMethod.GET)
@@ -219,16 +223,24 @@ public class MessageApi {
 	@RequestMapping(value = "/failed/resend/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public Boolean failedMessageSendAgain(@PathVariable String id) {
-		return	messageService.failedMessageResend(id);
+		return messageService.failedMessageResend(id);
 	}
 
 	@RequestMapping(value = "/failed/resendAll/{startTime}/{endTime}", method = RequestMethod.GET)
 	@ResponseBody
-	public Boolean allFailedMessagesSendAgain( @PathVariable Date startTime,@PathVariable Date endTime, String status) {
-		return	messageService.allFailedMessagesResend(startTime,endTime,status);
+	public Boolean allFailedMessagesSendAgain(@PathVariable Date startTime, @PathVariable Date endTime, String status) {
+		return messageService.allFailedMessagesResend(startTime, endTime, status);
 	}
 
-
+	@RequestMapping(value = "/cal")
+	public void cal(HttpServletResponse resp) throws IOException {
+		// db.shortMessage.find({merchantId:ObjectId("5214becf0cf237d06624b11e"),content:/.*花好月圆夜.*/})
+		resp.setCharacterEncoding("UTF-8");
+		PrintWriter p=resp.getWriter();
+		p.write(messageService.cal());
+		p.flush();
+		p.close();
+	}
 
 	@RequestMapping(value = "/reportReceiverTest", method = RequestMethod.GET)
 	@ResponseBody
@@ -237,7 +249,7 @@ public class MessageApi {
 		cbipReport.setClientSeq(1305021229440002L);
 		cbipReport.setStatus(0);
 		cbipReport.setErrorCode("0");
-		ReportReceiver reportReceiver=new ReportReceiver();
+		ReportReceiver reportReceiver = new ReportReceiver();
 		reportReceiver.receive(cbipReport);
 		return ReturnConstants.SUCCESS;
 	}

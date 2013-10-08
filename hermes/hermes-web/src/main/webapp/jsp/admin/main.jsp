@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-  主页
+  旺财宝管理主页
 </body>
 </html>

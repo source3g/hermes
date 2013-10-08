@@ -61,7 +61,8 @@ function uploadProgress(file, bytesLoaded) {
 
 function uploadSuccess(file, serverData) {
 	try {
-		showContentInfo(serverData);
+		//showContentInfo(serverData);
+		alert("成功 ");
 	} catch (ex) {
 		this.debug(ex);
 	}

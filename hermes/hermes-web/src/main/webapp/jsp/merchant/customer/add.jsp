@@ -133,6 +133,7 @@
 		var remindIndex = $(".remindItem").length; //初始化为1,第0个下边的方法直接添加，从第1个开始
 		var remindOptions=null;
 		$(document).ready(function() {
+			activeMenu("customerList");
 			if(${not empty error}){
 				alert("${error}");
 			}
@@ -237,19 +238,11 @@
 					return false;
 				}
 				$('#addCustomer').button('loading');
-				var options={
-						url : "${pageContext.request.contextPath}/merchant/customer/add/",
-						type : "post",
-						success : showContentInfo
-				};
+				$('#addCustomerForm').attr("action","${pageContext.request.contextPath}/merchant/customer/add/");
 				if(${not empty update }==true){
-					options.url="${pageContext.request.contextPath}${action}";
-					alert(options.url);
-					//options.success=function (){
-					//	history.go(-1);};
-					//}
+					$('#addCustomerForm').attr("action","${pageContext.request.contextPath}${action}");
 				}
-				$(this).ajaxSubmit(options);
+				$(this).submit();
 				return false;
 			});
 		});	

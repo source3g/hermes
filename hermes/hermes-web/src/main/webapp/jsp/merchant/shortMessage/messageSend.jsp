@@ -8,7 +8,7 @@
 <title>短信发送</title>
 </head>
 <body>
-	<form id="messageSendForm" class="well ">
+	<form id="messageSendForm" class="well "  method="post" action="${pageContext.request.contextPath}/merchant/message/messageSend/">
 		<table class="table table-bordered">
 			<thead>
 				<tr>
@@ -114,6 +114,7 @@
 
 	<script type="text/javascript">
 	$(document).ready(function() {
+		activeMenu("messageAdd");
 			var i=1;
 		$("#content").keyup(function(){
 			var length=$("#content").val().length;
@@ -161,14 +162,8 @@
 		 if (!$('#messageSendForm').valid()) {
 				return false;
 			}
-		 var options = {
-				 url:"${pageContext.request.contextPath}/merchant/message/messageSend/",
-				 type:"post",
-				success :showContentInfo	
-		}; 
 		$('#sendBtn').button('loading')
-	 	$(this).ajaxSubmit(options);
-		return false;
+		return true;
 		}); 
 	 
 	 //短信模板

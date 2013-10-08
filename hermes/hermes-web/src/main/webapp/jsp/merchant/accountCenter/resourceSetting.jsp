@@ -54,6 +54,7 @@
 	</table>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("merchantResourceSetting");
 					$('#addMerchantResourceForm').validate({
 						rules : {
 							name : {
@@ -71,7 +72,7 @@
 			if (!confirm("确定该删除吗")) {
 				return;
 			}
-			$.get("${pageContext.request.contextPath}/merchant/account/deletemerchantResource/" + name + "/", showContentInfo);
+			loadPage("${pageContext.request.contextPath}/merchant/account/deletemerchantResource/" + name + "/");
 		}
 		$("#addMerchantResourceForm").submit(function() {
 			if (!$('#addMerchantResourceForm').valid()) {
@@ -87,7 +88,7 @@
 		});
 		
 		function showListInfo(){
-			$.get("${pageContext.request.contextPath}/merchant/account/toResourceSetting/", showContentInfo);
+			loadPage("${pageContext.request.contextPath}/merchant/account/toResourceSetting/");
 		}
  		$("#addMerchantResourceForm1").submit(function() {
 			options = {

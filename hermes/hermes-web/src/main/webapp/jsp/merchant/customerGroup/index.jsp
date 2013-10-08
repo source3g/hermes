@@ -9,7 +9,7 @@
 </head>
 <body>
 	<h3>顾客组操作</h3>
-	<form id="addCustomerGroupForm" class="form-inline">
+	<form id="addCustomerGroupForm" method="post" class="form-inline" action="${pageContext.request.contextPath}/merchant/customerGroup/add">
 		<label class="control-label" for="name">名称：</label> <input type="text"
 			class="input-xlarge" placeholder="请输入顾客组名称..." id="name" name="name">
 		<span class="help-inline"><font color="red">*</font></span>
@@ -52,15 +52,10 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("customerGroup");
 			if(${not empty error}==true){
 				alert("${error}");
 			}
-			var submitOptions = {
-				url : "${pageContext.request.contextPath}/merchant/customerGroup/add",
-				type : "post",
-				success : showContentInfo
-			}
-
 			$("#addCustomerGroupForm").validate({
 				rules : {
 					name : {
@@ -85,11 +80,10 @@
 
 			$("#addCustomerGroupForm").submit(function() {
 				if (!$("#addCustomerGroupForm").valid()) {
-					return;
+					return false;
 				}
 				$('#addCustomerGroupBtn').button('loading')
-				$(this).ajaxSubmit(submitOptions);
-				return false;
+				return true;
 			});
 		});
 
@@ -114,7 +108,7 @@
 		function choseGroup(){
 			var customerGroupId=$('#groupIdToDel').val();
 			var selector=$('#sel').val();
-			$.get("${pageContext.request.contextPath}/merchant/customerGroup/update/"+customerGroupId+"/"+selector+"/",showContentInfo);
+			loadPage("${pageContext.request.contextPath}/merchant/customerGroup/update/"+customerGroupId+"/"+selector+"/");
 			 
 			$("#myModal").modal('hide');
 		}

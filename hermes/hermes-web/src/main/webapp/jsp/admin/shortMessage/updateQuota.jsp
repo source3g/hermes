@@ -50,6 +50,7 @@
 		$(document)
 				.ready(
 						function() {
+							activeMenu("shortMsgInfo");
 							var validateoptions = {
 								rules : {
 									count : {

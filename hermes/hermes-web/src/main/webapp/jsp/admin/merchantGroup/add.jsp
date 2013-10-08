@@ -46,6 +46,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("addMerchantGroup");
 			initDialog();
 			
 			if(${not empty error}==true){

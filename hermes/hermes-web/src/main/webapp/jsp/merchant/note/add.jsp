@@ -34,14 +34,6 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#addNote").submit(function() {
-				$(this).ajaxSubmit({
-					success : showContentInfo,
-					error : showError
-				});
-				return false;
-			});
-
 		});
 	</script>
 </body>

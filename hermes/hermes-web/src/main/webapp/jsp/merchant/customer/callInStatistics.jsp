@@ -55,6 +55,7 @@
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("callInStatistics");
 			 $.ajax({
 				url : "${pageContext.request.contextPath}/merchant/customer/callInStatisticsJson/",
 				dataType : "json",

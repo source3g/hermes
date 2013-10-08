@@ -83,6 +83,9 @@
 
 
 	<script type="text/javascript">
+	$(document).ready(function(){
+		activeMenu("electricMenu");
+	});
 		function sync() {
 			$.get("${pageContext.request.contextPath}/merchant/account/electricMenu/sync", function(data) {
 				alert("同步成功，两小时后会出现在王财宝中，请耐心等候，不要频繁点击");
@@ -107,7 +110,7 @@
 		}
 		function menuDetail(title, id) {
 			var url = "${pageContext.request.contextPath}/merchant/account/electricMenu/updateItem/" + id + "/" + title + "/";
-			$.get(url, showContentInfo);
+			loadPage(url);
 			return false;
 		}
 		function menuDetailDialog(title, id) {
@@ -131,7 +134,7 @@
 
 		function menusList(data) {
 			if (data != null) {
-				$.get("${pageContext.request.contextPath}/merchant/account/electricMenu", showContentInfo);
+				loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu");
 			}
 		}
 
@@ -256,7 +259,7 @@
 			if (data != null) {
 				alert(data);
 			}
-			$.get("${pageContext.request.contextPath}/merchant/account/electricMenu", showContentInfo);
+			loadPage("${pageContext.request.contextPath}/merchant/account/electricMenu");
 		}
 
 		function addChild(el) {

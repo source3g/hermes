@@ -9,14 +9,14 @@
 		<pattern> /js/*</pattern>
 		<pattern> /img/*		</pattern>
 		<pattern>/css/*</pattern>
-		<pattern>/admin/*</pattern>
+		<pattern>/jsp/admin/</pattern>
 		<pattern>/device/*</pattern>
 		<pattern>/api/*</pattern>
 	</excludes>
 
-	<!-- <decorator name="admin" page="adminDefault.jsp">
+	<decorator name="admin" page="adminDefault.jsp">
 		<pattern>/admin/*</pattern>
-	</decorator> -->
+	</decorator>
 
 	<decorator name="default" page="default.jsp">
 		<pattern>/merchant/*</pattern>

@@ -8,7 +8,7 @@
 <title>商户个人短信预存记录</title>
 </head>
 <body>
-	<form id="queryForm"  method="get">
+	<form id="queryForm"  method="get" action="${pageContext.request.contextPath}/admin/merchant/reservedMsgLog/${merchant.id}/">
 
 		<input id="pageNo" name="pageNo" type="hidden"> 
 	</form>
@@ -42,21 +42,12 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
+		activeMenu("shortMsgInfo");
 		initPage(${page.currentPage},${page.totalPageCount});
 });
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
-		var options={
-			    url:"${pageContext.request.contextPath}/admin/merchant/reservedMsgLog/${merchant.id}/",
-				success:showContentInfo,
-				error:showError
-		};
-		$('#queryForm').ajaxSubmit(options);
-		
-	}
-	function showError() {
-		$("#resultMessage").html("操作失败，请重试");
-		$("#errorModal").modal();
+		$('#queryForm').submit();
 	}
 	</script>
 </body>

@@ -19,13 +19,16 @@
 		<div class="control-group">
 			<label class="control-label" for="addr">地址：</label>
 			<div class="controls">
-				<input type="text" readonly="readonly" class="input-xlarge" id="addr" name="addr" value="${merchant.addr}"> <span class="help-inline"></span>
+				<input type="text" readonly="readonly" class="input-xlarge" id="addr" name="addr" value="${merchant.addr}">
+				<span class="help-inline"></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="addr">短信类型：</label>
 			<div class="controls">
-				<input type="text" readonly="readonly" class="input-xlarge" id="merchantMessageType" name="merchantMessageType" value="${merchant.merchantMessageType}"> <span class="help-inline"></span>
+				<input type="text" readonly="readonly" class="input-xlarge" id="merchantMessageType" name="merchantMessageType"
+					value="${merchant.merchantMessageType}">
+				<span class="help-inline"></span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -48,24 +51,28 @@
 		<div class="control-group">
 			<label class="control-label" for="merchantGroup">集团商户：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" readonly="readonly" placeholder="请选择集团商户，如果没有则不选..." id="merchantGroupSel" readonly="readonly" value="${merchantGroup.name }">
+				<input type="text" class="input-xlarge" readonly="readonly" placeholder="请选择集团商户，如果没有则不选..." id="merchantGroupSel" readonly="readonly"
+					value="${merchantGroup.name }">
 			</div>
 		</div>
 		<hr>
 		<div class="control-group">
 			<label class="control-label" for="account">账号：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户账号..." id="account" name="account" value="${merchant.account}" readonly="readonly"> <span class="help-inline"></span>
+				<input type="text" class="input-xlarge" placeholder="请输入商户账号..." id="account" name="account" value="${merchant.account}" readonly="readonly">
+				<span class="help-inline"></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label" for="password">密码：</label>
 			<div class="controls">
-				<input type="text" class="input-xlarge" placeholder="请输入商户账号..." id="password" name="password" value="${merchant.password}" readonly="readonly"> <span class="help-inline"></span>
+				<input type="text" class="input-xlarge" placeholder="请输入商户账号..." id="password" name="password" value="${merchant.password}" readonly="readonly">
+				<span class="help-inline"></span>
 			</div>
 		</div>
 		<h2>
-			盒子SN列表<input class="btn btn-success" type="button" onclick="refreshInfo();" value="刷新" />
+			盒子SN列表
+			<input class="btn btn-success" type="button" onclick="refreshInfo();" value="刷新" />
 		</h2>
 		<table class="table table-striped table-bordered bootstrap-datatable datatable" id="deviceTable">
 			<thead>
@@ -83,7 +90,9 @@
 					<td class='deviceSnTd'>${deviceStatusDto.sn}</td>
 					<c:choose>
 						<c:when test="${not empty deviceStatusDto.lastAskTime}">
-							<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${deviceStatusDto.lastAskTime}" /></td>
+							<td>
+								<fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${deviceStatusDto.lastAskTime}" />
+							</td>
 						</c:when>
 						<c:otherwise>
 							<td>无</td>
@@ -91,7 +100,9 @@
 					</c:choose>
 					<c:choose>
 						<c:when test="${not empty deviceStatusDto.lastUpdateTime}">
-							<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${deviceStatusDto.lastUpdateTime}" /></td>
+							<td>
+								<fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${deviceStatusDto.lastUpdateTime}" />
+							</td>
 						</c:when>
 						<c:otherwise>
 							<td>无</td>
@@ -124,6 +135,7 @@
 		$(document)
 				.ready(
 						function() {
+							activeMenu("listMerchant");
 							//查出标签分类信息
 							$
 									.get(
@@ -131,10 +143,8 @@
 											drawmerchantTagNodeList);
 						});
 		function refreshInfo() {
-			$
-					.get(
-							"${pageContext.request.contextPath}/admin/merchant/detail/${merchant.id}/",
-							showContentInfo);
+			loadPage("${pageContext.request.contextPath}/admin/merchant/detail/${merchant.id}/");
+							
 		}
 		function drawmerchantTagNodeList(data) {
 			for ( var i = 0; i < data.length; i++) {

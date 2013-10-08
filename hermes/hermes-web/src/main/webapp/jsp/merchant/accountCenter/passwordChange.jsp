@@ -47,6 +47,7 @@
 	</form>
 	<script type="text/javascript">
 	$(document).ready(function() {
+		activeMenu("passwordChange");
 		if(${not empty error}){
 			alert('${error}');
 		} 

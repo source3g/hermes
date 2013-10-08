@@ -66,6 +66,7 @@
 
 	<script type="text/javascript">
 	  $(document).ready(function() {
+		  activeMenu("merchantRemind");
 			if(${not empty error}){
 				alert("${error}");
 			}
@@ -78,13 +79,13 @@
 		  $("#customerModal"+index).modal();
 	  }
 		function sendMessages(title){
-			$.get("${pageContext.request.contextPath}/merchant/account/sendMessages/"+title+"/",showContentInfo);
+			loadPage("${pageContext.request.contextPath}/merchant/account/sendMessages/"+title+"/");
 		}
 		function ignoreSendMessages(title){
 			if(!confirm("忽略以后将不能再发送此条短信,确定该忽略吗?")){
 				return;
 			}
-			$.get("${pageContext.request.contextPath}/merchant/account/ignoreSendMessages/"+title+"/",showContentInfo);
+			loadPage("${pageContext.request.contextPath}/merchant/account/ignoreSendMessages/"+title+"/");
 		}
 	</script>
 </body>

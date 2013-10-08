@@ -10,3 +10,7 @@
 <link
 	href="${pageContext.request.contextPath}/css/default.css"
 	rel="stylesheet" />
+	
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
+<![endif]-->

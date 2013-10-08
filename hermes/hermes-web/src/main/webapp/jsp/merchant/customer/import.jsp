@@ -31,6 +31,7 @@
 	<script type="text/javascript">
 		var swfu;
 		$(document).ready(function() {
+			activeMenu("customerList");
 			swfu = new SWFUpload({
 				upload_url : "${pageContext.request.contextPath}/merchant/customer/import/",
 				post_params:{"jsessionid":"<%=session.getId()%>"},
@@ -80,7 +81,7 @@
 		$("#importForm").submit(function() {
 			$("#loader").css("display", "");
 			$(this).ajaxSubmit({
-				success : showContentInfo
+				success : function(data){ alert("上传成功!");}
 			});
 			return false;
 		});

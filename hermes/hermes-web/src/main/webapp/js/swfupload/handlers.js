@@ -104,7 +104,7 @@ function uploadSuccess(file, serverData) {
 	try {
 		var progress = new FileProgress(file, this.customSettings.upload_target);
 		addFileInfo(file.id, "文件上传完成");
-		addFileId(file.id, serverData);
+		//addFileId(file.id, serverData);
 		// alert(serverData);
 	} catch (ex) {
 		this.debug(ex);
@@ -134,7 +134,8 @@ function addReadyFileInfo(fileid, fileName, message, status) {
 	if (status == null) {
 		status = "";
 	}
-	$("#infoTable").append("<tr id='" + fileid + "'><td>" + fileName + "</td><td>" + status + "</td><td>" + message + "</td><td></td><td></td></tr>");
+	//alert("fileName="+fileName+"message"+message+"status"+status);
+	$("#infoTable").append("<tr id='" + fileid + "'><td>" + fileName + "</td><td>" + status + "</td><td>" +/* message +*/ "</td><td></td><td></td></tr>");
 }
 
 function cancelUpload() {

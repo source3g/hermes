@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.source3g.hermes</groupId>
 	<artifactId>hermes-parent</artifactId>
@@ -18,8 +19,8 @@
 		<module>hermes-sync</module>
 		<module>hermes-message</module>
 		<module>hermes-dictionary</module>
-    <module>hermes-security</module>
-  </modules>
+		<module>hermes-security</module>
+	</modules>
 	<build>
 		<finalName>${project.name}</finalName>
 		<testResources>
@@ -84,15 +85,22 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			
-			 <plugin>
-					<groupId>org.apache.tomcat.maven</groupId>
-					<artifactId>tomcat7-maven-plugin</artifactId>
-					<version>2.1</version>
-					<configuration>
-						<uriEncoding>UTF-8</uriEncoding>
-					</configuration>
-				</plugin>
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<uriEncoding>UTF-8</uriEncoding>
+					<mode>both</mode>
+					<contextFile>${project.build.path}/context.xml</contextFile>
+					<!-- <webapps> <webapp> <groupId>com.source3g.hermes</groupId> <artifactId>hermes-web</artifactId> 
+						<version>${project.version}</version> <type>war</type> <asWebapp>true</asWebapp> 
+						</webapp> <webapp> <groupId>com.source3g.hermes</groupId> <artifactId>hermes-api</artifactId> 
+						<version>${project.version}</version> <type>war</type> <asWebapp>true</asWebapp> 
+						</webapp> </webapps> -->
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -366,13 +374,13 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-		 <dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.1</version>
 			<type>jar</type>
 			<scope>compile</scope>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
@@ -394,7 +402,7 @@
 			<version>1.7.1</version>
 			<type>jar</type>
 			<scope>compile</scope>
-		</dependency> 
+		</dependency>
 
 
 		<dependency>

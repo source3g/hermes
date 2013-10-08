@@ -8,7 +8,7 @@
 <title>版本列表</title>
 </head>
 <body>
-	<form id="queryForm" method="get">
+	<form id="queryForm" method="get" action="${pageContext.request.contextPath}/admin/version/versionList/">
 		<input id="pageNo" name="pageNo" type="hidden">
 	</form>
 	<div class="well">
@@ -68,20 +68,12 @@
 	</div>
 	<script type="text/javascript">
     $(document).ready(function(){
-    	$('#queryForm').submit(function(){
-    		goToPage(1);
-    		return false;
-    	});
+    	activeMenu("versionList");
     	initPage(${page.currentPage},${page.totalPageCount});
 })
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
-		var options={
-				url:"${pageContext.request.contextPath}/admin/version/versionList/",
-				success:showContentInfo,
-				error:showError
-		};
-		$('#queryForm').ajaxSubmit(options);
+		$('#queryForm').submit();
 	}
     
     function selOnline(el){
@@ -89,11 +81,10 @@
     	if(confirm(message)){
     		$.post("${pageContext.request.contextPath}/admin/version/changeOnline/",{"version":$(el).val()},function (data,status){
     			alert("更换成功");
-    			showContentInfo(data);
+    			$('#queryForm').submit();
     		});
     		return true;
     	}
-    $.get("${pageContext.request.contextPath}/admin/version/versionList/",showContentInfo);
     	return false;
     }
     function selbeta(el){
@@ -102,16 +93,15 @@
     	if(confirm(message)){
     	  	$.post("${pageContext.request.contextPath}/admin/version/changeBetaVersion/",{"version":version},function (data,status){
         		alert("操作成功");
-        		showContentInfo(data);
+        		$('#queryForm').submit();
         	});
         	return true;
         	}
-    	$.get("${pageContext.request.contextPath}/admin/version/versionList/",showContentInfo);
     	  return false;
     }
     
     function toGrayUpdateDevicesList(){
-    	$.get("${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/",showContentInfo);
+    	loadPage("${pageContext.request.contextPath}/admin/version/toGrayUpdateDevicesList/");
     }
 	</script>
 </body>

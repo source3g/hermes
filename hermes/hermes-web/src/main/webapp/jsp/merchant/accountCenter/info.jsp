@@ -59,7 +59,12 @@
 				</tr>
 			</c:forEach>
 		</table>
-
 	</form>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			activeMenu("info");
+		});
+	
+	</script>
 </body>
 </html>

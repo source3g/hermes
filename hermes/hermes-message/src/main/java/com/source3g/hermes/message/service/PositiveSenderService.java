@@ -24,13 +24,14 @@ public class PositiveSenderService implements ApplicationContextAware {
 	private static ApplicationContext applicationContext;
 	@Value(value = "${message.channel}")
 	private String channel;
-	
+	@Value(value="${message.send.thread.count}")
+	private String threadCount;
 	@PostConstruct
 	public void init() {
 		Object service = applicationContext.getBean(channel);
 		if (service instanceof AbstractPositiveMessageService) {
 			abstractPositiveMessageService = (AbstractPositiveMessageService) service;
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < Integer.parseInt(getThreadCount()); i++) {
 				Thread thread = new Thread(new MessagePickThread());
 				thread.start();
 			}
@@ -59,5 +60,13 @@ public class PositiveSenderService implements ApplicationContextAware {
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {
 		applicationContext = context;
+	}
+
+	public String getThreadCount() {
+		return threadCount;
+	}
+
+	public void setThreadCount(String threadCount) {
+		this.threadCount = threadCount;
 	}
 }

@@ -44,7 +44,7 @@
 
 	<script type="text/javascript">
 	$(document).ready(function(){
-		
+		activeMenu("addDevice");
 	if(${not empty error}==true){
 			
 			alert("${error}");

@@ -82,6 +82,6 @@ public class FrontController {
 		if (!currentUser.isAuthenticated()) {
 			System.out.println("未授权");
 		}
-		return "admin/index";
+		return "admin/main";
 	}
 }

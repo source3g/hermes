@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Jms失败记录</title>
 </head>
-<form  id="findByTime" class="well form-inline " method="get">
+<form  id="findByTime" class="well form-inline " method="get" action="${pageContext.request.contextPath}/admin/system/toLogList/">
 <span>开始查询日期：</span><input type="text" class="input-medium" name="startTime"
 					value="${startTime}" placeholder="请输入开始日期..."
 					onclick="WdatePicker({dateFmt:'yyyy-MM-dd'});" />
@@ -52,29 +52,14 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
+	activeMenu("logList");
 	initPage(${page.currentPage},${page.totalPageCount});
-	
-	$("#findByTime").submit(function (){
-		var options={
-				url:"${pageContext.request.contextPath}/admin/system/toLogList/",
-				success:showContentInfo,
-				error:showError
-		};
-		$('#findByTime').ajaxSubmit(options);
-		return false;
-	});
 	});
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
-		var options={
-			    url:"${pageContext.request.contextPath}/admin/system/toLogList/",
-				success:showContentInfo,
-				error:showError
-		};
-		$('#queryForm').ajaxSubmit(options);
+		$('#queryForm').submit();
 		return false;
 	}
-	
 	
 	</script>
 </body>

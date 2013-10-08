@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.source3g.hermes.constants.ReturnConstants;
 import com.source3g.hermes.dto.dictionary.MerchantTagDto;
 import com.source3g.hermes.entity.dictionary.MerchantTagNode;
 import com.source3g.hermes.utils.ConfigParams;
@@ -32,12 +33,13 @@ public class MerchantTagNodeController {
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView add(MerchantTagDto tagDto) {
+	@ResponseBody
+	public String add(MerchantTagDto tagDto) {
 		String uri = ConfigParams.getBaseUrl() + "/dictionary/merchant/tags";
 		HttpEntity<MerchantTagDto> entity = new HttpEntity<MerchantTagDto>(tagDto);
 		String result = restTemplate.postForObject(uri, entity, String.class);
 		System.out.println(result);
-		return new ModelAndView("redirect:/admin/dictionary/tag/toTagSetting/");
+		return ReturnConstants.SUCCESS;
 	}
 
 	@RequestMapping(value = "/toTagSetting", method = RequestMethod.GET)

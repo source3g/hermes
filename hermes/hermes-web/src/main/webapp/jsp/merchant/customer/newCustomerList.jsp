@@ -9,7 +9,7 @@
 <title>未编辑顾客列表</title>
 </head>
 <body>
-	<form id="queryForm" class="well form-inline " method="get">
+	<form id="queryForm" class="well form-inline " method="get" action="${pageContext.request.contextPath}/merchant/customer/newCustomerList/">
 		<label class="control-label" for="name">电话：</label> <input type="text"
 			name="phone" value="${customer.phone}" placeholder="请输入电话号码..."> <input
 			id="pageNo" name="pageNo" type="hidden"> <input type="submit"
@@ -52,10 +52,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function(){
-			$('#queryForm').submit(function(){
-	    		goToPage(1);
-	    		return false;
-	    	});
+			activeMenu("customerList");
 			initPage(${page.currentPage},${page.totalPageCount});
 		});
 		function editById(id) {
@@ -64,11 +61,7 @@
 		
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
-			var options={
-					url:"${pageContext.request.contextPath}/merchant/customer/newCustomerList/",
-					success:showContentInfo
-			};
-			$('#queryForm').ajaxSubmit(options);
+			$('#queryForm').submit();
 		}
 	</script>
 </body>

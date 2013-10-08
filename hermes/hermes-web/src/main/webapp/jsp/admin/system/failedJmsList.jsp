@@ -8,7 +8,7 @@
 <title>Jms失败记录</title>
 </head>
 <body>
-<form id="queryForm"  method="get">
+<form id="queryForm"  method="get" action="${pageContext.request.contextPath}/admin/system/monitor/failedJms/">
 		<input id="pageNo" name="pageNo" type="hidden"> 
 	</form>
 	<form id="FailedJmsDtos">
@@ -50,6 +50,7 @@
 	</div>
 	<script type="text/javascript">
 	$(document).ready(function(){
+		activeMenu("failedJms");
 		initPage(${page.currentPage},${page.totalPageCount});
 });
 	function groupResend(){
@@ -59,17 +60,12 @@
 			  if(data!=null){
 					 alert(data);
 				 } 
-				$.get("${pageContext.request.contextPath}/admin/system/monitor/failedJms/",showContentInfo);
+			loadPage("${pageContext.request.contextPath}/admin/system/monitor/failedJms/");
 		 }
 	}
 	function goToPage(pageNo){
 		$("#pageNo").attr("value",pageNo);
-		var options={
-			    url:"${pageContext.request.contextPath}/admin/system/monitor/failedJms/",
-				success:showContentInfo,
-				error:showError
-		};
-		$('#queryForm').ajaxSubmit(options);
+		$('#queryForm').submit();
 		
 	}
 	function sendAgain(id){
@@ -80,8 +76,7 @@
 			if(data!=null){
 				 alert(data);
 			 } 
-			$.get("${pageContext.request.contextPath}/admin/system/monitor/failedJms/",showContentInfo);
-			
+			loadPage("${pageContext.request.contextPath}/admin/system/monitor/failedJms/");
 		}
 	}
 	</script>

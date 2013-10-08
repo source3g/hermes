@@ -24,6 +24,9 @@
 		</c:forEach>
 	</table>
 	<script type="text/javascript">
+		$(document).ready(function(){
+			activeMenu("branchAndSalers");
+		});
  		function addBranch() {
 			var branch = "<tbody><tr> <td class='info'><input class=\"input-small\"  placeholder=\"请输入分公司名字...\" type=\"text\" name=\"name\"><a href=\"javascript:void();\" onclick=\"addBranchCompany(this)\">保存 </a><a href=\"javascript:void();\" onclick=\"add(this);\">增加销售</a><a href=\"javascript:void();\" onclick=\"deleteThis(this)\"> 删除</a></td></tr></tbody>"
 			$('table').append(branch);

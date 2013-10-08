@@ -40,6 +40,7 @@
 	</form>
 	<script type="text/javascript">
 	$(document).ready(function() {
+		activeMenu("shortMsgInfo");
 		var validateoptions={
 					rules: {
 						count:{

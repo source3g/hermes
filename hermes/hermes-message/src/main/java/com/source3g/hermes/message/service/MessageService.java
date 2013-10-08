@@ -1,5 +1,6 @@
 package com.source3g.hermes.message.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -676,5 +677,35 @@ public class MessageService extends BaseService {
 			failedMessageResend(shortMessage);
 		}
 		return result;
+	}
+	
+	public String cal(){
+		//db.shortMessage.find({merchantId:ObjectId("5214becf0cf237d06624b11e"),content:/.*花好月圆夜.*/})
+		List<ShortMessage> list=mongoTemplate.find(new Query(Criteria.where("merchantId").is( new ObjectId("5214becf0cf237d06624b11e"))), ShortMessage.class);
+		List<ShortMessage> onceList=new ArrayList<ShortMessage>();
+		List<ShortMessage> twiceList=new ArrayList<ShortMessage>();
+		int onceCount=0;
+		int twiceCount=0;
+		StringBuilder sb=new StringBuilder();
+		for (ShortMessage s:list){
+			if(s.getContent().length()>=70){
+				twiceCount++;
+				twiceList.add(s);
+			}else{
+				onceCount++;
+				onceList.add(s);
+			}
+		}
+		sb.append("共发了短信"+list.size()+"条，其中扣费两条的短信数量有"+twiceCount+"条。扣费一条短信的条数为"+onceCount+"条\n");
+		sb.append("明细如下：扣费两次的短信分别为\n");
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		for (ShortMessage s:twiceList){
+			sb.append("目标："+s.getPhone()+"   内容："+s.getContent()+" 发送时间："+sdf.format(s.getSendTime())+"\n");
+		}
+		sb.append("扣费一次的短信分别为\n");
+		for (ShortMessage s:onceList){
+			sb.append("目标："+s.getPhone()+"   内容："+s.getContent()+" 发送时间："+sdf.format(s.getSendTime())+"\n");
+		}
+		return sb.toString();
 	}
 }

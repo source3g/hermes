@@ -9,9 +9,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.WebBindingInitializer;
 import org.springframework.web.context.request.WebRequest;
 
-
 public class MyWebBindingInitializer implements WebBindingInitializer {
-	
+
 	private Validator validator;
 
 	@Override
@@ -20,6 +19,7 @@ public class MyWebBindingInitializer implements WebBindingInitializer {
 		binder.registerCustomEditor(Date.class, new DatePropertyEditor());
 		binder.registerCustomEditor(ObjectId.class, new ObjectIdPropertyEditor());
 		binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+		//binder.registerCustomEditor(MerchantMessageType.class, new MerchantMessageTypePropertyEditor());
 	}
 
 	public Validator getValidator() {
@@ -29,7 +29,5 @@ public class MyWebBindingInitializer implements WebBindingInitializer {
 	public void setValidator(Validator validator) {
 		this.validator = validator;
 	}
-	
-	
 
 }

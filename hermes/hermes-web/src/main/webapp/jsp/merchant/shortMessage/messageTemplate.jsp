@@ -72,6 +72,7 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("messageTemplate");
 			var i=1;
 			$("#content").keyup(function(){
 				var length=$("#content").val().length;
@@ -104,19 +105,13 @@
 			});
 		});
 		function add() {
-			$("#messageTemplateForm").ajaxSubmit({
-				url : "${pageContext.request.contextPath}/merchant/message/template/add",
-				success : showContentInfo,
-				error : showError
-			});
+			$("#messageTemplateForm").attr("action","${pageContext.request.contextPath}/merchant/message/template/add");
+			$("#messageTemplateForm").submit();
 		}
 
 		function save() {
-			$("#messageTemplateForm").ajaxSubmit({
-				url : "${pageContext.request.contextPath}/merchant/message/template/save",
-				success : showContentInfo,
-				error : showError
-			});
+			$("#messageTemplateForm").attr("action","${pageContext.request.contextPath}/merchant/message/template/save");
+			$("#messageTemplateForm").submit();
 		}
 
 		function initSel(data) {
@@ -143,7 +138,7 @@
 				type : "get",
 				success : function(data) {
 					alert("删除成功");
-					showContentInfo(data);
+					refresh();
 				}
 			});
 		}

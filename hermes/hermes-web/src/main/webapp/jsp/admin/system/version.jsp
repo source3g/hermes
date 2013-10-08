@@ -88,6 +88,7 @@
 		}
 
 		$(document).ready(function() {
+			activeMenu("versionUpdate");
 			$('#addVersionForm').validate({
 				rules : {
 					version : {

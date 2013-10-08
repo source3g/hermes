@@ -45,6 +45,7 @@
 	</form>
 	<script type="text/javascript">
 	$(document).ready(function() {
+		activeMenu("messageAutoSend");
 		var i=1;
 		$("#oldMessageCotent").keyup(function(){
 			var length=$("#oldMessageCotent").val().length;

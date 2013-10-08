@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="../../include/import.jsp"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -57,16 +56,18 @@
 			</tr>
 			<tr>
 				<td>上次心跳时间</td>
-				<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
-						value="${device.deviceStatus.lastAskTime}" /></td>
+				<td>
+					<fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${device.deviceStatus.lastAskTime}" />
+				</td>
 			</tr>
 
 			<tr>
 				<td>上次成功获取任务时间</td>
 				<c:choose>
 					<c:when test="${not empty device.deviceStatus.lastUpdateTime}">
-						<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
-								value="${device.deviceStatus.lastUpdateTime}" /></td>
+						<td>
+							<fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${device.deviceStatus.lastUpdateTime}" />
+						</td>
 					</c:when>
 					<c:otherwise>
 						<td>无</td>
@@ -98,16 +99,20 @@
 			<tr>
 				<td colspan="2">转卡记录:</td>
 			</tr>
-			<c:forEach items="${device.device.simChangeRecords }"
-				var="changeRecord" varStatus="status">
+			<c:forEach items="${device.device.simChangeRecords }" var="changeRecord" varStatus="status">
 				<tr>
-					<td><fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒"
-							value="${changeRecord.changeTime}" /></td>
-					<td>从${changeRecord.oldSim.serviceNo}
-						转到${changeRecord.newSim.serviceNo }</td>
+					<td>
+						<fmt:formatDate pattern="yyyy年MM月dd日 HH时mm分ss秒" value="${changeRecord.changeTime}" />
+					</td>
+					<td>从${changeRecord.oldSim.serviceNo} 转到${changeRecord.newSim.serviceNo }</td>
 				</tr>
 			</c:forEach>
 		</table>
 	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			activeMenu("listDevice");
+		});
+	</script>
 </body>
 </html>

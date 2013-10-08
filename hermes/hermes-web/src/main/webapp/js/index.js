@@ -23,9 +23,23 @@ function loadContent(hash) {
 	}
 }
 
+
+function activeMenu(content){
+	$("#"+content).parents(".collapse").collapse("show");
+	$("#"+content).addClass("active");
+}
+
 function loadPage(url) {
 	//alert(url);
-	$.history.load(url);
+	//$.history.load(url);
+	//alert(url);
+	//alert(url);
+	window.location=url;
+}
+
+function refresh(){
+	window.location.replace(window.location.href);
+	//alert(ctx);
 }
 
 $(document).ready(function() {

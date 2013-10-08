@@ -8,7 +8,7 @@
 <title>发送记录</title>
 </head>
 <body>
-	<form id="queryForm" class="well form-inline " method="get">
+	<form id="queryForm" class="well form-inline " method="get" action="${pageContext.request.contextPath}/merchant/message/toMessageList/">
 		<label class="control-label" for="name">电话号码：</label> 
 			<input type="text"name="phone" value="${phone}" placeholder="请输电话号码...">
 			<label class="control-label" for="name">日期：</label>
@@ -66,29 +66,15 @@
 	</div>
 	<script type="text/javascript">
 	 $(document).ready(function(){
+		 activeMenu("messageList");
 		 initPage(${page.currentPage},${page.totalPageCount});
-			$('#queryForm').submit(function(){
-				goToPage(1);
-				return false;
-			});
-			
-			initCustomerGroupList()
+		initCustomerGroupList()
 	});
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
-			var options={
-					url:"${pageContext.request.contextPath}/merchant/message/toMessageList/",
-					success:showContentInfo,
-					error:showError
-			};
-			$('#queryForm').ajaxSubmit(options);
+			$('#queryForm').submit();
 			
 		}
-		function showError() {
-			$("#resultMessage").html("操作失败，请重试");
-			$("#errorModal").modal();
-		}
-		
 		function initCustomerGroupList() {
 			$.ajax({
 				url : "${pageContext.request.contextPath}/merchant/customerGroup/listAllJson",

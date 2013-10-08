@@ -8,7 +8,7 @@
 <title>导入日志列表</title>
 </head>
 <body>
-	<form id="queryForm" class="well form-inline " method="get">
+	<form id="queryForm" class="well form-inline " method="get" action="${pageContext.request.contextPath}/merchant/customer/importLog/">
 		<label class="control-label" for="name">导入时间：</label> <input
 			type="text" class="input-medium" name="startTime"
 			placeholder="起始日期..." onclick="WdatePicker();"
@@ -61,33 +61,17 @@
 
 	<script type="text/javascript">
 $(document).ready(function(){
-	$('#queryForm').submit(function(){
-		goToPage(1);
-		return false;
-	});
+	activeMenu("customerList");
 	initPage(${page.currentPage},${page.totalPageCount});
 });
 
 function goToPage(pageNo){
 	$("#pageNo").attr("value",pageNo);
-	var options={
-			url:"${pageContext.request.contextPath}/merchant/customer/importLog/",
-			success:showContentInfo,
-			error:showError
-	};
-	$('#queryForm').ajaxSubmit(options);
-	
+	$('#queryForm').submit();
 }
-function showError() {
-	$("#resultMessage").html("操作失败，请重试");
-	$("#errorModal").modal();
-}
+
 	function importLogInfo(id){
-		$.ajax({
-			url:"${pageContext.request.contextPath}/merchant/customer/importLog/items/"+id+"/",
-			type:"get",
-		success:showContentInfo
-		});
+		loadPage("${pageContext.request.contextPath}/merchant/customer/importLog/items/"+id+"/");
 	}
 </script>
 

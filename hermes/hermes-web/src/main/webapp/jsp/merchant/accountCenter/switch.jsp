@@ -83,6 +83,7 @@
 	<script type="text/javascript">
 		var templateData;
 		$(document).ready(function() {
+			activeMenu("merchantSwitch");
 			$.get("${pageContext.request.contextPath}/merchant/account/remindTemplate/get/", function callback(data) {
 				templateData = data;
 				if ($('input:radio[name=birthdayRemind]:checked').val() == "true") {

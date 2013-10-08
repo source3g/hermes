@@ -9,7 +9,7 @@
 </head>
 <body>
 
-	<form id="queryForm" class="well form-inline " method="get">
+	<form id="queryForm" class="well form-inline " method="get" action="${pageContext.request.contextPath}/admin/device/list/">
 		<label class="control-label" for="sn">编码：</label> <input id="sn"
 			type="text" class="input-medium " name="sn" value="${device.sn}"
 			placeholder="请输入盒子SN..." /> <label class="control-label" for="sn">商户账号：</label>
@@ -46,8 +46,8 @@
 						未知
 					</c:otherwise>
 					</c:choose></td>
-				<td><a class="btn btn-danger" href="javascript:void();"
-					onclick="deleteById('${device.id}');">删除</a> <a
+				<td><a class="btn btn-danger" href="${pageContext.request.contextPath}/admin/device/delete/${device.id}/"
+					onclick="return confirm('确定删除${device.sn}?')">删除</a> <a
 					class="btn btn-success" href="javascript:void();"
 					onclick="return showDeviceDetail('${device.id}');">详细信息</a></td>
 			</tr>
@@ -91,11 +91,12 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+			activeMenu("listDevice");
 			initPage(${page.currentPage},${page.totalPageCount});
-			$("#queryForm").submit(function(){
-				goToPage(1);
-				return false;
-			});
+			//$("#queryForm").submit(function(){
+			//	goToPage(1);
+			//	return false;
+			//});
 		});
 		
 		function showDeviceDetail(id){
@@ -116,34 +117,12 @@
 		}
 		function goToPage(pageNo) {
 			$("#pageNo").attr("value",pageNo);
-			var options = {
-				url : "${pageContext.request.contextPath}/admin/device/list/",
-				success : showContentInfo, // post-submit callback
-				error : showError
-			};
-			$('#queryForm').ajaxSubmit(options);
-			return false;
+			$("#queryForm").submit();
 		}
 
-		function deleteById(id) {
-			if(confirm("确定删除？")){
-			$.ajax({
-				url : "${pageContext.request.contextPath}/admin/device/delete/" + id + "/",
-				type : "get",
-				success : showContentInfo
-			});
-			}
-		}
 		function showError() {
 			$("#resultMessage").html("操作失败，请重试");
 			$("#errorModal").modal();
-		}
-		function deviceDetail(id){
-			$.ajax({
-				url:"${pageContext.request.contextPath}/admin/device/detail/"+id+"/",
-				type:"get",
-				success:showContentInfo
-			});
 		}
 	</script>
 </body>

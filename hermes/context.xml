@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/hermes-api" debug="1" reloadable="true" docBase="${project.build.path}/hermes-api/src/main/webapp" workDir="/hermes-api/work" >
+</Context>
+
+<Context path="/hermes" debug="1" reloadable="true" docBase="${project.build.path}/hermes-web/src/main/webapp" workDir="/hermes-web/work" >
+</Context>

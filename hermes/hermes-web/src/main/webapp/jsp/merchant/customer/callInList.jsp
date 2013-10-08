@@ -9,7 +9,7 @@
 <title>来电列表</title>
 </head>
 <body>
-	<form id="queryForm" class="well form-inline " method="get">
+	<form id="queryForm" class="well form-inline " method="get" action="${pageContext.request.contextPath}/merchant/customer/callInList/">
 		<label class="control-label" for="name">电话：</label> <input type="text"
 			name="phone" value="${customer.phone}" placeholder="请输入电话号码...">
 		<input id="pageNo" name="pageNo" type="hidden"> <label>顾客类型</label>
@@ -101,16 +101,13 @@
 
 	<script type="text/javascript">
 		$(document).ready(function (){
+			activeMenu("callInList");
 			if(${not empty error}){
 				alert("${error}");
 			}
 			if(${not empty success}){
 				alert("${success}");
 			}
-			$('#queryForm').submit(function(){
-	    		goToPage(1);
-	    		return false;
-	    	});
 			initPage(${page.currentPage},${page.totalPageCount});
 		});
 		
@@ -147,11 +144,7 @@
 		}
 		function goToPage(pageNo){
 			$("#pageNo").attr("value",pageNo);
-			var options={
-					url:"${pageContext.request.contextPath}/merchant/customer/callInList/",
-					success:showContentInfo
-			};
-			$('#queryForm').ajaxSubmit(options);
+			$('#queryForm').submit();
 		}
 		
 		function closeModal(){
@@ -169,7 +162,7 @@
 				  type: 'POST',
 				  url: "${pageContext.request.contextPath}/merchant/customer/quicklySend/",
 				  data: {"textarea":textarea,"phone":phone},
-				  success: showContentInfo
+				  success: function(){alert("发送成功");refresh();}
 				});
 			return false;
 		}
